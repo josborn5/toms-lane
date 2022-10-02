@@ -30,14 +30,15 @@ REM using the '/c' flag to skip linking and create only the '.obj' file
 cl.exe %COMMON_COMPILER_FLAGS% /c ..\%CODE_DIR%\win32\toms-lane-win32.cpp
 
 REM use the 'lib.exe' tool to create a lib file from the obj files
-REM !!! lib.exe -nologo toms-lane-win32.obj
+lib.exe -nologo toms-lane-win32.obj
+lib.exe -nologo toms-lane-platform.obj
 
 REM copy the library header files to the output directory
 REM !!! xcopy ..\%CODE_DIR%\*.hpp .
 
 set COMMON_LINKER_FLAGS=-opt:ref user32.lib Gdi32.lib winmm.lib
 REM Build tests
-REM !!! cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\tests\unit-tests.cpp /link %COMMON_LINKER_FLAGS% toms-lane.lib
+cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\platform\toms-lane-platform.tests.cpp /link %COMMON_LINKER_FLAGS% toms-lane-platform.lib
 
 REM build the demo using the toms-lane.lib
 REM !!! cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\demo\demo.cpp /link %COMMON_LINKER_FLAGS% toms-lane.lib toms-lane-win32.lib
