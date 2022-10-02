@@ -3,6 +3,14 @@
 
 namespace tl
 {
+	struct WindowSettings
+	{
+		int width;
+		int height;
+		char* title;
+		int targetFPS;
+	};
+
 	enum KEY
 	{
 		KEY_ENTER,
