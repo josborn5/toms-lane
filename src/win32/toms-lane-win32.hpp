@@ -2,7 +2,7 @@
 #define TOMS_LANE_WIN32_H
 
 #include <windows.h>
-#include "../platform/platform.hpp"
+#include "../platform/toms-lane-platform.hpp"
 
 namespace tl
 {

@@ -3,8 +3,6 @@
 #include <stdio.h>
 
 #include "toms-lane-win32.hpp"
-#include "../platform/platform.hpp"
-#include "../platform/game.hpp"
 
 namespace tl
 {

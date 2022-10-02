@@ -1,5 +1,7 @@
-#ifndef TOMS_LANE_GAME_H
-#define TOMS_LANE_GAME_H
+#ifndef TOMS_LANE_APPLICATION_H
+#define TOMS_LANE_APPLICATION_H
+
+#include "./platform.hpp"
 
 namespace tl
 {

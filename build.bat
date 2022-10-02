@@ -20,7 +20,7 @@ REM 64-bit build
 
 REM Build the platform independent library
 REM using the '/c' flag to skip linking and create only the '.obj' file
-cl.exe %COMMON_COMPILER_FLAGS% /c ..\%CODE_DIR%\platform\toms-lane.cpp
+cl.exe %COMMON_COMPILER_FLAGS% /c ..\%CODE_DIR%\platform\toms-lane-platform.cpp
 
 REM use the 'lib.exe' tool to create a lib file from the obj files
 REM !!! lib.exe -nologo toms-lane.obj
