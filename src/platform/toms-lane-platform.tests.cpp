@@ -2,5 +2,5 @@
 
 int main()
 {
-	run_Vec4_tests();
+	RunMathTests();
 }

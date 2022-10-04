@@ -51,9 +51,9 @@ namespace tl
 	template<typename T>
 	T DotProduct(const Vec4<T> &v1, const Vec4<T> &v2);
 	template<typename T>
-	T DotProduct(const Vec3<T> &v1, const Vec4<T> &v2);
-	template<typename T>
 	T DotProduct(const Vec3<T> &v1, const Vec3<T> &v2);
+	template<typename T>
+	T DotProduct(const Vec2<T> &v1, const Vec2<T> &v2);
 
 	template<typename T>
 	float Length(const Vec4<T> &in);
