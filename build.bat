@@ -18,27 +18,24 @@ set COMMON_COMPILER_FLAGS=-MT -nologo -Gm- -GR- -EHa- -Oi -WX -W4 -wd4100 -wd420
 
 REM 64-bit build
 
-REM Build the platform independent library
+set PLATFORM=toms-lane-platform
+set WIN32=toms-lane-win32
+
+REM Build the libary .obj files
 REM using the '/c' flag to skip linking and create only the '.obj' file
-cl.exe %COMMON_COMPILER_FLAGS% /c ..\%CODE_DIR%\platform\toms-lane-platform.cpp
+cl.exe %COMMON_COMPILER_FLAGS% /c ..\%CODE_DIR%\platform\%PLATFORM%.cpp
+cl.exe %COMMON_COMPILER_FLAGS% /c ..\%CODE_DIR%\win32\%WIN32%.cpp
 
-REM use the 'lib.exe' tool to create a lib file from the obj files
-REM !!! lib.exe -nologo toms-lane.obj
-
-REM Build the platform dependent library
-REM using the '/c' flag to skip linking and create only the '.obj' file
-cl.exe %COMMON_COMPILER_FLAGS% /c ..\%CODE_DIR%\win32\toms-lane-win32.cpp
-
-REM use the 'lib.exe' tool to create a lib file from the obj files
-lib.exe -nologo toms-lane-win32.obj
-lib.exe -nologo toms-lane-platform.obj
+REM use the 'lib.exe' tool to create lib files from the obj files
+lib.exe -nologo %PLATFORM%.obj
+lib.exe -nologo %WIN32%.obj
 
 REM copy the library header files to the output directory
 REM !!! xcopy ..\%CODE_DIR%\*.hpp .
 
 set COMMON_LINKER_FLAGS=-opt:ref user32.lib Gdi32.lib winmm.lib
 REM Build tests
-cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\platform\toms-lane-platform.tests.cpp /link %COMMON_LINKER_FLAGS% toms-lane-platform.lib
+cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\platform\toms-lane-platform.tests.cpp /link %COMMON_LINKER_FLAGS% %PLATFORM%.lib
 
 REM build the demo using the toms-lane.lib
 REM !!! cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\demo\demo.cpp /link %COMMON_LINKER_FLAGS% toms-lane.lib toms-lane-win32.lib
