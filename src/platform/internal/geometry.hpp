@@ -51,11 +51,12 @@ namespace tl
 	template<typename T>
 	Matrix4x4<T> MakeIdentityMatrix();
 
-	Matrix4x4<float> MakeTranslationMatrix
+	template<typename T>
+	Matrix4x4<T> MakeTranslationMatrix
 	(
-		float dispX,
-		float dispY,
-		float dispZ
+		T dispX,
+		T dispY,
+		T dispZ
 	);
 
 
