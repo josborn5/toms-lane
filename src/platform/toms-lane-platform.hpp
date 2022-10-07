@@ -6,5 +6,6 @@
 #include "./internal/math.hpp"
 #include "./internal/geometry.hpp"
 #include "./internal/software-rendering.hpp"
+#include "./internal/file.hpp"
 
 #endif
