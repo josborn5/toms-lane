@@ -38,8 +38,7 @@ REM Build tests
 cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\platform\toms-lane-platform.tests.cpp /link %COMMON_LINKER_FLAGS% %PLATFORM%.lib
 
 REM build the demo using the toms-lane.lib
-REM !!! cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\demo\demo.cpp /link %COMMON_LINKER_FLAGS% toms-lane.lib toms-lane-win32.lib
-
-REM !!! xcopy ..\%CODE_DIR%\demo\teapot.obj .
+cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\demo\demo.cpp /link %COMMON_LINKER_FLAGS% %PLATFORM%.lib %WIN32%.lib
+xcopy ..\%CODE_DIR%\demo\teapot.obj .
 
 popd
