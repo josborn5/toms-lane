@@ -12,6 +12,13 @@ float cameraYaw = 0.0f;
 
 bool isTeapot = false;
 
+float maxX = 0.0f;
+float minX = 0.0f;
+float maxY = 0.0f;
+float minY = 0.0f;
+float maxZ = 0.0f;
+float minZ = 0.0f;
+
 void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
 	tl::ReadObjFileToVec4("teapot.obj", mesh.triangles);
@@ -21,12 +28,12 @@ void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuff
 	{
 		mesh.triangles = {
 			// SOUTH
-			/*{ 0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f },
+			{ 0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f },
 			{ 0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f },
 
 			// EAST
 			{ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f },
-			{ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f, 1.0f },*/
+			{ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f, 1.0f },
 
 			// NORTH
 			{ 1.0f, 0.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f },
@@ -37,21 +44,51 @@ void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuff
 			{ 0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f },
 
 			// TOP
-			/*{ 0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f },
+			{ 0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f },
 			{ 0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f },
 
 			// BOTTOM
 			{ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f },
-			{ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f }*/
+			{ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f }
 		};
 	}
+
+	for (Triangle4d<float> tri : mesh.triangles)
+	{
+		if (tri.p[0].x > maxX) maxX = tri.p[0].x;
+		if (tri.p[0].x < minX) minX = tri.p[0].x;
+		if (tri.p[0].y > maxY) maxY = tri.p[0].y;
+		if (tri.p[0].y < minY) minY = tri.p[0].y;
+		if (tri.p[0].z > maxZ) maxZ = tri.p[0].z;
+		if (tri.p[0].z < minZ) minZ = tri.p[0].z;
+
+		if (tri.p[1].x > maxX) maxX = tri.p[1].x;
+		if (tri.p[1].x < minX) minX = tri.p[1].x;
+		if (tri.p[1].y > maxY) maxY = tri.p[1].y;
+		if (tri.p[1].y < minY) minY = tri.p[1].y;
+		if (tri.p[1].z > maxZ) maxZ = tri.p[1].z;
+		if (tri.p[1].z < minZ) minZ = tri.p[1].z;
+
+		if (tri.p[2].x > maxX) maxX = tri.p[2].x;
+		if (tri.p[2].x < minX) minX = tri.p[2].x;
+		if (tri.p[2].y > maxY) maxY = tri.p[2].y;
+		if (tri.p[2].y < minY) minY = tri.p[2].y;
+		if (tri.p[2].z > maxZ) maxZ = tri.p[2].z;
+		if (tri.p[2].z < minZ) minZ = tri.p[2].z;
+	}
+
+	// Center in x & y directions. Step back in the z direction.
+	float startingX = 0.5f * (maxX + minX);
+	float startingY = 0.5f * (maxY + minY);
+	float zDepth = maxZ - minZ;
+	float startingZ = minZ - zDepth;
 
 	// Initialize the projection matrix
 	projectionMatrix = tl::MakeProjectionMatrix(90.0f, 1.0f, 0.1f, 1000.0f);
 
 	// Initialize the camera
 	camera.up = { 0.0f, 1.0f, 0.0f };
-	camera.position = { 0.0f, 0.0f, 0.0f };
+	camera.position = { startingX, startingY, startingZ };
 	camera.direction = { 0.0f, 0.0f, 1.0f };
 }
 
