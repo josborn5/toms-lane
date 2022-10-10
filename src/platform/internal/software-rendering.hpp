@@ -7,6 +7,15 @@
 
 namespace tl
 {
+	struct Sprite
+	{
+		char* content;
+		int height;
+		int width;
+	};
+
+	Sprite LoadSprite(char* content);
+
 	/**
 	 *	|---|---|---|
 	 *	| 0 | 1 | 2 |	pixel ordinals
@@ -32,15 +41,10 @@ namespace tl
 	void DrawRect(const RenderBuffer &renderBuffer, uint32_t color, const Rect<float> &rect);
 
 	// Draw a sprite of a size determined by the given sprite string and blockHalfSize value
-	void DrawSprite(const RenderBuffer &renderBuffer, char *sprite, const Vec2<float> &p, float blockHalfSize, uint32_t color);
-
-	// Draw a sprite of a fixed size determined by the given footPrint value
 	void DrawSprite(
 		const RenderBuffer &renderBuffer,
-		char *sprite,
-		const Rect<float> &footPrint,
-		int xRes,
-		int yRes,
+		const Sprite &sprite,
+		const Rect<float> &footprint,
 		uint32_t color
 	);
 

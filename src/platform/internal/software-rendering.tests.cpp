@@ -5,6 +5,20 @@
 const uint32_t EMPTY = 0x000000;
 const uint32_t FILLED = 0xFFFFFF;
 
+void TestSprite(char* inputContent, int expectedHeight, int expectedWidth)
+{
+	tl::Sprite testSprite = tl::LoadSprite(inputContent);
+
+	std::cout << "\nSprite test" << std::endl;
+	std::cout << "Input content: '" << inputContent << "'" << std::endl;
+	std::cout << "Expected height: " << expectedHeight << std::endl;
+	std::cout << "Actual height: " << testSprite.height << std::endl;
+	std::cout << "Actual width: " << testSprite.width << std::endl;
+	std::cout << "Expected width: " << expectedWidth << std::endl;
+	assert(inputContent == testSprite.content);
+	assert(expectedHeight == testSprite.height);
+	assert(expectedWidth == testSprite.width);
+}
 
 void ClearPixelArray(uint32_t* pixelArray, int arrayLength)
 {
@@ -1032,4 +1046,20 @@ void RunSoftwareRenderingTests()
 		FILLED,	FILLED,	FILLED,	FILLED,	EMPTY,	EMPTY
 	};
 	Run6x4FillTriangleTest(tl::Vec3<int>{ 5, 0, 0 }, tl::Vec3<int>{ 0, 3, 0 }, tl::Vec3<int>{ 3, 3, 0 }, efb10);
+
+	// Sprites
+
+	char* inputSprite = "0\n\
+						0\n\
+						0";
+	TestSprite(inputSprite, 3, 1);
+
+	inputSprite = "0000";
+	TestSprite(inputSprite, 1, 4);
+
+	inputSprite =	"   0\n\
+					  0\n\
+					 0\n\
+					0";
+	TestSprite(inputSprite, 4, 4);
 }

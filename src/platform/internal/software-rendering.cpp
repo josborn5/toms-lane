@@ -250,79 +250,51 @@ namespace tl
 		DrawRectInPixels(renderBuffer, color, x0, y0, x1, y1);
 	}
 
-	void DrawSprite(const RenderBuffer &renderBuffer, char *sprite, const Vec2<float> &p, float blockHalfSize, uint32_t color)
-	{
-		Vec2<float> pCopy = Vec2<float> { p.x, p.y };
-
-		float blockSize = blockHalfSize * 2.0f;
-		Vec2<float> blockHalf = Vec2<float> { blockHalfSize, blockHalfSize };
-
-		while (*sprite)
-		{
-			if (*sprite == '\n')
-			{
-				pCopy.y -= blockSize;	// We're populating blocks in the sprint left to right, top to bottom. So y is decreasing.
-				pCopy.x = p.x; // reset cursor to start of next row
-			}
-			else
-			{
-				if (*sprite != ' ')
-				{
-					Rect<float> blockRect;
-					blockRect.position = pCopy;
-					blockRect.halfSize = blockHalf;
-					DrawRect(renderBuffer, color, blockRect);
-				}
-				pCopy.x += blockSize;
-			}
-			sprite++;
-		}
-	}
-
 	void DrawSprite(
 		const RenderBuffer &renderBuffer,
-		char *sprite,
-		const Rect<float> &footPrint,
-		int xRes,
-		int yRes,
+		const Sprite &sprite,
+		const Rect<float> &footprint,
 		uint32_t color
-	) {
-		// Calculate the overall dimensions of the area over which to draw the sprite
-		float footPrintHeight = footPrint.halfSize.y * 2.0f;
-		float footPrintWidth = footPrint.halfSize.y * 2.0f;
-		// Calculate the dimensions of each 'pixel' block in the sprite
-		float blockHeight = footPrintHeight / (float)yRes;
-		float blockWidth = footPrintWidth / (float)xRes;
-		Vec2<float> blockHalfSize = Vec2<float> { blockHeight * 0.5f, blockWidth * 0.5f };
+	)
+	{
+		// Work out the size of each block in the sprite
+		float footprintHeight = footprint.halfSize.y * 2.0f;
+		float footprintWidth = footprint.halfSize.x * 2.0f;
+
+		float blockWidth = footprintWidth / (float)sprite.width;
+		float blockHeight = footprintHeight / (float)sprite.height;
+		Vec2<float> blockHalf = { 0.5f * blockWidth, 0.5f * blockHeight };
 
 		// Calculate the cursor area over which to position each block. Position is measured fro the center
 		// so apply an offset for the block size
 		Vec2<float> pCopy = Vec2<float>
 		{
-			footPrint.position.x - footPrint.halfSize.x + blockHalfSize.x,
-			footPrint.position.y + footPrint.halfSize.y - blockHalfSize.y
+			footprint.position.x - footprint.halfSize.x + blockHalf.x,
+			footprint.position.y + footprint.halfSize.y - blockHalf.y
 		};
 
+		// iterate through the sprite content and fill blocks in the render buffer
 		float xMinCursorPos = pCopy.x;
-		while (*sprite)
+		char* content = sprite.content;
+		while (*content)
 		{
-			if (*sprite == '\n')
+			if (*content == '\n')
 			{
 				pCopy.y -= blockHeight;	// We're populating blocks in the sprint left to right, top to bottom. So y is decreasing.
 				pCopy.x = xMinCursorPos; // reset cursor to start of next row
 			}
 			else
 			{
-				if (*sprite != ' ')
+				if (*content != ' ')
 				{
 					Rect<float> blockRect;
 					blockRect.position = pCopy;
-					blockRect.halfSize = blockHalfSize;
+					blockRect.halfSize = blockHalf;
 					DrawRect(renderBuffer, color, blockRect);
 				}
 				pCopy.x += blockWidth;
 			}
-			sprite++;
+			*content++;
 		}
 	}
 
@@ -771,16 +743,16 @@ namespace tl
 
 		std::vector<Triangle4d<T>> trianglesToDraw;
 
-		Plane<T> bottomOfScreen = { (T)0, (T)0, (T)0,							(T)0, (T)1, (T)0 };
-		Plane<T> topOfScreen = { (T)0, (T)(renderBuffer.height - 1), (T)0,		(T)0, (T)-1, (T)0 };
-		Plane<T> leftOfScreen = { (T)0, (T)0, (T)0,								(T)1, (T)0, (T)0 };
-		Plane<T> rightOfScreen = { (T)(renderBuffer.width - 1), (T)0, (T)0,		(T)-1, (T)0, (T)0 };
+		Plane<T> bottomOfScreen = { (T)0, (T)0, (T)0,						(T)0, (T)1, (T)0 };
+		Plane<T> topOfScreen = { (T)0, (T)(renderBuffer.height - 1), (T)0,	(T)0, (T)-1, (T)0 };
+		Plane<T> leftOfScreen = { (T)0, (T)0, (T)0,							(T)1, (T)0, (T)0 };
+		Plane<T> rightOfScreen = { (T)(renderBuffer.width - 1), (T)0, (T)0,	(T)-1, (T)0, (T)0 };
 
 		for (Triangle4d<T> tri : mesh.triangles)
 		{
 			Triangle4d<T> transformed;
 			Triangle4d<T> viewed;
-			Triangle4d<T> projected; // TODO: switch this to Triangle4d so the depth information is kept and can be used in a depth buffer to prevent double rendering of triangles behind each other
+			Triangle4d<T> projected;
 
 			// Transform the triangle in the mesh
 			MultiplyVectorWithMatrix(tri.p[0], transformed.p[0], transformMatrix);
@@ -793,10 +765,10 @@ namespace tl
 			Vec4<T> normal = UnitVector(CrossProduct(line1, line2));
 
 			Vec4<T> fromCameraToTriangle = SubtractVectors(transformed.p[0], camera.position);
-			T dot = DotProduct(normal, fromCameraToTriangle);
+//			T dot = DotProduct(normal, fromCameraToTriangle);
 
-			if (dot >= (T)0)
-			{
+//			if (dot >= (T)0)
+//			{
 				Vec4<T> lightDirection = { (T)0, (T)0, (T)1 };
 				Vec4<T> normalizedLightDirection = UnitVector(lightDirection);
 				T shade = DotProduct(normal, normalizedLightDirection);
@@ -840,7 +812,7 @@ namespace tl
 
 					trianglesToDraw.push_back(triToRender);
 				}
-			}
+// 			}
 		}
 
 		for (Triangle4d<T> triToRender : trianglesToDraw)
@@ -898,7 +870,7 @@ namespace tl
 				// Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
 				// Vec2<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
 				// Vec2<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
-				// DrawTriangleInPixels(renderBuffer, draw.color, p0Int, p1Int, p2Int);
+				// DrawTriangleInPixels(renderBuffer, 0xFFFFFF, p0Int, p1Int, p2Int);
 
 				Vec3<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
 				Vec3<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
@@ -908,9 +880,438 @@ namespace tl
 				// For whatever reason, the z values are inverted for the teapot. i.e. closer triangles have a lower Z value.
 				// As an ultra-hack I'm doing 10 minus the z-value to invert them.
 				T z = (T)10 - ((draw.p[0].z + draw.p[1].z + draw.p[2].z) / (T)3);
-				FillTriangleInPixels(renderBuffer, draw.color, p0Int, p1Int, p2Int, z);
+				FillTriangleInPixels(renderBuffer, 0xFFFFFF, p0Int, p1Int, p2Int, z);
 			}
 		}
 	}
 	template void TransformAndRenderMesh(const RenderBuffer &renderBuffer, const Mesh<float> &mesh, const Camera<float> &camera, const Matrix4x4<float> transformMatrix, const Matrix4x4<float> projectionMatrix);
+
+
+	// Render characters
+	const float CHARACTER_HEIGHT = 7.0f;
+	char *letters[26] = {
+	"\
+	 00\n\
+	0  0\n\
+	0  0\n\
+	0000\n\
+	0  0\n\
+	0  0\n\
+	0  0",
+
+	"\
+	000\n\
+	0  0\n\
+	0  0\n\
+	000\n\
+	0  0\n\
+	0  0\n\
+	000",
+
+	"\
+	 000\n\
+	0\n\
+	0\n\
+	0\n\
+	0\n\
+	0\n\
+	 000",
+
+	"\
+	000\n\
+	0  0\n\
+	0  0\n\
+	0  0\n\
+	0  0\n\
+	0  0\n\
+	000",
+
+	"\
+	0000\n\
+	0\n\
+	0\n\
+	000\n\
+	0\n\
+	0\n\
+	0000",
+
+	"\
+	0000\n\
+	0\n\
+	0\n\
+	000\n\
+	0\n\
+	0\n\
+	0",
+
+	"\
+	 000\n\
+	0\n\
+	0\n\
+	0 00\n\
+	0  0\n\
+	0  0\n\
+	 000",
+
+	"\
+	0  0\n\
+	0  0\n\
+	0  0\n\
+	0000\n\
+	0  0\n\
+	0  0\n\
+	0  0",
+
+	"\
+	000\n\
+	 0\n\
+	 0\n\
+	 0\n\
+	 0\n\
+	 0\n\
+	000",
+
+	"\
+	 000\n\
+	   0\n\
+	   0\n\
+	   0\n\
+	0  0\n\
+	0  0\n\
+	 000",
+
+	"\
+	0  0\n\
+	0  0\n\
+	0 0\n\
+	00\n\
+	0 0\n\
+	0  0\n\
+	0  0",
+
+	"\
+	0\n\
+	0\n\
+	0\n\
+	0\n\
+	0\n\
+	0\n\
+	0000",
+
+	"\
+	00 00\n\
+	0 0 0\n\
+	0 0 0\n\
+	0   0\n\
+	0   0\n\
+	0   0\n\
+	0   0",
+
+	"\
+	0   0\n\
+	00  0\n\
+	0 0 0\n\
+	0 0 0\n\
+	0 0 0\n\
+	0  00\n\
+	0   0",
+
+	"\
+	 00 \n\
+	0  0\n\
+	0  0\n\
+	0  0\n\
+	0  0\n\
+	0  0\n\
+	 00",
+
+	"\
+	000\n\
+	0  0\n\
+	0  0\n\
+	000\n\
+	0\n\
+	0\n\
+	0",
+
+	"\
+	 000\n\
+	0   0\n\
+	0   0\n\
+	0   0\n\
+	0 0 0\n\
+	0  0\n\
+	 00 0",
+
+	"\
+	000\n\
+	0  0\n\
+	0  0\n\
+	000\n\
+	0  0\n\
+	0  0\n\
+	0  0",
+
+	"\
+	 000\n\
+	0\n\
+	0\n\
+	 00\n\
+	   0\n\
+	   0\n\
+	000",
+
+	"\
+	000\n\
+	 0\n\
+	 0\n\
+	 0\n\
+	 0\n\
+	 0\n\
+	 0",
+
+	"\
+	0  0\n\
+	0  0\n\
+	0  0\n\
+	0  0\n\
+	0  0\n\
+	0  0\n\
+	 00",
+
+	"\
+	0   0\n\
+	0   0\n\
+	0   0\n\
+	 0 0\n\
+	 0 0\n\
+	  0\n\
+	  0",
+
+	"\
+	0   0\n\
+	0   0\n\
+	0   0\n\
+	0 0 0\n\
+	0 0 0\n\
+	 0 0\n\
+	 0 0",
+
+	"\
+	0   0\n\
+	0   0\n\
+	 0 0\n\
+	  0\n\
+	 0 0\n\
+	0   0\n\
+	0   0",
+
+	"\
+	0   0\n\
+	0   0\n\
+	 0 0\n\
+	 0 0\n\
+	  0\n\
+	  0\n\
+	  0",
+
+	"\
+	0000\n\
+	   0\n\
+	  0\n\
+	 0\n\
+	0\n\
+	0\n\
+	0000"
+	};
+
+	char *digits[10] = {
+	"\
+	 000 \n\
+	0   0\n\
+	0  00\n\
+	0 0 0\n\
+	00  0\n\
+	0   0\n\
+	 000",
+
+	"\
+	 0\n\
+	00\n\
+	 0\n\
+	 0\n\
+	 0\n\
+	 0\n\
+	000",
+
+	"\
+	 00\n\
+	0  0\n\
+	   0\n\
+	  0\n\
+	 0\n\
+	0\n\
+	0000",
+
+	"\
+	 00\n\
+	0  0\n\
+	   0\n\
+	 00\n\
+	   0\n\
+	0  0\n\
+	 00",
+
+	"\
+	  00\n\
+	 0 0\n\
+	0  0\n\
+	0000\n\
+	   0\n\
+	   0\n\
+	   0",
+
+	"\
+	0000\n\
+	0\n\
+	0\n\
+	000\n\
+	   0\n\
+	   0\n\
+	000",
+
+	"\
+	 000\n\
+	0\n\
+	0\n\
+	000\n\
+	0  0\n\
+	0  0\n\
+	 00",
+
+	"\
+	0000\n\
+	   0\n\
+	   0\n\
+	  0\n\
+	 0\n\
+	0\n\
+	0",
+
+	"\
+	 00\n\
+	0  0\n\
+	0  0\n\
+	 00\n\
+	0  0\n\
+	0  0\n\
+	 00",
+
+	"\
+	 00\n\
+	0  0\n\
+	0  0\n\
+	 00\n\
+	  0\n\
+	 0\n\
+	0"
+	};
+
+	int GetLetterIndex(char c)
+	{
+		return c - 'A';
+	}
+
+	Sprite LoadSprite(char* content)
+	{
+		char* copy = content;
+		int height = 0;
+		int width = 0;
+		int rowCounter = 0;
+		while (*copy)
+		{
+			if (rowCounter == 0 && height == 0)
+			{
+				height += 1;
+			}
+			if (*copy == '\n')
+			{
+				if (width < rowCounter)
+				{
+					width = rowCounter;
+				}
+				rowCounter = 0;
+				height += 1;
+			}
+			// ignore any leading tabs at the start of a row
+			else if (rowCounter != 0 || (rowCounter == 0 && *copy != '\t'))
+			{
+				rowCounter += 1;
+			}
+			copy++;
+		}
+
+		// Set the width value if no newline char exists in the content
+		if (height == 1)
+		{
+			width = rowCounter;
+		}
+
+		Sprite sprite = Sprite();
+		sprite.content = content;
+		sprite.height = height;
+		sprite.width = width;
+		return sprite;
+	}
+
+	/*static void DrawAlphabetCharacters(const RenderBuffer &renderBuffer, const tl::Vec2<int> &gameRect, char *text, const tl::Vec2<float> &p, float fontSize, uint32_t color)
+	{
+		float blockHalfSize = fontSize / (2.0f * CHARACTER_HEIGHT);
+		float characterWidth = fontSize;
+		tl::Vec2<float> pCopy = tl::Vec2<float> { p.x, p.y };
+		
+		for (char *letterAt = text; *letterAt; letterAt++)
+		{
+			if (*letterAt != ' ')
+			{
+				int letterIndex = GetLetterIndex(*letterAt);
+				char *letter = letters[letterIndex];
+
+				tl::DrawSprite(renderBuffer, letter, pCopy, blockHalfSize, color);
+			}
+			pCopy.x += characterWidth;
+		}
+	}
+
+	static void DrawNumber(const RenderBuffer &renderBuffer, const tl::Vec2<int> &gameRect, int number, const tl::Vec2<float> &p, float fontSize, uint32_t color)
+	{
+		float blockHalfSize = fontSize / (2.0f * CHARACTER_HEIGHT);
+		float characterWidth = fontSize;
+		tl::Vec2<float> pCopy = tl::Vec2<float> { p.x, p.y };
+
+		int baseTenMultiplier = 1;
+		int digit = number / baseTenMultiplier;
+		int digitCount = 1;
+		while (digit > 0)
+		{
+			baseTenMultiplier *= 10;
+			digitCount += 1;
+			digit = number / baseTenMultiplier;
+		}
+
+		int workingNumber = number;
+		while (baseTenMultiplier >= 10)
+		{
+			baseTenMultiplier /= 10;
+			digit = workingNumber / baseTenMultiplier;
+
+			workingNumber -= (digit * baseTenMultiplier);
+
+			char *charDigit = digits[digit];
+			tl::DrawSprite(renderBuffer, charDigit, pCopy, blockHalfSize, color);
+
+			pCopy.x += characterWidth;
+		}
+	}*/
+
 }
