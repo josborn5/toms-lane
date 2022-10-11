@@ -889,240 +889,240 @@ namespace tl
 
 	// Render characters
 	const float CHARACTER_HEIGHT = 7.0f;
-	char *letters[26] = {
-	"\
+	Sprite letters[26] = {
+	LoadSprite("\
 	 00\n\
 	0  0\n\
 	0  0\n\
 	0000\n\
 	0  0\n\
 	0  0\n\
-	0  0",
+	0  0"),
 
-	"\
+	LoadSprite("\
 	000\n\
 	0  0\n\
 	0  0\n\
 	000\n\
 	0  0\n\
 	0  0\n\
-	000",
+	000"),
 
-	"\
+	LoadSprite("\
 	 000\n\
 	0\n\
 	0\n\
 	0\n\
 	0\n\
 	0\n\
-	 000",
+	 000"),
 
-	"\
+	LoadSprite("\
 	000\n\
 	0  0\n\
 	0  0\n\
 	0  0\n\
 	0  0\n\
 	0  0\n\
-	000",
+	000"),
 
-	"\
+	LoadSprite("\
 	0000\n\
 	0\n\
 	0\n\
 	000\n\
 	0\n\
 	0\n\
-	0000",
+	0000"),
 
-	"\
+	LoadSprite("\
 	0000\n\
 	0\n\
 	0\n\
 	000\n\
 	0\n\
 	0\n\
-	0",
+	0"),
 
-	"\
+	LoadSprite("\
 	 000\n\
 	0\n\
 	0\n\
 	0 00\n\
 	0  0\n\
 	0  0\n\
-	 000",
+	 000"),
 
-	"\
+	LoadSprite("\
 	0  0\n\
 	0  0\n\
 	0  0\n\
 	0000\n\
 	0  0\n\
 	0  0\n\
-	0  0",
+	0  0"),
 
-	"\
+	LoadSprite("\
 	000\n\
 	 0\n\
 	 0\n\
 	 0\n\
 	 0\n\
 	 0\n\
-	000",
+	000"),
 
-	"\
+	LoadSprite("\
 	 000\n\
 	   0\n\
 	   0\n\
 	   0\n\
 	0  0\n\
 	0  0\n\
-	 000",
+	 000"),
 
-	"\
+	LoadSprite("\
 	0  0\n\
 	0  0\n\
 	0 0\n\
 	00\n\
 	0 0\n\
 	0  0\n\
-	0  0",
+	0  0"),
 
-	"\
+	LoadSprite("\
 	0\n\
 	0\n\
 	0\n\
 	0\n\
 	0\n\
 	0\n\
-	0000",
+	0000"),
 
-	"\
+	LoadSprite("\
 	00 00\n\
 	0 0 0\n\
 	0 0 0\n\
 	0   0\n\
 	0   0\n\
 	0   0\n\
-	0   0",
+	0   0"),
 
-	"\
+	LoadSprite("\
 	0   0\n\
 	00  0\n\
 	0 0 0\n\
 	0 0 0\n\
 	0 0 0\n\
 	0  00\n\
-	0   0",
+	0   0"),
 
-	"\
+	LoadSprite("\
 	 00 \n\
 	0  0\n\
 	0  0\n\
 	0  0\n\
 	0  0\n\
 	0  0\n\
-	 00",
+	 00"),
 
-	"\
+	LoadSprite("\
 	000\n\
 	0  0\n\
 	0  0\n\
 	000\n\
 	0\n\
 	0\n\
-	0",
+	0"),
 
-	"\
+	LoadSprite("\
 	 000\n\
 	0   0\n\
 	0   0\n\
 	0   0\n\
 	0 0 0\n\
 	0  0\n\
-	 00 0",
+	 00 0"),
 
-	"\
+	LoadSprite("\
 	000\n\
 	0  0\n\
 	0  0\n\
 	000\n\
 	0  0\n\
 	0  0\n\
-	0  0",
+	0  0"),
 
-	"\
+	LoadSprite("\
 	 000\n\
 	0\n\
 	0\n\
 	 00\n\
 	   0\n\
 	   0\n\
-	000",
+	000"),
 
-	"\
+	LoadSprite("\
 	000\n\
 	 0\n\
 	 0\n\
 	 0\n\
 	 0\n\
 	 0\n\
-	 0",
+	 0"),
 
-	"\
+	LoadSprite("\
 	0  0\n\
 	0  0\n\
 	0  0\n\
 	0  0\n\
 	0  0\n\
 	0  0\n\
-	 00",
+	 00"),
 
-	"\
+	LoadSprite("\
 	0   0\n\
 	0   0\n\
 	0   0\n\
 	 0 0\n\
 	 0 0\n\
 	  0\n\
-	  0",
+	  0"),
 
-	"\
+	LoadSprite("\
 	0   0\n\
 	0   0\n\
 	0   0\n\
 	0 0 0\n\
 	0 0 0\n\
 	 0 0\n\
-	 0 0",
+	 0 0"),
 
-	"\
+	LoadSprite("\
 	0   0\n\
 	0   0\n\
 	 0 0\n\
 	  0\n\
 	 0 0\n\
 	0   0\n\
-	0   0",
+	0   0"),
 
-	"\
+	LoadSprite("\
 	0   0\n\
 	0   0\n\
 	 0 0\n\
 	 0 0\n\
 	  0\n\
 	  0\n\
-	  0",
+	  0"),
 
-	"\
+	LoadSprite("\
 	0000\n\
 	   0\n\
 	  0\n\
 	 0\n\
 	0\n\
 	0\n\
-	0000"
+	0000")
 	};
 
 	char *digits[10] = {
@@ -1243,8 +1243,8 @@ namespace tl
 				rowCounter = 0;
 				height += 1;
 			}
-			// ignore any leading tabs at the start of a row
-			else if (rowCounter != 0 || (rowCounter == 0 && *copy != '\t'))
+			// ignore any tabs
+			else if (*copy != '\t')
 			{
 				rowCounter += 1;
 			}
@@ -1264,26 +1264,41 @@ namespace tl
 		return sprite;
 	}
 
-	/*static void DrawAlphabetCharacters(const RenderBuffer &renderBuffer, const tl::Vec2<int> &gameRect, char *text, const tl::Vec2<float> &p, float fontSize, uint32_t color)
+	void DrawAlphabetCharacters(
+		const RenderBuffer &renderBuffer,
+		char *text,
+		const tl::Rect<float> &footprint,
+		uint32_t color
+	)
 	{
-		float blockHalfSize = fontSize / (2.0f * CHARACTER_HEIGHT);
-		float characterWidth = fontSize;
-		tl::Vec2<float> pCopy = tl::Vec2<float> { p.x, p.y };
-		
+		// TODO: encapsulate char count in a string type class
+		int charCounter = 0;
+		char* textCopy = text;
+		while (*textCopy)
+		{
+			charCounter += 1;
+			textCopy++;
+		}
+		float charHalfSizeWidth = footprint.halfSize.x / charCounter;
+		float startCharPositionX = footprint.position.x - footprint.halfSize.x + charHalfSizeWidth;
+		tl::Vec2<float> charPosition = tl::Vec2<float> { startCharPositionX, footprint.position.y };
+		Rect<float> charRect;
+		charRect.halfSize = tl::Vec2<float> { charHalfSizeWidth, footprint.halfSize.y };
+		charRect.position = tl::Vec2<float> { startCharPositionX, footprint.position.y };
 		for (char *letterAt = text; *letterAt; letterAt++)
 		{
 			if (*letterAt != ' ')
 			{
 				int letterIndex = GetLetterIndex(*letterAt);
-				char *letter = letters[letterIndex];
+				Sprite letter = letters[letterIndex];
 
-				tl::DrawSprite(renderBuffer, letter, pCopy, blockHalfSize, color);
+				tl::DrawSprite(renderBuffer, letter, charRect, color);
 			}
-			pCopy.x += characterWidth;
+			charRect.position.x += (2.0f * charHalfSizeWidth);
 		}
 	}
 
-	static void DrawNumber(const RenderBuffer &renderBuffer, const tl::Vec2<int> &gameRect, int number, const tl::Vec2<float> &p, float fontSize, uint32_t color)
+	/*static void DrawNumber(const RenderBuffer &renderBuffer, const tl::Vec2<int> &gameRect, int number, const tl::Vec2<float> &p, float fontSize, uint32_t color)
 	{
 		float blockHalfSize = fontSize / (2.0f * CHARACTER_HEIGHT);
 		float characterWidth = fontSize;
@@ -1313,5 +1328,5 @@ namespace tl
 			pCopy.x += characterWidth;
 		}
 	}*/
-
 }
+
