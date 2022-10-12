@@ -55,6 +55,13 @@ namespace tl
 		uint32_t color
 	);
 
+	void DrawNumber(
+		const RenderBuffer &renderBuffer,
+		int number,
+		const tl::Rect<float> &firstCharFootprint,
+		uint32_t color
+	);
+
 	// Triangles
 	void FillTriangleInPixels(const RenderBuffer &renderBuffer, uint32_t color, const Vec3<int> &p0, const Vec3<int> &p1, const Vec3<int> &p2, float z);
 

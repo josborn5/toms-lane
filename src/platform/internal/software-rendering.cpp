@@ -1125,96 +1125,96 @@ namespace tl
 	0000")
 	};
 
-	char *digits[10] = {
-	"\
+	Sprite digits[10] = {
+	LoadSprite("\
 	 000 \n\
 	0   0\n\
 	0  00\n\
 	0 0 0\n\
 	00  0\n\
 	0   0\n\
-	 000",
+	 000"),
 
-	"\
+	LoadSprite("\
 	 0\n\
 	00\n\
 	 0\n\
 	 0\n\
 	 0\n\
 	 0\n\
-	000",
+	000"),
 
-	"\
+	LoadSprite("\
 	 00\n\
 	0  0\n\
 	   0\n\
 	  0\n\
 	 0\n\
 	0\n\
-	0000",
+	0000"),
 
-	"\
+	LoadSprite("\
 	 00\n\
 	0  0\n\
 	   0\n\
 	 00\n\
 	   0\n\
 	0  0\n\
-	 00",
+	 00"),
 
-	"\
+	LoadSprite("\
 	  00\n\
 	 0 0\n\
 	0  0\n\
 	0000\n\
 	   0\n\
 	   0\n\
-	   0",
+	   0"),
 
-	"\
+	LoadSprite("\
 	0000\n\
 	0\n\
 	0\n\
 	000\n\
 	   0\n\
 	   0\n\
-	000",
+	000"),
 
-	"\
+	LoadSprite("\
 	 000\n\
 	0\n\
 	0\n\
 	000\n\
 	0  0\n\
 	0  0\n\
-	 00",
+	 00"),
 
-	"\
+	LoadSprite("\
 	0000\n\
 	   0\n\
 	   0\n\
 	  0\n\
 	 0\n\
 	0\n\
-	0",
+	0"),
 
-	"\
+	LoadSprite("\
 	 00\n\
 	0  0\n\
 	0  0\n\
 	 00\n\
 	0  0\n\
 	0  0\n\
-	 00",
+	 00"),
 
-	"\
+	LoadSprite("\
 	 00\n\
 	0  0\n\
 	0  0\n\
 	 00\n\
 	  0\n\
 	 0\n\
-	0"
+	0")
 	};
 
 	int GetLetterIndex(char c)
@@ -1267,24 +1267,14 @@ namespace tl
 	void DrawAlphabetCharacters(
 		const RenderBuffer &renderBuffer,
 		char *text,
-		const tl::Rect<float> &footprint,
+		const tl::Rect<float> &firstCharFootprint,
 		uint32_t color
 	)
 	{
-		// TODO: encapsulate char count in a string type class
-		int charCounter = 0;
-		char* textCopy = text;
-		while (*textCopy)
-		{
-			charCounter += 1;
-			textCopy++;
-		}
-		float charHalfSizeWidth = footprint.halfSize.x / charCounter;
-		float startCharPositionX = footprint.position.x - footprint.halfSize.x + charHalfSizeWidth;
-		tl::Vec2<float> charPosition = tl::Vec2<float> { startCharPositionX, footprint.position.y };
 		Rect<float> charRect;
-		charRect.halfSize = tl::Vec2<float> { charHalfSizeWidth, footprint.halfSize.y };
-		charRect.position = tl::Vec2<float> { startCharPositionX, footprint.position.y };
+		charRect.halfSize = firstCharFootprint.halfSize;
+		charRect.position = tl::Vec2<float> { firstCharFootprint.position.x, firstCharFootprint.position.y };
+		float charWidth = 2.0f * firstCharFootprint.halfSize.x;
 		for (char *letterAt = text; *letterAt; letterAt++)
 		{
 			if (*letterAt != ' ')
@@ -1294,15 +1284,21 @@ namespace tl
 
 				tl::DrawSprite(renderBuffer, letter, charRect, color);
 			}
-			charRect.position.x += (2.0f * charHalfSizeWidth);
+			charRect.position.x += charWidth;
 		}
 	}
 
-	/*static void DrawNumber(const RenderBuffer &renderBuffer, const tl::Vec2<int> &gameRect, int number, const tl::Vec2<float> &p, float fontSize, uint32_t color)
+	void DrawNumber(
+		const RenderBuffer &renderBuffer,
+		int number,
+		const tl::Rect<float> &firstCharFootprint,
+		uint32_t color
+	)
 	{
-		float blockHalfSize = fontSize / (2.0f * CHARACTER_HEIGHT);
-		float characterWidth = fontSize;
-		tl::Vec2<float> pCopy = tl::Vec2<float> { p.x, p.y };
+		Rect<float> charRect;
+		charRect.halfSize = firstCharFootprint.halfSize;
+		charRect.position = tl::Vec2<float> { firstCharFootprint.position.x, firstCharFootprint.position.y };
+		float charWidth = 2.0f * firstCharFootprint.halfSize.x;
 
 		int baseTenMultiplier = 1;
 		int digit = number / baseTenMultiplier;
@@ -1322,11 +1318,11 @@ namespace tl
 
 			workingNumber -= (digit * baseTenMultiplier);
 
-			char *charDigit = digits[digit];
-			tl::DrawSprite(renderBuffer, charDigit, pCopy, blockHalfSize, color);
+			Sprite charDigit = digits[digit];
+			tl::DrawSprite(renderBuffer, charDigit, charRect, color);
 
-			pCopy.x += characterWidth;
+			charRect.position.x += charWidth;
 		}
-	}*/
+	}
 }
 
