@@ -19,6 +19,8 @@ float minY = 0.0f;
 float maxZ = 0.0f;
 float minZ = 0.0f;
 
+bool isStarted = false;
+
 void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
 	tl::ReadObjFileToVec4("teapot.obj", mesh.triangles);
@@ -95,6 +97,20 @@ void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuff
 void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
 	const uint32_t BACKGROUND_COLOR = 0x000000;
+	tl::ClearScreen(renderBuffer, BACKGROUND_COLOR);
+	if (!isStarted)
+	{
+		tl::Rect<float> titleCharRect = tl::Rect<float>();
+		titleCharRect.position = { 100.0f, 350.0f };
+		titleCharRect.halfSize = { 20.0f, 30.0f };
+		tl::DrawAlphabetCharacters(renderBuffer, "TOMS LANE", titleCharRect, 0x999999);
+
+		if (input.buttons[KEY_S].isDown)
+		{
+			isStarted = true;
+		}
+		return;
+	}
 
 	float positionIncrement = 1.0f;
 	if (!isTeapot) positionIncrement = 0.1f;

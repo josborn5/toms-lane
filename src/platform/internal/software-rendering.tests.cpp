@@ -1049,17 +1049,19 @@ void RunSoftwareRenderingTests()
 
 	// Sprites
 
-	char* inputSprite = "0\n\
-						0\n\
-						0";
+	char* inputSprite = "\
+0\n\
+0\n\
+0";
 	TestSprite(inputSprite, 3, 1);
 
 	inputSprite = "0000";
 	TestSprite(inputSprite, 1, 4);
 
-	inputSprite =	"   0\n\
-					  0\n\
-					 0\n\
-					0";
+	inputSprite =	"\
+   0\n\
+  0\n\
+ 0\n\
+0";
 	TestSprite(inputSprite, 4, 4);
 }

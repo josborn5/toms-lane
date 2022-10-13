@@ -294,7 +294,7 @@ namespace tl
 				}
 				pCopy.x += blockWidth;
 			}
-			*content++;
+			content++;
 		}
 	}
 
@@ -891,330 +891,330 @@ namespace tl
 	const float CHARACTER_HEIGHT = 7.0f;
 	Sprite letters[26] = {
 	LoadSprite("\
-	 00\n\
-	0  0\n\
-	0  0\n\
-	0000\n\
-	0  0\n\
-	0  0\n\
-	0  0"),
+ 00\n\
+0  0\n\
+0  0\n\
+0000\n\
+0  0\n\
+0  0\n\
+0  0 "),
 
 	LoadSprite("\
-	000\n\
-	0  0\n\
-	0  0\n\
-	000\n\
-	0  0\n\
-	0  0\n\
-	000"),
+000\n\
+0  0\n\
+0  0\n\
+000\n\
+0  0\n\
+0  0\n\
+000  "),
 
 	LoadSprite("\
-	 000\n\
-	0\n\
-	0\n\
-	0\n\
-	0\n\
-	0\n\
-	 000"),
+ 000\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+ 000 "),
 
 	LoadSprite("\
-	000\n\
-	0  0\n\
-	0  0\n\
-	0  0\n\
-	0  0\n\
-	0  0\n\
-	000"),
+000\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+000  "),
 
 	LoadSprite("\
-	0000\n\
-	0\n\
-	0\n\
-	000\n\
-	0\n\
-	0\n\
-	0000"),
+0000\n\
+0\n\
+0\n\
+000\n\
+0\n\
+0\n\
+0000 "),
 
 	LoadSprite("\
-	0000\n\
-	0\n\
-	0\n\
-	000\n\
-	0\n\
-	0\n\
-	0"),
+0000\n\
+0\n\
+0\n\
+000\n\
+0\n\
+0\n\
+0    "),
 
 	LoadSprite("\
-	 000\n\
-	0\n\
-	0\n\
-	0 00\n\
-	0  0\n\
-	0  0\n\
-	 000"),
+ 000\n\
+0\n\
+0\n\
+0 00\n\
+0  0\n\
+0  0\n\
+ 000  "),
 
 	LoadSprite("\
-	0  0\n\
-	0  0\n\
-	0  0\n\
-	0000\n\
-	0  0\n\
-	0  0\n\
-	0  0"),
+0  0\n\
+0  0\n\
+0  0\n\
+0000\n\
+0  0\n\
+0  0\n\
+0  0 "),
 
 	LoadSprite("\
-	000\n\
-	 0\n\
-	 0\n\
-	 0\n\
-	 0\n\
-	 0\n\
-	000"),
+000\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+000 "),
 
 	LoadSprite("\
-	 000\n\
-	   0\n\
-	   0\n\
-	   0\n\
-	0  0\n\
-	0  0\n\
-	 000"),
+ 000\n\
+   0\n\
+   0\n\
+   0\n\
+0  0\n\
+0  0\n\
+ 000 "),
 
 	LoadSprite("\
-	0  0\n\
-	0  0\n\
-	0 0\n\
-	00\n\
-	0 0\n\
-	0  0\n\
-	0  0"),
+0  0\n\
+0  0\n\
+0 0\n\
+00\n\
+0 0\n\
+0  0\n\
+0  0 "),
 
 	LoadSprite("\
-	0\n\
-	0\n\
-	0\n\
-	0\n\
-	0\n\
-	0\n\
-	0000"),
+0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0000 "),
 
 	LoadSprite("\
-	00 00\n\
-	0 0 0\n\
-	0 0 0\n\
-	0   0\n\
-	0   0\n\
-	0   0\n\
-	0   0"),
+00 00\n\
+0 0 0\n\
+0 0 0\n\
+0   0\n\
+0   0\n\
+0   0\n\
+0   0 "),
 
 	LoadSprite("\
-	0   0\n\
-	00  0\n\
-	0 0 0\n\
-	0 0 0\n\
-	0 0 0\n\
-	0  00\n\
-	0   0"),
+0   0\n\
+00  0\n\
+0 0 0\n\
+0 0 0\n\
+0 0 0\n\
+0  00\n\
+0   0 "),
 
 	LoadSprite("\
-	 00 \n\
-	0  0\n\
-	0  0\n\
-	0  0\n\
-	0  0\n\
-	0  0\n\
-	 00"),
+ 00 \n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+ 00  "),
 
 	LoadSprite("\
-	000\n\
-	0  0\n\
-	0  0\n\
-	000\n\
-	0\n\
-	0\n\
-	0"),
+000\n\
+0  0\n\
+0  0\n\
+000\n\
+0\n\
+0\n\
+0    "),
 
 	LoadSprite("\
-	 000\n\
-	0   0\n\
-	0   0\n\
-	0   0\n\
-	0 0 0\n\
-	0  0\n\
-	 00 0"),
+ 000\n\
+0   0\n\
+0   0\n\
+0   0\n\
+0 0 0\n\
+0  0\n\
+ 00 0 "),
 
 	LoadSprite("\
-	000\n\
-	0  0\n\
-	0  0\n\
-	000\n\
-	0  0\n\
-	0  0\n\
-	0  0"),
+000\n\
+0  0\n\
+0  0\n\
+000\n\
+0  0\n\
+0  0\n\
+0  0 "),
 
 	LoadSprite("\
-	 000\n\
-	0\n\
-	0\n\
-	 00\n\
-	   0\n\
-	   0\n\
-	000"),
+ 000\n\
+0\n\
+0\n\
+ 00\n\
+   0\n\
+   0\n\
+000  "),
 
 	LoadSprite("\
-	000\n\
-	 0\n\
-	 0\n\
-	 0\n\
-	 0\n\
-	 0\n\
-	 0"),
+000\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0  "),
 
 	LoadSprite("\
-	0  0\n\
-	0  0\n\
-	0  0\n\
-	0  0\n\
-	0  0\n\
-	0  0\n\
-	 00"),
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+ 00  "),
 
 	LoadSprite("\
-	0   0\n\
-	0   0\n\
-	0   0\n\
-	 0 0\n\
-	 0 0\n\
-	  0\n\
-	  0"),
+0   0\n\
+0   0\n\
+0   0\n\
+ 0 0\n\
+ 0 0\n\
+  0\n\
+  0   "),
 
 	LoadSprite("\
-	0   0\n\
-	0   0\n\
-	0   0\n\
-	0 0 0\n\
-	0 0 0\n\
-	 0 0\n\
-	 0 0"),
+0   0\n\
+0   0\n\
+0   0\n\
+0 0 0\n\
+0 0 0\n\
+ 0 0\n\
+ 0 0  "),
 
 	LoadSprite("\
-	0   0\n\
-	0   0\n\
-	 0 0\n\
-	  0\n\
-	 0 0\n\
-	0   0\n\
-	0   0"),
+0   0\n\
+0   0\n\
+ 0 0\n\
+  0\n\
+ 0 0\n\
+0   0\n\
+0   0 "),
 
 	LoadSprite("\
-	0   0\n\
-	0   0\n\
-	 0 0\n\
-	 0 0\n\
-	  0\n\
-	  0\n\
-	  0"),
+0   0\n\
+0   0\n\
+ 0 0\n\
+ 0 0\n\
+  0\n\
+  0\n\
+  0   "),
 
 	LoadSprite("\
-	0000\n\
-	   0\n\
-	  0\n\
-	 0\n\
-	0\n\
-	0\n\
-	0000")
+0000\n\
+   0\n\
+  0\n\
+ 0\n\
+0\n\
+0\n\
+0000 ")
 	};
 
 	Sprite digits[10] = {
 	LoadSprite("\
-	 000 \n\
-	0   0\n\
-	0  00\n\
-	0 0 0\n\
-	00  0\n\
-	0   0\n\
-	 000"),
+ 000 \n\
+0   0\n\
+0  00\n\
+0 0 0\n\
+00  0\n\
+0   0\n\
+ 000"),
 
 	LoadSprite("\
-	 0\n\
-	00\n\
-	 0\n\
-	 0\n\
-	 0\n\
-	 0\n\
-	000"),
+ 0\n\
+00\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+000"),
 
 	LoadSprite("\
-	 00\n\
-	0  0\n\
-	   0\n\
-	  0\n\
-	 0\n\
-	0\n\
-	0000"),
+ 00\n\
+0  0\n\
+   0\n\
+  0\n\
+ 0\n\
+0\n\
+0000"),
 
 	LoadSprite("\
-	 00\n\
-	0  0\n\
-	   0\n\
-	 00\n\
-	   0\n\
-	0  0\n\
-	 00"),
+ 00\n\
+0  0\n\
+   0\n\
+ 00\n\
+   0\n\
+0  0\n\
+ 00"),
 
 	LoadSprite("\
-	  00\n\
-	 0 0\n\
-	0  0\n\
-	0000\n\
-	   0\n\
-	   0\n\
-	   0"),
+  00\n\
+ 0 0\n\
+0  0\n\
+0000\n\
+   0\n\
+   0\n\
+   0"),
 
 	LoadSprite("\
-	0000\n\
-	0\n\
-	0\n\
-	000\n\
-	   0\n\
-	   0\n\
-	000"),
+0000\n\
+0\n\
+0\n\
+000\n\
+   0\n\
+   0\n\
+000"),
 
 	LoadSprite("\
-	 000\n\
-	0\n\
-	0\n\
-	000\n\
-	0  0\n\
-	0  0\n\
-	 00"),
+ 000\n\
+0\n\
+0\n\
+000\n\
+0  0\n\
+0  0\n\
+ 00"),
 
 	LoadSprite("\
-	0000\n\
-	   0\n\
-	   0\n\
-	  0\n\
-	 0\n\
-	0\n\
-	0"),
+0000\n\
+   0\n\
+   0\n\
+  0\n\
+ 0\n\
+0\n\
+0"),
 
 	LoadSprite("\
-	 00\n\
-	0  0\n\
-	0  0\n\
-	 00\n\
-	0  0\n\
-	0  0\n\
-	 00"),
+ 00\n\
+0  0\n\
+0  0\n\
+ 00\n\
+0  0\n\
+0  0\n\
+ 00"),
 
 	LoadSprite("\
-	 00\n\
-	0  0\n\
-	0  0\n\
-	 00\n\
-	  0\n\
-	 0\n\
-	0")
+ 00\n\
+0  0\n\
+0  0\n\
+ 00\n\
+  0\n\
+ 0\n\
+0")
 	};
 
 	int GetLetterIndex(char c)
@@ -1243,8 +1243,7 @@ namespace tl
 				rowCounter = 0;
 				height += 1;
 			}
-			// ignore any tabs
-			else if (*copy != '\t')
+			else
 			{
 				rowCounter += 1;
 			}
@@ -1274,7 +1273,8 @@ namespace tl
 		Rect<float> charRect;
 		charRect.halfSize = firstCharFootprint.halfSize;
 		charRect.position = tl::Vec2<float> { firstCharFootprint.position.x, firstCharFootprint.position.y };
-		float charWidth = 2.0f * firstCharFootprint.halfSize.x;
+		float spaceWidth = 0.2f * firstCharFootprint.halfSize.x;
+		float charWidth = 2.0f * firstCharFootprint.halfSize.x + spaceWidth;
 		for (char *letterAt = text; *letterAt; letterAt++)
 		{
 			if (*letterAt != ' ')
