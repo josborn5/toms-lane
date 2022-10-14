@@ -1216,6 +1216,14 @@ namespace tl
  0\n\
 0")
 	};
+	Sprite negSprite = LoadSprite("\
+\n\
+\n\
+\n\
+0000\n\
+\n\
+\n\
+");
 
 	int GetLetterIndex(char c)
 	{
@@ -1280,7 +1288,7 @@ namespace tl
 		charRect.halfSize = firstCharFootprint.halfSize;
 		charRect.position = tl::Vec2<float> { firstCharFootprint.position.x, firstCharFootprint.position.y };
 		float spaceWidth = 0.2f * firstCharFootprint.halfSize.x;
-		float charWidth = 2.0f * firstCharFootprint.halfSize.x + spaceWidth;
+		float charWidth = (2.0f * firstCharFootprint.halfSize.x) + spaceWidth;
 		for (char *letterAt = text; *letterAt; letterAt++)
 		{
 			if (*letterAt != ' ')
@@ -1304,19 +1312,35 @@ namespace tl
 		Rect<float> charRect;
 		charRect.halfSize = firstCharFootprint.halfSize;
 		charRect.position = tl::Vec2<float> { firstCharFootprint.position.x, firstCharFootprint.position.y };
-		float charWidth = 2.0f * firstCharFootprint.halfSize.x;
+		float spaceWidth = 0.2f * firstCharFootprint.halfSize.x;
+		float charWidth = (2.0f * firstCharFootprint.halfSize.x) + spaceWidth;
+
+		// Special case: zero
+		if (number == 0)
+		{
+			tl::DrawSprite(renderBuffer, digits[0], charRect, color);
+			return;
+		}
+
+		// Handle negative numbers
+		int safeNumber = (number < 0) ? -1 * number : number;
+		if (number < 0)
+		{
+			tl::DrawSprite(renderBuffer, negSprite, charRect, color);
+			charRect.position.x += charWidth;
+		}
 
 		int baseTenMultiplier = 1;
-		int digit = number / baseTenMultiplier;
+		int digit = safeNumber / baseTenMultiplier;
 		int digitCount = 1;
 		while (digit > 0)
 		{
 			baseTenMultiplier *= 10;
 			digitCount += 1;
-			digit = number / baseTenMultiplier;
+			digit = safeNumber / baseTenMultiplier;
 		}
 
-		int workingNumber = number;
+		int workingNumber = safeNumber;
 		while (baseTenMultiplier >= 10)
 		{
 			baseTenMultiplier /= 10;
