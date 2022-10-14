@@ -103,7 +103,7 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 		tl::Rect<float> titleCharRect = tl::Rect<float>();
 		titleCharRect.position = { 100.0f, 350.0f };
 		titleCharRect.halfSize = { 20.0f, 30.0f };
-		tl::DrawAlphabetCharacters(renderBuffer, "TOMS LANE", titleCharRect, 0x999999);
+		tl::DrawAlphabetCharacters(renderBuffer, "TL DEMO", titleCharRect, 0x999999);
 
 		if (input.buttons[KEY_S].isDown)
 		{

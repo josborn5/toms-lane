@@ -897,7 +897,7 @@ namespace tl
 0000\n\
 0  0\n\
 0  0\n\
-0  0 "),
+0  0"),
 
 	LoadSprite("\
 000\n\
@@ -906,7 +906,7 @@ namespace tl
 000\n\
 0  0\n\
 0  0\n\
-000  "),
+000"),
 
 	LoadSprite("\
  000\n\
@@ -915,7 +915,7 @@ namespace tl
 0\n\
 0\n\
 0\n\
- 000 "),
+ 000"),
 
 	LoadSprite("\
 000\n\
@@ -924,16 +924,7 @@ namespace tl
 0  0\n\
 0  0\n\
 0  0\n\
-000  "),
-
-	LoadSprite("\
-0000\n\
-0\n\
-0\n\
-000\n\
-0\n\
-0\n\
-0000 "),
+000"),
 
 	LoadSprite("\
 0000\n\
@@ -942,7 +933,16 @@ namespace tl
 000\n\
 0\n\
 0\n\
-0    "),
+0000"),
+
+	LoadSprite("\
+0000\n\
+0\n\
+0\n\
+000\n\
+0\n\
+0\n\
+0"),
 
 	LoadSprite("\
  000\n\
@@ -951,7 +951,7 @@ namespace tl
 0 00\n\
 0  0\n\
 0  0\n\
- 000  "),
+ 000"),
 
 	LoadSprite("\
 0  0\n\
@@ -960,7 +960,7 @@ namespace tl
 0000\n\
 0  0\n\
 0  0\n\
-0  0 "),
+0  0"),
 
 	LoadSprite("\
 000\n\
@@ -969,7 +969,7 @@ namespace tl
  0\n\
  0\n\
  0\n\
-000 "),
+000"),
 
 	LoadSprite("\
  000\n\
@@ -978,7 +978,7 @@ namespace tl
    0\n\
 0  0\n\
 0  0\n\
- 000 "),
+ 000"),
 
 	LoadSprite("\
 0  0\n\
@@ -987,7 +987,7 @@ namespace tl
 00\n\
 0 0\n\
 0  0\n\
-0  0 "),
+0  0"),
 
 	LoadSprite("\
 0\n\
@@ -996,7 +996,7 @@ namespace tl
 0\n\
 0\n\
 0\n\
-0000 "),
+0000"),
 
 	LoadSprite("\
 00 00\n\
@@ -1005,16 +1005,16 @@ namespace tl
 0   0\n\
 0   0\n\
 0   0\n\
-0   0 "),
+0   0"),
 
 	LoadSprite("\
 0   0\n\
+0   0\n\
 00  0\n\
 0 0 0\n\
-0 0 0\n\
-0 0 0\n\
 0  00\n\
-0   0 "),
+0   0\n\
+0   0"),
 
 	LoadSprite("\
  00 \n\
@@ -1023,7 +1023,7 @@ namespace tl
 0  0\n\
 0  0\n\
 0  0\n\
- 00  "),
+ 00"),
 
 	LoadSprite("\
 000\n\
@@ -1032,7 +1032,7 @@ namespace tl
 000\n\
 0\n\
 0\n\
-0    "),
+0"),
 
 	LoadSprite("\
  000\n\
@@ -1041,7 +1041,7 @@ namespace tl
 0   0\n\
 0 0 0\n\
 0  0\n\
- 00 0 "),
+ 00 0"),
 
 	LoadSprite("\
 000\n\
@@ -1050,7 +1050,7 @@ namespace tl
 000\n\
 0  0\n\
 0  0\n\
-0  0 "),
+0  0"),
 
 	LoadSprite("\
  000\n\
@@ -1059,7 +1059,7 @@ namespace tl
  00\n\
    0\n\
    0\n\
-000  "),
+000"),
 
 	LoadSprite("\
 000\n\
@@ -1068,7 +1068,7 @@ namespace tl
  0\n\
  0\n\
  0\n\
- 0  "),
+ 0"),
 
 	LoadSprite("\
 0  0\n\
@@ -1077,7 +1077,7 @@ namespace tl
 0  0\n\
 0  0\n\
 0  0\n\
- 00  "),
+ 00"),
 
 	LoadSprite("\
 0   0\n\
@@ -1086,7 +1086,7 @@ namespace tl
  0 0\n\
  0 0\n\
   0\n\
-  0   "),
+  0"),
 
 	LoadSprite("\
 0   0\n\
@@ -1095,7 +1095,7 @@ namespace tl
 0 0 0\n\
 0 0 0\n\
  0 0\n\
- 0 0  "),
+ 0 0"),
 
 	LoadSprite("\
 0   0\n\
@@ -1104,7 +1104,7 @@ namespace tl
   0\n\
  0 0\n\
 0   0\n\
-0   0 "),
+0   0"),
 
 	LoadSprite("\
 0   0\n\
@@ -1113,7 +1113,7 @@ namespace tl
  0 0\n\
   0\n\
   0\n\
-  0   "),
+  0"),
 
 	LoadSprite("\
 0000\n\
@@ -1122,7 +1122,7 @@ namespace tl
  0\n\
 0\n\
 0\n\
-0000 ")
+0000")
 	};
 
 	Sprite digits[10] = {
@@ -1248,6 +1248,12 @@ namespace tl
 				rowCounter += 1;
 			}
 			copy++;
+		}
+
+		// Check the final row (it may not end in a \n char)
+		if (width < rowCounter)
+		{
+			width = rowCounter;
 		}
 
 		// Set the width value if no newline char exists in the content

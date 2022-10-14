@@ -1058,10 +1058,22 @@ void RunSoftwareRenderingTests()
 	inputSprite = "0000";
 	TestSprite(inputSprite, 1, 4);
 
-	inputSprite =	"\
+	inputSprite = "\
    0\n\
   0\n\
  0\n\
 0";
 	TestSprite(inputSprite, 4, 4);
+
+	inputSprite = "\
+0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0000";
+	TestSprite(inputSprite, 7, 4);
+
+
 }
