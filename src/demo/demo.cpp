@@ -12,12 +12,9 @@ float cameraYaw = 0.0f;
 
 bool isTeapot = false;
 
-float maxX = 0.0f;
-float minX = 0.0f;
-float maxY = 0.0f;
-float minY = 0.0f;
-float maxZ = 0.0f;
-float minZ = 0.0f;
+tl::Vec3<float> max = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+tl::Vec3<float> min = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+tl::Vec3<float> start = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 
 bool isStarted = false;
 
@@ -57,41 +54,48 @@ void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuff
 
 	for (Triangle4d<float> tri : mesh.triangles)
 	{
-		if (tri.p[0].x > maxX) maxX = tri.p[0].x;
-		if (tri.p[0].x < minX) minX = tri.p[0].x;
-		if (tri.p[0].y > maxY) maxY = tri.p[0].y;
-		if (tri.p[0].y < minY) minY = tri.p[0].y;
-		if (tri.p[0].z > maxZ) maxZ = tri.p[0].z;
-		if (tri.p[0].z < minZ) minZ = tri.p[0].z;
+		if (tri.p[0].x > max.x) max.x = tri.p[0].x;
+		if (tri.p[0].x < min.x) min.x = tri.p[0].x;
+		if (tri.p[0].y > max.y) max.y = tri.p[0].y;
+		if (tri.p[0].y < min.y) min.y = tri.p[0].y;
+		if (tri.p[0].z > max.z) max.z = tri.p[0].z;
+		if (tri.p[0].z < min.z) min.z = tri.p[0].z;
 
-		if (tri.p[1].x > maxX) maxX = tri.p[1].x;
-		if (tri.p[1].x < minX) minX = tri.p[1].x;
-		if (tri.p[1].y > maxY) maxY = tri.p[1].y;
-		if (tri.p[1].y < minY) minY = tri.p[1].y;
-		if (tri.p[1].z > maxZ) maxZ = tri.p[1].z;
-		if (tri.p[1].z < minZ) minZ = tri.p[1].z;
+		if (tri.p[1].x > max.x) max.x = tri.p[1].x;
+		if (tri.p[1].x < min.x) min.x = tri.p[1].x;
+		if (tri.p[1].y > max.y) max.y = tri.p[1].y;
+		if (tri.p[1].y < min.y) min.y = tri.p[1].y;
+		if (tri.p[1].z > max.z) max.z = tri.p[1].z;
+		if (tri.p[1].z < min.z) min.z = tri.p[1].z;
 
-		if (tri.p[2].x > maxX) maxX = tri.p[2].x;
-		if (tri.p[2].x < minX) minX = tri.p[2].x;
-		if (tri.p[2].y > maxY) maxY = tri.p[2].y;
-		if (tri.p[2].y < minY) minY = tri.p[2].y;
-		if (tri.p[2].z > maxZ) maxZ = tri.p[2].z;
-		if (tri.p[2].z < minZ) minZ = tri.p[2].z;
+		if (tri.p[2].x > max.x) max.x = tri.p[2].x;
+		if (tri.p[2].x < min.x) min.x = tri.p[2].x;
+		if (tri.p[2].y > max.y) max.y = tri.p[2].y;
+		if (tri.p[2].y < min.y) min.y = tri.p[2].y;
+		if (tri.p[2].z > max.z) max.z = tri.p[2].z;
+		if (tri.p[2].z < min.z) min.z = tri.p[2].z;
 	}
 
 	// Center in x & y directions. Step back in the z direction.
-	float startingX = 0.5f * (maxX + minX);
-	float startingY = 0.5f * (maxY + minY);
-	float zDepth = maxZ - minZ;
-	float startingZ = minZ - zDepth;
+	tl::Vec3<float> depth = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+	depth.z = max.z - min.z;
+	depth.y = max.y - min.y;
+	depth.x = max.x - min.x;
+	start.z = min.z - depth.z;
+	start.y = 0.5f * (max.y + min.y);
+	start.x = 0.5f * (max.x + min.x);
+
+	// set the bounds of the camera
+	max.z += depth.z;
+	min.z -= depth.z;
+	max.y += depth.y;
+	min.y -= depth.y;
+	max.x += depth.x;
+	min.x -= depth.x;
 
 	// Initialize the projection matrix
 	projectionMatrix = tl::MakeProjectionMatrix(90.0f, 1.0f, 0.1f, 1000.0f);
 
-	// Initialize the camera
-	camera.up = { 0.0f, 1.0f, 0.0f };
-	camera.position = { startingX, startingY, startingZ };
-	camera.direction = { 0.0f, 0.0f, 1.0f };
 }
 
 void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
@@ -108,8 +112,19 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 		if (input.buttons[KEY_S].isDown)
 		{
 			isStarted = true;
+
+			// Initialize the camera
+			camera.up = { 0.0f, 1.0f, 0.0f };
+			camera.position = { start.x, start.y, start.z };
+			camera.direction = { 0.0f, 0.0f, 1.0f };
+			cameraYaw = 0.0f;
 		}
 		return;
+	}
+
+	if (input.buttons[KEY_R].isDown)
+	{
+		isStarted = false;
 	}
 
 	float positionIncrement = 1.0f;
@@ -164,8 +179,6 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 	{
 		camera.position.y += positionIncrement;
 	}
-
-	tl::ClearScreen(renderBuffer, BACKGROUND_COLOR);
 
 	theta += dt;
 	// Initialize the rotation matrices
