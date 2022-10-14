@@ -95,7 +95,14 @@ void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuff
 
 	// Initialize the projection matrix
 	projectionMatrix = tl::MakeProjectionMatrix(90.0f, 1.0f, 0.1f, 1000.0f);
+}
 
+static void ResetCamera()
+{
+	camera.up = { 0.0f, 1.0f, 0.0f };
+	camera.position = { start.x, start.y, start.z };
+	camera.direction = { 0.0f, 0.0f, 1.0f };
+	cameraYaw = 0.0f;
 }
 
 void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
@@ -112,12 +119,7 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 		if (input.buttons[KEY_S].isDown)
 		{
 			isStarted = true;
-
-			// Initialize the camera
-			camera.up = { 0.0f, 1.0f, 0.0f };
-			camera.position = { start.x, start.y, start.z };
-			camera.direction = { 0.0f, 0.0f, 1.0f };
-			cameraYaw = 0.0f;
+			ResetCamera();
 		}
 		return;
 	}
@@ -178,6 +180,11 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 	else if (input.buttons[KEY_UP].isDown)
 	{
 		camera.position.y += positionIncrement;
+	}
+
+	if (input.buttons[KEY_C].isDown)
+	{
+		ResetCamera();
 	}
 
 	theta += dt;
