@@ -18,7 +18,18 @@ tl::Vec3<float> startPosition = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 tl::Vec3<float> startDirection = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 tl::Vec3<float> meshCenter = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 
+tl::Rect<float> map;
+
 bool isStarted = false;
+
+template <typename T>
+static T Clamp(T min, T value, T max)
+{
+	if (value < min) return min;
+	if (value > max) return max;
+	return value;
+}
+template float Clamp(float min, float value, float max);
 
 void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
@@ -95,15 +106,19 @@ void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuff
 	startDirection = tl::SubtractVectors(meshCenter, startPosition);
 
 	// set the bounds of the camera
-	max.z += depth.z;
-	min.z -= depth.z;
-	max.y += depth.y;
-	min.y -= depth.y;
-	max.x += depth.x;
-	min.x -= depth.x;
+	max.z += 2.0f * depth.z;
+	min.z -= 2.0f * depth.z;
+	max.y += 2.0f * depth.y;
+	min.y -= 2.0f * depth.y;
+	max.x += 2.0f * depth.x;
+	min.x -= 2.0f * depth.x;
 
 	// Initialize the projection matrix
 	projectionMatrix = tl::MakeProjectionMatrix(90.0f, 1.0f, 0.1f, 1000.0f);
+
+	// Initialize the map
+	map.position = { 900.0f, 200.0f };
+	map.halfSize = { 100.0f, 50.0f };
 }
 
 static void ResetCamera()
@@ -125,6 +140,8 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 		titleCharRect.halfSize = { 20.0f, 30.0f };
 		tl::DrawAlphabetCharacters(renderBuffer, "TL DEMO", titleCharRect, 0x999999);
 
+		// TODO: Plot the max & min x, y, z values of the mesh
+
 		if (input.buttons[KEY_S].isDown)
 		{
 			isStarted = true;
@@ -141,8 +158,6 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 	float positionIncrement = 1.0f;
 	if (!isTeapot) positionIncrement = 0.1f;
 	float yawIncrement = 0.05f;
-	float zOffset = 150.0f;
-	if (!isTeapot) zOffset = 15.0f;
 
 	// First process any change in yaw and update the camera direction
 	if (input.buttons[KEY_D].isDown)
@@ -197,21 +212,47 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 	}
 
 	theta += dt;
-	// Initialize the rotation matrices
-	tl::Matrix4x4<float> rotationMatrixX = tl::MakeXAxisRotationMatrix(theta);
-	tl::Matrix4x4<float> rotationMatrixY = tl::MakeYAxisRotationMatrix(theta);
-	tl::Matrix4x4<float> rotationMatrixZ = tl::MakeZAxisRotationMatrix(theta);
 
-	// Initialize the translation matrix
-	// Push back away from the camera which is implicitly located at z: 0. This ensures we're not trying to render trinagles behind the camera
-	tl::Matrix4x4<float> translationMatrix = tl::MakeTranslationMatrix(0.0f, 0.0f, zOffset);
-
-	// Combine all the rotation and translation matrices into a single world transfomration matrix
 	tl::Matrix4x4<float> worldMatrix;
-	// worldMatrix = MultiplyMatrixWithMatrix(rotationMatrixZ, rotationMatrixX);
 	worldMatrix = tl::MakeIdentityMatrix<float>();
-	worldMatrix = tl::MultiplyMatrixWithMatrix(worldMatrix, translationMatrix);
+
+	// Final bounds check on the camera
+	camera.position.x = Clamp(min.x, camera.position.x, max.x);
+	camera.position.y = Clamp(min.y, camera.position.y, max.y);
+	camera.position.z = Clamp(min.z, camera.position.z, max.z);
 
 	tl::TransformAndRenderMesh(renderBuffer, mesh, camera, worldMatrix, projectionMatrix);
+
+
+	// Show info about z-position
+	tl::Vec2<float> charHalfSize = { 4.0f, 8.0f };
+	tl::Vec2<float> charPos = { 400.0f, 400.0f };
+	tl::Rect<float> charFoot;
+	charFoot.position = charPos;
+	charFoot.halfSize = charHalfSize;
+	tl::DrawNumber(renderBuffer, (int)camera.position.z, charFoot, 0xAAAAAA);
+
+	// Draw the map
+	tl::DrawRect(renderBuffer, 0x333399, map);
+
+	float mapMaxY = map.position.y + map.halfSize.y;
+	float mapMinY = map.position.y - map.halfSize.y;
+
+	float mapYGrad = (mapMinY - mapMaxY) / (min.x - max.x);
+	float mapYOffset = mapMaxY - (mapYGrad * max.x);
+
+	float mapMaxX = map.position.x + map.halfSize.x;
+	float mapMinX = map.position.x - map.halfSize.x;
+
+	float mapXGrad = (mapMinX - mapMaxX) / (min.z - max.z);
+	float mapXOffset = mapMaxX - (mapXGrad * max.z);
+
+	tl::Rect<float> mapCamera;
+	mapCamera.halfSize = tl::Vec2<float>{ 4.0f, 4.0f };
+	float mapCameraX = (mapXGrad * camera.position.z) + mapXOffset;
+	float mapCameraY = (mapYGrad * camera.position.x) + mapYOffset;
+	mapCamera.position = { mapCameraX, mapCameraY };
+	tl::DrawRect(renderBuffer, 0x993333, mapCamera);
 }
+
 
