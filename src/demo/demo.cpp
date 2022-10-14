@@ -14,7 +14,9 @@ bool isTeapot = false;
 
 tl::Vec3<float> max = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 tl::Vec3<float> min = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
-tl::Vec3<float> start = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+tl::Vec3<float> startPosition = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+tl::Vec3<float> startDirection = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+tl::Vec3<float> meshCenter = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 
 bool isStarted = false;
 
@@ -76,14 +78,21 @@ void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuff
 		if (tri.p[2].z < min.z) min.z = tri.p[2].z;
 	}
 
-	// Center in x & y directions. Step back in the z direction.
 	tl::Vec3<float> depth = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 	depth.z = max.z - min.z;
 	depth.y = max.y - min.y;
 	depth.x = max.x - min.x;
-	start.z = min.z - depth.z;
-	start.y = 0.5f * (max.y + min.y);
-	start.x = 0.5f * (max.x + min.x);
+
+	meshCenter.x = 0.5f * (max.x + min.x);
+	meshCenter.y = 0.5f * (max.y + min.y);
+	meshCenter.z = 0.5f * (max.z + min.z);
+
+	// Start position is centered in x & y directions and stepped back in the z direction.
+	startPosition.z = min.z - depth.z;
+	startPosition.y = meshCenter.y;
+	startPosition.x = meshCenter.x;
+
+	startDirection = tl::SubtractVectors(meshCenter, startPosition);
 
 	// set the bounds of the camera
 	max.z += depth.z;
@@ -100,8 +109,8 @@ void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuff
 static void ResetCamera()
 {
 	camera.up = { 0.0f, 1.0f, 0.0f };
-	camera.position = { start.x, start.y, start.z };
-	camera.direction = { 0.0f, 0.0f, 1.0f };
+	camera.position = { startPosition.x, startPosition.y, startPosition.z };
+	camera.direction = { startDirection.x, startDirection.y, startDirection.z };
 	cameraYaw = 0.0f;
 }
 
