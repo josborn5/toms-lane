@@ -10,7 +10,7 @@ tl::Matrix4x4<float> projectionMatrix;
 float theta = 0.0f;
 float cameraYaw = 0.0f;
 
-bool isTeapot = false;
+bool isTeapot = true;
 
 tl::Vec3<float> max = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 tl::Vec3<float> min = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
@@ -117,7 +117,7 @@ void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuff
 	projectionMatrix = tl::MakeProjectionMatrix(90.0f, 1.0f, 0.1f, 1000.0f);
 
 	// Initialize the map
-	map.position = { 900.0f, 200.0f };
+	map.position = { 1100.0f, 75.0f };
 	map.halfSize = { 100.0f, 50.0f };
 }
 
@@ -225,12 +225,42 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 
 
 	// Show info about z-position
-	tl::Vec2<float> charHalfSize = { 4.0f, 8.0f };
-	tl::Vec2<float> charPos = { 400.0f, 400.0f };
+	float fontSize = 16.0f;
+	float infoHeight = 4.0f * fontSize;
 	tl::Rect<float> charFoot;
-	charFoot.position = charPos;
-	charFoot.halfSize = charHalfSize;
+	charFoot.position = { 100.0f, infoHeight };
+	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
+
+	tl::DrawAlphabetCharacters(renderBuffer, "MAX", charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)max.x, charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)max.y, charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)max.z, charFoot, 0xAAAAAA);
+
+	charFoot.position = { 200.0f, infoHeight };
+	tl::DrawAlphabetCharacters(renderBuffer, "MIN", charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)min.x, charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)min.y, charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)min.z, charFoot, 0xAAAAAA);
+
+	charFoot.position = { 300.0f, infoHeight };
+	tl::DrawAlphabetCharacters(renderBuffer, "POS", charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)camera.position.x, charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)camera.position.y, charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
 	tl::DrawNumber(renderBuffer, (int)camera.position.z, charFoot, 0xAAAAAA);
+
+	charFoot.position = { 400.0f, infoHeight };
+	tl::DrawAlphabetCharacters(renderBuffer, "MESH", charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)mesh.triangles.size(), charFoot, 0xAAAAAA);
 
 	// Draw the map
 	tl::DrawRect(renderBuffer, 0x333399, map);
@@ -254,5 +284,4 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 	mapCamera.position = { mapCameraX, mapCameraY };
 	tl::DrawRect(renderBuffer, 0x993333, mapCamera);
 }
-
 

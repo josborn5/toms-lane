@@ -765,10 +765,10 @@ namespace tl
 			Vec4<T> normal = UnitVector(CrossProduct(line1, line2));
 
 			Vec4<T> fromCameraToTriangle = SubtractVectors(transformed.p[0], camera.position);
-//			T dot = DotProduct(normal, fromCameraToTriangle);
+			T dot = DotProduct(normal, fromCameraToTriangle);
 
-//			if (dot >= (T)0)
-//			{
+			if (dot >= (T)0)
+			{
 				Vec4<T> lightDirection = { (T)0, (T)0, (T)1 };
 				Vec4<T> normalizedLightDirection = UnitVector(lightDirection);
 				T shade = DotProduct(normal, normalizedLightDirection);
@@ -812,7 +812,7 @@ namespace tl
 
 					trianglesToDraw.push_back(triToRender);
 				}
-// 			}
+			}
 		}
 
 		for (Triangle4d<T> triToRender : trianglesToDraw)
@@ -880,7 +880,7 @@ namespace tl
 				// For whatever reason, the z values are inverted for the teapot. i.e. closer triangles have a lower Z value.
 				// As an ultra-hack I'm doing 10 minus the z-value to invert them.
 				T z = (T)10 - ((draw.p[0].z + draw.p[1].z + draw.p[2].z) / (T)3);
-				FillTriangleInPixels(renderBuffer, 0xFFFFFF, p0Int, p1Int, p2Int, z);
+				FillTriangleInPixels(renderBuffer, draw.color, p0Int, p1Int, p2Int, z);
 			}
 		}
 	}

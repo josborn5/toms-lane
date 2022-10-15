@@ -7,7 +7,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	settings.title = "Demo";
 	settings.width = 1280;
 	settings.height = 720;
-	settings.targetFPS = 30;
+	settings.targetFPS = 60;
 
 	tl::Win32Main(instance, settings);
 }
