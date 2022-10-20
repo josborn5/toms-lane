@@ -192,6 +192,14 @@ namespace tl
 	}
 	template void MultiplyVectorWithMatrix(const Vec4<float> &in, Vec4<float> &out, const Matrix4x4<float> &matrix);
 
+	Vec2<float> Transform2DVector(const Vec2<float> &in, const Matrix3x3<float> &transformMatrix)
+	{
+		Vec2<float> out;
+		out.x = (in.x * transformMatrix.m[0][0]) + (in.y * transformMatrix.m[0][1]) + (transformMatrix.m[0][2]);
+		out.y = (in.x * transformMatrix.m[1][0]) + (in.y * transformMatrix.m[1][1]) + (transformMatrix.m[1][2]);
+		return out;
+	}
+
 	template<typename T>
 	Matrix4x4<T> MultiplyMatrixWithMatrix(const Matrix4x4<T> &m1, const Matrix4x4<T> &m2)
 	{

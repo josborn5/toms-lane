@@ -19,8 +19,39 @@ tl::Vec3<float> startDirection = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 tl::Vec3<float> meshCenter = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 
 tl::Rect<float> map;
+tl::Matrix3x3<float> mapProjectionMatrix;
 
 bool isStarted = false;
+
+tl::Matrix3x3<float> GenerateProjectionMatrix(const tl::Rect<float> &from, const tl::Rect<float> &to)
+{
+	float toMaxY = to.position.y + to.halfSize.y;
+	float toMinY = to.position.y - to.halfSize.y;
+
+	float toMaxX = to.position.x + to.halfSize.x;
+	float toMinX = to.position.x - to.halfSize.x;
+
+	float fromMaxY = from.position.y + from.halfSize.y;
+	float fromMinY = from.position.y - from.halfSize.y;
+
+	float fromMaxX = from.position.x + from.halfSize.x;
+	float fromMinX = from.position.x - from.halfSize.x;
+
+	float toYGrad = (toMinY - toMaxY) / (fromMinY - fromMaxY);
+	float toYOffset = toMaxY - (toYGrad * fromMaxY);
+
+	float toXGrad = (toMinX - toMaxX) / (fromMinX - fromMaxX);
+	float toXOffset = toMaxX - (toXGrad * fromMaxX);
+
+	tl::Matrix3x3<float> transformMatrix = tl::Matrix3x3<float>();
+	transformMatrix.m[0][0] = toXGrad;
+	transformMatrix.m[0][2] = toXOffset;
+	transformMatrix.m[1][1] = toYGrad;
+	transformMatrix.m[1][2] = toYOffset;
+	transformMatrix.m[2][2] = 1.0f;
+
+	return transformMatrix;
+}
 
 template <typename T>
 static T Clamp(T min, T value, T max)
@@ -119,6 +150,16 @@ void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuff
 	// Initialize the map
 	map.position = { 1100.0f, 75.0f };
 	map.halfSize = { 100.0f, 50.0f };
+
+	// Initialize the projection matrix for world to map
+	tl::Rect<float> topDownWorld = tl::Rect<float>();
+
+	// Using a top down projection for the map view.
+	// So depth (z) in the world --> horizontal (x) on the screen map.
+	// Left/right in the world (x) --> vertical (y) on the screen map.
+	topDownWorld.position = Vec2<float> { meshCenter.z, meshCenter.y };
+	topDownWorld.halfSize = Vec2<float> { (0.5f * (max.z - min.z)), (0.5f * (max.y - min.y)) };
+	mapProjectionMatrix = GenerateProjectionMatrix(topDownWorld, map);
 }
 
 static void ResetCamera()
@@ -265,23 +306,12 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 	// Draw the map
 	tl::DrawRect(renderBuffer, 0x333399, map);
 
-	float mapMaxY = map.position.y + map.halfSize.y;
-	float mapMinY = map.position.y - map.halfSize.y;
-
-	float mapYGrad = (mapMinY - mapMaxY) / (min.x - max.x);
-	float mapYOffset = mapMaxY - (mapYGrad * max.x);
-
-	float mapMaxX = map.position.x + map.halfSize.x;
-	float mapMinX = map.position.x - map.halfSize.x;
-
-	float mapXGrad = (mapMinX - mapMaxX) / (min.z - max.z);
-	float mapXOffset = mapMaxX - (mapXGrad * max.z);
 
 	tl::Rect<float> mapCamera;
 	mapCamera.halfSize = tl::Vec2<float>{ 4.0f, 4.0f };
-	float mapCameraX = (mapXGrad * camera.position.z) + mapXOffset;
-	float mapCameraY = (mapYGrad * camera.position.x) + mapYOffset;
-	mapCamera.position = { mapCameraX, mapCameraY };
+	tl::Vec2<float> topDownCameraPosition = { camera.position.z, camera.position.x };
+
+	mapCamera.position = Transform2DVector(topDownCameraPosition, mapProjectionMatrix);
 	tl::DrawRect(renderBuffer, 0x993333, mapCamera);
 }
 
