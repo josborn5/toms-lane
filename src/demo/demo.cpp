@@ -19,11 +19,11 @@ tl::Vec3<float> startDirection = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 tl::Vec3<float> meshCenter = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 
 tl::Rect<float> map;
-tl::Matrix3x3<float> mapProjectionMatrix;
+tl::Matrix2x3<float> mapProjectionMatrix;
 
 bool isStarted = false;
 
-tl::Matrix3x3<float> GenerateProjectionMatrix(const tl::Rect<float> &from, const tl::Rect<float> &to)
+tl::Matrix2x3<float> GenerateProjectionMatrix(const tl::Rect<float> &from, const tl::Rect<float> &to)
 {
 	float toMaxY = to.position.y + to.halfSize.y;
 	float toMinY = to.position.y - to.halfSize.y;
@@ -43,12 +43,11 @@ tl::Matrix3x3<float> GenerateProjectionMatrix(const tl::Rect<float> &from, const
 	float toXGrad = (toMinX - toMaxX) / (fromMinX - fromMaxX);
 	float toXOffset = toMaxX - (toXGrad * fromMaxX);
 
-	tl::Matrix3x3<float> transformMatrix = tl::Matrix3x3<float>();
+	tl::Matrix2x3<float> transformMatrix = tl::Matrix2x3<float>();
 	transformMatrix.m[0][0] = toXGrad;
 	transformMatrix.m[0][2] = toXOffset;
 	transformMatrix.m[1][1] = toYGrad;
 	transformMatrix.m[1][2] = toYOffset;
-	transformMatrix.m[2][2] = 1.0f;
 
 	return transformMatrix;
 }

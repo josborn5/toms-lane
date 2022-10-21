@@ -74,9 +74,9 @@ namespace tl
 	 * Indexing is done by row then column. matrix.m[row][col]
 	 */
 	template<typename T>
-	struct Matrix3x3
+	struct Matrix2x3
 	{
-		T m[3][3] = {0};
+		T m[2][3] = {0};
 	};
 
 	/**
@@ -94,7 +94,7 @@ namespace tl
 	template<typename T>
 	void MultiplyVectorWithMatrix(const Vec4<T> &in, Vec4<T> &out, const Matrix4x4<T> &matrix);
 
-	Vec2<float> Transform2DVector(const Vec2<float> &in, const Matrix3x3<float> &transformMatrix);
+	Vec2<float> Transform2DVector(const Vec2<float> &in, const Matrix2x3<float> &transformMatrix);
 
 	template<typename T>
 	Matrix4x4<T> MultiplyMatrixWithMatrix(const Matrix4x4<T> &m1, const Matrix4x4<T> &m2);
