@@ -118,8 +118,12 @@ namespace tl
 	 * p0 & p1 are pixel and NOT position ordinals
 	 */
 	// Implemented with Bresenham's algorithm
-	void DrawLineInPixels(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<int> &p0, const Vec2<int> &p1)
-	{
+	void DrawLineInPixels(
+		const RenderBuffer &renderBuffer,
+		uint32_t color,
+		const Vec2<int> &p0,
+		const Vec2<int> &p1
+	) {
 		int x0 = p0.x;
 		int y0 = p0.y;
 		int x1 = p1.x;
@@ -205,6 +209,22 @@ namespace tl
 				*shortDimensionVar += shortDimensionIncrement;
 			}
 		}
+	}
+	void DrawLineInPixels(
+		const RenderBuffer &renderBuffer,
+		uint32_t color,
+		const Vec2<float> &p0,
+		const Vec2<float> &p1
+	) {
+		Vec2<int> intP0 = {
+			(int)p0.x,
+			(int)p0.y
+		};
+		Vec2<int> intP1 = {
+			(int)p1.x,
+			(int)p1.y
+		};
+		DrawLineInPixels(renderBuffer, color, intP0, intP1);
 	}
 
 	static int ClampInt(int min, int val, int max)

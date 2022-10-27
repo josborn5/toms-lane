@@ -308,9 +308,31 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 
 	tl::Rect<float> mapCamera;
 	mapCamera.halfSize = tl::Vec2<float>{ 4.0f, 4.0f };
-	tl::Vec2<float> topDownCameraPosition = { camera.position.z, camera.position.x };
+	tl::Vec2<float> topDownCameraPosition = {
+		camera.position.z,
+		camera.position.x
+	};
+
+	tl::Vec4<float> pointPosition = tl::AddVectors(camera.position, tl::MultiplyVectorByScalar(camera.direction, 50.0f));
+	tl::Vec2<float> topDownPointPosition = {
+		pointPosition.z,
+		pointPosition.x
+	};
+	tl::Vec2<float> mapCameraPointPosition = Transform2DVector(topDownPointPosition, mapProjectionMatrix);
+
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)pointPosition.x, charFoot, 0xAAAAAA);
+
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)mapCameraPointPosition.y, charFoot, 0xAAAAAA);
 
 	mapCamera.position = Transform2DVector(topDownCameraPosition, mapProjectionMatrix);
 	tl::DrawRect(renderBuffer, 0x993333, mapCamera);
+	tl::DrawLineInPixels(
+		renderBuffer,
+		0x993333,
+		mapCamera.position,
+		mapCameraPointPosition
+	);
 }
 

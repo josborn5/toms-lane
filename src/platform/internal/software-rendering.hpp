@@ -35,7 +35,18 @@ namespace tl
 	 * p0 & p1 are pixel and NOT position ordinals
 	 */
 	// Implemented with Bresenham's algorithm
-	void DrawLineInPixels(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<int> &p0, const Vec2<int> &p1);
+	void DrawLineInPixels(
+		const RenderBuffer &renderBuffer,
+		uint32_t color,
+		const Vec2<int> &p0,
+		const Vec2<int> &p1
+	);
+	void DrawLineInPixels(
+		const RenderBuffer &renderBuffer,
+		uint32_t color,
+		const Vec2<float> &p0,
+		const Vec2<float> &p1
+	);
 
 	// Rects
 	void DrawRect(const RenderBuffer &renderBuffer, uint32_t color, const Rect<float> &rect);
