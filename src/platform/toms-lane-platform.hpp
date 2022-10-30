@@ -7,5 +7,6 @@
 #include "./internal/geometry.hpp"
 #include "./internal/software-rendering.hpp"
 #include "./internal/file.hpp"
+#include "./internal/collision.hpp"
 
 #endif
