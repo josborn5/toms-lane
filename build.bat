@@ -41,4 +41,7 @@ REM build the demo using the toms-lane.lib
 cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\demo\demo.cpp /link %COMMON_LINKER_FLAGS% %PLATFORM%.lib %WIN32%.lib
 xcopy ..\%CODE_DIR%\demo\teapot.obj .
 
+REM build the obby game
+cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\obby\obby.cpp /link %COMMON_LINKER_FLAGS% %PLATFORM%.lib %WIN32%.lib
+
 popd

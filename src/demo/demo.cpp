@@ -1,7 +1,7 @@
 #include <math.h>
 
 #include "../platform/toms-lane-platform.hpp"
-#include "demo-win32.cpp"
+#include "./demo-win32.cpp"
 
 tl::Camera<float> camera;
 tl::Mesh<float> mesh;
@@ -178,7 +178,12 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 		tl::Rect<float> titleCharRect = tl::Rect<float>();
 		titleCharRect.position = { 100.0f, 350.0f };
 		titleCharRect.halfSize = { 20.0f, 30.0f };
-		tl::DrawAlphabetCharacters(renderBuffer, "TL DEMO", titleCharRect, 0x999999);
+		tl::DrawAlphabetCharacters(
+			renderBuffer,
+			"TL DEMO",
+			titleCharRect,
+			0x999999
+		);
 
 		// TODO: Plot the max & min x, y, z values of the mesh
 
