@@ -7,7 +7,14 @@ const float BLOCK_HEIGHT = 30.0f;
 
 char *levels[10] = {
 "\
-0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+000000000000000000000000000\n\
+0                         0\n\
+0                         0\n\
+0   0  0  0  0  0  0  0   0\n\
+0                         0\n\
+0                         0\n\
+000000000000000000000000000",
+
 
 "\
      00\n\
@@ -22,59 +29,77 @@ CCCCCCCCCCCC",
      MM"
 };
 
-static void PopulateBlocksForLevel(int level, Block* block, int blockArraySize, tl::Vec2<float> blockArea, tl::Vec2<float> blockAreaPosition)
-{
-	// clear out any remaining blocks in the block array
-	Block* firstBlock = block;
-	tl::Vec2<float> originVector = tl::Vec2<float> { 0.0f, 0.0f };
-	for (int i = 0; i < blockArraySize; i += 1)
-	{
-		firstBlock->exists = 0;
-		firstBlock->halfSize = originVector;
-		firstBlock->position = originVector;
-		firstBlock->color = 0;
-		firstBlock++;
-	}
-
+int PopulateBlocksForLevel(
+	int level,
+	GameState &gameState,
+	const tl::Vec2<int> &pixelRect
+) {
 	// Temporary hack - force level to be between 1 and 3
 	if (level > 3)
 	{
 		level = 1;
 	}
 
-	char* blockLayoutForLevel = levels[level - 1];
+	// level is a 1-based index. levels array is 0-based.
+	char* blockLayout = levels[level - 1];
 
-	tl::Vec2<float> blockHalfSize;
-	blockHalfSize.x = 0.5f * BLOCK_WIDTH;
-	blockHalfSize.y = 0.5f * BLOCK_HEIGHT;
+	tl::Vec2<int> dimensions = tl::GetContentDimensions(blockLayout);
 
-	int blockCount = 0;
-	tl::Vec2<float> blockPosition = blockAreaPosition;
-	blockPosition.x += blockHalfSize.x;
-	blockPosition.y -= blockHalfSize.y;
-	float originalX = blockPosition.x;
-	while (*blockLayoutForLevel)
+	// Check the block array size is big enough for the content
+	int contentCount = dimensions.x * dimensions.y;
+	if (contentCount > gameState.blockCount)
 	{
-		if (*blockLayoutForLevel == '\n')
+		return 1;
+	}
+
+	float blockHeight = (float)pixelRect.y / dimensions.y;
+	float blockWidth = (float)pixelRect.x / dimensions.x;
+	tl::Vec2<float> blockHalfSize = {
+		0.5f * blockWidth,
+		0.5f * blockHeight
+	};
+
+	bool endOfContent = false;
+	float originalX = blockHalfSize.x;
+	tl::Vec2<float> blockPosition = {
+		originalX,
+		(float)pixelRect.y - blockHalfSize.y
+	};
+	for (int i = 0; i < gameState.blockCount; i += 1)
+	{
+		endOfContent = (*blockLayout == NULL);
+
+		if (*blockLayout == '\n')
 		{
 			blockPosition.x = originalX;
-			blockPosition.y -= BLOCK_HEIGHT;
+			blockPosition.y -= blockHeight;
 		}
 		else
 		{
-			if (*blockLayoutForLevel != ' ')
+			Block* block = &(gameState.blocks[i]);
+			if (*blockLayout != ' ')
 			{
-				block->exists = 1;
-				block->halfSize = blockHalfSize;
-				block->position = blockPosition;
-				block->color = MakeColorFromGrey((uint8_t)(blockCount * 20));
-				blockCount += 1;
+				block->exists = true;
+				block->color = 0xAAAAAA;
+			}
+			else
+			{
+				block->exists = false;
+				block->color = 0;
 			}
 
-			blockPosition.x += BLOCK_WIDTH;
+			block->halfSize = blockHalfSize;
+			block->position = blockPosition;
+
+			blockPosition.x += blockWidth;
 		}
 
-		block++;
-		blockLayoutForLevel++;
+		if (!endOfContent)
+		{
+			blockLayout++;
+		}
 	}
+
+	return 0;
 }
+

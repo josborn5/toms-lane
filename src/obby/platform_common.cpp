@@ -26,7 +26,3 @@ static float ClampFloat(float min, float val, float max)
 	return val;
 }
 
-static uint32_t MakeColorFromGrey(uint8_t grey)
-{
-	return (grey << 0) | (grey << 8) | (grey << 16);
-}

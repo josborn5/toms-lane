@@ -35,7 +35,8 @@ struct Block : tl::Rect<float> {
 	bool exists;
 };
 
-struct {
+struct GameState
+{
 	tl::Rect<float> player;
 	Block blocks[BLOCK_ARRAY_SIZE];
 	int level;
@@ -43,6 +44,7 @@ struct {
 	int lives;
 	Mode mode;
 	float levelTransitionTimer;
-} typedef GameState;
+	const int blockCount = BLOCK_ARRAY_SIZE;
+};
 
 #endif

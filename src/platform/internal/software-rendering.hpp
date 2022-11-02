@@ -14,6 +14,7 @@ namespace tl
 		int width;
 	};
 
+	tl::Vec2<int> GetContentDimensions(char* content);
 	Sprite LoadSprite(char* content);
 
 	/**

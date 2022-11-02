@@ -1250,19 +1250,18 @@ namespace tl
 		return c - 'A';
 	}
 
-	Sprite LoadSprite(char* content)
+	tl::Vec2<int> GetContentDimensions(char* content)
 	{
-		char* copy = content;
 		int height = 0;
 		int width = 0;
 		int rowCounter = 0;
-		while (*copy)
+		while (*content)
 		{
 			if (rowCounter == 0 && height == 0)
 			{
 				height += 1;
 			}
-			if (*copy == '\n')
+			if (*content == '\n')
 			{
 				if (width < rowCounter)
 				{
@@ -1275,7 +1274,7 @@ namespace tl
 			{
 				rowCounter += 1;
 			}
-			copy++;
+			content++;
 		}
 
 		// Check the final row (it may not end in a \n char)
@@ -1289,11 +1288,17 @@ namespace tl
 		{
 			width = rowCounter;
 		}
+		tl::Vec2<int> dim = { width, height };
+		return dim;
+	}
 
+	Sprite LoadSprite(char* content)
+	{
 		Sprite sprite = Sprite();
 		sprite.content = content;
-		sprite.height = height;
-		sprite.width = width;
+		tl::Vec2<int> dimensions = GetContentDimensions(content);
+		sprite.height = dimensions.y;
+		sprite.width = dimensions.x;
 		return sprite;
 	}
 

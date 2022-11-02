@@ -63,14 +63,18 @@ bool allBlocksCleared = false;;
 
 char debugStringBuffer[256];
 
-static void StartLevel(int newLevel)
+static void StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
 {
 	allBlocksCleared = false;
 
-	PopulateBlocksForLevel(newLevel, gamestate.blocks, BLOCK_ARRAY_SIZE, BLOCK_AREA, BLOCK_AREA_POS);
+	PopulateBlocksForLevel(
+		newLevel,
+		gamestate,
+		pixelRect
+	);
 }
 
-static void InitializeGameState(GameState *state, tl::Vec2<int> pixelRect, const tl::Input &input)
+static void InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect, const tl::Input &input)
 {
 	state->mode = ReadyToStart;
 	float worldHalfX = 0.5f * (float)X_DIM_BASE;
@@ -96,7 +100,7 @@ static void InitializeGameState(GameState *state, tl::Vec2<int> pixelRect, const
 	state->score = 0;
 	state->lives = STARTING_LIVES;
 	state->level = 1;
-	StartLevel(state->level);
+	StartLevel(state->level, pixelRect);
 }
 
 static void UpdateGameState(GameState *state, tl::Vec2<int> pixelRect, const tl::Input &input, float dt)
