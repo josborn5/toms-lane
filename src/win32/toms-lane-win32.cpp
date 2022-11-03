@@ -296,7 +296,13 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			LARGE_INTEGER LastCounter = Win32_GetWallClock();
 			int64_t LastCycleCount = __rdtsc();
 
-			Initialize(GameMemory, globalRenderBuffer);
+
+			int initResult = Initialize(GameMemory, globalRenderBuffer);
+			if (initResult != 0)
+			{
+				return initResult;
+			}
+
 
 			// Main loop
 			while (successfulMemoryAllocation && IsRunning)
@@ -311,7 +317,11 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				gameInput.mouse.y = globalRenderBuffer.height - mousePointer.y;
 
 
-				UpdateAndRender(GameMemory, gameInput, globalRenderBuffer, lastDt);
+				int updateResult = UpdateAndRender(GameMemory, gameInput, globalRenderBuffer, lastDt);
+				if (updateResult != 0)
+				{
+					return updateResult;
+				}
 
 
 				ResetButtons(&gameInput);

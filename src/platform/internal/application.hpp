@@ -5,8 +5,8 @@
 
 namespace tl
 {
-	void Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer);
-	void UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt);
+	int Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer);
+	int UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt);
 }
 
 #endif

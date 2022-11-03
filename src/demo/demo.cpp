@@ -61,7 +61,7 @@ static T Clamp(T min, T value, T max)
 }
 template float Clamp(float min, float value, float max);
 
-void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
+int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
 	tl::ReadObjFileToVec4("teapot.obj", mesh.triangles);
 	
@@ -159,6 +159,8 @@ void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuff
 	topDownWorld.position = Vec2<float> { meshCenter.z, meshCenter.y };
 	topDownWorld.halfSize = Vec2<float> { (0.5f * (max.z - min.z)), (0.5f * (max.y - min.y)) };
 	mapProjectionMatrix = GenerateProjectionMatrix(topDownWorld, map);
+
+	return 0;
 }
 
 static void ResetCamera()
@@ -169,7 +171,7 @@ static void ResetCamera()
 	cameraYaw = 0.0f;
 }
 
-void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
+int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
 	const uint32_t BACKGROUND_COLOR = 0x000000;
 	tl::ClearScreen(renderBuffer, BACKGROUND_COLOR);
@@ -192,7 +194,7 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 			isStarted = true;
 			ResetCamera();
 		}
-		return;
+		return 0;
 	}
 
 	if (input.buttons[KEY_R].isDown)
@@ -339,5 +341,7 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const
 		mapCamera.position,
 		mapCameraPointPosition
 	);
+
+	return 0;
 }
 

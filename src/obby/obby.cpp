@@ -63,18 +63,18 @@ bool allBlocksCleared = false;;
 
 char debugStringBuffer[256];
 
-static void StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
+static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
 {
 	allBlocksCleared = false;
 
-	PopulateBlocksForLevel(
+	return PopulateBlocksForLevel(
 		newLevel,
 		gamestate,
 		pixelRect
 	);
 }
 
-static void InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect, const tl::Input &input)
+static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect, const tl::Input &input)
 {
 	state->mode = ReadyToStart;
 	float worldHalfX = 0.5f * (float)X_DIM_BASE;
@@ -100,7 +100,7 @@ static void InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect
 	state->score = 0;
 	state->lives = STARTING_LIVES;
 	state->level = 1;
-	StartLevel(state->level, pixelRect);
+	return StartLevel(state->level, pixelRect);
 }
 
 static void UpdateGameState(GameState *state, tl::Vec2<int> pixelRect, const tl::Input &input, float dt)
@@ -285,13 +285,13 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	}
 }
 
-void tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
+int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
-
+	return 0;
 }
 
 
-void tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, const RenderBuffer &renderBuffer, float dt)
+int tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, const RenderBuffer &renderBuffer, float dt)
 {
 	tl::Vec2<int> pixelRect;
 	pixelRect.x = renderBuffer.width;
@@ -305,8 +305,7 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, c
 	if (!initialized)
 	{
 		initialized = true;
-		InitializeGameState(&gamestate, pixelRect, input);
-		return;
+		return InitializeGameState(&gamestate, pixelRect, input);
 	}
 
 	if (IsReleased(input, tl::KEY_H))
@@ -320,5 +319,7 @@ void tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, c
 	}
 
 	RenderGameState(renderBuffer, gamestate);
+
+	return 0;
 }
 
