@@ -16,8 +16,6 @@ pushd %OUTPUT_DIR%
 REM https://docs.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-alphabetically
 set COMMON_COMPILER_FLAGS=-MT -nologo -Gm- -GR- -EHa- -Oi -WX -W4 -wd4100 -wd4201 -FC -Z7 /EHsc /O2 -Fm
 
-REM 64-bit build
-
 set PLATFORM=toms-lane-platform
 set WIN32=toms-lane-win32
 
@@ -29,9 +27,6 @@ cl.exe %COMMON_COMPILER_FLAGS% /c ..\%CODE_DIR%\win32\%WIN32%.cpp
 REM use the 'lib.exe' tool to create lib files from the obj files
 lib.exe -nologo %PLATFORM%.obj
 lib.exe -nologo %WIN32%.obj
-
-REM copy the library header files to the output directory
-REM !!! xcopy ..\%CODE_DIR%\*.hpp .
 
 set COMMON_LINKER_FLAGS=-opt:ref user32.lib Gdi32.lib winmm.lib
 REM Build tests

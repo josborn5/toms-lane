@@ -4,10 +4,6 @@
 #include "./levels.cpp"
 #include "./obby-win32.cpp"
 
-#define BLOCK_AREA tl::Vec2<float> { 1000.0f, 200.0f }
-#define BLOCK_AREA_POS tl::Vec2<float> { 100.0f, 300.0f }
-#define BALL_HALF_SIZE tl::Vec2<float> { 10.0f, 10.0f }
-
 /*
 
 * checkpoint
@@ -17,13 +13,8 @@
 */
 
 
-const float MIN_BALL_SPEED = 40.0f;
-const float LEVEL_CHANGE_BALL_SPEED = 5.0f;
-
 const uint32_t BACKGROUND_COLOR = 0x551100;
-const uint32_t BALL_COLOR = 0x0000FF;
 const uint32_t BAT_COLOR = 0x00FF00;
-const uint32_t BLOCK_COLOR = 0xFFFF00;
 const uint32_t TEXT_COLOR = 0xFFFF00;
 
 uint32_t playerColor = BAT_COLOR;
@@ -31,7 +22,6 @@ uint32_t playerColor = BAT_COLOR;
 const int BLOCK_SCORE = 10;
 const int NO_BLOCK_HIT_INDEX = -1;
 
-const float FONT_SIZE = 20.0f;
 const float BAT_WIDTH = 50.0f;
 const float BAT_HEIGHT = 50.0f;
 
@@ -43,8 +33,6 @@ const int STARTING_LIVES = 3;
 
 const tl::Vec2<float> smallFontHalfSize = { 5.0f, 10.0f };
 const tl::Vec2<float> titleFontHalfSize = { 15.0f, 30.0f };
-
-tl::Vec2<int> GAME_RECT = { X_DIM_BASE, Y_DIM_BASE };
 
 int rainbowColor = 0;
 float minPlayerX;
@@ -60,8 +48,6 @@ GameState gamestate = {0};
 bool initialized = false;
 bool isPaused = false;
 bool allBlocksCleared = false;;
-
-char debugStringBuffer[256];
 
 static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
 {
@@ -103,7 +89,13 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	return StartLevel(state->level, pixelRect);
 }
 
-static void UpdateGameState(GameState *state, tl::Vec2<int> pixelRect, const tl::Input &input, float dt)
+static void UpdateGameState(
+	GameState *state,
+	tl::Vec2<int> pixelRect,
+	const tl::Input &input,
+	float dt,
+	const tl::RenderBuffer &renderBuffer
+)
 {
 	if (state->mode == ReadyToStart)
 	{
@@ -122,17 +114,20 @@ static void UpdateGameState(GameState *state, tl::Vec2<int> pixelRect, const tl:
 	newPlayerState.velocity.y = state->player.velocity.y;
 	if (IsDown(input, tl::KEY_LEFT))
 	{
-		newPlayerState.position.x = state->player.position.x - 20;
+		newPlayerState.position.x -= 20;
 	}
 	if (IsDown(input, tl::KEY_RIGHT))
 	{
-		newPlayerState.position.x = state->player.position.x + 20;
+		newPlayerState.position.x += 20;
 	}
-	if (IsDown(input, tl::KEY_SPACE))
+	if (IsDown(input, tl::KEY_UP))
 	{
-		newPlayerState.velocity.y = 300.0f;
+		newPlayerState.position.y += 20;
 	}
-
+	if (IsDown(input, tl::KEY_DOWN))
+	{
+		newPlayerState.position.y -= 20;
+	}
 
 	float minCollisionTime = dt;
 
@@ -152,32 +147,21 @@ static void UpdateGameState(GameState *state, tl::Vec2<int> pixelRect, const tl:
 		}
 	}
 
-	// Check for any horizontal collisions
-	if (collisionSide == tl::Right || collisionSide == tl::Left)
-	{
-		newPlayerState.velocity.x = 0.0f;
-		playerColor = 0xFF0000;
-	}
-	else
-	{
-		newPlayerState.velocity.x = (newPlayerState.position.x - state->player.position.x) / dt;
-		playerColor = BAT_COLOR;
-	}
+	// Show info about z-position
+	float fontSize = 16.0f;
+	float infoHeight = 4.0f * fontSize;
+	tl::Rect<float> charFoot;
+	charFoot.position = { 100.0f, infoHeight };
+	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
 
-	// Check for any vertical collisions
-	if (collisionSide == tl::Top || collisionSide == tl::Overlap)
-	{
-		newPlayerState.velocity.y = 0.0f;
-		playerColor = 0xFF0000;
-	}
-	else
-	{
-		newPlayerState.velocity.y = state->player.velocity.y - (10.0f * dt * state->player.velocity.y);
-		playerColor = BAT_COLOR;
-	}
+	tl::DrawAlphabetCharacters(renderBuffer, "COL", charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, collisionSide, charFoot, 0xAAAAAA);
 
-	// newPlayerState.position.y = newPlayerState.position.y + (newPlayerState.velocity.y * dt);
-	newPlayerState.position.y = state->player.position.y - 5.0f;
+
+	newPlayerState.velocity.x = (newPlayerState.position.x - state->player.position.x) / dt;
+	newPlayerState.velocity.y = (newPlayerState.position.y - state->player.position.y) / dt;
+
 	newPlayerState.position.x = ClampFloat(minPlayerX, newPlayerState.position.x, maxPlayerX);
 	newPlayerState.position.y = ClampFloat(minPlayerY, newPlayerState.position.y, maxPlayerY);
 
@@ -315,7 +299,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, co
 
 	if (!isPaused)
 	{
-		UpdateGameState(&gamestate, pixelRect, input, dt);
+		UpdateGameState(&gamestate, pixelRect, input, dt, renderBuffer);
 	}
 
 	RenderGameState(renderBuffer, gamestate);
