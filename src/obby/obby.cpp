@@ -89,6 +89,37 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	return StartLevel(state->level, pixelRect);
 }
 
+static tl::Vec2<float> GetPlayerVelocity(
+	const tl::Input &input,
+	const tl::Vec2<float> &prevVelocity,
+	float dt
+)
+{
+	tl::Vec2<float> newVelocity = {0};
+
+	const float horizontalDeltaPosition = 20.0f;
+	if (IsDown(input, tl::KEY_LEFT))
+	{
+		newVelocity.x = -horizontalDeltaPosition / dt;
+	}
+	if (IsDown(input, tl::KEY_RIGHT))
+	{
+		newVelocity.x = horizontalDeltaPosition / dt;
+	}
+
+	if (IsDown(input, tl::KEY_SPACE))
+	{
+		newVelocity.y = 600.0f;
+	}
+	else
+	{
+		const float verticalAcceleration = -10.0f;
+		newVelocity.y = prevVelocity.y + (verticalAcceleration / dt);
+	}
+
+	return newVelocity;
+}
+
 static void UpdateGameState(
 	GameState *state,
 	tl::Vec2<int> pixelRect,
@@ -106,29 +137,10 @@ static void UpdateGameState(
 		return;
 	}
 
-	// Update player state
-	tl::Rect<float> newPlayerState = {0};
-	newPlayerState.position.x = state->player.position.x;
-	newPlayerState.position.y = state->player.position.y;
-	newPlayerState.velocity.x = state->player.velocity.x;
-	newPlayerState.velocity.y = state->player.velocity.y;
-	if (IsDown(input, tl::KEY_LEFT))
-	{
-		newPlayerState.position.x -= 20;
-	}
-	if (IsDown(input, tl::KEY_RIGHT))
-	{
-		newPlayerState.position.x += 20;
-	}
-	if (IsDown(input, tl::KEY_UP))
-	{
-		newPlayerState.position.y += 20;
-	}
-	if (IsDown(input, tl::KEY_DOWN))
-	{
-		newPlayerState.position.y -= 20;
-	}
+	// Calculate velocity to apply to current player state
+	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(input, state->player.velocity, dt);
 
+	// Check for collisions based on the calculated velocity and current player position
 	float minCollisionTime = dt;
 
 	// check for collision between player and blocks
@@ -158,9 +170,9 @@ static void UpdateGameState(
 	charFoot.position.y -= fontSize;
 	tl::DrawNumber(renderBuffer, collisionSide, charFoot, 0xAAAAAA);
 
-
-	newPlayerState.velocity.x = (newPlayerState.position.x - state->player.position.x) / dt;
-	newPlayerState.velocity.y = (newPlayerState.position.y - state->player.position.y) / dt;
+	tl::Rect<float> newPlayerState = {0};
+	newPlayerState.position.x = state->player.position.x + (currentPlayerVelocity.x * dt);
+	newPlayerState.position.y = state->player.position.y + (currentPlayerVelocity.y * dt);
 
 	newPlayerState.position.x = ClampFloat(minPlayerX, newPlayerState.position.x, maxPlayerX);
 	newPlayerState.position.y = ClampFloat(minPlayerY, newPlayerState.position.y, maxPlayerY);
