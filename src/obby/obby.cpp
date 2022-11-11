@@ -47,12 +47,9 @@ GameState gamestate = {0};
 
 bool initialized = false;
 bool isPaused = false;
-bool allBlocksCleared = false;;
 
 static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
 {
-	allBlocksCleared = false;
-
 	return PopulateBlocksForLevel(
 		newLevel,
 		gamestate,
@@ -145,18 +142,29 @@ static void UpdateGameState(
 
 	// check for collision between player and blocks
 	tl::CollisionSide collisionSide = tl::None;
-
+	tl::Rect<float> currentPlayerState = {0};
+	currentPlayerState.velocity = currentPlayerVelocity;
+	currentPlayerState.position = state->player.position;
 	for (int j = 0; j < BLOCK_ARRAY_SIZE; j += 1)
 	{
 		Block block = state->blocks[j];
 		if (!block.exists) continue;
-		tl::CollisionResult collisionResult = tl::CheckCollisionBetweenRects(block, state->player, minCollisionTime);
+		tl::CollisionResult collisionResult = tl::CheckCollisionBetweenRects(block, currentPlayerState, minCollisionTime);
 		if (collisionResult.collisions[1].side != tl::None)
 		{
 			minCollisionTime = collisionResult.time;
 			collisionSide = collisionResult.collisions[1].side;
-			state->player.position = collisionResult.collisions[1].position;
+			currentPlayerState.position = collisionResult.collisions[1].position;
 		}
+	}
+
+	if (collisionSide != tl::None)
+	{
+		playerColor = 0xFF0000;
+	}
+	else
+	{
+		playerColor = BAT_COLOR;
 	}
 
 	// Show info about z-position
@@ -166,13 +174,13 @@ static void UpdateGameState(
 	charFoot.position = { 100.0f, infoHeight };
 	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
 
-	tl::DrawAlphabetCharacters(renderBuffer, "COL", charFoot, 0xAAAAAA);
+	tl::DrawAlphabetCharacters(renderBuffer, "COL", charFoot, 0xFF0000);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, collisionSide, charFoot, 0xAAAAAA);
+	tl::DrawNumber(renderBuffer, collisionSide, charFoot, 0xFF0000);
 
 	tl::Rect<float> newPlayerState = {0};
-	newPlayerState.position.x = state->player.position.x + (currentPlayerVelocity.x * dt);
-	newPlayerState.position.y = state->player.position.y + (currentPlayerVelocity.y * dt);
+	newPlayerState.position.x = currentPlayerState.position.x + (currentPlayerVelocity.x * dt);
+	newPlayerState.position.y = currentPlayerState.position.y + (currentPlayerVelocity.y * dt);
 
 	newPlayerState.position.x = ClampFloat(minPlayerX, newPlayerState.position.x, maxPlayerX);
 	newPlayerState.position.y = ClampFloat(minPlayerY, newPlayerState.position.y, maxPlayerY);
@@ -270,11 +278,9 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	tl::DrawRect(renderBuffer, playerColor, state.player);
 
 	// blocks
-	allBlocksCleared = true;
 	for (int i = 0; i < BLOCK_ARRAY_SIZE; i += 1)
 	{
 		Block block = state.blocks[i];
-		allBlocksCleared = false;
 		if (!block.exists) continue;
 
 		tl::DrawRect(renderBuffer, block.color, block);
