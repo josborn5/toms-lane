@@ -22,8 +22,8 @@ uint32_t playerColor = BAT_COLOR;
 const int BLOCK_SCORE = 10;
 const int NO_BLOCK_HIT_INDEX = -1;
 
-const float BAT_WIDTH = 50.0f;
-const float BAT_HEIGHT = 50.0f;
+const float BAT_WIDTH = 25.0f;
+const float BAT_HEIGHT = 25.0f;
 
 const int X_DIM_ORIGIN = 0;
 const int X_DIM_BASE = 1280;
@@ -75,7 +75,7 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	minPlayerY = 0.0f + state->player.halfSize.y;
 	maxPlayerY = (float)Y_DIM_BASE - state->player.halfSize.y;
 
-	state->player.position.x = 800;
+	state->player.position.x = state->player.halfSize.x;
 	state->player.position.y = 500;
 	state->player.velocity.x = 0.0f;
 	state->player.velocity.y = 0.0f;
@@ -104,14 +104,12 @@ static tl::Vec2<float> GetPlayerVelocity(
 		newVelocity.x = horizontalDeltaPosition / dt;
 	}
 
+	const float verticalAcceleration = -10.0f;
+	newVelocity.y = prevVelocity.y + (verticalAcceleration / dt);
+
 	if (IsDown(input, tl::KEY_SPACE))
 	{
 		newVelocity.y = 600.0f;
-	}
-	else
-	{
-		const float verticalAcceleration = -10.0f;
-		newVelocity.y = prevVelocity.y + (verticalAcceleration / dt);
 	}
 
 	return newVelocity;
@@ -145,6 +143,7 @@ static void UpdateGameState(
 	tl::Rect<float> currentPlayerState = {0};
 	currentPlayerState.velocity = currentPlayerVelocity;
 	currentPlayerState.position = state->player.position;
+	currentPlayerState.halfSize = state->player.halfSize;
 	for (int j = 0; j < BLOCK_ARRAY_SIZE; j += 1)
 	{
 		Block block = state->blocks[j];
@@ -158,13 +157,9 @@ static void UpdateGameState(
 		}
 	}
 
-	if (collisionSide != tl::None)
+	if (collisionSide == tl::Top || collisionSide == tl::Bottom)
 	{
-		playerColor = 0xFF0000;
-	}
-	else
-	{
-		playerColor = BAT_COLOR;
+		currentPlayerState.velocity.y = 0.0f;
 	}
 
 	// Show info about z-position
@@ -179,8 +174,8 @@ static void UpdateGameState(
 	tl::DrawNumber(renderBuffer, collisionSide, charFoot, 0xFF0000);
 
 	tl::Rect<float> newPlayerState = {0};
-	newPlayerState.position.x = currentPlayerState.position.x + (currentPlayerVelocity.x * dt);
-	newPlayerState.position.y = currentPlayerState.position.y + (currentPlayerVelocity.y * dt);
+	newPlayerState.position.x = currentPlayerState.position.x + (currentPlayerState.velocity.x * dt);
+	newPlayerState.position.y = currentPlayerState.position.y + (currentPlayerState.velocity.y * dt);
 
 	newPlayerState.position.x = ClampFloat(minPlayerX, newPlayerState.position.x, maxPlayerX);
 	newPlayerState.position.y = ClampFloat(minPlayerY, newPlayerState.position.y, maxPlayerY);
@@ -191,17 +186,16 @@ static void UpdateGameState(
 	state->player.velocity.y = newPlayerState.velocity.y;
 }
 
-char* isla_avatar = "\
- 0 0 0\n\
- 00000\n\
-  000\n\
-   0\n\
-0000000\n\
-   0\n\
-  000\n\
- 0   0";
-const int islaAvatarWidth = 7;
-const int islaAvatarHeight = 8;
+char* islaAvatar = "\
+0 0 0\n\
+00000\n\
+ 000\n\
+  0\n\
+00000\n\
+  0\n\
+ 000\n\
+0   0";
+tl::Sprite islaSprite = tl::LoadSprite(islaAvatar);
 
 static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameState &state)
 {
@@ -275,7 +269,8 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	tl::DrawRect(renderBuffer, BACKGROUND_COLOR, worldRect);
 
 	// player
-	tl::DrawRect(renderBuffer, playerColor, state.player);
+	// tl::DrawRect(renderBuffer, playerColor, state.player);
+	tl::DrawSprite(renderBuffer, islaSprite, state.player, playerColor);
 
 	// blocks
 	for (int i = 0; i < BLOCK_ARRAY_SIZE; i += 1)
