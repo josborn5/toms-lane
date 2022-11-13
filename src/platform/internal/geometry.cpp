@@ -4,6 +4,15 @@
 
 namespace tl
 {
+	Rect<float> CopyRect(Rect<float> original)
+	{
+		Rect<float> copy;
+		copy.position = CopyVec2(original.position);
+		copy.halfSize = CopyVec2(original.halfSize);
+		copy.velocity = CopyVec2(original.velocity);
+		return copy;
+	}
+
 	Matrix4x4<float> MakeProjectionMatrix(
 		float fieldOfVewDeg,
 		float aspectRatio,

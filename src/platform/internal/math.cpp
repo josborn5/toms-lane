@@ -57,7 +57,12 @@ namespace tl
 	template Vec2<float> SubtractVectors(const Vec2<float> &v1, const Vec2<float> &v2);
 	template Vec2<double> SubtractVectors(const Vec2<double> &v1, const Vec2<double> &v2);
 
-	
+	Vec2<float> CopyVec2(Vec2<float> original)
+	{
+		Vec2<float> copy = { original.x, original.y };
+		return copy;
+	}
+
 	template<typename T>
 	Vec4<T> MultiplyVectorByScalar(const Vec4<T> &vec, T sca)
 	{

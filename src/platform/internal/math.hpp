@@ -27,6 +27,8 @@ namespace tl
 		T w;
 	};
 
+	Vec2<float> CopyVec2(Vec2<float> original);
+
 	template<typename T>
 	Vec4<T> AddVectors(const Vec4<T> &v1, const Vec4<T> &v2);
 	template<typename T>

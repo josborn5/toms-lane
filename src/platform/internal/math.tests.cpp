@@ -20,4 +20,13 @@ void RunMathTests()
 	// dot_product
 	float dot = tl::DotProduct(tl::Vec4<float>{ 1.0f, 2.0f, 3.0f }, tl::Vec4<float>{ 4.0f, 5.0f, 6.0f });
 	assert(dot == (float)32);
+
+	// CopyVec2
+	tl::Vec2<float> original = tl::Vec2<float> { 1.0f, 2.0f };
+	tl::Vec2<float> copy = CopyVec2(original);
+	assert(copy.x == original.x);
+	assert(copy.y == original.y);
+
+	original.x += 1.0f;
+	assert(copy.x != original.x);
 }

@@ -140,10 +140,9 @@ static void UpdateGameState(
 
 	// check for collision between player and blocks
 	tl::CollisionSide collisionSide = tl::None;
-	tl::Rect<float> currentPlayerState = {0};
+	tl::Rect<float> currentPlayerState = CopyRect(state->player);
 	currentPlayerState.velocity = currentPlayerVelocity;
-	currentPlayerState.position = state->player.position;
-	currentPlayerState.halfSize = state->player.halfSize;
+
 	for (int j = 0; j < BLOCK_ARRAY_SIZE; j += 1)
 	{
 		Block block = state->blocks[j];
@@ -180,6 +179,11 @@ static void UpdateGameState(
 	newPlayerState.position.x = ClampFloat(minPlayerX, newPlayerState.position.x, maxPlayerX);
 	newPlayerState.position.y = ClampFloat(minPlayerY, newPlayerState.position.y, maxPlayerY);
 
+	if (newPlayerState.position.y <= minPlayerY)
+	{
+		state->mode = GameOver;
+	}
+
 	state->player.position.x = newPlayerState.position.x;
 	state->player.position.y = newPlayerState.position.y;
 	state->player.velocity.x = newPlayerState.velocity.x;
@@ -196,6 +200,18 @@ char* islaAvatar = "\
  000\n\
 0   0";
 tl::Sprite islaSprite = tl::LoadSprite(islaAvatar);
+
+char* jumpScare = "\
+       00000\n\
+     000000000\n\
+   0000  0  0000\n\
+  000000   000000\n\
+    00000000000\n\
+     0 0 0 0 0\n\
+     000000000\n\
+";
+tl::Sprite jumpScareSprite = tl::LoadSprite(jumpScare);
+
 
 static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameState &state)
 {
@@ -258,6 +274,32 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 			TEXT_COLOR
 		);
 
+		return;
+	}
+
+	if (state.mode == GameOver)
+	{
+		tl::ClearScreen(renderBuffer, 0x050505);
+
+		tl::Rect<float> jumpScareRect = {0};
+		jumpScareRect.position = tl::Vec2<float> { 300.0f, 200.0f };
+		jumpScareRect.halfSize = tl::Vec2<float> { 200.0f, 200.0f };
+		tl::DrawSprite(
+			renderBuffer,
+			jumpScareSprite,
+			jumpScareRect,
+			0xFF0000
+		);
+
+		tl::Rect<float> titleCharRect = {0};
+		titleCharRect.halfSize = tl::Vec2<float> { 50.0f, 75.0f };
+		titleCharRect.position = tl::Vec2<float> { 200.0f, 500.0f };
+		tl::DrawAlphabetCharacters(
+			renderBuffer,
+			"YOU DIED",
+			titleCharRect,
+			0xFF0000
+		);
 		return;
 	}
 
