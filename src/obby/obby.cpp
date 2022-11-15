@@ -104,7 +104,7 @@ static tl::Vec2<float> GetPlayerVelocity(
 		newVelocity.x = horizontalDeltaPosition / dt;
 	}
 
-	const float verticalAcceleration = -10.0f;
+	const float verticalAcceleration = -3.0f;
 	newVelocity.y = prevVelocity.y + (verticalAcceleration / dt);
 
 	if (IsDown(input, tl::KEY_SPACE))
@@ -161,18 +161,7 @@ static void UpdateGameState(
 		currentPlayerState.velocity.y = 0.0f;
 	}
 
-	// Show info about z-position
-	float fontSize = 16.0f;
-	float infoHeight = 4.0f * fontSize;
-	tl::Rect<float> charFoot;
-	charFoot.position = { 100.0f, infoHeight };
-	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
-
-	tl::DrawAlphabetCharacters(renderBuffer, "COL", charFoot, 0xFF0000);
-	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, collisionSide, charFoot, 0xFF0000);
-
-	tl::Rect<float> newPlayerState = {0};
+	tl::Rect<float> newPlayerState = CopyRect(currentPlayerState);
 	newPlayerState.position.x = currentPlayerState.position.x + (currentPlayerState.velocity.x * dt);
 	newPlayerState.position.y = currentPlayerState.position.y + (currentPlayerState.velocity.y * dt);
 
@@ -304,14 +293,25 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	}
 
 	// background
-	tl::ClearScreen(renderBuffer, 0x000000);
 	tl::Rect<float> worldRect;
 	worldRect.position = worldPosition;
 	worldRect.halfSize = worldHalfSize;
 	tl::DrawRect(renderBuffer, BACKGROUND_COLOR, worldRect);
 
+	// Show info about z-position
+	float fontSize = 16.0f;
+	float infoHeight = 4.0f * fontSize;
+	tl::Rect<float> charFoot;
+	charFoot.position = { 100.0f, infoHeight };
+	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
+
+	tl::DrawAlphabetCharacters(renderBuffer, "VEL Y", charFoot, 0x999999);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)state.player.velocity.y, charFoot, 0x999999);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, (int)state.player.position.y, charFoot, 0x999999);
+
 	// player
-	// tl::DrawRect(renderBuffer, playerColor, state.player);
 	tl::DrawSprite(renderBuffer, islaSprite, state.player, playerColor);
 
 	// blocks
