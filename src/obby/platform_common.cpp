@@ -8,8 +8,8 @@ static bool IsReleased(const tl::Input &input, int button)
 
 static bool IsDown(const tl::Input &input, int button)
 {
-	bool isReleased = input.buttons[button].isDown;
-	return isReleased;
+	bool isDown = input.buttons[button].isDown;
+	return isDown;
 }
 
 static int ClampInt(int min, int val, int max)
