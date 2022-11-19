@@ -311,9 +311,6 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	charFoot.position.y -= fontSize;
 	tl::DrawNumber(renderBuffer, (int)state.player.position.y, charFoot, 0x999999);
 
-	// player
-	tl::DrawSprite(renderBuffer, islaSprite, state.player, playerColor);
-
 	// blocks
 	for (int i = 0; i < BLOCK_ARRAY_SIZE; i += 1)
 	{
@@ -322,6 +319,9 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 
 		tl::DrawRect(renderBuffer, block.color, block);
 	}
+
+	// player
+	tl::DrawSprite(renderBuffer, islaSprite, state.player, playerColor);
 }
 
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
