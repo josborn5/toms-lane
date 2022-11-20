@@ -3,6 +3,7 @@
 
 #include "./levels.cpp"
 #include "./obby-win32.cpp"
+#include "./game-state.cpp"
 
 /*
 
