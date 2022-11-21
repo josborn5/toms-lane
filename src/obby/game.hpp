@@ -33,6 +33,7 @@ struct Boundary
 struct Block : tl::Rect<float> {
 	int color;
 	bool exists;
+	bool isCheckpoint;
 };
 
 struct GameState
