@@ -1,9 +1,10 @@
-#include "./game.hpp"
-#include "../platform/toms-lane-platform.hpp"
+#include "../game.hpp"
+#include "../../platform/toms-lane-platform.hpp"
 
-#include "./platform_common.cpp"
+#include "../obby-win32.cpp"
+#include "../platform_common.cpp"
+
 #include "./levels.cpp"
-#include "./obby-win32.cpp"
 #include "./update-gamestate.cpp"
 #include "./render-gamestate.cpp"
 

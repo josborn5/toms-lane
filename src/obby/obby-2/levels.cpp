@@ -1,5 +1,5 @@
-#include "./game.hpp"
-#include "../platform/toms-lane-platform.hpp"
+#include "../game.hpp"
+#include "../../platform/toms-lane-platform.hpp"
 
 char *levels[10] = {
 "\
