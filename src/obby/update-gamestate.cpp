@@ -3,15 +3,6 @@
 
 GameState gamestate = {0};
 
-const float BAT_WIDTH = 25.0f;
-const float BAT_HEIGHT = 25.0f;
-
-const int X_DIM_ORIGIN = 0;
-const int X_DIM_BASE = 1280;
-const int Y_DIM_ORIGIN = 0;
-const int Y_DIM_BASE = 720;
-const int STARTING_LIVES = 3;
-
 tl::Vec2<float> worldPosition = ZERO_VECTOR;
 tl::Vec2<float> worldHalfSize = ZERO_VECTOR;
 
@@ -108,20 +99,20 @@ static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
 static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect, const tl::Input &input)
 {
 	state->mode = ReadyToStart;
-	float worldHalfX = 0.5f * (float)X_DIM_BASE;
-	float worldHalfY = 0.5f * (float)Y_DIM_BASE;
+	float worldHalfX = 0.5f * (float)pixelRect.x;
+	float worldHalfY = 0.5f * (float)pixelRect.y;
 	worldHalfSize.x = worldHalfX;
 	worldHalfSize.y = worldHalfY;
 	worldPosition.x = worldHalfX;
 	worldPosition.y = worldHalfY;
 
-	state->player.halfSize.x = BAT_WIDTH;
-	state->player.halfSize.y = BAT_HEIGHT;
+	state->player.halfSize.x = 25.0f;
+	state->player.halfSize.y = 25.0f;
 
 	minPlayerX = 0.0f + state->player.halfSize.x;
-	maxPlayerX = (float)X_DIM_BASE - state->player.halfSize.x;
+	maxPlayerX = (float)pixelRect.x - state->player.halfSize.x;
 	minPlayerY = 0.0f + state->player.halfSize.y;
-	maxPlayerY = (float)Y_DIM_BASE - state->player.halfSize.y;
+	maxPlayerY = (float)pixelRect.y - state->player.halfSize.y;
 
 	state->player.position.x = state->player.halfSize.x;
 	state->player.position.y = 500;
@@ -129,7 +120,7 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	state->player.velocity.y = 0.0f;
 
 	state->score = 0;
-	state->lives = STARTING_LIVES;
+	state->lives = 3;
 	state->level = 1;
 	return StartLevel(state->level, pixelRect);
 }
