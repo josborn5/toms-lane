@@ -1075,5 +1075,14 @@ void RunSoftwareRenderingTests()
 0000";
 	TestSprite(inputSprite, 7, 4);
 
-
+	inputSprite = "\
+ \n\
+ \n\
+ \n\
+0  0\n\
+ \n\
+ \n\
+ \n\
+                        ";
+	TestSprite(inputSprite, 8, 24);
 }

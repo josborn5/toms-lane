@@ -8,14 +8,13 @@ const tl::Vec2<float> smallFontHalfSize = { 5.0f, 10.0f };
 const tl::Vec2<float> titleFontHalfSize = { 15.0f, 30.0f };
 
 char* islaAvatar = "\
-0 0 0\n\
-00000\n\
- 000\n\
-  0\n\
-00000\n\
-  0\n\
- 000\n\
-0   0";
+0000000000000000000\n\
+0000000000000000000\n\
+0000000000000000000\n\
+0000000000000000000\n\
+0000000000000000000\n\
+0000000000000000000\n\
+0000000000000000000";
 tl::Sprite islaSprite = tl::LoadSprite(islaAvatar);
 
 char* jumpScare = "\
@@ -120,7 +119,7 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	}
 
 	// background
-    tl::ClearScreen(renderBuffer, BACKGROUND_COLOR);
+    // tl::ClearScreen(renderBuffer, BACKGROUND_COLOR);
 
 	// Show info about z-position
 	float fontSize = 16.0f;

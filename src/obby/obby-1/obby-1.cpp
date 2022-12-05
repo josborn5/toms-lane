@@ -48,6 +48,9 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, co
 
 	if (!isPaused)
 	{
+		// player
+		tl::DrawSprite(renderBuffer, islaSprite, gamestate.player, 0x154DDA);
+		
 		UpdateGameState(&gamestate, pixelRect, input, dt, renderBuffer);
 	}
 

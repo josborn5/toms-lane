@@ -11,6 +11,12 @@ float maxPlayerX;
 float minPlayerY;
 float maxPlayerY;
 
+static void ClearBlock(Block* block)
+{
+	block->exists = false;
+	block->color = 0;
+}
+
 int PopulateBlocksForLevel(
 	int level,
 	GameState &gameState,
@@ -59,7 +65,11 @@ int PopulateBlocksForLevel(
 		else
 		{
 			Block* block = &(gameState.blocks[i]);
-			if (*blockLayout != ' ')
+			if (endOfContent)
+			{
+				ClearBlock(block);
+			}
+			else if (*blockLayout != ' ')
 			{
 				block->exists = true;
 				bool isCheckpoint = (*blockLayout == 'c');
@@ -68,8 +78,7 @@ int PopulateBlocksForLevel(
 			}
 			else
 			{
-				block->exists = false;
-				block->color = 0;
+				ClearBlock(block);
 			}
 
 			block->halfSize = blockHalfSize;
@@ -182,6 +191,7 @@ static void UpdateGameState(
 	tl::Rect<float> currentPlayerState = CopyRect(state->player);
 	currentPlayerState.velocity = currentPlayerVelocity;
 
+	bool isBlockCheckpoint = false;
 	for (int j = 0; j < BLOCK_ARRAY_SIZE; j += 1)
 	{
 		Block block = state->blocks[j];
@@ -192,12 +202,24 @@ static void UpdateGameState(
 			minCollisionTime = collisionResult.time;
 			collisionSide = collisionResult.collisions[1].side;
 			currentPlayerState.position = collisionResult.collisions[1].position;
+			isBlockCheckpoint = block.isCheckpoint;
 		}
 	}
 
 	if (collisionSide == tl::Top || collisionSide == tl::Bottom)
 	{
 		currentPlayerState.velocity.y = 0.0f;
+	}
+
+	if (isBlockCheckpoint)
+	{
+		int nextLevel = state->level += 1;
+		StartLevel(nextLevel, pixelRect);
+		state->player.position.x = state->player.halfSize.x;
+		state->player.position.y = 500;
+		state->player.velocity.x = 0.0f;
+		state->player.velocity.y = 0.0f;
+		return;
 	}
 
 	tl::Rect<float> newPlayerState = CopyRect(currentPlayerState);

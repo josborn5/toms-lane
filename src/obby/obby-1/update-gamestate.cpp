@@ -49,7 +49,7 @@ int PopulateBlocksForLevel(
 	};
 	for (int i = 0; i < gameState.blockCount; i += 1)
 	{
-		endOfContent = (*blockLayout == NULL);
+		endOfContent = (*blockLayout == '\0');
 
 		if (*blockLayout == '\n')
 		{
@@ -182,6 +182,7 @@ static void UpdateGameState(
 	tl::Rect<float> currentPlayerState = CopyRect(state->player);
 	currentPlayerState.velocity = currentPlayerVelocity;
 
+	bool isBlockCheckpoint = false;
 	for (int j = 0; j < BLOCK_ARRAY_SIZE; j += 1)
 	{
 		Block block = state->blocks[j];
@@ -192,12 +193,34 @@ static void UpdateGameState(
 			minCollisionTime = collisionResult.time;
 			collisionSide = collisionResult.collisions[1].side;
 			currentPlayerState.position = collisionResult.collisions[1].position;
+			isBlockCheckpoint = block.isCheckpoint;
 		}
+	}
+
+	float fontSize = 16.0f;
+	float infoHeight = 4.0f * fontSize;
+	tl::Rect<float> charFoot;
+	charFoot.position = { 500.0f, infoHeight };
+	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
+	tl::DrawAlphabetCharacters(renderBuffer, "COL", charFoot, 0x999999);
+	charFoot.position.y -= fontSize;
+	tl::DrawNumber(renderBuffer, collisionSide, charFoot, 0x999999);
+
+	if (currentPlayerState.velocity.x <0)
+	{
+		int test=-8;
+		test++;
 	}
 
 	if (collisionSide == tl::Top || collisionSide == tl::Bottom)
 	{
 		currentPlayerState.velocity.y = 0.0f;
+
+		if (isBlockCheckpoint)
+		{
+			int nextlevel = state->level += 1;
+			StartLevel(nextlevel, pixelRect);
+		}
 	}
 
 	tl::Rect<float> newPlayerState = CopyRect(currentPlayerState);
