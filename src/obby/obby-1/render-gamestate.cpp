@@ -74,7 +74,7 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 		titleCharRect.position = tl::Vec2<float> { 200.0f, 500.0f };
 		tl::DrawAlphabetCharacters(
 			renderBuffer,
-			"GIVE ME BOBUX",
+			"PLAY GAME SO I CAN GET BOBUX  ",
 			titleCharRect,
 			rainbowValue
 		);

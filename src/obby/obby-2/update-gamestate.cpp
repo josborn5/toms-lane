@@ -17,7 +17,7 @@ int PopulateBlocksForLevel(
 	const tl::Vec2<int> &pixelRect
 ) {
 	// Temporary hack - force level to be between 1 and 3
-	if (level > 3)
+	if (level > 4)
 	{
 		level = 1;
 	}
@@ -87,7 +87,7 @@ static tl::Vec2<float> GetPlayerVelocity(
 	const float verticalAcceleration = -3.0f;
 	newVelocity.y = prevVelocity.y + (verticalAcceleration / dt);
 
-	if (IsDown(input, tl::KEY_SPACE))
+	if (IsPressed(input, tl::KEY_SPACE))
 	{
 		newVelocity.y = 600.0f;
 	}
@@ -138,10 +138,15 @@ static void UpdateGameState(
 		}
 	}
 
-	if (collisionSide == tl::Top || collisionSide == tl::Bottom)
+	if (collisionSide == tl::Top)
 	{
 		currentPlayerState.velocity.y = 0.0f;
 	}
+	else if (collisionSide == tl::Left)
+	{
+		currentPlayerState.velocity.x = 0.0f;
+	}
+
 
 	if (isBlockCheckpoint)
 	{

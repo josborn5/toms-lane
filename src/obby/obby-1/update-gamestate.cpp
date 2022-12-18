@@ -74,7 +74,7 @@ static tl::Vec2<float> GetPlayerVelocity(
 {
 	tl::Vec2<float> newVelocity = {0};
 
-	const float horizontalDeltaPosition = 10.0f;
+	const float horizontalDeltaPosition = 5.0f;
 	if (IsDown(input, tl::KEY_LEFT))
 	{
 		newVelocity.x = -horizontalDeltaPosition / dt;
@@ -84,10 +84,10 @@ static tl::Vec2<float> GetPlayerVelocity(
 		newVelocity.x = horizontalDeltaPosition / dt;
 	}
 
-	const float verticalAcceleration = -3.0f;
+	const float verticalAcceleration = -1.0f;
 	newVelocity.y = prevVelocity.y + (verticalAcceleration / dt);
 
-	if (IsDown(input, tl::KEY_SPACE))
+	if (IsPressed(input, tl::KEY_SPACE))
 	{
 		newVelocity.y = 600.0f;
 	}
