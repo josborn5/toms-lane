@@ -92,6 +92,12 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 		return;
 	}
 
+	if (state.mode == StartingNextLevel)
+	{
+		tl::ClearScreen(renderBuffer, 0x050505);
+		return;
+	}
+
 	if (state.mode == GameOver)
 	{
 		tl::ClearScreen(renderBuffer, 0x050505);

@@ -135,6 +135,7 @@ static void UpdateGameState(
 			collisionSide = collisionResult.collisions[1].side;
 			currentPlayerState.position = collisionResult.collisions[1].position;
 			isBlockCheckpoint = block.isCheckpoint;
+			state->collision = collisionSide;
 		}
 	}
 
@@ -142,7 +143,7 @@ static void UpdateGameState(
 	{
 		currentPlayerState.velocity.y = 0.0f;
 	}
-	else if (collisionSide == tl::Left)
+	else if (collisionSide == tl::Left || collisionSide == tl::Right)
 	{
 		currentPlayerState.velocity.x = 0.0f;
 	}

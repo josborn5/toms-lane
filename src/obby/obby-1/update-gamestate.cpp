@@ -30,11 +30,17 @@ int PopulateBlocksForLevel(
 
 static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
 {
-	return PopulateBlocksForLevel(
+	int returnVal = PopulateBlocksForLevel(
 		newLevel,
 		gamestate,
 		pixelRect
 	);
+
+	tl::Vec2<float> playerStartPosition = GetPlayerStartPosition(gamestate.blocks, gamestate.blockCount);
+
+	gamestate.player.position = playerStartPosition;
+
+	return returnVal;
 }
 
 static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect, const tl::Input &input)
@@ -107,8 +113,13 @@ static void UpdateGameState(
 	{
 		if (IsReleased(input, tl::KEY_S))
 		{
-			state->mode = Started;
+			state->mode = StartingNextLevel;
 		}
+		return;
+	}
+	else if (state->mode == StartingNextLevel)
+	{
+		state->mode = Started;
 		return;
 	}
 
@@ -161,6 +172,8 @@ static void UpdateGameState(
 		{
 			int nextlevel = state->level += 1;
 			StartLevel(nextlevel, pixelRect);
+			state->mode = StartingNextLevel;
+			return;
 		}
 	}
 

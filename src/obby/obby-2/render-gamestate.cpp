@@ -129,11 +129,9 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	charFoot.position = { 100.0f, infoHeight };
 	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
 
-	tl::DrawAlphabetCharacters(renderBuffer, "VEL Y", charFoot, 0x999999);
+	tl::DrawAlphabetCharacters(renderBuffer, "COL", charFoot, 0x999999);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)state.player.velocity.y, charFoot, 0x999999);
-	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)state.player.position.y, charFoot, 0x999999);
+	tl::DrawNumber(renderBuffer, state.collision, charFoot, 0x999999);
 
 	// blocks
 	for (int i = 0; i < BLOCK_ARRAY_SIZE; i += 1)

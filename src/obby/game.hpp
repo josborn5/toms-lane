@@ -30,10 +30,17 @@ struct Boundary
 	float direction;
 };
 
+enum BlockType
+{
+	Checkpoint,
+	Spawn
+};
+
 struct Block : tl::Rect<float> {
 	int color;
 	bool exists;
 	bool isCheckpoint;
+	BlockType type;
 };
 
 struct GameState
@@ -46,6 +53,7 @@ struct GameState
 	Mode mode;
 	float levelTransitionTimer;
 	const int blockCount = BLOCK_ARRAY_SIZE;
+	int collision;
 };
 
 #endif

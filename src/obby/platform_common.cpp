@@ -87,6 +87,15 @@ int PopulateBlocksForLevelString(
 				bool isCheckpoint = (*blockLayout == 'c');
 				block->color = (isCheckpoint) ? 0xAA5555 : 0xAAAAAA;
 				block->isCheckpoint = isCheckpoint;
+				switch (*blockLayout)
+				{
+					case 'c':
+						block->type = Checkpoint;
+						break;
+					case 's':
+						block->type = Spawn;
+						break;
+				}
 			}
 			else
 			{
@@ -106,4 +115,20 @@ int PopulateBlocksForLevelString(
 	}
 
 	return 0;
+}
+
+tl::Vec2<float> GetPlayerStartPosition(Block* block, int arraySize)
+{
+	for (int i = 0; i < arraySize; i += 1)
+	{
+		Block checkBlock = block[i];
+		if (checkBlock.type == Spawn)
+		{
+			tl::Vec2<float> playerStartPosition = checkBlock.position;
+			playerStartPosition.y += (checkBlock.halfSize.y + 50.0f);
+			return playerStartPosition;
+		}
+	}
+
+	return tl::Vec2<float> { 0.0f, 0.0f };
 }
