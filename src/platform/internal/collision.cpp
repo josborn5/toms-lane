@@ -12,11 +12,11 @@ namespace tl
 	)
 	{
 		CollisionResult result = CollisionResult();
-		float yCollisionCheckPos = (wallFaceDir < 0) ? wallYPos - rect.halfSize.y : wallYPos + rect.halfSize.y;
+		float yCollisionCheckPos = (wallFaceDir < 0.0f) ? wallYPos - rect.halfSize.y : wallYPos + rect.halfSize.y;
 
 		// Check for overlap
-		if (((wallFaceDir >= 0) && (rect.position.y < yCollisionCheckPos))
-			|| ((wallFaceDir < 0) && (rect.position.y > yCollisionCheckPos))) {
+		if (((wallFaceDir >= 0.0f) && (rect.position.y < yCollisionCheckPos))
+			|| ((wallFaceDir < 0.0f) && (rect.position.y > yCollisionCheckPos))) {
 			result.time = 0.0f;
 			Collision rectCollision = Collision();
 			rectCollision.side = Overlap;
@@ -26,8 +26,8 @@ namespace tl
 		}
 
 		// Check if rect is moving toward the wall face
-		if (rect.velocity.y >= 0 && wallFaceDir >= 0) return result;
-		if (rect.velocity.y <= 0 && wallFaceDir < 0) return result;
+		if (rect.velocity.y >= 0 && wallFaceDir >= 0.0f) return result;
+		if (rect.velocity.y <= 0 && wallFaceDir < 0.0f) return result;
 
 		// If the rect is moving toward the wall face, check for collision between ball and topside of wall
 		float tCollision = (yCollisionCheckPos - rect.position.y) / rect.velocity.y;
@@ -35,7 +35,7 @@ namespace tl
 		{
 			result.time = tCollision;
 			Collision rectCollision = Collision();
-			rectCollision.side = (wallFaceDir < 0) ? Top : Bottom;
+			rectCollision.side = (wallFaceDir < 0.0f) ? Top : Bottom;
 			float xCollisionPos = rect.position.x + (tCollision * rect.velocity.x);
 			rectCollision.position = Vec2<float> { xCollisionPos, yCollisionCheckPos };
 			result.collisions[0] = rectCollision;
@@ -51,11 +51,11 @@ namespace tl
 	)
 	{
 		CollisionResult result = CollisionResult();
-		float xCollisionCheckPos = (wallFaceDir < 0) ? wallXPos - rect.halfSize.x : wallXPos + rect.halfSize.x;
+		float xCollisionCheckPos = (wallFaceDir < 0.0f) ? wallXPos - rect.halfSize.x : wallXPos + rect.halfSize.x;
 
 		// Check for overlap
-		if (((wallFaceDir >= 0) && (rect.position.x < xCollisionCheckPos))
-			|| ((wallFaceDir < 0) && (rect.position.x > xCollisionCheckPos))) {
+		if (((wallFaceDir >= 0.0f) && (rect.position.x < xCollisionCheckPos))
+			|| ((wallFaceDir < 0.0f) && (rect.position.x > xCollisionCheckPos))) {
 			result.time = 0.0f;
 			Collision rectCollision = Collision();
 			rectCollision.side = Overlap;
@@ -65,8 +65,8 @@ namespace tl
 		}
 
 		// Check if rect is moving toward the wall face
-		if (rect.velocity.x >= 0 && wallFaceDir >= 0) return result;
-		if (rect.velocity.x <= 0 && wallFaceDir < 0) return result;
+		if (rect.velocity.x >= 0 && wallFaceDir >= 0.0f) return result;
+		if (rect.velocity.x <= 0 && wallFaceDir < 0.0f) return result;
 
 		// If the rect is moving toward the wall face, check for collision between ball and topside of wall
 		float tCollision = (xCollisionCheckPos - rect.position.x) / rect.velocity.x;
@@ -74,7 +74,7 @@ namespace tl
 		{
 			result.time = tCollision;
 			Collision rectCollision = Collision();
-			rectCollision.side = (wallFaceDir < 0) ? Top : Bottom;
+			rectCollision.side = (wallFaceDir < 0.0f) ? Top : Bottom;
 			float yCollisionPos = rect.position.y + (tCollision * rect.velocity.y);
 			rectCollision.position = Vec2<float> { xCollisionCheckPos, yCollisionPos };
 			result.collisions[0] = rectCollision;
@@ -113,21 +113,21 @@ namespace tl
 		// 1. Top/bottom side
 		CollisionSide verCollisionResult = None;
 		float yCollisionCheckPos = 0.0f;
-		if (movingRectVelocityB.y > 0)
+		if (movingRectVelocityB.y > 0.0f)
 		{
 			yCollisionCheckPos = blockBottomSide;
 			verCollisionResult = Bottom;
 		}
-		if (movingRectVelocityB.y < 0)
+		if (movingRectVelocityB.y < 0.0f)
 		{
 			yCollisionCheckPos = blockTopSide;
 			verCollisionResult = Top;
 		}
 
-		if (movingRectVelocityB.y != 0)
+		if (movingRectVelocityB.y != 0.0f)
 		{
 			float tYCollision = (yCollisionCheckPos - movingRectPositionB.y) / movingRectVelocityB.y;
-			if (tYCollision >= 0)
+			if (tYCollision >= 0.0f)
 			{
 				float ballXPosAtCollision = movingRectPositionB.x + (tYCollision * movingRectVelocityB.x);
 				if (ballXPosAtCollision >= blockLeftSide && ballXPosAtCollision <= blockRightSide && tYCollision < maxCollisionTime)
@@ -145,21 +145,21 @@ namespace tl
 		// 2. Left/right side, 
 		CollisionSide horCollisionResult = None;
 		float xCollisionCheckPos = 0.0f;
-		if (movingRectVelocityB.x > 0)
+		if (movingRectVelocityB.x > 0.0f)
 		{
 			xCollisionCheckPos = blockLeftSide;
 			horCollisionResult = Left;
 		}
-		if (movingRectVelocityB.x < 0)
+		if (movingRectVelocityB.x < 0.0f)
 		{
 			xCollisionCheckPos = blockRightSide;
 			horCollisionResult = Right;
 		}
 
-		if (movingRectVelocityB.x != 0)
+		if (movingRectVelocityB.x != 0.0f)
 		{
 			float tXCollision = (xCollisionCheckPos - movingRectPositionB.x) / movingRectVelocityB.x;
-			if (tXCollision >= 0)
+			if (tXCollision >= 0.0f)
 			{
 				float ballYPosAtCollision = movingRectPositionB.y + (tXCollision * movingRectVelocityB.y);
 				if (ballYPosAtCollision >= blockBottomSide && ballYPosAtCollision <= blockTopSide && tXCollision < maxCollisionTime)
