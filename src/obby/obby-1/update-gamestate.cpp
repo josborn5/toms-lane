@@ -140,12 +140,17 @@ static void UpdateGameState(
 		Block block = state->blocks[j];
 		if (!block.exists) continue;
 		tl::CollisionResult collisionResult = tl::CheckCollisionBetweenRects(block, currentPlayerState, minCollisionTime);
-		if (collisionResult.collisions[1].side != tl::None)
+		if (collisionResult.collisions[1].side == tl::Top)
 		{
 			minCollisionTime = collisionResult.time;
 			collisionSide = collisionResult.collisions[1].side;
 			currentPlayerState.position = collisionResult.collisions[1].position;
 			isBlockCheckpoint = block.isCheckpoint;
+			state->blocks[j].color = 0xAA0000;
+		}
+		else
+		{
+			state->blocks[j].color = 0xAAAAAA;
 		}
 	}
 
