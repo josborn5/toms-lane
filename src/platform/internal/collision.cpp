@@ -130,7 +130,7 @@ namespace tl
 			if (tYCollision >= 0.0f)
 			{
 				float ballXPosAtCollision = movingRectPositionB.x + (tYCollision * movingRectVelocityB.x);
-				if (ballXPosAtCollision >= blockLeftSide && ballXPosAtCollision <= blockRightSide && tYCollision < maxCollisionTime)
+				if (ballXPosAtCollision >= blockLeftSide && ballXPosAtCollision <= blockRightSide && tYCollision <= maxCollisionTime)
 				{
 					result.time = tYCollision;
 					Collision movingRect = Collision();
@@ -162,7 +162,7 @@ namespace tl
 			if (tXCollision >= 0.0f)
 			{
 				float ballYPosAtCollision = movingRectPositionB.y + (tXCollision * movingRectVelocityB.y);
-				if (ballYPosAtCollision >= blockBottomSide && ballYPosAtCollision <= blockTopSide && tXCollision < maxCollisionTime)
+				if (ballYPosAtCollision >= blockBottomSide && ballYPosAtCollision <= blockTopSide && tXCollision <= maxCollisionTime)
 				{
 					result.time = tXCollision;
 					Collision movingRect = Collision();

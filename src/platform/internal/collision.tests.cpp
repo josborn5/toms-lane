@@ -22,15 +22,14 @@ const float topWall = -1.0f;
 #define blockAboveOrigin Vec2<float> { 0.0f, 4.0f }
 #define blockBelowOrigin Vec2<float> { 0.0f, -4.0f }
 
-void RunCheckStaticAndMovingRectCollisionTests(
+void RunCheckStaticAndMovingRectCollisionTestsWithTime(
 	Vec2<float> bPosition0,
 	Vec2<float> bVelocity,
 	float expectedCollisionTime,
 	CollisionSide expectedCollisionResult,
-	Vec2<float> expectedCollisionPosition)
+	Vec2<float> expectedCollisionPosition,
+	float collisionTime)
 {
-	float collisionTime = originalCollisionTime;
-
 	Rect<float> aRect;
 	aRect.halfSize = oneByOneHalfSize;
 	aRect.position = originPosition;
@@ -60,6 +59,23 @@ void RunCheckStaticAndMovingRectCollisionTests(
 		assert(result.collisions[0].position.x == expectedCollisionPosition.x);
 		assert(result.collisions[0].position.y == expectedCollisionPosition.y);
 	}
+}
+
+void RunCheckStaticAndMovingRectCollisionTests(
+	Vec2<float> bPosition0,
+	Vec2<float> bVelocity,
+	float expectedCollisionTime,
+	CollisionSide expectedCollisionResult,
+	Vec2<float> expectedCollisionPosition)
+{
+	RunCheckStaticAndMovingRectCollisionTestsWithTime(
+		bPosition0,
+		bVelocity,
+		expectedCollisionTime,
+		expectedCollisionResult,
+		expectedCollisionPosition,
+		originalCollisionTime
+	);
 }
 
 void RunCheckCollisionBetweenMovingRectsTests(Vec2<float> aVelocity, Vec2<float> bPosition0, Vec2<float> bVelocity, float expectedCollisionTime, CollisionSide expectedCollisionResult, Vec2<float> expectedCollisionPosition)
@@ -150,19 +166,19 @@ void RunCollisionTests()
 	*/
 
 	/* A <--B--> Right Hand Side collisions */
-	// collision on x-axis
+	printf("\n// collision on x-axis\n");
 	RunCheckStaticAndMovingRectCollisionTests(blockRightOfOrigin, movingLeft, 1, Right, Vec2<float> { 2.0f, 0.0f });
 
-	// No collision on x-axis when moving too slow to collide before collision time boundary
-	RunCheckStaticAndMovingRectCollisionTests(blockRightOfOrigin, Vec2<float> { -0.20000001f, 0.0f }, 0.0f, None, Vec2<float> { 4.0f, 0.0f });
+	printf("\n// No collision on x-axis when moving too slow to collide before collision time boundary\n");
+	RunCheckStaticAndMovingRectCollisionTests(blockRightOfOrigin, Vec2<float> { -0.19999998f, 0.0f }, 0.0f, None, Vec2<float> { 4.0f, 0.0f });
 
-	// Collision on x-axis when moving slow to collide on collision time
+	printf("\n// Collision on x-axis when moving slow to collide on collision time\n");
 	RunCheckStaticAndMovingRectCollisionTests(blockRightOfOrigin, Vec2<float> { -0.20000002f, 0.0f }, 9.99999905f, Right, Vec2<float> { 2.0f, 0.0f });
 
-	// No collision on x axis when moving away from each other
+	printf("\n// No collision on x axis when moving away from each other\n");
 	RunCheckStaticAndMovingRectCollisionTests(blockRightOfOrigin, movingRight, 0.0f, None, Vec2<float> { 4.0f, 0.0f });
 
-	// Collision on x axis when moving toward each other off center at boundary
+	printf("\n// Collision on x axis when moving toward each other off center at boundary\n");
 	RunCheckStaticAndMovingRectCollisionTests(Vec2<float> { 4.0f, 2.0f }, movingLeft, 1, Right, Vec2<float> { 2.0f, 2.0f });
 
 	// No Collision on x axis when moving toward each other off center at boundary
@@ -179,8 +195,8 @@ void RunCollisionTests()
 	// collision on x-axis
 	RunCheckStaticAndMovingRectCollisionTests(blockLeftOfOrigin, movingRight, 1, Left, Vec2<float> { -2.0f, 0.0f });
 
-	// No collision on x-axis when moving too slow to collide before collision time boundary
-	RunCheckStaticAndMovingRectCollisionTests(blockLeftOfOrigin, Vec2<float> { 0.20000001f, 0.0f }, 0.0f, None, Vec2<float> { -4.0f, 0.0f });
+	printf("\n// No collision on x-axis when moving too slow to collide before collision time boundary\n");
+	RunCheckStaticAndMovingRectCollisionTests(blockLeftOfOrigin, Vec2<float> { 0.19999999f, 0.0f }, 0.0f, None, Vec2<float> { -4.0f, 0.0f });
 
 	// Collision on x-axis when moving slow to collide on collision time
 	RunCheckStaticAndMovingRectCollisionTests(blockLeftOfOrigin, Vec2<float> { 0.20000002f, 0.0f }, 9.99999905f, Left, Vec2<float> { -2.0f, 0.0f });
@@ -211,8 +227,8 @@ void RunCollisionTests()
 	// collision on y-axis
 	RunCheckStaticAndMovingRectCollisionTests(blockBelowOrigin, movingUp, 1, Bottom, Vec2<float> { 0.0f, -2.0f });
 
-	// No collision on y-axis when moving too slow to collide before collision time boundary
-	RunCheckStaticAndMovingRectCollisionTests(blockBelowOrigin, Vec2<float> { 0.0f, 0.20000001f }, 0.0f, None, Vec2<float> { 0.0f, -4.0f });
+	printf("\n// No collision on y-axis when moving too slow to collide before collision time boundary\n");
+	RunCheckStaticAndMovingRectCollisionTests(blockBelowOrigin, Vec2<float> { 0.0f, 0.19999999f }, 0.0f, None, Vec2<float> { 0.0f, -4.0f });
 
 	// Collision on y-axis when moving slow to collide on collision time
 	RunCheckStaticAndMovingRectCollisionTests(blockBelowOrigin, Vec2<float> { 0.0f, 0.20000002f }, 9.99999905f, Bottom, Vec2<float> { 0.0f, -2.0f });
@@ -243,8 +259,8 @@ void RunCollisionTests()
 	// collision on y-axis
 	RunCheckStaticAndMovingRectCollisionTests(blockAboveOrigin, movingDown, 1, Top, Vec2<float> { 0.0f, 2.0f });
 
-	// No collision on y-axis when moving too slow to collide before collision time boundary
-	RunCheckStaticAndMovingRectCollisionTests(blockAboveOrigin, Vec2<float> { 0.0f, -0.20000001f }, 0.0f, None, Vec2<float> { 0.0f, 4.0f });
+	printf("\n// No collision on y-axis when moving too slow to collide before collision time boundary\n");
+	RunCheckStaticAndMovingRectCollisionTests(blockAboveOrigin, Vec2<float> { 0.0f, -0.19999999f }, 0.0f, None, Vec2<float> { 0.0f, 4.0f });
 
 	// Collision on y-axis when moving slow to collide on collision time
 	RunCheckStaticAndMovingRectCollisionTests(blockAboveOrigin, Vec2<float> { 0.0f, -0.20000002f }, 9.99999905f, Top, Vec2<float> { 0.0f, 2.0f });
@@ -261,7 +277,10 @@ void RunCollisionTests()
 	// Collision when already touching and moving toward each other
 	RunCheckStaticAndMovingRectCollisionTests(Vec2<float> { 0.0f, 2.0f }, movingDown, 0.0f, Top, Vec2<float> { 0.0f, 2.0f });
 
-	// No collision when already touching and moving away from each other
+	printf("\n// Collision when already touching and moving toward each other and zero min collision time\n");
+	RunCheckStaticAndMovingRectCollisionTestsWithTime(Vec2<float> { 0.0f, 2.0f }, movingDown, 0.0f, Top, Vec2<float> { 0.0f, 2.0f }, 0.0f);
+
+	printf("\n// No collision when already touching and moving away from each other\n");
 	RunCheckStaticAndMovingRectCollisionTests(Vec2<float> { 0.0f, 2.0f }, movingUp, 0.0f, None, Vec2<float> { 0.0f, 2.0f });
 
 	/*
