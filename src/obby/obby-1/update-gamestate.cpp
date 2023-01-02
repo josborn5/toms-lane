@@ -146,7 +146,7 @@ static void UpdateGameState(
 		tl::CollisionResult collisionResult = tl::CheckCollisionBetweenRects(block, currentPlayerState, minCollisionTime);
 		if (collisionResult.collisions[1].side == tl::Top)
 		{
-			// minCollisionTime = collisionResult.time;
+			minCollisionTime = collisionResult.time;
 			collisionSide = collisionResult.collisions[1].side;
 			currentPlayerState.position = collisionResult.collisions[1].position;
 			isBlockCheckpoint = block.isCheckpoint;
