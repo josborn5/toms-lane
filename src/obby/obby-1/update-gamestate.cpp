@@ -126,54 +126,22 @@ static void UpdateGameState(
 	// Calculate velocity to apply to current player state
 	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(input, state->player.velocity, dt);
 
-	// Check for collisions based on the calculated velocity and current player position
-	float minCollisionTime = dt;
-
-	// check for collision between player and blocks
-	tl::CollisionSide collisionSide = tl::None;
 	tl::Rect<float> currentPlayerState = CopyRect(state->player);
 	currentPlayerState.velocity = currentPlayerVelocity;
 
-	bool isBlockCheckpoint = false;
-	for (int j = 0; j < BLOCK_ARRAY_SIZE; j += 1)
-	{
-		state->blocks[j].color = (state->blocks[j].isCheckpoint) ? 0xAA5555 : 0xAAAAAA;
-	}
-	for (int j = 0; j < BLOCK_ARRAY_SIZE; j += 1)
-	{
-		Block block = state->blocks[j];
-		if (!block.exists) continue;
-		tl::CollisionResult collisionResult = tl::CheckCollisionBetweenRects(block, currentPlayerState, minCollisionTime);
-		if (collisionResult.collisions[1].side == tl::Top)
-		{
-			minCollisionTime = collisionResult.time;
-			collisionSide = collisionResult.collisions[1].side;
-			currentPlayerState.position = collisionResult.collisions[1].position;
-			isBlockCheckpoint = block.isCheckpoint;
-			state->blocks[j].color = 0xAA0000;
-		}
-	}
+	// Check for collisions based on the calculated velocity and current player position
+	BlockCollisionResult blockCollisionResult = GetBlockCollisionResult(
+		state->blocks,
+		currentPlayerState,
+		state->blockCount,
+		dt
+	);
 
-	float fontSize = 16.0f;
-	float infoHeight = 4.0f * fontSize;
-	tl::Rect<float> charFoot;
-	charFoot.position = { 500.0f, infoHeight };
-	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
-	tl::DrawAlphabetCharacters(renderBuffer, "COL", charFoot, 0x999999);
-	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, collisionSide, charFoot, 0x999999);
-
-	if (currentPlayerState.velocity.x <0)
-	{
-		int test=-8;
-		test++;
-	}
-
-	if (collisionSide == tl::Top || collisionSide == tl::Bottom)
+	if (blockCollisionResult.south.any)
 	{
 		currentPlayerState.velocity.y = 0.0f;
 
-		if (isBlockCheckpoint)
+		if (blockCollisionResult.south.isCheckpoint)
 		{
 			int nextlevel = state->level += 1;
 			StartLevel(nextlevel, pixelRect);

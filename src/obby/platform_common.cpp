@@ -1,4 +1,5 @@
 #include "../platform/toms-lane-platform.hpp"
+#include "./platform_common.hpp"
 
 static bool IsReleased(const tl::Input &input, int button)
 {
@@ -131,4 +132,70 @@ tl::Vec2<float> GetPlayerStartPosition(Block* block, int arraySize)
 	}
 
 	return tl::Vec2<float> { 0.0f, 0.0f };
+}
+
+static void UpdateBlockCollision(
+	BlockCollision& toUpdate,
+	const Block& block,
+	float time
+) {
+	if (toUpdate.time > time)
+	{
+		toUpdate.any = true;
+		toUpdate.time = time;
+		toUpdate.isCheckpoint = block.isCheckpoint;
+	}
+	else if (toUpdate.time == time)
+	{
+		toUpdate.isCheckpoint = (toUpdate.isCheckpoint) ? true : block.isCheckpoint;
+	}
+}
+
+BlockCollisionResult GetBlockCollisionResult(
+	Block* blocks,
+	tl::Rect<float>& currentPlayerState,
+	int blockCount,
+	float dt
+) {
+	BlockCollisionResult blockCollisionResult;
+
+	BlockCollision north;
+	BlockCollision south;
+	BlockCollision east;
+	BlockCollision west;
+
+	float minCollisionTime = dt;
+
+	for (int j = 0; j < blockCount; j += 1)
+	{
+		blocks[j].color = (blocks[j].isCheckpoint) ? 0xAA5555 : 0xAAAAAA;
+	}
+	for (int j = 0; j < blockCount; j += 1)
+	{
+		Block block = blocks[j];
+		if (!block.exists) continue;
+		tl::CollisionResult collisionResult = tl::CheckCollisionBetweenRects(block, currentPlayerState, minCollisionTime);
+		
+		switch (collisionResult.collisions[1].side)
+		{
+			case tl::Top:
+				minCollisionTime = collisionResult.time;
+				currentPlayerState.position = collisionResult.collisions[1].position;
+				blocks[j].color = 0xAA0000;
+
+				UpdateBlockCollision(
+					south,
+					block,
+					minCollisionTime
+				);
+				break;
+		}
+	}
+
+	if (south.time <= minCollisionTime)
+	{
+		blockCollisionResult.south = south;
+	}
+
+	return blockCollisionResult;
 }
