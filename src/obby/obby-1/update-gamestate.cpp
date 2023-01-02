@@ -125,7 +125,6 @@ static void UpdateGameState(
 
 	// Calculate velocity to apply to current player state
 	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(input, state->player.velocity, dt);
-
 	tl::Rect<float> currentPlayerState = CopyRect(state->player);
 	currentPlayerState.velocity = currentPlayerVelocity;
 

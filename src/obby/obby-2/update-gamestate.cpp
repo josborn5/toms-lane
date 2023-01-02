@@ -114,50 +114,28 @@ static void UpdateGameState(
 
 	// Calculate velocity to apply to current player state
 	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(input, state->player.velocity, dt);
-
-	// Check for collisions based on the calculated velocity and current player position
-	float minCollisionTime = dt;
-
-	// check for collision between player and blocks
-	tl::CollisionSide collisionSide = tl::None;
 	tl::Rect<float> currentPlayerState = CopyRect(state->player);
 	currentPlayerState.velocity = currentPlayerVelocity;
 
-	bool isBlockCheckpoint = false;
-	for (int j = 0; j < BLOCK_ARRAY_SIZE; j += 1)
-	{
-		Block block = state->blocks[j];
-		if (!block.exists) continue;
-		tl::CollisionResult collisionResult = tl::CheckCollisionBetweenRects(block, currentPlayerState, minCollisionTime);
-		if (collisionResult.collisions[1].side != tl::None)
-		{
-			minCollisionTime = collisionResult.time;
-			collisionSide = collisionResult.collisions[1].side;
-			currentPlayerState.position = collisionResult.collisions[1].position;
-			isBlockCheckpoint = block.isCheckpoint;
-			state->collision = collisionSide;
-		}
-	}
+	// Check for collisions based on the calculated velocity and current player position
+	BlockCollisionResult blockCollisionResult = GetBlockCollisionResult(
+		state->blocks,
+		currentPlayerState,
+		state->blockCount,
+		dt
+	);
 
-	if (collisionSide == tl::Top)
+	if (blockCollisionResult.south.any)
 	{
 		currentPlayerState.velocity.y = 0.0f;
-	}
-	else if (collisionSide == tl::Left || collisionSide == tl::Right)
-	{
-		currentPlayerState.velocity.x = 0.0f;
-	}
 
-
-	if (isBlockCheckpoint)
-	{
-		int nextLevel = state->level += 1;
-		StartLevel(nextLevel, pixelRect);
-		state->player.position.x = state->player.halfSize.x;
-		state->player.position.y = 500;
-		state->player.velocity.x = 0.0f;
-		state->player.velocity.y = 0.0f;
-		return;
+		if (blockCollisionResult.south.isCheckpoint)
+		{
+			int nextlevel = state->level += 1;
+			StartLevel(nextlevel, pixelRect);
+			state->mode = StartingNextLevel;
+			return;
+		}
 	}
 
 	tl::Rect<float> newPlayerState = CopyRect(currentPlayerState);
