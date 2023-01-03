@@ -141,7 +141,7 @@ static void Win32_ProcessPendingMessages(Input* input)
 		{
 			case WM_SYSKEYDOWN:
 			case WM_SYSKEYUP:
-			case WM_KEYDOWN:
+			case WM_KEYDOWN: // https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#keystroke-messages
 			case WM_KEYUP:
 			{
 				uint32_t vKCode = (uint32_t)Message.wParam;
