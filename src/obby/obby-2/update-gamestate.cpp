@@ -1,7 +1,7 @@
 #include "../game.hpp"
 #include "../../platform/toms-lane-platform.hpp"
 
-GameState gamestate = {0};
+GameState gamestate = {};
 
 tl::Vec2<float> worldPosition = ZERO_VECTOR;
 tl::Vec2<float> worldHalfSize = ZERO_VECTOR;

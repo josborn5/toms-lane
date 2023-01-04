@@ -1,7 +1,7 @@
 #include "../game.hpp"
 #include "../../platform/toms-lane-platform.hpp"
 
-GameState gamestate = {0};
+GameState gamestate = {};
 
 tl::Vec2<float> worldPosition = ZERO_VECTOR;
 tl::Vec2<float> worldHalfSize = ZERO_VECTOR;
@@ -66,6 +66,9 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	state->player.velocity.x = 0.0f;
 	state->player.velocity.y = 0.0f;
 
+	state->player.availableJumps = 2;
+	state->player.inJump = false;
+
 	state->score = 0;
 	state->lives = 3;
 	state->level = 1;
@@ -73,8 +76,8 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 }
 
 static tl::Vec2<float> GetPlayerVelocity(
-	const tl::Input &input,
-	const tl::Vec2<float> &prevVelocity,
+	const tl::Input& input,
+	Player& player,
 	float dt
 )
 {
@@ -91,11 +94,18 @@ static tl::Vec2<float> GetPlayerVelocity(
 	}
 
 	const float verticalAcceleration = -1.0f;
-	newVelocity.y = prevVelocity.y + (verticalAcceleration / dt);
+	newVelocity.y = player.velocity.y + (verticalAcceleration / dt);
 
-	if (IsPressed(input, tl::KEY_SPACE))
+	bool spaceIsDown = IsPressed(input, tl::KEY_SPACE);
+	if (spaceIsDown && !player.inJump && player.availableJumps > 0)
 	{
-		newVelocity.y = 600.0f;
+		newVelocity.y = 900.0f;
+		player.inJump = true;
+		player.availableJumps -= 1;
+	}
+	else if (!spaceIsDown && player.inJump)
+	{
+		player.inJump = false;
 	}
 
 	return newVelocity;
@@ -124,7 +134,7 @@ static void UpdateGameState(
 	}
 
 	// Calculate velocity to apply to current player state
-	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(input, state->player.velocity, dt);
+	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(input, state->player, dt);
 	tl::Rect<float> currentPlayerState = CopyRect(state->player);
 	currentPlayerState.velocity = currentPlayerVelocity;
 
@@ -139,6 +149,7 @@ static void UpdateGameState(
 	if (blockCollisionResult.south.any)
 	{
 		currentPlayerState.velocity.y = 0.0f;
+		state->player.availableJumps = 2;
 
 		if (blockCollisionResult.south.isCheckpoint)
 		{

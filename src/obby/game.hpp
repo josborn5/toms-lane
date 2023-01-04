@@ -43,9 +43,15 @@ struct Block : tl::Rect<float> {
 	BlockType type;
 };
 
+struct Player : tl::Rect<float>
+{
+	int availableJumps;
+	bool inJump;
+};
+
 struct GameState
 {
-	tl::Rect<float> player;
+	Player player;
 	Block blocks[BLOCK_ARRAY_SIZE];
 	int level;
 	int score;
