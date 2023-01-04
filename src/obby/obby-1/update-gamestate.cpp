@@ -76,37 +76,6 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	return StartLevel(state->level, pixelRect);
 }
 
-static tl::Vec2<float> GetPlayerVelocity(
-	const tl::Input& input,
-	Player& player,
-	float dt
-)
-{
-	tl::Vec2<float> newVelocity = {0};
-
-	UpdatePlayerMovement(input, player.movement);
-
-	const float horizontalDeltaPosition = 5.0f;
-	if (player.movement.left)
-	{
-		newVelocity.x = -horizontalDeltaPosition / dt;
-	}
-	if (player.movement.right)
-	{
-		newVelocity.x = horizontalDeltaPosition / dt;
-	}
-
-	const float verticalAcceleration = -1.0f;
-	newVelocity.y = player.velocity.y + (verticalAcceleration / dt);
-
-	if (player.movement.inJump && !player.movement.wasInJump)
-	{
-		newVelocity.y = 900.0f;
-	}
-
-	return newVelocity;
-}
-
 static void UpdateGameState(
 	GameState *state,
 	tl::Vec2<int> pixelRect,
@@ -129,8 +98,17 @@ static void UpdateGameState(
 		return;
 	}
 
+	// Translate input to player movement
+	UpdatePlayerMovement(input, state->player.movement);
+
 	// Calculate velocity to apply to current player state
-	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(input, state->player, dt);
+	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(
+		300.0f, // horizontalSpeed
+		900.0f, // jumpSpeed
+		-1.0f, // gravity
+		state->player,
+		dt
+	);
 	tl::Rect<float> currentPlayerState = CopyRect(state->player);
 	currentPlayerState.velocity = currentPlayerVelocity;
 

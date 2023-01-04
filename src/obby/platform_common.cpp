@@ -151,6 +151,53 @@ static void UpdateBlockCollision(
 	}
 }
 
+void UpdatePlayerMovement(
+	const tl::Input& input,
+	PlayerMovement& player
+) {
+	player.left = IsDown(input, tl::KEY_LEFT);
+	player.right = IsDown(input, tl::KEY_RIGHT);
+
+	bool spaceIsDown = IsPressed(input, tl::KEY_SPACE);
+	if (spaceIsDown &&
+		!player.inJump &&
+		!player.wasInJump &&
+		player.availableJumps > 0
+	) {
+		player.inJump = true;
+		player.availableJumps -= 1;
+	}
+	else if (player.inJump && !player.wasInJump)
+	{
+		player.wasInJump = true;
+	}
+	else if (!spaceIsDown && player.inJump)
+	{
+		player.inJump = false;
+		player.wasInJump = false;
+	}
+}
+
+tl::Vec2<float> GetPlayerVelocity(
+	float horizontalSpeed,
+	float jumpSpeed,
+	float gravity,
+	const Player& player,
+	float dt
+) {
+	tl::Vec2<float> newVelocity;
+	newVelocity.x = (player.movement.left)
+		? -horizontalSpeed
+		: (player.movement.right)
+			? horizontalSpeed
+			: 0.0f;
+	newVelocity.y = (player.movement.inJump && !player.movement.wasInJump)
+		? jumpSpeed
+		: player.velocity.y + (gravity / dt);
+
+	return newVelocity;
+}
+
 BlockCollisionResult GetBlockCollisionResult(
 	Block* blocks,
 	tl::Rect<float>& currentPlayerState,
