@@ -43,10 +43,18 @@ struct Block : tl::Rect<float> {
 	BlockType type;
 };
 
-struct Player : tl::Rect<float>
+struct PlayerMovement
 {
+	bool left;
+	bool right;
 	int availableJumps;
 	bool inJump;
+	bool wasInJump;
+};
+
+struct Player : tl::Rect<float>
+{
+	PlayerMovement movement;
 };
 
 struct GameState

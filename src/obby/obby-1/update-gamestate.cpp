@@ -66,8 +66,9 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	state->player.velocity.x = 0.0f;
 	state->player.velocity.y = 0.0f;
 
-	state->player.availableJumps = 2;
-	state->player.inJump = false;
+	state->player.movement.availableJumps = 2;
+	state->player.movement.inJump = false;
+	state->player.movement.wasInJump = false;
 
 	state->score = 0;
 	state->lives = 3;
@@ -83,12 +84,14 @@ static tl::Vec2<float> GetPlayerVelocity(
 {
 	tl::Vec2<float> newVelocity = {0};
 
+	UpdatePlayerMovement(input, player.movement);
+
 	const float horizontalDeltaPosition = 5.0f;
-	if (IsDown(input, tl::KEY_LEFT))
+	if (player.movement.left)
 	{
 		newVelocity.x = -horizontalDeltaPosition / dt;
 	}
-	if (IsDown(input, tl::KEY_RIGHT))
+	if (player.movement.right)
 	{
 		newVelocity.x = horizontalDeltaPosition / dt;
 	}
@@ -96,16 +99,9 @@ static tl::Vec2<float> GetPlayerVelocity(
 	const float verticalAcceleration = -1.0f;
 	newVelocity.y = player.velocity.y + (verticalAcceleration / dt);
 
-	bool spaceIsDown = IsPressed(input, tl::KEY_SPACE);
-	if (spaceIsDown && !player.inJump && player.availableJumps > 0)
+	if (player.movement.inJump && !player.movement.wasInJump)
 	{
 		newVelocity.y = 900.0f;
-		player.inJump = true;
-		player.availableJumps -= 1;
-	}
-	else if (!spaceIsDown && player.inJump)
-	{
-		player.inJump = false;
 	}
 
 	return newVelocity;
@@ -149,7 +145,7 @@ static void UpdateGameState(
 	if (blockCollisionResult.south.any)
 	{
 		currentPlayerState.velocity.y = 0.0f;
-		state->player.availableJumps = 2;
+		state->player.movement.availableJumps = 2;
 
 		if (blockCollisionResult.south.isCheckpoint)
 		{
