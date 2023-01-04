@@ -60,39 +60,14 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	state->player.velocity.x = 0.0f;
 	state->player.velocity.y = 0.0f;
 
+	state->player.movement.availableJumps = 2;
+	state->player.movement.inJump = false;
+	state->player.movement.wasInJump = false;
+
 	state->score = 0;
 	state->lives = 3;
 	state->level = 1;
 	return StartLevel(state->level, pixelRect);
-}
-
-static tl::Vec2<float> GetPlayerVelocity(
-	const tl::Input &input,
-	const tl::Vec2<float> &prevVelocity,
-	float dt
-)
-{
-	tl::Vec2<float> newVelocity = {0};
-
-	const float horizontalDeltaPosition = 10.0f;
-	if (IsDown(input, tl::KEY_LEFT))
-	{
-		newVelocity.x = -horizontalDeltaPosition / dt;
-	}
-	if (IsDown(input, tl::KEY_RIGHT))
-	{
-		newVelocity.x = horizontalDeltaPosition / dt;
-	}
-
-	const float verticalAcceleration = -3.0f;
-	newVelocity.y = prevVelocity.y + (verticalAcceleration / dt);
-
-	if (IsPressed(input, tl::KEY_SPACE))
-	{
-		newVelocity.y = 600.0f;
-	}
-
-	return newVelocity;
 }
 
 static void UpdateGameState(
@@ -112,8 +87,17 @@ static void UpdateGameState(
 		return;
 	}
 
+	// Translate input to player movement
+	UpdatePlayerMovement(input, state->player.movement);
+
 	// Calculate velocity to apply to current player state
-	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(input, state->player.velocity, dt);
+	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(
+		400.0f, // horizontalSpeed
+		1600.0f, // jumpSpeed
+		-3.0f, // gravity
+		state->player,
+		dt
+	);
 	tl::Rect<float> currentPlayerState = CopyRect(state->player);
 	currentPlayerState.velocity = currentPlayerVelocity;
 
@@ -128,6 +112,7 @@ static void UpdateGameState(
 	if (blockCollisionResult.south.any)
 	{
 		currentPlayerState.velocity.y = 0.0f;
+		state->player.movement.availableJumps = 2;
 
 		if (blockCollisionResult.south.isCheckpoint)
 		{
