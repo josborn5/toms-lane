@@ -30,11 +30,16 @@ int PopulateBlocksForLevel(
 
 static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
 {
-	return PopulateBlocksForLevel(
+	int returnVal = PopulateBlocksForLevel(
 		newLevel,
 		gamestate,
 		pixelRect
 	);
+
+	tl::Vec2<float> playerStartPosition = GetPlayerStartPosition(gamestate.blocks, gamestate.blockCount);
+	gamestate.player.position = playerStartPosition;
+
+	return returnVal;
 }
 
 static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect, const tl::Input &input)

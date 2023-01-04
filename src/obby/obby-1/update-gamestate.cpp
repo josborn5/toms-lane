@@ -37,7 +37,6 @@ static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
 	);
 
 	tl::Vec2<float> playerStartPosition = GetPlayerStartPosition(gamestate.blocks, gamestate.blockCount);
-
 	gamestate.player.position = playerStartPosition;
 
 	return returnVal;
