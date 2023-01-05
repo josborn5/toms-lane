@@ -7,12 +7,6 @@ static bool IsReleased(const tl::Input &input, int button)
 	return isReleased;
 }
 
-static bool IsPressed(const tl::Input &input, int button)
-{
-	bool isReleased = input.buttons[button].isDown && !input.buttons[button].wasDown;
-	return isReleased;
-}
-
 static bool IsDown(const tl::Input &input, int button)
 {
 	bool isDown = input.buttons[button].isDown;
@@ -158,7 +152,7 @@ void UpdatePlayerMovement(
 	player.left = IsDown(input, tl::KEY_LEFT);
 	player.right = IsDown(input, tl::KEY_RIGHT);
 
-	bool spaceIsDown = IsPressed(input, tl::KEY_SPACE);
+	bool spaceIsDown = IsDown(input, tl::KEY_SPACE);
 	if (spaceIsDown &&
 		!player.inJump &&
 		!player.wasInJump &&
