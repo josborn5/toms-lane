@@ -9,8 +9,7 @@ tl::Matrix4x4<float> projectionMatrix;
 
 float theta = 0.0f;
 float cameraYaw = 0.0f;
-
-bool isTeapot = true;
+float positionIncrement = 1.0f;
 
 tl::Vec3<float> max = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 tl::Vec3<float> min = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
@@ -63,11 +62,11 @@ template float Clamp(float min, float value, float max);
 
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
-	tl::ReadObjFileToVec4("teapot.obj", mesh.triangles);
-	
-	// Using a clockwise winding convention
-	if (!isTeapot)
+	// EXE must be run as admin in order to have read permission for the file. need to figure out how to fix this.
+	if (!tl::ReadObjFileToVec4("./teapot.obj", mesh.triangles))
 	{
+		// Fall back to cube if file cannot be read
+		// Using a clockwise winding convention
 		mesh.triangles = {
 			// SOUTH
 			{ 0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f },
@@ -93,6 +92,7 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 			{ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f },
 			{ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f }
 		};
+		positionIncrement = 0.1f;
 	}
 
 	for (Triangle4d<float> tri : mesh.triangles)
@@ -187,7 +187,23 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 			0x999999
 		);
 
-		// TODO: Plot the max & min x, y, z values of the mesh
+		tl::Rect<float> subtitleCharRect;
+		subtitleCharRect.position = { 100.0f, 250.0f };
+		subtitleCharRect.halfSize = MultiplyVectorByScalar(titleCharRect.halfSize, 0.5f);
+		tl::DrawAlphabetCharacters(
+			renderBuffer,
+			"RUN AS ADMIN FOR TEAPOT",
+			subtitleCharRect,
+			0x999999
+		);
+
+		subtitleCharRect.position.y -= 100.0f;
+		tl::DrawAlphabetCharacters(
+			renderBuffer,
+			"PRESS S TO START",
+			subtitleCharRect,
+			0x999999
+		);
 
 		if (input.buttons[KEY_S].isDown)
 		{
@@ -202,8 +218,6 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		isStarted = false;
 	}
 
-	float positionIncrement = 1.0f;
-	if (!isTeapot) positionIncrement = 0.1f;
 	float yawIncrement = 0.05f;
 
 	// First process any change in yaw and update the camera direction
@@ -233,7 +247,8 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	}
 
 	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced
-	tl::Vec4<float> cameraPositionStrafe = CrossProduct(camera.up, camera.direction);
+	tl::Vec4<float> rawCameraPositionStrafe = CrossProduct(camera.up, camera.direction);
+	tl::Vec4<float> cameraPositionStrafe = MultiplyVectorByScalar(rawCameraPositionStrafe, positionIncrement);
 	if (input.buttons[KEY_LEFT].isDown)
 	{
 		camera.position = SubtractVectors(camera.position, cameraPositionStrafe);
