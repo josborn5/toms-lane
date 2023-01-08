@@ -11,7 +11,7 @@ namespace tl
 	bool ReadObjFileToVec4(std::string const &filename, std::vector<tl::Triangle4d<T>> &triangles)
 	{
 		std::ifstream objFile;
-		objFile.open(filename);
+		objFile.open(filename, std::ios::in);
 		if (!objFile.is_open())
 		{
 			return false;
