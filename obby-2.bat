@@ -1,1 +1,1 @@
-./build-run-obby.bat obby-2
+./compile-run-obby.bat obby-2
