@@ -335,7 +335,8 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		camera.position.x
 	};
 
-	tl::Vec4<float> pointPosition = tl::AddVectors(camera.position, tl::MultiplyVectorByScalar(camera.direction, 50.0f));
+	float pointerScale = 0.1f * (max.z - min.z);
+	tl::Vec4<float> pointPosition = tl::AddVectors(camera.position, tl::MultiplyVectorByScalar(camera.direction, pointerScale));
 	tl::Vec2<float> topDownPointPosition = {
 		pointPosition.z,
 		pointPosition.x
