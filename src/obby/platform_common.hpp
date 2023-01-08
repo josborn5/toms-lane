@@ -21,3 +21,10 @@ BlockCollisionResult GetBlockCollisionResult(
 	const tl::Rect<float>& playerState,
 	float dt
 );
+
+void RenderBlocksAndPlayer(
+	const tl::RenderBuffer& renderBuffer,
+	const tl::Sprite& sprite,
+	const GameState& state,
+	uint32_t playerColor
+);

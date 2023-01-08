@@ -240,3 +240,22 @@ BlockCollisionResult GetBlockCollisionResult(
 
 	return blockCollisionResult;
 }
+
+void RenderBlocksAndPlayer(
+	const tl::RenderBuffer& renderBuffer,
+	const tl::Sprite& sprite,
+	const GameState& state,
+	uint32_t playerColor
+) {
+	// blocks
+	for (int i = 0; i < state.blockCount; i += 1)
+	{
+		Block block = state.blocks[i];
+		if (!block.exists) continue;
+
+		tl::DrawRect(renderBuffer, block.color, block);
+	}
+
+	// player
+	tl::DrawSprite(renderBuffer, sprite, state.player, playerColor);
+}

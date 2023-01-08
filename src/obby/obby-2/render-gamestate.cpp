@@ -133,15 +133,10 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	charFoot.position.y -= fontSize;
 	tl::DrawNumber(renderBuffer, state.collision, charFoot, 0x999999);
 
-	// blocks
-	for (int i = 0; i < BLOCK_ARRAY_SIZE; i += 1)
-	{
-		Block block = state.blocks[i];
-		if (!block.exists) continue;
-
-		tl::DrawRect(renderBuffer, block.color, block);
-	}
-
-	// player
-	tl::DrawSprite(renderBuffer, islaSprite, state.player, playerColor);
+	RenderBlocksAndPlayer(
+		renderBuffer,
+		islaSprite,
+		state,
+		playerColor
+	);
 }
