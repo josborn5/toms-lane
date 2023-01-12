@@ -4,7 +4,7 @@
 
 namespace tl
 {
-	Rect<float> CopyRect(Rect<float> original)
+	Rect<float> CopyRect(const Rect<float>& original)
 	{
 		Rect<float> copy;
 		copy.position = CopyVec2(original.position);

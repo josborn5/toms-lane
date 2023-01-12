@@ -14,7 +14,7 @@ namespace tl
 		Vec2<T> velocity;
 	};
 
-	Rect<float> CopyRect(Rect<float> original);
+	Rect<float> CopyRect(const Rect<float>& original);
 
 	template<typename T>
 	struct Triangle2d
