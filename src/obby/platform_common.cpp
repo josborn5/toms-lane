@@ -131,6 +131,7 @@ tl::Vec2<float> GetPlayerStartPosition(Block* block, int arraySize)
 static void UpdateBlockCollision(
 	BlockCollision& toUpdate,
 	const Block& block,
+	const tl::Vec2<float>& position,
 	float time
 ) {
 	if (toUpdate.time > time)
@@ -138,6 +139,7 @@ static void UpdateBlockCollision(
 		toUpdate.any = true;
 		toUpdate.time = time;
 		toUpdate.isCheckpoint = block.isCheckpoint;
+		toUpdate.position = position;
 	}
 	else if (toUpdate.time == time)
 	{
@@ -221,12 +223,34 @@ BlockCollisionResult GetBlockCollisionResult(
 		{
 			case tl::Top:
 				minCollisionTime = collisionResult.time;
-				currentPlayerState.position = collisionResult.collisions[1].position;
 				blocks[j].color = 0xAA0000;
 
 				UpdateBlockCollision(
 					south,
 					block,
+					collisionResult.collisions[1].position,
+					minCollisionTime
+				);
+				break;
+			case tl::Right:
+				minCollisionTime = collisionResult.time;
+				blocks[j].color = 0xAA0000;
+
+				UpdateBlockCollision(
+					west,
+					block,
+					collisionResult.collisions[1].position,
+					minCollisionTime
+				);
+				break;
+			case tl::Left:
+				minCollisionTime = collisionResult.time;
+				blocks[j].color = 0xAA0000;
+
+				UpdateBlockCollision(
+					east,
+					block,
+					collisionResult.collisions[1].position,
 					minCollisionTime
 				);
 				break;
@@ -236,6 +260,7 @@ BlockCollisionResult GetBlockCollisionResult(
 	if (south.time <= minCollisionTime)
 	{
 		blockCollisionResult.south = south;
+		currentPlayerState.position = south.position;
 	}
 
 	return blockCollisionResult;

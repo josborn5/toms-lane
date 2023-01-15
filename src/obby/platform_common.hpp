@@ -5,6 +5,7 @@ struct BlockCollision
 	bool any = false;
 	bool isCheckpoint = false;
 	float time = MAX_FLOAT;
+	tl::Vec2<float> position;
 };
 
 struct BlockCollisionResult
