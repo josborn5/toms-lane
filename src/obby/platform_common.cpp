@@ -62,8 +62,11 @@ int PopulateBlocksForLevelString(
 	};
 	for (int i = 0; i < gameState.blockCount; i += 1)
 	{
-		endOfContent = (*blockLayout == NULL);
+		ClearBlock(&(gameState.blocks[i]));
+	}
 
+	for (int i = 0; i < gameState.blockCount && !endOfContent; i += 1)
+	{
 		if (*blockLayout == '\n')
 		{
 			blockPosition.x = originalX;
@@ -72,11 +75,7 @@ int PopulateBlocksForLevelString(
 		else
 		{
 			Block* block = &(gameState.blocks[i]);
-			if (endOfContent)
-			{
-				ClearBlock(block);
-			}
-			else if (*blockLayout != ' ')
+			if (*blockLayout != ' ')
 			{
 				block->exists = true;
 				bool isCheckpoint = (*blockLayout == 'c');
@@ -92,10 +91,6 @@ int PopulateBlocksForLevelString(
 						break;
 				}
 			}
-			else
-			{
-				ClearBlock(block);
-			}
 
 			block->halfSize = blockHalfSize;
 			block->position = blockPosition;
@@ -103,10 +98,8 @@ int PopulateBlocksForLevelString(
 			blockPosition.x += blockWidth;
 		}
 
-		if (!endOfContent)
-		{
-			blockLayout++;
-		}
+		blockLayout++;
+		endOfContent = (*blockLayout == NULL);
 	}
 
 	return 0;
