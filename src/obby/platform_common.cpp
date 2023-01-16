@@ -31,6 +31,8 @@ static void ClearBlock(Block* block)
 {
 	block->exists = false;
 	block->color = 0;
+	block->isCheckpoint = false;
+	block->type = Regular;
 }
 
 int PopulateBlocksForLevelString(

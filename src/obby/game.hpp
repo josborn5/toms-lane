@@ -32,6 +32,7 @@ struct Boundary
 
 enum BlockType
 {
+	Regular,
 	Checkpoint,
 	Spawn
 };
