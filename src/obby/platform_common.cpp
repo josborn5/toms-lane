@@ -211,10 +211,6 @@ BlockCollisionResult GetBlockCollisionResult(
 
 	for (int j = 0; j < blockCount; j += 1)
 	{
-		blocks[j].color = (blocks[j].isCheckpoint) ? 0xAA5555 : 0xAAAAAA;
-	}
-	for (int j = 0; j < blockCount; j += 1)
-	{
 		Block block = blocks[j];
 		if (!block.exists) continue;
 		tl::CollisionResult collisionResult = tl::CheckCollisionBetweenRects(block, currentPlayerState, minCollisionTime);
@@ -261,6 +257,18 @@ BlockCollisionResult GetBlockCollisionResult(
 	{
 		blockCollisionResult.south = south;
 		currentPlayerState.position = south.position;
+	}
+
+	if (east.time <= minCollisionTime)
+	{
+		blockCollisionResult.east = east;
+		currentPlayerState.position = east.position;
+	}
+
+	if (west.time <= minCollisionTime)
+	{
+		blockCollisionResult.west = west;
+		currentPlayerState.position = west.position;
 	}
 
 	return blockCollisionResult;

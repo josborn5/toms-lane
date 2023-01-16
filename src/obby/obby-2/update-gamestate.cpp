@@ -106,25 +106,34 @@ static void UpdateGameState(
 	tl::Rect<float> currentPlayerState = CopyRect(state->player);
 	currentPlayerState.velocity = currentPlayerVelocity;
 
-	// Check for collisions based on the calculated velocity and current player position
-	BlockCollisionResult blockCollisionResult = GetBlockCollisionResult(
-		state->blocks,
-		currentPlayerState,
-		state->blockCount,
-		dt
-	);
-
-	if (blockCollisionResult.south.any)
+	float checkTime = dt;
+	while (checkTime > 0)
 	{
-		currentPlayerState.velocity.y = 0.0f;
-		state->player.movement.availableJumps = 2;
+		// Check for collisions based on the calculated velocity and current player position
+		BlockCollisionResult blockCollisionResult = GetBlockCollisionResult(
+			state->blocks,
+			currentPlayerState,
+			state->blockCount,
+			checkTime
+		);
 
-		if (blockCollisionResult.south.isCheckpoint)
+		if (blockCollisionResult.south.any)
 		{
-			int nextlevel = state->level += 1;
-			StartLevel(nextlevel, pixelRect);
-			state->mode = StartingNextLevel;
-			return;
+			checkTime = dt - blockCollisionResult.south.time;
+			currentPlayerState.velocity.y = 0.0f;
+			state->player.movement.availableJumps = 2;
+
+			if (blockCollisionResult.south.isCheckpoint)
+			{
+				int nextlevel = state->level += 1;
+				StartLevel(nextlevel, pixelRect);
+				state->mode = StartingNextLevel;
+				return;
+			}
+		}
+		else
+		{
+			checkTime = -1.0f;
 		}
 	}
 
