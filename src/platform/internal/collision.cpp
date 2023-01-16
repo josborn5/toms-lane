@@ -130,7 +130,8 @@ namespace tl
 			if (tYCollision >= 0.0f)
 			{
 				float ballXPosAtCollision = movingRectPositionB.x + (tYCollision * movingRectVelocityB.x);
-				if (ballXPosAtCollision >= blockLeftSide && ballXPosAtCollision <= blockRightSide && tYCollision <= maxCollisionTime)
+				// TODO: if (ballXPosAtCollision == blockLeftSide || ballXPosAtCollision || blockRightSide) AND (movingRectVelocityB.x == 0.0f) then the moving rect is 'brushing' against the static rect. Need to convey that in the return value somehow.
+				if (ballXPosAtCollision > blockLeftSide && ballXPosAtCollision < blockRightSide && tYCollision <= maxCollisionTime)
 				{
 					result.time = tYCollision;
 					Collision movingRect = Collision();
@@ -162,7 +163,8 @@ namespace tl
 			if (tXCollision >= 0.0f)
 			{
 				float ballYPosAtCollision = movingRectPositionB.y + (tXCollision * movingRectVelocityB.y);
-				if (ballYPosAtCollision >= blockBottomSide && ballYPosAtCollision <= blockTopSide && tXCollision <= maxCollisionTime)
+				// TODO: if (ballYPosAtCollision == blockBottomSide || ballYPosAtCollision == blockTopSide) AND (movingRectVelocityB.y == 0.0f) then the moving rect is 'brushing' against the static rect. Need to convey that in the return value somehow.
+				if (ballYPosAtCollision > blockBottomSide && ballYPosAtCollision < blockTopSide && tXCollision <= maxCollisionTime)
 				{
 					result.time = tXCollision;
 					Collision movingRect = Collision();

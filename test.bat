@@ -10,7 +10,7 @@ mkdir %OUTPUT_DIR%
 pushd %OUTPUT_DIR%
 
 REM https://docs.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-alphabetically
-set COMMON_COMPILER_FLAGS=-MT -nologo -Gm- -GR- -EHa- -Oi -WX -W4 -wd4100 -wd4201 -FC -Z7 /EHsc /O2 -Fm
+set COMMON_COMPILER_FLAGS=-MT -nologo -Gm- -GR- -EHa- -Oi -WX -W4 -wd4100 -wd4201 -FC -Z7 /EHsc -Fm
 
 set PLATFORM=toms-lane-platform
 

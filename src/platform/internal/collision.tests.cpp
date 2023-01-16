@@ -73,8 +73,6 @@ void RunCheckRectAndXLineCollisionTest(
 
 void RunCollisionTests()
 {
-	RunStaticAndMovingRectCollisionTests();
-
 	RunCheckCollisionBetweenMovingRectTests();
 
 	/*
@@ -163,4 +161,6 @@ void RunCollisionTests()
 	 * <--B
 	 */
 	RunCheckRectAndXLineCollisionTest("12", topWall, Vec2<float> { 0.0f, -1.0f }, movingLeft, 0.0f, None, Vec2<float> { 0.0f, -1.0f });
+
+	RunStaticAndMovingRectCollisionTests();
 }

@@ -8,7 +8,7 @@ void CheckStaticAndMovingRectCollisionWithTime(
 {
 	Rect<float> aRect;
 	aRect.halfSize = oneByOneHalfSize;
-	aRect.position = originPosition;
+	aRect.position = Vec2<float> { 0.0f, 0.0f };
 	aRect.velocity = Vec2<float> { 0.0f, 0.0f };
 
 	Rect<float> bRect;
@@ -70,10 +70,10 @@ void RunStaticAndMovingRectCollisionTests()
 	CheckStaticAndMovingRectCollision(blockRightOfOrigin, movingRight, 0.0f, None, Vec2<float> { 4.0f, 0.0f });
 
 	printf("\n// Collision on x axis when moving toward each other off center at boundary\n");
-	CheckStaticAndMovingRectCollision(Vec2<float> { 4.0f, 2.0f }, movingLeft, 1, Right, Vec2<float> { 2.0f, 2.0f });
+	CheckStaticAndMovingRectCollision(Vec2<float> { 4.0f, 1.99f }, movingLeft, 1, Right, Vec2<float> { 2.0f, 1.99f });
 
 	// No Collision on x axis when moving toward each other off center at boundary
-	CheckStaticAndMovingRectCollision(Vec2<float> { 4.0f, 2.000001f }, movingLeft, 0.0f, None, Vec2<float> { 4.0f, 2.000001f });
+	CheckStaticAndMovingRectCollision(Vec2<float> { 4.0f, 2.01f }, movingLeft, 0.0f, None, Vec2<float> { 4.0f, 2.01f });
 
 	// Collision when already touching and moving toward each other
 	CheckStaticAndMovingRectCollision(Vec2<float> { 2.0f, 0.0f }, movingLeft, 0.0f, Right, Vec2<float> { 2.0f, 0.0f });
@@ -99,7 +99,7 @@ void RunStaticAndMovingRectCollisionTests()
 	CheckStaticAndMovingRectCollision(blockLeftOfOrigin, movingRight, 1, Left, Vec2<float> { -2.0f, 0.0f });
 
 	// No Collision on x axis when moving toward each other off center at boundary
-	CheckStaticAndMovingRectCollision(Vec2<float> { -4.0f, 2.000001f }, movingRight, 0.0f, None, Vec2<float> { -4.0f, 2.000001f });
+	CheckStaticAndMovingRectCollision(Vec2<float> { -4.0f, 2.01f }, movingRight, 0.0f, None, Vec2<float> { -4.0f, 2.000001f });
 
 	// Collision when already touching and moving toward each other
 	CheckStaticAndMovingRectCollision(Vec2<float> { -2.0f, 0.0f }, movingRight, 0.0f, Left, Vec2<float> { -2.0f, 0.0f });
@@ -131,7 +131,7 @@ void RunStaticAndMovingRectCollisionTests()
 	CheckStaticAndMovingRectCollision(blockBelowOrigin, movingUp, 1, Bottom, Vec2<float> { 0.0f, -2.0f });
 
 	// No Collision on y axis when moving toward each other off center at boundary
-	CheckStaticAndMovingRectCollision(Vec2<float> { 2.000001f, -4.0f }, movingUp, 0.0f, None, Vec2<float> { 2.000001f, -4.0f });
+	CheckStaticAndMovingRectCollision(Vec2<float> { 2.01f, -4.0f }, movingUp, 0.0f, None, Vec2<float> { 2.000001f, -4.0f });
 
 	// Collision when already touching and moving toward each other
 	CheckStaticAndMovingRectCollision(Vec2<float> { 0.0f, -2.0f }, movingUp, 0.0f, Bottom, Vec2<float> { 0.0f, -2.0f });
@@ -160,10 +160,10 @@ void RunStaticAndMovingRectCollisionTests()
 	CheckStaticAndMovingRectCollision(blockAboveOrigin, movingUp, 0.0f, None, Vec2<float> { 0.0f, 4.0f });
 
 	// Collision on y axis when moving toward each other off center at boundary
-	CheckStaticAndMovingRectCollision(Vec2<float> { 2.0f, 4.0f }, movingDown, 1, Top, Vec2<float> { 2.0f, 2.0f });
+	CheckStaticAndMovingRectCollision(Vec2<float> { 1.99f, 4.0f }, movingDown, 1, Top, Vec2<float> { 1.99f, 2.00f });
 
 	// No Collision on y axis when moving toward each other off center at boundary
-	CheckStaticAndMovingRectCollision(Vec2<float> { 2.000001f, 4.0f }, movingDown, 0.0f, None, Vec2<float> { 2.000001f, 4.0f });
+	CheckStaticAndMovingRectCollision(Vec2<float> { 2.01f, 4.0f }, movingDown, 0.0f, None, Vec2<float> { 2.01f, 4.0f });
 
 	// Collision when already touching and moving toward each other
 	CheckStaticAndMovingRectCollision(Vec2<float> { 0.0f, 2.0f }, movingDown, 0.0f, Top, Vec2<float> { 0.0f, 2.0f });
@@ -174,4 +174,6 @@ void RunStaticAndMovingRectCollisionTests()
 	printf("\n// No collision when already touching and moving away from each other\n");
 	CheckStaticAndMovingRectCollision(Vec2<float> { 0.0f, 2.0f }, movingUp, 0.0f, None, Vec2<float> { 0.0f, 2.0f });
 
+	printf("\n// No collision when horizontal moving rect brushes the surface, moving parallel to it\n");
+	CheckStaticAndMovingRectCollision(Vec2<float> { 2.0f, 2.0f }, { -2.0f, 0.0f }, 0.0f, None, Vec2<float> { 0.0f, 2.0f });
 }
