@@ -45,4 +45,7 @@ cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\obby\obby-2\obby-2.cpp /link %COMMO
 REM build the breakout game
 cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\breakout\breakout.cpp /link %COMMON_LINKER_FLAGS% %PLATFORM%.lib %WIN32%.lib
 
+REM build the driving game
+cl.exe %COMMON_COMPILER_FLAGS% ..\%CODE_DIR%\driving\driving.cpp /link %COMMON_LINKER_FLAGS% %PLATFORM%.lib %WIN32%.lib
+
 popd
