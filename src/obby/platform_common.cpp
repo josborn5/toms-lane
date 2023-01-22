@@ -81,16 +81,24 @@ int PopulateBlocksForLevelString(
 			{
 				block->exists = true;
 				bool isCheckpoint = (*blockLayout == 'c');
-				block->color = (isCheckpoint) ? 0xAA5555 : 0xAAAAAA;
 				block->isCheckpoint = isCheckpoint;
 				switch (*blockLayout)
 				{
 					case 'c':
 						block->type = Checkpoint;
+						block->color = 0xAA5555;
 						break;
 					case 's':
 						block->type = Spawn;
+						block->color = 0x0000AA;
 						break;
+					case 'K':
+						block->type = Killbrick;
+						block->color = 0xF79226;
+						break;
+					default:
+						block->type = Regular;
+						block->color = 0xAAAAAA;
 				}
 			}
 
@@ -133,12 +141,14 @@ static void UpdateBlockCollision(
 	{
 		toUpdate.any = true;
 		toUpdate.time = time;
-		toUpdate.isCheckpoint = block.isCheckpoint;
+		toUpdate.isCheckpoint = (block.type == Checkpoint);
+		toUpdate.isKillbrick = (block.type == Killbrick);
 		toUpdate.position = position;
 	}
 	else if (toUpdate.time == time)
 	{
-		toUpdate.isCheckpoint = (toUpdate.isCheckpoint) ? true : block.isCheckpoint;
+		toUpdate.isCheckpoint = (toUpdate.isCheckpoint) ? true : (block.type == Checkpoint);
+		toUpdate.isKillbrick = (toUpdate.isKillbrick) ? true : (block.type == Killbrick);
 	}
 }
 
@@ -214,7 +224,6 @@ BlockCollisionResult GetBlockCollisionResult(
 		{
 			case tl::Top:
 				minCollisionTime = collisionResult.time;
-				blocks[j].color = 0xAA0000;
 
 				UpdateBlockCollision(
 					south,
@@ -225,7 +234,6 @@ BlockCollisionResult GetBlockCollisionResult(
 				break;
 			case tl::Right:
 				minCollisionTime = collisionResult.time;
-				blocks[j].color = 0xAA0000;
 
 				UpdateBlockCollision(
 					west,
@@ -236,7 +244,6 @@ BlockCollisionResult GetBlockCollisionResult(
 				break;
 			case tl::Left:
 				minCollisionTime = collisionResult.time;
-				blocks[j].color = 0xAA0000;
 
 				UpdateBlockCollision(
 					east,

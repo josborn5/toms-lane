@@ -34,7 +34,8 @@ enum BlockType
 {
 	Regular,
 	Checkpoint,
-	Spawn
+	Spawn,
+	Killbrick
 };
 
 struct Block : tl::Rect<float> {

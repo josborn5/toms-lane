@@ -17,7 +17,7 @@ int PopulateBlocksForLevel(
 	const tl::Vec2<int> &pixelRect
 ) {
 	// Temporary hack - force level to be between 1 and 3
-	if (level > 3)
+	if (level > 6)
 	{
 		level = 1;
 	}
@@ -127,6 +127,12 @@ static void UpdateGameState(
 			checkTime = dt - blockCollisionResult.south.time;
 			currentPlayerState.velocity.y = 0.0f;
 			state->player.movement.availableJumps = 2;
+
+			if (blockCollisionResult.south.isKillbrick)
+			{
+				state->mode = GameOver;
+				return;
+			}
 
 			if (blockCollisionResult.south.isCheckpoint)
 			{
