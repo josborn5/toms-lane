@@ -69,9 +69,13 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	state->player.movement.inJump = false;
 	state->player.movement.wasInJump = false;
 
-	state->score = 0;
-	state->lives = 3;
-	state->level = 1;
+	if (state->lives <= 0)
+	{
+		state->score = 0;
+		state->lives = 3;
+		state->level = 1;
+	}
+
 	return StartLevel(state->level, pixelRect);
 }
 
@@ -147,6 +151,7 @@ static void UpdateGameState(
 	if (newPlayerState.position.y <= minPlayerY)
 	{
 		state->mode = GameOver;
+		state->lives -= 1;
 	}
 
 	state->player.position.x = newPlayerState.position.x;
