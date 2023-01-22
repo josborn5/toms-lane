@@ -121,6 +121,8 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 			titleCharRect,
 			0xFF0000
 		);
+
+		tl::DrawRect(renderBuffer, 0x00AA00, state.restartLevelButton);
 		return;
 	}
 

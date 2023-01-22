@@ -69,6 +69,9 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	state->player.movement.inJump = false;
 	state->player.movement.wasInJump = false;
 
+	state->restartLevelButton.position = { 700.0f, 200.0f };
+	state->restartLevelButton.halfSize = { 100.0f, 50.0f };
+
 	state->score = 0;
 	state->lives = 3;
 	state->level = 1;
@@ -94,6 +97,10 @@ static void UpdateGameState(
 	else if (state->mode == StartingNextLevel)
 	{
 		state->mode = Started;
+		return;
+	}
+	else if (state->mode == GameOver)
+	{
 		return;
 	}
 
@@ -131,6 +138,7 @@ static void UpdateGameState(
 			if (blockCollisionResult.south.isKillbrick)
 			{
 				state->mode = GameOver;
+				state->lives -= 1;
 				return;
 			}
 
@@ -171,6 +179,7 @@ static void UpdateGameState(
 	if (newPlayerState.position.y <= minPlayerY)
 	{
 		state->mode = GameOver;
+		state->lives -= 1;
 	}
 
 	state->player.position.x = newPlayerState.position.x;
