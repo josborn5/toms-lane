@@ -1,1 +1,1 @@
-./compile-run-obby.bat obby-2
+.\build-scripts\compile-run-project.bat obby-2 obby\obby-2\obby-2.cpp
