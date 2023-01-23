@@ -2,8 +2,8 @@
 #include "./math.hpp"
 #include "./geometry.hpp"
 #include "./software-rendering.hpp"
-#include <list>
-#include <vector>
+#include <list> // TODO: REMOVE!
+#include <vector> // TODO: REMOVE!
 
 namespace tl
 {
@@ -748,7 +748,7 @@ namespace tl
 	}
 
 	template<typename T>
-	void TransformAndRenderMesh(const RenderBuffer &renderBuffer, const Mesh<T> &mesh, const Camera<T> &camera, const Matrix4x4<T> transformMatrix, const Matrix4x4<T> projectionMatrix)
+	void TransformAndRenderMesh(const RenderBuffer &renderBuffer, const MeshArray<T> &mesh, const Camera<T> &camera, const Matrix4x4<T> transformMatrix, const Matrix4x4<T> projectionMatrix)
 	{
 		const int RED = 0;
 		const int GREEN = 255;
@@ -768,8 +768,9 @@ namespace tl
 		Plane<T> leftOfScreen = { (T)0, (T)0, (T)0,							(T)1, (T)0, (T)0 };
 		Plane<T> rightOfScreen = { (T)(renderBuffer.width - 1), (T)0, (T)0,	(T)-1, (T)0, (T)0 };
 
-		for (Triangle4d<T> tri : mesh.triangles)
+		for (int h = 0; h < mesh.triangles.length; h += 1)
 		{
+			Triangle4d<T> tri = mesh.triangles.content[h];
 			Triangle4d<T> transformed;
 			Triangle4d<T> viewed;
 			Triangle4d<T> projected;
@@ -904,7 +905,7 @@ namespace tl
 			}
 		}
 	}
-	template void TransformAndRenderMesh(const RenderBuffer &renderBuffer, const Mesh<float> &mesh, const Camera<float> &camera, const Matrix4x4<float> transformMatrix, const Matrix4x4<float> projectionMatrix);
+	template void TransformAndRenderMesh(const RenderBuffer &renderBuffer, const MeshArray<float> &mesh, const Camera<float> &camera, const Matrix4x4<float> transformMatrix, const Matrix4x4<float> projectionMatrix);
 
 
 	// Render characters

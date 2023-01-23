@@ -4,7 +4,7 @@
 #include "./demo-win32.cpp"
 
 tl::Camera<float> camera;
-tl::Mesh<float> mesh;
+tl::MeshArray<float> meshArray;
 tl::Matrix4x4<float> projectionMatrix;
 
 float theta = 0.0f;
@@ -62,12 +62,16 @@ template float Clamp(float min, float value, float max);
 
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
+	meshArray.triangles.capacity = 1024;
+	meshArray.triangles.content = (tl::Triangle4d<float> *)gameMemory.PermanentStorage;
+	tl::ReadObjFileToArray4("./teapot.obj", meshArray.triangles);
+	
 	// EXE must be run as admin in order to have read permission for the file. need to figure out how to fix this.
-	if (!tl::ReadObjFileToVec4("./teapot.obj", mesh.triangles))
+	if (!tl::ReadObjFileToArray4("./teapot.obj", meshArray.triangles))
 	{
 		// Fall back to cube if file cannot be read
 		// Using a clockwise winding convention
-		mesh.triangles = {
+		/* meshArray.triangles.content = {
 			// SOUTH
 			{ 0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f },
 			{ 0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f },
@@ -91,12 +95,13 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 			// BOTTOM
 			{ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f },
 			{ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f }
-		};
+		}; */
 		positionIncrement = 0.1f;
 	}
 
-	for (Triangle4d<float> tri : mesh.triangles)
+	for (int i = 0; i < meshArray.triangles.length; i += 1)
 	{
+		Triangle4d<float> tri = meshArray.triangles.content[i];
 		if (tri.p[0].x > max.x) max.x = tri.p[0].x;
 		if (tri.p[0].x < min.x) min.x = tri.p[0].x;
 		if (tri.p[0].y > max.y) max.y = tri.p[0].y;
@@ -283,7 +288,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	camera.position.y = Clamp(min.y, camera.position.y, max.y);
 	camera.position.z = Clamp(min.z, camera.position.z, max.z);
 
-	tl::TransformAndRenderMesh(renderBuffer, mesh, camera, worldMatrix, projectionMatrix);
+	tl::TransformAndRenderMesh(renderBuffer, meshArray, camera, worldMatrix, projectionMatrix);
 
 
 	// Show info about z-position
@@ -322,7 +327,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	charFoot.position = { 400.0f, infoHeight };
 	tl::DrawAlphabetCharacters(renderBuffer, "MESH", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)mesh.triangles.size(), charFoot, 0xAAAAAA);
+	tl::DrawNumber(renderBuffer, meshArray.triangles.length, charFoot, 0xAAAAAA);
 
 	// Draw the map
 	tl::DrawRect(renderBuffer, 0x333399, map);

@@ -2,7 +2,7 @@
 #define TOMS_LANE_GEOMETRY_H
 
 #include "./math.hpp"
-#include <vector>
+#include "./data-structures.hpp"
 
 namespace tl
 {
@@ -37,9 +37,9 @@ namespace tl
 	};
 
 	template<typename T>
-	struct Mesh
+	struct MeshArray
 	{
-		std::vector<Triangle4d<T>> triangles;
+		HeapArray<Triangle4d<T>> triangles;
 	};
 
 	template<typename T>
