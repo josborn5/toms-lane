@@ -38,13 +38,7 @@ namespace tl
 				// expect line to have syntax 'v x y z' where x, y & z are the ordinals of the point position
 				stringStream >> junk >> vertex.x >> vertex.y >> vertex.z;
 				vertex.w = (T)1.0;
-
-				int nextVertexIndex = heapVertices.length;
-				if (nextVertexIndex < heapVertices.capacity)
-				{
-					heapVertices.content[nextVertexIndex] = vertex;
-					heapVertices.length = nextVertexIndex + 1;
-				}
+				heapVertices.append(vertex);
 			}
 
 			if (line[0] == 'f')
@@ -57,13 +51,8 @@ namespace tl
 					heapVertices.content[points[1] - 1],
 					heapVertices.content[points[2] - 1]
 				};
-				
-				int nextTriangleIndex = triangles.length;
-				if (nextTriangleIndex < triangles.capacity)
-				{
-					triangles.content[nextTriangleIndex] = newTriangle;
-					triangles.length = nextTriangleIndex + 1;
-				}
+
+				triangles.append(newTriangle);
 			}
 		}
 
