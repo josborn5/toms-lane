@@ -8,7 +8,7 @@
 namespace tl
 {
 	template<typename T>
-	bool ReadObjFileToArray4(std::string const &filename, HeapArray<Triangle4d<T>> &triangles);
+	bool ReadObjFileToArray4(std::string const &filename, HeapArray<Triangle4d<T>> &triangles, MemorySpace& transient);
 }
 
 #endif

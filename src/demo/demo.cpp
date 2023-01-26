@@ -60,14 +60,16 @@ static T Clamp(T min, T value, T max)
 }
 template float Clamp(float min, float value, float max);
 
-int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
+int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
 	meshArray.triangles.capacity = 1024;
 	meshArray.triangles.content = (tl::Triangle4d<float> *)gameMemory.PermanentStorage;
-	tl::ReadObjFileToArray4("./teapot.obj", meshArray.triangles);
+	tl::MemorySpace transientMemory;
+	transientMemory.content = gameMemory.TransientStorage;
+	transientMemory.sizeInBytes = gameMemory.TransientStorageSpace;
 	
 	// EXE must be run as admin in order to have read permission for the file. need to figure out how to fix this.
-	if (!tl::ReadObjFileToArray4("./teapot.obj", meshArray.triangles))
+	if (!tl::ReadObjFileToArray4("./teapot.obj", meshArray.triangles, transientMemory))
 	{
 		// Fall back to cube if file cannot be read
 		// Using a clockwise winding convention
