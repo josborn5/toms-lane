@@ -274,8 +274,8 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 			// Initialize general use memory
 			GameMemory GameMemory;
-			GameMemory.PermanentStorageSpace = Megabytes(1);
-			GameMemory.TransientStorageSpace = Megabytes((uint64_t)1);
+			GameMemory.PermanentStorageSpace = Megabytes(settings.permanentSpaceInMegabytes);
+			GameMemory.TransientStorageSpace = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
 
 			uint64_t totalStorageSpace = GameMemory.PermanentStorageSpace + GameMemory.TransientStorageSpace;
 			bool successfulMemoryAllocation = true;
