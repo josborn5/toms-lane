@@ -91,7 +91,8 @@ namespace tl
 		const MeshArray<T> &mesh,
 		const Camera<T> &camera,
 		const Matrix4x4<T>& transformMatrix,
-		const Matrix4x4<T>& projectionMatrix
+		const Matrix4x4<T>& projectionMatrix,
+		const MemorySpace& transient
 	);
 }
 

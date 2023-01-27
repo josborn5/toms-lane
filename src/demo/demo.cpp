@@ -293,7 +293,11 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	camera.position.y = Clamp(min.y, camera.position.y, max.y);
 	camera.position.z = Clamp(min.z, camera.position.z, max.z);
 
-	tl::TransformAndRenderMesh(renderBuffer, meshArray, camera, worldMatrix, projectionMatrix);
+	tl::MemorySpace transientMemory;
+	transientMemory.content = gameMemory.TransientStorage;
+	transientMemory.sizeInBytes = gameMemory.TransientStorageSpace;
+
+	tl::TransformAndRenderMesh(renderBuffer, meshArray, camera, worldMatrix, projectionMatrix, transientMemory);
 
 
 	// Show info about z-position

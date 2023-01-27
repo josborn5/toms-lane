@@ -3,7 +3,6 @@
 #include "./geometry.hpp"
 #include "./software-rendering.hpp"
 #include <list> // TODO: REMOVE!
-#include <vector> // TODO: REMOVE!
 
 namespace tl
 {
@@ -753,7 +752,8 @@ namespace tl
 		const MeshArray<T> &mesh,
 		const Camera<T> &camera,
 		const Matrix4x4<T>& transformMatrix,
-		const Matrix4x4<T>& projectionMatrix
+		const Matrix4x4<T>& projectionMatrix,
+		const MemorySpace& transient
 	) {
 		const int RED = 0;
 		const int GREEN = 255;
@@ -766,7 +766,7 @@ namespace tl
 		// View matrix
 		Matrix4x4<T> viewMatrix = LookAt(cameraMatrix);
 
-		std::vector<Triangle4d<T>> trianglesToDraw;
+		HeapArray<Triangle4d<T>> trianglesToDrawArray = HeapArray<Triangle4d<T>>(transient);
 
 		Plane<T> bottomOfScreen = { (T)0, (T)0, (T)0,						(T)0, (T)1, (T)0 };
 		Plane<T> topOfScreen = { (T)0, (T)(renderBuffer.height - 1), (T)0,	(T)0, (T)-1, (T)0 };
@@ -836,13 +836,14 @@ namespace tl
 
 					triToRender.color = triangleColor;
 
-					trianglesToDraw.push_back(triToRender);
+					trianglesToDrawArray.append(triToRender);
 				}
 			}
 		}
 
-		for (Triangle4d<T> triToRender : trianglesToDraw)
+		for (int n = 0; n < trianglesToDrawArray.length; n += 1)
 		{
+			Triangle4d<T> triToRender = trianglesToDrawArray.content[n];
 			Triangle4d<T> clipped[2];
 			std::list<Triangle4d<T>> triangleQueue;
 			triangleQueue.push_back(triToRender);
@@ -915,7 +916,8 @@ namespace tl
 		const MeshArray<float> &mesh,
 		const Camera<float> &camera,
 		const Matrix4x4<float>& transformMatrix,
-		const Matrix4x4<float>& projectionMatrix
+		const Matrix4x4<float>& projectionMatrix,
+		const MemorySpace& transient
 	);
 
 
