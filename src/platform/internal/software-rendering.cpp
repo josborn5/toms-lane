@@ -748,8 +748,13 @@ namespace tl
 	}
 
 	template<typename T>
-	void TransformAndRenderMesh(const RenderBuffer &renderBuffer, const MeshArray<T> &mesh, const Camera<T> &camera, const Matrix4x4<T> transformMatrix, const Matrix4x4<T> projectionMatrix)
-	{
+	void TransformAndRenderMesh(
+		const RenderBuffer &renderBuffer,
+		const MeshArray<T> &mesh,
+		const Camera<T> &camera,
+		const Matrix4x4<T>& transformMatrix,
+		const Matrix4x4<T>& projectionMatrix
+	) {
 		const int RED = 0;
 		const int GREEN = 255;
 		const int BLUE = 0;
@@ -905,7 +910,13 @@ namespace tl
 			}
 		}
 	}
-	template void TransformAndRenderMesh(const RenderBuffer &renderBuffer, const MeshArray<float> &mesh, const Camera<float> &camera, const Matrix4x4<float> transformMatrix, const Matrix4x4<float> projectionMatrix);
+	template void TransformAndRenderMesh(
+		const RenderBuffer &renderBuffer,
+		const MeshArray<float> &mesh,
+		const Camera<float> &camera,
+		const Matrix4x4<float>& transformMatrix,
+		const Matrix4x4<float>& projectionMatrix
+	);
 
 
 	// Render characters

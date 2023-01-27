@@ -86,7 +86,13 @@ namespace tl
 	unsigned int GetColorFromRGB(int red, int green, int blue);
 
 	template<typename T>
-	void TransformAndRenderMesh(const RenderBuffer &renderBuffer, const MeshArray<T> &mesh, const Camera<T> &camera, const Matrix4x4<T> transformMatrix, const Matrix4x4<T> projectionMatrix);
+	void TransformAndRenderMesh(
+		const RenderBuffer &renderBuffer,
+		const MeshArray<T> &mesh,
+		const Camera<T> &camera,
+		const Matrix4x4<T>& transformMatrix,
+		const Matrix4x4<T>& projectionMatrix
+	);
 }
 
 #endif
