@@ -62,11 +62,14 @@ template float Clamp(float min, float value, float max);
 
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
-	meshArray.triangles.capacity = 1024;
-	meshArray.triangles.content = (tl::Triangle4d<float> *)gameMemory.PermanentStorage;
 	tl::MemorySpace transientMemory;
 	transientMemory.content = gameMemory.TransientStorage;
 	transientMemory.sizeInBytes = gameMemory.TransientStorageSpace;
+
+	tl::MemorySpace permanentMemory;
+	permanentMemory.content = gameMemory.PermanentStorage;
+	permanentMemory.sizeInBytes = gameMemory.PermanentStorageSpace;
+	meshArray.triangles.initialize(permanentMemory);
 	
 	// EXE must be run as admin in order to have read permission for the file. need to figure out how to fix this.
 	if (!tl::ReadObjFileToArray4("./teapot.obj", meshArray.triangles, transientMemory))

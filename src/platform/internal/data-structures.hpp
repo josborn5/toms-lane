@@ -14,10 +14,27 @@ namespace tl
 	{
 		private:
 			int _length = 0;
+			int _capacity = 0;
+
 		public :
 			const int& length = _length;
-			int capacity; // TODO: make this a private prop like length. Define a constructor that takes in a MemorySpace type to set the capacity.
+			const int& capacity = _capacity;
+
 			T* content;
+
+			HeapArray() {}
+			HeapArray(const MemorySpace& memory)
+			{
+				initialize(memory);
+			}
+
+			void initialize(const MemorySpace& memory)
+			{
+				content = (T *)memory.content;
+				size_t typeSizeInBytes = sizeof(T);
+				_capacity = (int)(memory.sizeInBytes / typeSizeInBytes);
+			}
+
 			int append(const T& item)
 			{
 				if (_length < capacity)

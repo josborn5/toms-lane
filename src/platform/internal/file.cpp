@@ -17,11 +17,7 @@ namespace tl
 			return false;
 		}
 
-		HeapArray<Vec4<T>> heapVertices;
-		heapVertices.content = (Vec4<T> *)transient.content;
-		size_t vec4TSizeInBytes = sizeof(Vec4<T>);
-		int transientCapacity = (int)(transient.sizeInBytes / vec4TSizeInBytes);
-		heapVertices.capacity = transientCapacity;
+		HeapArray<Vec4<T>> heapVertices = HeapArray<Vec4<T>>(transient);
 
 		while (!objFile.eof())
 		{
