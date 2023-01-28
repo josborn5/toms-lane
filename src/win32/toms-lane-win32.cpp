@@ -1,6 +1,5 @@
 #include <windows.h>
 #include <stdint.h>
-#include <stdio.h>
 
 #include "toms-lane-win32.hpp"
 
