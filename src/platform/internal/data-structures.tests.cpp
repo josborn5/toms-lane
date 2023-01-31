@@ -1,4 +1,5 @@
 #include "./data-structures.hpp"
+#include <stdio.h>
 #include <assert.h>
 
 using namespace tl;
@@ -92,30 +93,37 @@ void RunHeapQueueTests()
 	int first = queue.dequeue();
 	assert(first == 1);
 	assert(queue.length == 3);
-	assert(queue.capacity == 4);
+	assert(queue.capacity == 3);
 
 	int second = queue.dequeue();
 	assert(second == 2);
 	assert(queue.length == 2);
-	assert(queue.capacity == 4);
-
-	assert(queue.length == 2);
-	assert(queue.capacity == 4);
+	assert(queue.capacity == 2);
 
 	int third = queue.dequeue();
 	assert(third == 3);
 	assert(queue.length == 1);
-	assert(queue.capacity == 4);
+	assert(queue.capacity == 1);
 
 	int fourth = queue.dequeue();
 	assert(fourth == 4);
 	assert(queue.length == 0);
-	assert(queue.capacity == 4);
+	assert(queue.capacity == 0);
+
+	assert(queue.enqueue(1) == 1);
+	assert(queue.length == 0);
+	assert(queue.capacity == 0);
+
+	assert(queue.enqueue(2) == 1);
+	assert(queue.length == 0);
+	assert(queue.capacity == 0);
 }
 
 void RunDataStructureTests()
 {
+	printf("\n===== Heap Array =====\n");
 	RunHeapArrayTests();
 
+	printf("\n===== Heap Queue =====\n");
 	RunHeapQueueTests();
 }

@@ -71,12 +71,12 @@ namespace tl
 			int _capacity = 0;
 			int _length = 0;
 			T* _head;
-			T* _tail;
 			T* _ogHead;
 
 		public:
 			const int& length = _length;
 			const int& capacity = _capacity;
+			const T* content = _head;
 
 			HeapQueue(const MemorySpace& memory)
 			{
@@ -97,13 +97,14 @@ namespace tl
 				return 1;
 			}
 
-			T& dequeue()
+			T dequeue()
 			{
 				if (_length > 0)
 				{
 					T* headItem = _head;
 					_head++;
 					_length -= 1;
+					_capacity -= 1; // TODO: Convert this to a tail reference and connect to the enqueue check
 
 					return *headItem;
 				}
