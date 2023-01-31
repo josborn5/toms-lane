@@ -3,6 +3,59 @@
 
 using namespace tl;
 
+MemorySpace AllocateMemorySpace(int capacity)
+{
+	int sizeInBytes = capacity * sizeof(int);
+	void* memory = malloc(sizeInBytes);
+	MemorySpace space;
+	space.content = memory;
+	space.sizeInBytes = sizeInBytes;
+	return space;
+}
+
+void ReturnMemorySpace(MemorySpace space)
+{
+	free(space.content);
+}
+
+void RunHeapArrayTests()
+{
+	MemorySpace fourInts = AllocateMemorySpace(4);
+
+	HeapArray<int> array = HeapArray<int>(fourInts);
+	assert(array.length == 0);
+	assert(array.capacity == 4);
+
+	array.append(5);
+	assert(array.content[0] == 5);
+	assert(array.length == 1);
+	assert(array.capacity == 4);
+
+	array.append(4);
+	assert(array.content[0] == 5);
+	assert(array.content[1] == 4);
+	assert(array.length == 2);
+	assert(array.capacity == 4);
+
+	MemorySpace remaining = array.sizeToCurrentLength();
+	assert(array.content[0] == 5);
+	assert(array.content[1] == 4);
+	assert(array.length == 2);
+	assert(array.capacity == 2);
+
+	size_t sizeOfTwoInts = sizeof(int) * 2;
+	assert(remaining.content == ((int *)fourInts.content + sizeOfTwoInts));
+	assert(remaining.sizeInBytes == sizeOfTwoInts);
+
+	// Write to first item of remaining and assert array content remains unchanged
+	int* firstItemInRemainingSpace = (int *)remaining.content;
+	*firstItemInRemainingSpace = 3;
+	assert(array.content[0] == 5);
+	assert(array.content[1] == 4);
+
+	ReturnMemorySpace(fourInts);
+}
+
 void RunHeapQueueTests()
 {
 	int sizeInBytes = 4 * sizeof(int);
@@ -62,5 +115,7 @@ void RunHeapQueueTests()
 
 void RunDataStructureTests()
 {
+	RunHeapArrayTests();
+
 	RunHeapQueueTests();
 }

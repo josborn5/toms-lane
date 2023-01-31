@@ -45,6 +45,23 @@ namespace tl
 				}
 				return 0;
 			}
+
+			/*
+			 * Sets capacity to current length
+			 * and returns details of any
+			  * remaining MemorySpace
+			 */
+			MemorySpace sizeToCurrentLength()
+			{
+				int remaining = _capacity - _length;
+				_capacity = _length;
+				size_t typeSizeInBytes = sizeof(T);
+				size_t currentSizeInBytes = typeSizeInBytes * _length;
+				MemorySpace remainingSpaceDetails;
+				remainingSpaceDetails.content = (T *)(content + currentSizeInBytes);
+				remainingSpaceDetails.sizeInBytes = (unsigned long)remaining * (unsigned long)typeSizeInBytes;
+				return remainingSpaceDetails;
+			}
 	};
 
 	template<typename T>
@@ -69,7 +86,7 @@ namespace tl
 				_capacity = (int)(memory.sizeInBytes / typeSizeInBytes);
 			}
 
-			int enqueue(T item)
+			int enqueue(const T& item)
 			{
 				if (_length < _capacity) // TODO: Copy down if _ogHead > _head
 				{
@@ -80,7 +97,7 @@ namespace tl
 				return 1;
 			}
 
-			T dequeue()
+			T& dequeue()
 			{
 				if (_length > 0)
 				{
