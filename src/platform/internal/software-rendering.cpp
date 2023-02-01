@@ -841,12 +841,16 @@ namespace tl
 			}
 		}
 
+		tl::MemorySpace remainingTransient = trianglesToDrawArray.sizeToCurrentLength();
+
 		for (int n = 0; n < trianglesToDrawArray.length; n += 1)
 		{
 			Triangle4d<T> triToRender = trianglesToDrawArray.content[n];
 			Triangle4d<T> clipped[2];
-			std::list<Triangle4d<T>> triangleQueue;
-			triangleQueue.push_back(triToRender);
+			
+			tl::HeapQueue<Triangle4d<T>> triangleHeapQueue = tl::HeapQueue<Triangle4d<T>>(remainingTransient);
+			if (triangleHeapQueue.enqueue(triToRender) != 0) throw; // TODO: don't throw, handle gracefully
+
 			int newTriangles = 1;
 
 			// Clip against each screen edge
@@ -855,8 +859,7 @@ namespace tl
 				int trianglesToAdd = 0;
 				while (newTriangles > 0)
 				{
-					Triangle4d<T> test = triangleQueue.front();
-					triangleQueue.pop_front();
+					Triangle4d<T> test = triangleHeapQueue.dequeue();
 					newTriangles -= 1;
 
 					switch (edge)
@@ -885,15 +888,16 @@ namespace tl
 
 					for (int i = 0; i < trianglesToAdd; i += 1)
 					{
-						triangleQueue.push_back(clipped[i]);
+						triangleHeapQueue.enqueue(clipped[i]);
 					}
 				}
 
-				newTriangles = (int)triangleQueue.size();
+				newTriangles = triangleHeapQueue.length;
 			}
 
-			for (Triangle4d<T> draw : triangleQueue)
+			for (int i = 0; i < triangleHeapQueue.length; i += 1)
 			{
+				Triangle4d<T> draw = triangleHeapQueue.content[i];
 				// Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
 				// Vec2<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
 				// Vec2<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };

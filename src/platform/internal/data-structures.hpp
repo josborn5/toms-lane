@@ -15,6 +15,7 @@ namespace tl
 		private:
 			int _length = 0;
 			int _capacity = 0;
+			size_t _itemSizeInBytes = sizeof(T);
 
 		public :
 			const int& length = _length;
@@ -31,8 +32,7 @@ namespace tl
 			void initialize(const MemorySpace& memory)
 			{
 				content = (T *)memory.content;
-				size_t typeSizeInBytes = sizeof(T);
-				_capacity = (int)(memory.sizeInBytes / typeSizeInBytes);
+				_capacity = (int)(memory.sizeInBytes / _itemSizeInBytes);
 			}
 
 			int append(const T& item)
@@ -53,13 +53,12 @@ namespace tl
 			 */
 			MemorySpace sizeToCurrentLength()
 			{
+				T* addressOfNextItem = &content[_length];
 				int remaining = _capacity - _length;
 				_capacity = _length;
-				size_t typeSizeInBytes = sizeof(T);
-				size_t currentSizeInBytes = typeSizeInBytes * _length;
 				MemorySpace remainingSpaceDetails;
-				remainingSpaceDetails.content = (T *)(content + currentSizeInBytes);
-				remainingSpaceDetails.sizeInBytes = (unsigned long)remaining * (unsigned long)typeSizeInBytes;
+				remainingSpaceDetails.content = addressOfNextItem;
+				remainingSpaceDetails.sizeInBytes = (unsigned long)(remaining * _itemSizeInBytes);
 				return remainingSpaceDetails;
 			}
 	};
@@ -70,18 +69,17 @@ namespace tl
 		private:
 			int _capacity = 0;
 			int _length = 0;
-			T* _head;
 			T* _ogHead;
 
 		public:
 			const int& length = _length;
 			const int& capacity = _capacity;
-			const T* content = _head;
+			T* content;
 
 			HeapQueue(const MemorySpace& memory)
 			{
-				_head = (T *)memory.content;
-				_ogHead = _head;
+				content = (T *)memory.content;
+				_ogHead = content;
 				size_t typeSizeInBytes = sizeof(T);
 				_capacity = (int)(memory.sizeInBytes / typeSizeInBytes);
 			}
@@ -90,7 +88,7 @@ namespace tl
 			{
 				if (_length < _capacity) // TODO: Copy down if _ogHead > _head
 				{
-					_head[_length] = item;
+					content[_length] = item;
 					_length += 1;
 					return 0;
 				}
@@ -101,12 +99,12 @@ namespace tl
 			{
 				if (_length > 0)
 				{
-					T* headItem = _head;
-					_head++;
+					T headItem = *content;
+					content++;
 					_length -= 1;
 					_capacity -= 1; // TODO: Convert this to a tail reference and connect to the enqueue check
 
-					return *headItem;
+					return headItem;
 				}
 				
 				throw;

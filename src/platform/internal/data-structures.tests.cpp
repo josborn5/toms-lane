@@ -4,24 +4,21 @@
 
 using namespace tl;
 
-MemorySpace AllocateMemorySpace(int capacity)
-{
-	int sizeInBytes = capacity * sizeof(int);
-	void* memory = malloc(sizeInBytes);
-	MemorySpace space;
-	space.content = memory;
-	space.sizeInBytes = sizeInBytes;
-	return space;
-}
-
-void ReturnMemorySpace(MemorySpace space)
-{
-	free(space.content);
-}
-
 void RunHeapArrayTests()
 {
-	MemorySpace fourInts = AllocateMemorySpace(4);
+	const int originalMemValue = 8;
+	int sixInts[6] = {
+		originalMemValue,
+		originalMemValue,
+		originalMemValue,
+		originalMemValue,
+		originalMemValue,
+		originalMemValue
+	};
+	// MemorySpace fourInts = AllocateMemorySpace(4);
+	MemorySpace fourInts;
+	fourInts.content = &sixInts[1];
+	fourInts.sizeInBytes = 4 * sizeof(int);
 
 	HeapArray<int> array = HeapArray<int>(fourInts);
 	assert(array.length == 0);
@@ -31,30 +28,33 @@ void RunHeapArrayTests()
 	assert(array.content[0] == 5);
 	assert(array.length == 1);
 	assert(array.capacity == 4);
+	assert(sixInts[0] == originalMemValue);
+	assert(sixInts[5] == originalMemValue);
 
 	array.append(4);
 	assert(array.content[0] == 5);
 	assert(array.content[1] == 4);
 	assert(array.length == 2);
 	assert(array.capacity == 4);
+	assert(sixInts[0] == originalMemValue);
+	assert(sixInts[5] == originalMemValue);
 
 	MemorySpace remaining = array.sizeToCurrentLength();
 	assert(array.content[0] == 5);
 	assert(array.content[1] == 4);
 	assert(array.length == 2);
 	assert(array.capacity == 2);
+	assert(sixInts[0] == originalMemValue);
+	assert(sixInts[5] == originalMemValue);
 
-	size_t sizeOfTwoInts = sizeof(int) * 2;
-	assert(remaining.content == ((int *)fourInts.content + sizeOfTwoInts));
-	assert(remaining.sizeInBytes == sizeOfTwoInts);
+	assert(remaining.content == &sixInts[3]);
+	assert(remaining.sizeInBytes == 2 * sizeof(int));
 
 	// Write to first item of remaining and assert array content remains unchanged
 	int* firstItemInRemainingSpace = (int *)remaining.content;
 	*firstItemInRemainingSpace = 3;
 	assert(array.content[0] == 5);
 	assert(array.content[1] == 4);
-
-	ReturnMemorySpace(fourInts);
 }
 
 void RunHeapQueueTests()
