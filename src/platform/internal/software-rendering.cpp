@@ -2,7 +2,7 @@
 #include "./math.hpp"
 #include "./geometry.hpp"
 #include "./software-rendering.hpp"
-#include <list> // TODO: REMOVE!
+#include "./utilities.hpp"
 
 namespace tl
 {
@@ -42,7 +42,7 @@ namespace tl
 		const int* endX = &x1;
 		if (x1 < x0)
 		{
-			std::swap(x0, x1);
+			tl::swap(x0, x1);
 		}
 
 		int positionStartOfRow = renderBuffer.width * y;
@@ -69,7 +69,7 @@ namespace tl
 		const int* endX = &x1;
 		if (x1 < x0)
 		{
-			std::swap(x0, x1);
+			tl::swap(x0, x1);
 		}
 
 		int positionStartOfRow = renderBuffer.width * y;
@@ -548,15 +548,15 @@ namespace tl
 		 */
 		if (pp1->y < pp0->y)
 		{
-			std::swap(pp0, pp1);
+			tl::swap(pp0, pp1);
 		}
 		if (pp2->y < pp1->y)
 		{
-			std::swap(pp1, pp2);
+			tl::swap(pp1, pp2);
 		}
 		if (pp1->y < pp0->y)
 		{
-			std::swap(pp0, pp1);
+			tl::swap(pp0, pp1);
 		}
 
 		// Check for natural flat top
@@ -565,7 +565,7 @@ namespace tl
 			// sort top two points of flat top by their x co-ordinate
 			if (pp1->x < pp0->x)
 			{
-				std::swap(pp0, pp1);
+				tl::swap(pp0, pp1);
 			}
 			FillFlatTopTriangle(renderBuffer, color, *pp0, *pp1, *pp2, z);
 		}
@@ -574,7 +574,7 @@ namespace tl
 			// sort bottom two points of flat bottom by their x co-ordinate
 			if (pp2->x < pp1->x)
 			{
-				std::swap(pp1, pp2);
+				tl::swap(pp1, pp2);
 			}
 			FillFlatBottomTriangle(renderBuffer, color, *pp0, *pp1, *pp2, z);
 		}

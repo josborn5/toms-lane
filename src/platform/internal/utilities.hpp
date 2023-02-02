@@ -6,15 +6,12 @@
 namespace tl
 {
 	template<typename T>
-	int swap(T& a, T& b, MemorySpace& transient)
+	void swap(T& a, T& b)
 	{
-		if (transient.sizeInBytes < sizeof(T)) return 1;
-
-		*(T *)transient.content = a;
+		T spare;
+		spare = a;
 		a = b;
-		b = *(T *)transient.content;
-
-		return 0;
+		b = spare;
 	}
 }
 
