@@ -9,5 +9,6 @@
 #include "./internal/file.hpp"
 #include "./internal/collision.hpp"
 #include "./internal/data-structures.hpp"
+#include "./internal/utilities.hpp"
 
 #endif

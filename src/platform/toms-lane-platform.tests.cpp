@@ -3,6 +3,7 @@
 #include "./internal/software-rendering.tests.cpp"
 #include "./internal/collision.tests.cpp"
 #include "./internal/data-structures.tests.cpp"
+#include "./internal/utilities.tests.cpp"
 
 int main()
 {
@@ -15,5 +16,7 @@ int main()
 	RunCollisionTests();
 
 	RunDataStructureTests();
+
+	RunUtilitiesTests();
 }
 
