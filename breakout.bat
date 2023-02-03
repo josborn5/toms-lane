@@ -1,1 +1,1 @@
-.\build-scripts\compile-run-project.bat breakout breakout\breakout.cpp
+.\build-scripts\compile-run-project.bat breakout breakout\breakout.cpp %1

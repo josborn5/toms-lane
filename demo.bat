@@ -1,1 +1,1 @@
-.\build-scripts\compile-run-project.bat demo demo\demo.cpp
+.\build-scripts\compile-run-project.bat demo demo\demo.cpp %1
