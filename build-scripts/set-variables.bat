@@ -4,7 +4,8 @@ set CODE_DIR=src
 set OUTPUT_DIR=bin
 
 REM https://docs.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-alphabetically
-set COMMON_COMPILER_FLAGS=-MT -nologo -Gm- -GR- -EHa- -Oi -WX -W4 -wd4100 -wd4201 -FC -Z7 /EHsc /O2 -Fm
+set DEBUG_COMPILER_FLAGS=-MT -nologo -Gm- -GR- -EHa- -Oi -WX -W4 -wd4100 -wd4201 -FC -Z7 /EHsc -Fm
+set RELEASE_COMPILER_FLAGS=%DEBUG_COMPILER_FLAGS% /O2
 
 set TL_PLATFORM=toms-lane-platform
 set TL_WIN32=toms-lane-win32
