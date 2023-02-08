@@ -57,6 +57,7 @@ struct PlayerMovement
 struct Player : tl::Rect<float>
 {
 	PlayerMovement movement;
+	tl::Sprite sprite;
 };
 
 struct GameState

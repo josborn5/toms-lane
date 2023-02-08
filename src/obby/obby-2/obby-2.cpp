@@ -5,8 +5,8 @@
 #include "../platform_common.cpp"
 
 #include "./levels.cpp"
-#include "./update-gamestate.cpp"
 #include "./render-gamestate.cpp"
+#include "./update-gamestate.cpp"
 
 /*
 

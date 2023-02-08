@@ -8,15 +8,45 @@ const tl::Vec2<float> smallFontHalfSize = { 5.0f, 10.0f };
 const tl::Vec2<float> titleFontHalfSize = { 15.0f, 30.0f };
 
 char* islaAvatar = "\
-0 0 0\n\
-00000\n\
+  0\n\
+ 000\n\
  000\n\
   0\n\
 00000\n\
   0\n\
- 000\n\
+  0\n\
+ 0 0\n\
+ 0 0\n\
+0   0\n\
 0   0";
+char* islaAvatarMove1 = "\
+  0\n\
+ 000\n\
+ 000\n\
+  0\n\
+  0\n\
+  00\n\
+  0 0\n\
+ 0\n\
+ 0\n\
+0\n\
+0";
+char* islaAvatarMove2 = "\
+  0\n\
+ 000\n\
+ 000\n\
+  0\n\
+  0\n\
+ 00\n\
+0 0\n\
+   0\n\
+   0\n\
+    0\n\
+    0";
+
 tl::Sprite islaSprite = tl::LoadSprite(islaAvatar);
+tl::Sprite islaSpriteMove1 = tl::LoadSprite(islaAvatarMove1);
+tl::Sprite islaSpriteMove2 = tl::LoadSprite(islaAvatarMove2);
 
 char* jumpScare = "\
        00000\n\
@@ -135,7 +165,7 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 
 	RenderBlocksAndPlayer(
 		renderBuffer,
-		islaSprite,
+		state.player.sprite,
 		state,
 		playerColor
 	);

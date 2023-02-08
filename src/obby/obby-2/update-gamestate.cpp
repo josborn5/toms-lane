@@ -11,6 +11,9 @@ float maxPlayerX;
 float minPlayerY;
 float maxPlayerY;
 
+bool moveSwitch = false;
+float moveCount = 0.0f;
+
 int PopulateBlocksForLevel(
 	int level,
 	GameState &gameState,
@@ -68,6 +71,7 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	state->player.movement.availableJumps = 2;
 	state->player.movement.inJump = false;
 	state->player.movement.wasInJump = false;
+	state->player.sprite = islaSprite;
 
 	if (state->lives <= 0)
 	{
@@ -158,4 +162,20 @@ static void UpdateGameState(
 	state->player.position.y = newPlayerState.position.y;
 	state->player.velocity.x = newPlayerState.velocity.x;
 	state->player.velocity.y = newPlayerState.velocity.y;
+
+	if (state->player.velocity.x == 0.0f)
+	{
+		state->player.sprite = islaSprite;
+		moveCount = 0.0f;
+	}
+	else
+	{
+		if (moveCount > 0.15f)
+		{
+			moveCount = 0.0f;
+			moveSwitch = !moveSwitch;
+		}
+		state->player.sprite = (moveSwitch) ? islaSpriteMove1 : islaSpriteMove2;
+		moveCount += dt;
+	}
 }
