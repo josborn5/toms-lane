@@ -3,6 +3,8 @@
 
 #include "toms-lane-win32.hpp"
 
+#include "toms-lane-win32-file.cpp"
+
 namespace tl
 {
 

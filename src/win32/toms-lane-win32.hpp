@@ -17,6 +17,8 @@ namespace tl
 		double framesPerSecond = 0.0f;
 		double megaCyclesPerFrame = 0.0f;
 	};
+
+	int Win32ReadFile(FileReadRequest requestInfo);
 }
 
 #endif
