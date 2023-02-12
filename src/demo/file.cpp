@@ -2,8 +2,7 @@
 #include <strstream>
 #include <string>
 #include <iostream>
-#include "./file.hpp"
-#include "./data-structures.hpp"
+#include "../platform/toms-lane-platform.hpp"
 
 namespace tl
 {

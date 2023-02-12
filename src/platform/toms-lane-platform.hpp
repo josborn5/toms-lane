@@ -6,7 +6,6 @@
 #include "./internal/math.hpp"
 #include "./internal/geometry.hpp"
 #include "./internal/software-rendering.hpp"
-#include "./internal/file.hpp"
 #include "./internal/collision.hpp"
 #include "./internal/data-structures.hpp"
 #include "./internal/utilities.hpp"

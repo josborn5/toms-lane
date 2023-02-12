@@ -1,6 +1,7 @@
 #include <math.h>
 
 #include "../platform/toms-lane-platform.hpp"
+#include "./file.cpp"
 #include "./demo-win32.cpp"
 
 tl::Camera<float> camera;

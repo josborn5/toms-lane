@@ -360,16 +360,18 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				// Work out elapsed time for current frame
 				lastDt = Win32_GetSecondsElapsed(LastCounter, EndCounter);
 
-				// Output frame tine information
+				// Output frame time information
 				uint64_t counterElapsed = LastCounter.QuadPart - EndCounter.QuadPart;
 				double FPS = (double)GlobalPerfCountFrequency / (double)counterElapsed;
 				int64_t CyclesElapsed = EndCycleCount - LastCycleCount;
 				double MCPF = (double)CyclesElapsed / (1000.0f * 1000.0f);
-
-				char buffer[DEBUG_BUFFER_SIZE];
 				float msPerFrame = 1000.0f * lastDt;
-				sprintf_s(buffer, DEBUG_BUFFER_SIZE, "%.02f ms, %.02f ms/f,  %.02f f/s,  %.02f MC/f\n", workTime, msPerFrame, FPS, MCPF);
-				OutputDebugStringA(buffer);
+
+				DebugInfo debugInfo;
+				debugInfo.workTime = workTime;
+				debugInfo.msPerFrame = msPerFrame;
+				debugInfo.framesPerSecond = FPS;
+				debugInfo.megaCyclesPerFrame = MCPF;
 
 				// Reset measurementsfor next frame
 				LastCounter = EndCounter;
