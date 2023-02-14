@@ -25,6 +25,7 @@ TODO (in no particular order):
 #include "game.h"
 #include "../platform/toms-lane-platform.hpp"
 
+#include <math.h>
 #include "math.c"
 #include "platform_common.c"
 #include "levels.c"
@@ -271,8 +272,8 @@ static void UpdateGameState(GameState *state, const tl::Vec2<int>& pixelRect, co
 					// Add a horizontal velocity to allow player to change ball direction
 					float ballAngleFromNormal = GetThetaForBallPlayerCollision(player.position.x, state->balls[i].position.x, player.halfSize.x);
 					float ballSpeed = tl::Length(state->balls[i].velocity);
-					newBallState.velocity.x = (float)sin(ballAngleFromNormal) * ballSpeed;
-					newBallState.velocity.y = (float)cos(ballAngleFromNormal) * ballSpeed;
+					newBallState.velocity.x = (float)sinf(ballAngleFromNormal) * ballSpeed;
+					newBallState.velocity.y = (float)cosf(ballAngleFromNormal) * ballSpeed;
 				}
 				else if (ballBatCollisionResult.collisions[1].side == tl::Left)
 				{
