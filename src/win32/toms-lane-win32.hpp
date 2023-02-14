@@ -18,7 +18,8 @@ namespace tl
 		double megaCyclesPerFrame = 0.0f;
 	};
 
-	int Win32ReadFile(FileReadRequest requestInfo);
+	int ReadFile(char* fileName, MemorySpace readBuffer);
+	int WriteFile(char* fileName, MemorySpace writeBuffer);
 }
 
 #endif
