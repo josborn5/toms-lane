@@ -12,7 +12,7 @@ namespace tl
 	{
 		if (access == Write)
 		{
-			return CreateFileA(fileName, GENERIC_WRITE, FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
+			return CreateFileA(fileName, GENERIC_WRITE, FILE_SHARE_WRITE, 0, CREATE_ALWAYS, 0, 0);
 		}
 		return CreateFileA(fileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
 	}
