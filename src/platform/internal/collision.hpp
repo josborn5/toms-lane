@@ -4,11 +4,6 @@
 #include "./math.hpp"
 #include "./geometry.hpp"
 
-// I'm getting linker errors when using separate hpp & cpp files. I don't know why, but these links might provide some info-
-// https://stackoverflow.com/a/33164552
-// https://stackoverflow.com/questions/20150652
-// https://stackoverflow.com/questions/3705740
-
 namespace tl
 {
 	enum CollisionSide
