@@ -18,6 +18,21 @@ namespace tl
 	tl::Vec2<int> GetContentDimensions(char* content);
 	Sprite LoadSprite(char* content);
 
+	struct Color
+	{
+		float r = 0.0f;
+		float g = 0.0f;
+		float b = 0.0f;
+		float a = 0.0f;
+	};
+
+	struct SpriteC
+	{
+		int width;
+		int height;
+		Color* content;
+	};
+
 	/**
 	 *	|---|---|---|
 	 *	| 0 | 1 | 2 |	pixel ordinals
@@ -60,6 +75,12 @@ namespace tl
 		const Rect<float> &footprint,
 		uint32_t color
 	);
+	// Draw a sprite of a size determined by the given sprite string and blockHalfSize value
+	void DrawSpriteC(
+		const RenderBuffer &renderBuffer,
+		const SpriteC &sprite,
+		const Rect<float> &footprint
+	);
 
 	void DrawAlphabetCharacters(
 		const RenderBuffer &renderBuffer,
@@ -83,7 +104,7 @@ namespace tl
 
 	void ClearScreen(const RenderBuffer &renderBuffer, uint32_t color);
 
-	unsigned int GetColorFromRGB(int red, int green, int blue);
+	uint32_t GetColorFromRGB(int red, int green, int blue);
 
 	template<typename T>
 	void TransformAndRenderMesh(

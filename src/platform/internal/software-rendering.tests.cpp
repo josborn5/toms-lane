@@ -5,6 +5,7 @@
 #include "software-rendering.tests.common.cpp"
 #include "software-rendering.tests.sprite.cpp"
 #include "software-rendering.tests.draw-line.cpp"
+#include "software-rendering.tests.color.cpp"
 
 void ClearPixelAndDepthArray(uint32_t* pixelArray, float* depthArray, int arrayLength)
 {
@@ -759,4 +760,6 @@ void RunSoftwareRenderingTests()
 	Run6x4FillTriangleTest(tl::Vec3<int>{ 5, 0, 0 }, tl::Vec3<int>{ 0, 3, 0 }, tl::Vec3<int>{ 3, 3, 0 }, efb10);
 
 	RunSpriteTests();
+
+	RunColorTests();
 }

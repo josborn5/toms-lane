@@ -142,10 +142,11 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	charFoot.position.y -= fontSize;
 	tl::DrawNumber(renderBuffer, (int)state.player.position.y, charFoot, 0x999999);
 
-	RenderBlocksAndPlayer(
+	RenderBlocks(renderBuffer, state);
+
+	tl::DrawSpriteC(
 		renderBuffer,
-		islaSprite,
-		state,
-		playerColor
+		state.player.spriteTest,
+		state.player
 	);
 }

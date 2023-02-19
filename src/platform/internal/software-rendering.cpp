@@ -274,8 +274,7 @@ namespace tl
 		const Sprite &sprite,
 		const Rect<float> &footprint,
 		uint32_t color
-	)
-	{
+	) {
 		// Work out the size of each block in the sprite
 		float footprintHeight = footprint.halfSize.y * 2.0f;
 		float footprintWidth = footprint.halfSize.x * 2.0f;
@@ -314,6 +313,65 @@ namespace tl
 				pCopy.x += blockWidth;
 			}
 			content++;
+		}
+	}
+
+	void DrawSpriteC(
+		const RenderBuffer &renderBuffer,
+		const SpriteC &sprite,
+		const Rect<float> &footprint
+	) {
+		// Work out the size of each block in the sprite
+		float footprintHeight = footprint.halfSize.y * 2.0f;
+		float footprintWidth = footprint.halfSize.x * 2.0f;
+
+		float blockWidth = footprintWidth / (float)sprite.width;
+		float blockHeight = footprintHeight / (float)sprite.height;
+		Vec2<float> blockHalf = { 0.5f * blockWidth, 0.5f * blockHeight };
+
+		// Calculate the cursor area over which to position each block. Position is measured fro the center
+		// so apply an offset for the block size
+		Vec2<float> pCopy = Vec2<float>
+		{
+			footprint.position.x - footprint.halfSize.x + blockHalf.x,
+			footprint.position.y + footprint.halfSize.y - blockHalf.y
+		};
+
+		// iterate through the sprite content and fill blocks in the render buffer
+		float xMinCursorPos = pCopy.x;
+		Color* content = sprite.content;
+		int contentLength = sprite.height * sprite.width;
+		int rowCounter = 0;
+		for (int i = 0; i < contentLength; i += 1)
+		{
+			Color blockColor = content[i];
+
+			// TODO: handle the color.a value (0.0f means transparent)
+			if (blockColor.a > 0.0f)
+			{
+				Rect<float> blockRect;
+				blockRect.position = pCopy;
+				blockRect.halfSize = blockHalf;
+				uint32_t color = GetColorFromRGB(
+					(int)(255.0f * blockColor.r),
+					(int)(255.0f * blockColor.g),
+					(int)(255.0f * blockColor.b)
+				);
+				DrawRect(renderBuffer, color, blockRect);
+			}
+
+			rowCounter += 1;
+			if (rowCounter >= sprite.width)
+			{
+				rowCounter = 0;
+				pCopy.y -= blockHeight;	// We're populating blocks in the sprint left to right, top to bottom. So y is decreasing.
+				pCopy.x = xMinCursorPos; // reset cursor to start of next row
+			}
+			else
+			{
+				pCopy.x += blockWidth;
+			}
+			
 		}
 	}
 
@@ -725,7 +783,7 @@ namespace tl
 		}
 	}
 
-	unsigned int GetColorFromRGB(int red, int green, int blue)
+	uint32_t GetColorFromRGB(int red, int green, int blue)
 	{
 		// Use bitwise operators to construct a single uint32_t value from three 0-255 RGB values.
 		// There are 32 bits to fill up.
@@ -743,7 +801,7 @@ namespace tl
 		// Adding these together gives us the 0xRRGGBB value:
 		//		|0x|00|00|00| + |00|RR|00|00| + |00|00|GG|00| + |00|00|00|BB| = |0x|RR|GG|BB|
 		uint32_t color = (uint32_t)(0x000000 + (red << 16) + (green << 8) + blue);
-		return (unsigned int)color;
+		return color;
 	}
 
 	template<typename T>
@@ -799,7 +857,7 @@ namespace tl
 				Vec4<T> normalizedLightDirection = UnitVector(lightDirection);
 				T shade = DotProduct(normal, normalizedLightDirection);
 
-				unsigned int triangleColor = GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
+				uint32_t triangleColor = GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
 
 				// Convert the triangle position from world space to view space
 				MultiplyVectorWithMatrix(transformed.p[0], viewed.p[0], viewMatrix);

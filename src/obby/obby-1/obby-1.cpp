@@ -19,8 +19,16 @@
 bool initialized = false;
 bool isPaused = false;
 
+tl::Color testSpriteContent[4] = {
+	{ 1.0f, 0.0f, 0.0f, 1.0f },  { 0.0f, 1.0f, 0.0f, 1.0f },
+	{ 0.0f, 0.0f, 1.0f, 1.0f },  { 1.0f, 0.0f, 1.0f, 1.0f }
+};
+
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
+	gamestate.player.spriteTest.height = 2;
+	gamestate.player.spriteTest.width = 2;
+	gamestate.player.spriteTest.content = testSpriteContent;
 	return 0;
 }
 
