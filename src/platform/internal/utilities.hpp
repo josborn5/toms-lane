@@ -13,6 +13,8 @@ namespace tl
 		a = b;
 		b = spare;
 	}
+
+	int CharStringToInt(char* toParse);
 }
 
 #endif
