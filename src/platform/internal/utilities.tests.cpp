@@ -35,7 +35,10 @@ void RunUtilitiesTests()
 		to[i] = 'b';
 	}
 
-	tl::CopyToChar(from, to, '-');
+	char* pointer = tl::CopyToChar(from, to, '-');
+
+	assert(*pointer == '-');
+	assert(pointer == &from[3]);
 
 	assert(to[0] == 'a');
 	assert(to[1] == 'a');
@@ -52,6 +55,7 @@ void RunUtilitiesTests()
 	assert(from[4] == 'a');
 	assert(from[5] == 'a');
 	assert(from[6] == 'a');
+	assert(from[7] == '\0');
 
 	from = "aaaaa";
 	for (int i = 0; i < length; i += 1)
@@ -59,7 +63,11 @@ void RunUtilitiesTests()
 		to[i] = 'b';
 	}
 
-	tl::CopyToChar(from, to, '-');
+	pointer = tl::CopyToChar(from, to, '-');
+
+	assert(*pointer == '\0');
+	assert(pointer == &from[5]);
+
 	assert(to[0] == 'a');
 	assert(to[1] == 'a');
 	assert(to[2] == 'a');
@@ -67,6 +75,13 @@ void RunUtilitiesTests()
 	assert(to[4] == 'a');
 	assert(to[5] == '\0');
 	assert(to[6] == 'b');
+
+	assert(from[0] == 'a');
+	assert(from[1] == 'a');
+	assert(from[2] == 'a');
+	assert(from[3] == 'a');
+	assert(from[4] == 'a');
+	assert(from[5] == '\0');
 
 	free(to);
 

@@ -41,7 +41,7 @@ namespace tl
 		return (isNegative) ? -1 * intValue : intValue;
 	}
 
-	void CopyToChar(char* from, char* to, const char endChar)
+	char* CopyToChar(char* from, char* to, const char endChar)
 	{
 		while (*from && *from != endChar)
 		{
@@ -51,5 +51,7 @@ namespace tl
 			to++;
 		}
 		*to = '\0';
+
+		return from;
 	}
 }

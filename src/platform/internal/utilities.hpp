@@ -16,7 +16,7 @@ namespace tl
 
 	int CharStringToInt(char* toParse);
 
-	void CopyToChar(char* from, char* to, const char toChar);
+	char* CopyToChar(char* from, char* to, const char toChar);
 }
 
 #endif
