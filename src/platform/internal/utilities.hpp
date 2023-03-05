@@ -17,6 +17,8 @@ namespace tl
 	int CharStringToInt(char* toParse);
 
 	char* CopyToChar(char* from, char* to, const char toChar);
+
+	char* GetNextNumberChar(char* from);
 }
 
 #endif

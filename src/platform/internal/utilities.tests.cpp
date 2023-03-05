@@ -85,5 +85,11 @@ void RunUtilitiesTests()
 
 	free(to);
 
+	printf("\n===== GetNextNumberChar =====\n");
+	char* numberString = "ab 123";
+	char* result = tl::GetNextNumberChar(numberString);
+	assert(*result == '1');
+	assert(result == &numberString[3]);
+
 	printf("\nDONE!\n");
 }

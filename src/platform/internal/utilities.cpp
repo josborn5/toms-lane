@@ -54,4 +54,14 @@ namespace tl
 
 		return from;
 	}
+
+	char* GetNextNumberChar(char* from)
+	{
+		while (*from && (*from < '0' || *from > '9'))
+		{
+			from++;
+		}
+
+		return from;
+	}
 }
