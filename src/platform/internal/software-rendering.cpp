@@ -1378,6 +1378,62 @@ namespace tl
 		return sprite;
 	}
 
+	/*
+	* Assumed char* format is:
+	* width<int>\n
+	* height<int>\n
+	* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // 1st pixel
+	* :
+	* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // Nth pixel
+	*/
+	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite)
+	{
+		char LF = '\n';
+		char* buffer = (char *)space.content;
+		// Width
+		char* workingPointer = GetNextNumberChar(content);
+		workingPointer = CopyToChar(workingPointer, buffer, LF);
+		int width = CharStringToInt(buffer);
+
+		// Height
+		workingPointer = GetNextNumberChar(workingPointer);
+		workingPointer = CopyToChar(workingPointer, buffer, LF);
+		int height = CharStringToInt(buffer);
+
+		// Content
+		int contentCount = height * width;
+
+		sprite.width = width;
+		sprite.height = height;
+
+		for (int i = 0; i < contentCount && *workingPointer; i += 1)
+		{
+			workingPointer = GetNextNumberChar(workingPointer);
+
+			/// RBG values
+			int rgbContent[3];
+			for (int j = 0; j < 3 && *workingPointer; j += 1)
+			{
+				workingPointer = CopyToChar(workingPointer, buffer, ',');
+				rgbContent[j] = CharStringToInt(buffer);
+				workingPointer = GetNextNumberChar(workingPointer);
+			}
+
+			// A value
+			workingPointer = GetNextNumberChar(workingPointer);
+			workingPointer = CopyToChar(workingPointer, buffer, LF);
+			int aValue = CharStringToInt(buffer);
+
+			Color color;
+			color.r = (float)rgbContent[0] / 255.0f;
+			color.g = (float)rgbContent[1] / 255.0f;
+			color.b = (float)rgbContent[2] / 255.0f;
+			color.a = (float)aValue / 255.0f;
+
+			sprite.content[i] = color;
+		}
+	}
+
 	void DrawAlphabetCharacters(
 		const RenderBuffer &renderBuffer,
 		char *text,
@@ -1456,4 +1512,3 @@ namespace tl
 		}
 	}
 }
-

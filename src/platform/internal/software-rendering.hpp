@@ -15,7 +15,7 @@ namespace tl
 		int width;
 	};
 
-	tl::Vec2<int> GetContentDimensions(char* content);
+	Vec2<int> GetContentDimensions(char* content);
 	Sprite LoadSprite(char* content);
 
 	struct Color
@@ -32,6 +32,11 @@ namespace tl
 		int height;
 		Color* content;
 	};
+	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite);
+
+	SpriteC ReadSpriteCFromFile(
+		char* filePath
+	);
 
 	/**
 	 *	|---|---|---|
