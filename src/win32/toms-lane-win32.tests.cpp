@@ -21,7 +21,7 @@ int main()
 
 	// Read file that does not exist returns non-zero result
 	int readFileResult = tl::ReadFile("test-file.dat", testSpace);
-	assert(readFileResult != 0);
+	assert(readFileResult == tl::FileDoesNotExist);
 
 	// Create new file
 	int writeFileResult = tl::WriteFile("test-file.dat", testSpace2);

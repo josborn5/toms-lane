@@ -34,10 +34,6 @@ namespace tl
 	};
 	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite);
 
-	SpriteC ReadSpriteCFromFile(
-		char* filePath
-	);
-
 	/**
 	 *	|---|---|---|
 	 *	| 0 | 1 | 2 |	pixel ordinals
