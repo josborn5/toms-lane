@@ -36,5 +36,7 @@ int main()
 	assert(testBuffer[3] == 4);
 	assert(testBuffer[4] == 5);
 
+
+	printf("\n===== SUCCESS! =====\n");
 	return 0;
 }

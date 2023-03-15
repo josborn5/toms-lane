@@ -18,6 +18,7 @@ namespace tl
 		double megaCyclesPerFrame = 0.0f;
 	};
 
+	int GetFileSize(char* fileName, uint64_t& size);
 	int ReadFile(char* fileName, const MemorySpace& readBuffer);
 	int WriteFile(char* fileName, const MemorySpace& writeBuffer);
 

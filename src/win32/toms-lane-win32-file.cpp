@@ -19,6 +19,11 @@ namespace tl
 
 	int WriteFile(char* fileName, const MemorySpace& writeBuffer)
 	{
+		if(!writeBuffer.content)
+		{
+			return InvalidBuffer;
+		}
+
 		HANDLE fileHandle = Win32GetFileHandle(fileName, Write);
 
 		if(fileHandle == INVALID_HANDLE_VALUE)
@@ -26,24 +31,14 @@ namespace tl
 			return InvalidFilePath;
 		}
 
-		if(!writeBuffer.content)
-		{
-			CloseHandle(fileHandle);
-			return InvalidBuffer;
-		}
-
 		LPDWORD bytesWritten = 0;
-		if(!::WriteFile(fileHandle, writeBuffer.content, writeBuffer.sizeInBytes, bytesWritten, NULL))
-		{
-			CloseHandle(fileHandle);
-			return FileWriteError;
-		}
-
+		bool writeSuccess = ::WriteFile(fileHandle, writeBuffer.content, writeBuffer.sizeInBytes, bytesWritten, NULL);
 		CloseHandle(fileHandle);
-		return Success;
+
+		return writeSuccess ? Success : FileWriteError;
 	}
-	
-	int ReadFile(char* fileName, const MemorySpace& readBuffer)
+
+	int GetFileSize(char* fileName, uint64_t& size)
 	{
 		HANDLE fileHandle = Win32GetFileHandle(fileName, Read);
 
@@ -53,9 +48,10 @@ namespace tl
 		}
 
 		LARGE_INTEGER fileSize;
-		if(!GetFileSizeEx(fileHandle, &fileSize))
+		bool readSuccess = GetFileSizeEx(fileHandle, &fileSize);
+		CloseHandle(fileHandle);
+		if(!readSuccess)
 		{
-			CloseHandle(fileHandle);
 			return FileSizeError;
 		}
 
@@ -64,28 +60,38 @@ namespace tl
 			return FileTooLargeToRead;
 		}
 
-		uint32_t fileSize32 = (uint32_t)(fileSize.QuadPart); // assert we're not trying to open a file larger than 4GB, since ReadFile will break for 4GB+ file
-		unsigned long fileSize64 = (unsigned long)fileSize.QuadPart;
+		size = (uint64_t)fileSize.QuadPart;
+
+		return Success;
+	}
+	
+	int ReadFile(char* fileName, const MemorySpace& readBuffer)
+	{
+		if(!readBuffer.content)
+		{
+			return InvalidBuffer;
+		}
+
+		uint64_t fileSize;
+		int fileReadResult = GetFileSize(fileName, fileSize);
+		if (fileReadResult != Success)
+		{
+			return fileReadResult;
+		}
+
+		uint32_t fileSize32 = (uint32_t)fileSize; // assert we're not trying to open a file larger than 4GB, since ReadFile will break for 4GB+ file
+		unsigned long fileSize64 = (unsigned long)fileSize;
 
 		if (fileSize64 > readBuffer.sizeInBytes)
 		{
-			CloseHandle(fileHandle);
 			return BufferTooSmallForFile;
 		}
 
-		if(!readBuffer.content)
-		{
-			CloseHandle(fileHandle);
-			return InvalidBuffer;
-		}
+		HANDLE fileHandle = Win32GetFileHandle(fileName, Read);
 		DWORD bytesToRead;
-		if(!::ReadFile(fileHandle, readBuffer.content, fileSize32, &bytesToRead, 0))
-		{
-			CloseHandle(fileHandle);
-			return FileReadError;
-		}
-
+		bool readSuccess = ::ReadFile(fileHandle, readBuffer.content, fileSize32, &bytesToRead, 0);
 		CloseHandle(fileHandle);
-		return Success;
+
+		return readSuccess ? Success : FileReadError;
 	}
 }
