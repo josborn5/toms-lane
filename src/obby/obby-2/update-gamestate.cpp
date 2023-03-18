@@ -20,7 +20,7 @@ int PopulateBlocksForLevel(
 	const tl::Vec2<int> &pixelRect
 ) {
 	// Temporary hack - force level to be between 1 and 3
-	if (level > 4)
+	if (level > 6)
 	{
 		level = 1;
 	}
@@ -154,8 +154,10 @@ static void UpdateGameState(
 
 	if (newPlayerState.position.y <= minPlayerY)
 	{
-		state->mode = GameOver;
-		state->lives -= 1;
+		// restart current level
+		StartLevel(state->level, pixelRect);
+		state->mode = StartingNextLevel;
+		return;
 	}
 
 	state->player.position.x = newPlayerState.position.x;
@@ -175,7 +177,15 @@ static void UpdateGameState(
 			moveCount = 0.0f;
 			moveSwitch = !moveSwitch;
 		}
-		state->player.sprite = (moveSwitch) ? islaSpriteMove1 : islaSpriteMove2;
+		if (state->player.velocity.x > 0.0f)
+		{
+			state->player.sprite = (moveSwitch) ? islaSpriteMoveRight1 : islaSpriteMoveRight2;
+		}
+		else
+		{
+			state->player.sprite = (moveSwitch) ? islaSpriteMoveLeft1 : islaSpriteMoveLeft2;
+		}
+		
 		moveCount += dt;
 	}
 }

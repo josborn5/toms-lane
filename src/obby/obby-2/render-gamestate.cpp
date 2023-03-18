@@ -8,45 +8,71 @@ const tl::Vec2<float> smallFontHalfSize = { 5.0f, 10.0f };
 const tl::Vec2<float> titleFontHalfSize = { 15.0f, 30.0f };
 
 char* islaAvatar = "\
-  0\n\
- 000\n\
- 000\n\
-  0\n\
-00000\n\
-  0\n\
-  0\n\
- 0 0\n\
- 0 0\n\
-0   0\n\
-0   0";
-char* islaAvatarMove1 = "\
-  0\n\
- 000\n\
- 000\n\
-  0\n\
-  0\n\
-  00\n\
+   0\n\
+  000\n\
+  000\n\
+   0\n\
+0000000\n\
+   0\n\
+   0\n\
   0 0\n\
+  0 0\n\
+ 0   0\n\
+0     0";
+char* islaAvatarMoveright1 = "\
+      0\n\
+     000\n\
+     000\n\
+      0\n\
+000000\n\
+    0\n\
+   0\n\
+\n\
+\n\
+\n\
+";
+char* islaAvatarMoveright2 = "\
+      0\n\
+     000\n\
+     000\n\
+      0\n\
+000000\n\
+      0\n\
+       0\n\
+\n\
+\n\
+\n\
+";
+char* islaAvatarMoveleft1 = "\
  0\n\
+000\n\
+000\n\
+ 0\n\
+  000000\n\
  0\n\
 0\n\
-0";
-char* islaAvatarMove2 = "\
-  0\n\
- 000\n\
- 000\n\
-  0\n\
-  0\n\
- 00\n\
-0 0\n\
-   0\n\
+\n\
+\n\
+\n\
+";
+char* islaAvatarMoveleft2 = "\
+ 0\n\
+000\n\
+000\n\
+ 0\n\
+  000000\n\
    0\n\
     0\n\
-    0";
+\n\
+\n\
+\n\
+";
 
 tl::Sprite islaSprite = tl::LoadSprite(islaAvatar);
-tl::Sprite islaSpriteMove1 = tl::LoadSprite(islaAvatarMove1);
-tl::Sprite islaSpriteMove2 = tl::LoadSprite(islaAvatarMove2);
+tl::Sprite islaSpriteMoveRight1 = tl::LoadSprite(islaAvatarMoveright1);
+tl::Sprite islaSpriteMoveRight2 = tl::LoadSprite(islaAvatarMoveright2);
+tl::Sprite islaSpriteMoveLeft1 =  tl::LoadSprite(islaAvatarMoveleft1);
+tl::Sprite islaSpriteMoveLeft2 =  tl::LoadSprite(islaAvatarMoveleft2);
 
 char* jumpScare = "\
        00000\n\
