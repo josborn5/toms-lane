@@ -2,6 +2,8 @@
 #include "../win32/toms-lane-win32.hpp"
 #include "./sprite-editor-win32.cpp"
 
+tl::SpriteC* sprite;
+
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
 	// Load file
@@ -19,6 +21,8 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	{
 		return 1;
 	}
+
+	sprite = (tl::SpriteC*)fileReadMemory.content;
 	
 	return 0;
 }
