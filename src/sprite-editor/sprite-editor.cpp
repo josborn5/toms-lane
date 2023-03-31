@@ -8,13 +8,8 @@ tl::Rect<float> rootGrid;
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
 	// Load file
-	tl::MemorySpace fileReadMemory;
-	fileReadMemory.sizeInBytes = gameMemory.PermanentStorageSpace;
-	fileReadMemory.content = gameMemory.PermanentStorage;
-
-	tl::MemorySpace tempMemory;
-	tempMemory.sizeInBytes = gameMemory.TransientStorageSpace;
-	tempMemory.content = gameMemory.TransientStorage;
+	tl::MemorySpace fileReadMemory = gameMemory.permanent;
+	tl::MemorySpace tempMemory = gameMemory.transient;
 
 	uint64_t fileSize = 0;
 	if (tl::GetFileSize(filePath, fileSize) != tl::Success)

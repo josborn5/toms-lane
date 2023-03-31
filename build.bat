@@ -21,3 +21,5 @@ call .\build-scripts\compile-project.bat obby-2 obby\obby-2\obby-2.cpp %1
 call .\build-scripts\compile-project.bat breakout breakout\breakout.cpp %1
 
 call .\build-scripts\compile-project.bat driving driving\driving.cpp %1
+
+call .\build-scripts\compile-project.bat sprite-editor sprite-editor\sprite-editor.cpp %1

@@ -275,19 +275,19 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 			// Initialize general use memory
 			GameMemory GameMemory;
-			GameMemory.PermanentStorageSpace = Megabytes(settings.permanentSpaceInMegabytes);
-			GameMemory.TransientStorageSpace = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
+			GameMemory.permanent.sizeInBytes = Megabytes(settings.permanentSpaceInMegabytes);
+			GameMemory.transient.sizeInBytes = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
 
-			uint64_t totalStorageSpace = GameMemory.PermanentStorageSpace + GameMemory.TransientStorageSpace;
+			uint64_t totalStorageSpace = GameMemory.permanent.sizeInBytes + GameMemory.transient.sizeInBytes;
 			bool successfulMemoryAllocation = true;
-			GameMemory.PermanentStorage = VirtualAlloc(0, (size_t)totalStorageSpace, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
-			if(GameMemory.PermanentStorage == NULL)
+			GameMemory.permanent.content = VirtualAlloc(0, (size_t)totalStorageSpace, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+			if(GameMemory.permanent.content == NULL)
 			{
 				successfulMemoryAllocation = false;
 				DisplayLastWin32Error();
 			}
 
-			GameMemory.TransientStorage = (uint8_t*)GameMemory.PermanentStorage + GameMemory.PermanentStorageSpace;
+			GameMemory.transient.content = (uint8_t*)GameMemory.permanent.content + GameMemory.permanent.sizeInBytes;
 
 			// Initialize input state
 			Input gameInput = {0};

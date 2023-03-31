@@ -1,14 +1,10 @@
 #ifndef TOMS_LANE_DATA_STRUCTURES_H
 #define TOMS_LANE_DATA_STRUCTURES_H
 
+#include "./platform.hpp"
+
 namespace tl
 {
-	struct MemorySpace
-	{
-		void* content;
-		unsigned long sizeInBytes;
-	};
-	
 	template<typename T>
 	struct HeapArray
 	{

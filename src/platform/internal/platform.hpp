@@ -60,13 +60,16 @@ namespace tl
 		Button buttons[BUTTON_COUNT];
 	};
 
+	struct MemorySpace
+	{
+		void* content;
+		unsigned long sizeInBytes;
+	};
+
 	struct GameMemory
 	{
-		bool IsInitialized;
-		unsigned long PermanentStorageSpace;
-		unsigned long TransientStorageSpace;
-		void* PermanentStorage;
-		void* TransientStorage;
+		MemorySpace permanent;
+		MemorySpace transient;
 	};
 }
 #endif

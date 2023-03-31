@@ -63,13 +63,8 @@ template float Clamp(float min, float value, float max);
 
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
-	tl::MemorySpace transientMemory;
-	transientMemory.content = gameMemory.TransientStorage;
-	transientMemory.sizeInBytes = gameMemory.TransientStorageSpace;
-
-	tl::MemorySpace permanentMemory;
-	permanentMemory.content = gameMemory.PermanentStorage;
-	permanentMemory.sizeInBytes = gameMemory.PermanentStorageSpace;
+	tl::MemorySpace transientMemory = gameMemory.transient;
+	tl::MemorySpace permanentMemory = gameMemory.permanent;
 	meshArray.triangles.initialize(permanentMemory);
 	
 	// EXE must be run as admin in order to have read permission for the file. need to figure out how to fix this.
@@ -294,9 +289,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	camera.position.y = Clamp(min.y, camera.position.y, max.y);
 	camera.position.z = Clamp(min.z, camera.position.z, max.z);
 
-	tl::MemorySpace transientMemory;
-	transientMemory.content = gameMemory.TransientStorage;
-	transientMemory.sizeInBytes = gameMemory.TransientStorageSpace;
+	tl::MemorySpace transientMemory = gameMemory.transient;
 
 	tl::TransformAndRenderMesh(renderBuffer, meshArray, camera, worldMatrix, projectionMatrix, transientMemory);
 
