@@ -47,21 +47,44 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
-	tl::DrawRect(renderBuffer, 0xFF0000, rootGrid);
+	uint32_t gridBorderColor = 0x444444;
+	tl::DrawRect(renderBuffer, gridBorderColor, rootGrid);
+
+	float pixelBorderWidth = 5.0f;
+	float pixelDimensionWithBorder = (rootGrid.halfSize.x) / sprite.width;
+	float pixelDimension = pixelDimensionWithBorder - (2.0f * pixelBorderWidth);
+	tl::Vec2<float> pixelHalfSize = { 0.5F * pixelDimension, 0.5f * pixelDimension };
+
+	float yOriginalPosition = (2.0f * rootGrid.halfSize.y) - (0.5f * pixelDimensionWithBorder);
+	for (int j = 0; j < sprite.height; j += 1)
+	{
+		float yPosition = yOriginalPosition - (j * pixelDimensionWithBorder);
+		for (int i = 0; i < sprite.width; i += 1)
+		{
+			float xPosition = (0.5f * pixelDimensionWithBorder) + (i * pixelDimensionWithBorder);
+
+			tl::Vec2<float> pixelPosition = { xPosition, yPosition };
+			tl::Rect<float> pixelFootPrint;
+			pixelFootPrint.halfSize = pixelHalfSize;
+			pixelFootPrint.position = pixelPosition;
+
+			tl::DrawRect(renderBuffer, 0xFF0000, pixelFootPrint);
+		}
+	}
 
 	tl::Rect<float> numberFoot;
 	numberFoot.halfSize = { 10.0f, 20.0f };
 	numberFoot.position = { 400.0f, 200.0f };
 	tl::DrawNumber(
 		renderBuffer,
-		(int)rootGrid.halfSize.x,
+		sprite.width,
 		numberFoot,
 		0xFFFFFF
 	);
 	numberFoot.position.y -= 30.0f;
 	tl::DrawNumber(
 		renderBuffer,
-		(int)rootGrid.halfSize.y,
+		sprite.height,
 		numberFoot,
 		0xFFFFFF
 	);
