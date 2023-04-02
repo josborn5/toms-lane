@@ -80,6 +80,49 @@ void RunSpriteTests()
 	assert(testSprite.content[1].b == 0.2f);
 	assert(testSprite.content[1].a == 0.6f);
 
+	tl::LoadSpriteC("\
+3\n\
+2\n\
+255 102 51 255\n\
+204 102 51 153\n\
+255 0 0 255\n\
+0 255 0 255\n\
+0 0 255 255\n\
+255 255 255 255\n\
+", space, testSprite);
+	printf("\nactual SpriteC width: %d\nactual SpriteC height: %d\n", testSprite.width, testSprite.height);
+	assert(testSprite.width == 3);
+	assert(testSprite.height == 2);
+	assert(testSprite.content[0].r == 1.0f);
+	assert(testSprite.content[0].g == 0.4f);
+	assert(testSprite.content[0].b == 0.2f);
+	assert(testSprite.content[0].a == 1.0f);
+
+	assert(testSprite.content[1].r == 0.8f);
+	assert(testSprite.content[1].g == 0.4f);
+	assert(testSprite.content[1].b == 0.2f);
+	assert(testSprite.content[1].a == 0.6f);
+
+	assert(testSprite.content[2].r == 1.0f);
+	assert(testSprite.content[2].g == 0.0f);
+	assert(testSprite.content[2].b == 0.0f);
+	assert(testSprite.content[2].a == 1.0f);
+
+	assert(testSprite.content[3].r == 0.0f);
+	assert(testSprite.content[3].g == 1.0f);
+	assert(testSprite.content[3].b == 0.0f);
+	assert(testSprite.content[3].a == 1.0f);
+
+	assert(testSprite.content[4].r == 0.0f);
+	assert(testSprite.content[4].g == 0.0f);
+	assert(testSprite.content[4].b == 1.0f);
+	assert(testSprite.content[4].a == 1.0f);
+
+	assert(testSprite.content[5].r == 1.0f);
+	assert(testSprite.content[5].g == 1.0f);
+	assert(testSprite.content[5].b == 1.0f);
+	assert(testSprite.content[5].a == 1.0f);
+
 	free(space.content);
 	free(testSprite.content);
 }
