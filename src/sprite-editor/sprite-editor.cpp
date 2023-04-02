@@ -3,7 +3,9 @@
 #include "./sprite-editor-win32.cpp"
 
 tl::SpriteC sprite;
-tl::Rect<float> rootGrid;
+tl::Rect<float> spriteRect;
+tl::Rect<float> gridRect;
+tl::Rect<float> commandRect;
 
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
@@ -22,6 +24,20 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 		return 1;
 	}
 
+	commandRect.halfSize = {
+		(float)windowWidth * 0.5f,
+		50.0f
+	};
+	commandRect.position = tl::CopyVec2(commandRect.halfSize);
+	spriteRect.halfSize = {
+		commandRect.halfSize.x,
+		((float)windowHeight * 0.5f) - commandRect.halfSize.y
+	};
+	spriteRect.position = {
+		spriteRect.halfSize.x,
+		spriteRect.halfSize.y + commandRect.position.y + commandRect.halfSize.y
+	};
+
 	char* spriteCharArray = (char*)fileReadMemory.content;
 	uint64_t spriteCharArrayLength = fileSize / sizeof(char);
 	char* addressAfterSpriteCharArray = &spriteCharArray[spriteCharArrayLength];
@@ -29,33 +45,44 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	sprite.content = (tl::Color*)addressAfterSpriteCharArray;
 	tl::LoadSpriteC(spriteCharArray, tempMemory, sprite);
 
-	float aspectRatio = (float)sprite.height / (float)sprite.width;
-	if (aspectRatio >= 1)
+	float spriteAspectRatio = (float)sprite.height / (float)sprite.width;
+	float backgroundAspectRatio = spriteRect.halfSize.y / spriteRect.halfSize.x;
+	float relativeAspectRatio = spriteAspectRatio / backgroundAspectRatio;
+	if (relativeAspectRatio >= 1.0f)
 	{
-		rootGrid.halfSize.y = 600.0f * 0.5f;
-		rootGrid.halfSize.x = aspectRatio * rootGrid.halfSize.y * 0.5f;
+		gridRect.halfSize.y = spriteRect.halfSize.y;
+		gridRect.halfSize.x = gridRect.halfSize.y * (float)sprite.width / (float)sprite.height;
 	}
 	else
 	{
-		rootGrid.halfSize.x = 800;
-		rootGrid.halfSize.y = aspectRatio * rootGrid.halfSize.x * 0.5f;
+		gridRect.halfSize.x = spriteRect.halfSize.x;
+		gridRect.halfSize.y = gridRect.halfSize.x * (float)sprite.height / (float)sprite.width;
 	}
 
-	rootGrid.position = tl::CopyVec2(rootGrid.halfSize);
+	gridRect.position = {
+		gridRect.halfSize.x,
+		gridRect.halfSize.y + commandRect.position.y + commandRect.halfSize.y
+	};
 	return 0;
 }
 
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
-	uint32_t gridBorderColor = 0x444444;
-	tl::DrawRect(renderBuffer, gridBorderColor, rootGrid);
+	uint32_t commandBackgroundColor = 0xAA0000;
+	tl::DrawRect(renderBuffer, commandBackgroundColor, commandRect);
+	
+	uint32_t spriteBackgroundColor = 0x0000AA;
+	tl::DrawRect(renderBuffer, spriteBackgroundColor, spriteRect);
+	
+	uint32_t gridBorderColor = 0x00AA00;
+	tl::DrawRect(renderBuffer, gridBorderColor, gridRect);
 
 	float pixelBorderWidth = 5.0f;
-	float pixelDimensionWithBorder = (rootGrid.halfSize.x) / sprite.width;
+	float pixelDimensionWithBorder = (2.0f * gridRect.halfSize.x) / sprite.width;
 	float pixelDimension = pixelDimensionWithBorder - (2.0f * pixelBorderWidth);
 	tl::Vec2<float> pixelHalfSize = { 0.5F * pixelDimension, 0.5f * pixelDimension };
 
-	float yOriginalPosition = (2.0f * rootGrid.halfSize.y) - (0.5f * pixelDimensionWithBorder);
+	float yOriginalPosition = gridRect.position.y + gridRect.halfSize.y - (0.5f * pixelDimensionWithBorder);
 	for (int j = 0; j < sprite.height; j += 1)
 	{
 		float yPosition = yOriginalPosition - (j * pixelDimensionWithBorder);
