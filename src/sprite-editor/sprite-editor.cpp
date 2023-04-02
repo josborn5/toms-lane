@@ -68,7 +68,15 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 			pixelFootPrint.halfSize = pixelHalfSize;
 			pixelFootPrint.position = pixelPosition;
 
-			tl::DrawRect(renderBuffer, 0xFF0000, pixelFootPrint);
+			int pixelIndex = (j * sprite.width) + i;
+			tl::Color blockColor = sprite.content[pixelIndex];
+
+			uint32_t color = tl::GetColorFromRGB(
+				(int)(255.0f * blockColor.r),
+				(int)(255.0f * blockColor.g),
+				(int)(255.0f * blockColor.b)
+			);
+			tl::DrawRect(renderBuffer, color, pixelFootPrint);
 		}
 	}
 
