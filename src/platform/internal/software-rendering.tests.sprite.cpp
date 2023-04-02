@@ -66,7 +66,7 @@ void RunSpriteTests()
 	space.content = malloc(8);
 	tl::SpriteC testSprite;
 	testSprite.content = (tl::Color *)malloc(1024);
-	tl::LoadSpriteC("2\n1\n255, 102, 51, 255\n204, 102, 51, 153", space, testSprite);
+	tl::LoadSpriteC("2\n1\n255 102 51 255\n204 102 51 153", space, testSprite);
 	printf("\nactual SpriteC width: %d\nactual SpriteC height: %d\n", testSprite.width, testSprite.height);
 	assert(testSprite.width == 2);
 	assert(testSprite.height == 1);

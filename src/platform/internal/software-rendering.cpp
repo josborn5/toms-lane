@@ -1414,7 +1414,7 @@ namespace tl
 			int rgbContent[3];
 			for (int j = 0; j < 3 && *workingPointer; j += 1)
 			{
-				workingPointer = CopyToChar(workingPointer, buffer, ',');
+				workingPointer = CopyToChar(workingPointer, buffer, ' ');
 				rgbContent[j] = CharStringToInt(buffer);
 				workingPointer = GetNextNumberChar(workingPointer);
 			}
