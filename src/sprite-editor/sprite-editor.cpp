@@ -2,10 +2,12 @@
 #include "../win32/toms-lane-win32.hpp"
 #include "./sprite-editor-win32.cpp"
 
-tl::SpriteC sprite;
-tl::Rect<float> spriteRect;
-tl::Rect<float> gridRect;
-tl::Rect<float> commandRect;
+static tl::SpriteC sprite;
+static tl::Rect<float> spriteRect;
+static tl::Rect<float> gridRect;
+static tl::Rect<float> commandRect;
+
+static char commandBuffer[5];
 
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
@@ -68,16 +70,15 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
-	uint32_t commandBackgroundColor = 0xAA0000;
+	const uint32_t commandBackgroundColor = 0x000000;
+	const uint32_t spriteBackgroundColor = 0x222222;
+	const uint32_t gridBorderColor = 0x444444;
+	const float pixelBorderWidth = 2.0f;
+
 	tl::DrawRect(renderBuffer, commandBackgroundColor, commandRect);
-	
-	uint32_t spriteBackgroundColor = 0x0000AA;
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, spriteRect);
-	
-	uint32_t gridBorderColor = 0x00AA00;
 	tl::DrawRect(renderBuffer, gridBorderColor, gridRect);
 
-	float pixelBorderWidth = 5.0f;
 	float pixelDimensionWithBorder = (2.0f * gridRect.halfSize.x) / sprite.width;
 	float pixelDimension = pixelDimensionWithBorder - (2.0f * pixelBorderWidth);
 	tl::Vec2<float> pixelHalfSize = { 0.5F * pixelDimension, 0.5f * pixelDimension };
@@ -107,21 +108,5 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		}
 	}
 
-	tl::Rect<float> numberFoot;
-	numberFoot.halfSize = { 10.0f, 20.0f };
-	numberFoot.position = { 400.0f, 200.0f };
-	tl::DrawNumber(
-		renderBuffer,
-		sprite.width,
-		numberFoot,
-		0xFFFFFF
-	);
-	numberFoot.position.y -= 30.0f;
-	tl::DrawNumber(
-		renderBuffer,
-		sprite.height,
-		numberFoot,
-		0xFFFFFF
-	);
 	return 0;
 }
