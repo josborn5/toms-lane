@@ -2,12 +2,14 @@
 #include "../win32/toms-lane-win32.hpp"
 #include "./sprite-editor-win32.cpp"
 
+#define COMMAND_BUFFER_SIZE 5
+
 static tl::SpriteC sprite;
 static tl::Rect<float> spriteRect;
 static tl::Rect<float> gridRect;
 static tl::Rect<float> commandRect;
 
-static char commandBuffer[5];
+static char commandBuffer[COMMAND_BUFFER_SIZE];
 
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
@@ -24,6 +26,11 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	if (tl::ReadFile(filePath, fileReadMemory) != tl::Success)
 	{
 		return 1;
+	}
+
+	for (int i = 0; i < COMMAND_BUFFER_SIZE; i += 1)
+	{
+		commandBuffer[i] = '\0';
 	}
 
 	commandRect.halfSize = {
