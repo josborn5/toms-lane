@@ -38,7 +38,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, co
 	pixelRect.x = renderBuffer.width;
 	pixelRect.y = renderBuffer.height;
 
-	if (IsReleased(input, tl::KEY_R))
+	if (tl::IsReleased(input, tl::KEY_R))
 	{
 		initialized = false;
 	}
@@ -49,7 +49,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, co
 		return InitializeGameState(&gamestate, pixelRect, input);
 	}
 
-	if (IsReleased(input, tl::KEY_H))
+	if (tl::IsReleased(input, tl::KEY_H))
 	{
 		isPaused = !isPaused;
 	}
