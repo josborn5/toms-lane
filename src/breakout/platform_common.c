@@ -1,11 +1,5 @@
 #include "../platform/toms-lane-platform.hpp"
 
-static bool IsReleased(const tl::Input &input, int button)
-{
-	bool isReleased = !input.buttons[button].isDown && input.buttons[button].wasDown;
-	return isReleased;
-}
-
 static int ClampInt(int min, int val, int max)
 {
 	if (val < min) return min;

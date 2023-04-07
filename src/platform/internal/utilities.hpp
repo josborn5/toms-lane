@@ -1,8 +1,6 @@
 #ifndef TOMS_LANE_UTILITIES_H
 #define TOMS_LANE_UTILITIES_H
 
-#include "./data-structures.hpp"
-
 namespace tl
 {
 	template<typename T>

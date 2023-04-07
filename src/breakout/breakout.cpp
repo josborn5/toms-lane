@@ -193,7 +193,7 @@ static void UpdateGameState(GameState *state, const tl::Vec2<int>& pixelRect, co
 {
 	if (state->mode == ReadyToStart)
 	{
-		if (IsReleased(input, tl::KEY_S))
+		if (tl::IsReleased(input, tl::KEY_S))
 		{
 			state->mode = Started;
 		}
@@ -560,7 +560,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	pixelRect.x = renderBuffer.width;
 	pixelRect.y = renderBuffer.height;
 
-	if (IsReleased(input, tl::KEY_R))
+	if (tl::IsReleased(input, tl::KEY_R))
 	{
 		initialized = false;
 	}
@@ -571,7 +571,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		InitializeGameState(&gamestate, pixelRect, input);
 	}
 
-	if (IsReleased(input, tl::KEY_SPACE))
+	if (tl::IsReleased(input, tl::KEY_SPACE))
 	{
 		isPaused = !isPaused;
 	}

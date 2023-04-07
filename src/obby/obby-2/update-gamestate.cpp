@@ -93,7 +93,7 @@ static void UpdateGameState(
 {
 	if (state->mode == ReadyToStart)
 	{
-		if (IsReleased(input, tl::KEY_S))
+		if (tl::IsReleased(input, tl::KEY_S))
 		{
 			state->mode = Started;
 		}

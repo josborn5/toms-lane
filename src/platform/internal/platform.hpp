@@ -60,6 +60,8 @@ namespace tl
 		Button buttons[BUTTON_COUNT];
 	};
 
+	bool IsReleased(const Input &input, int button);
+
 	struct MemorySpace
 	{
 		void* content;

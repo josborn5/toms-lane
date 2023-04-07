@@ -3,3 +3,4 @@
 #include "./internal/software-rendering.cpp"
 #include "./internal/collision.cpp"
 #include "./internal/utilities.cpp"
+#include "./internal/platform.cpp"

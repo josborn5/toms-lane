@@ -1,12 +1,6 @@
 #include "../platform/toms-lane-platform.hpp"
 #include "./platform_common.hpp"
 
-static bool IsReleased(const tl::Input &input, int button)
-{
-	bool isReleased = !input.buttons[button].isDown && input.buttons[button].wasDown;
-	return isReleased;
-}
-
 static bool IsDown(const tl::Input &input, int button)
 {
 	bool isDown = input.buttons[button].isDown;
