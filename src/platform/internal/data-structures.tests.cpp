@@ -55,6 +55,10 @@ void RunHeapArrayTests()
 	*firstItemInRemainingSpace = 3;
 	assert(array.content[0] == 5);
 	assert(array.content[1] == 4);
+
+	assert(array.length == 2);
+	array.clear();
+	assert(array.length == 0);
 }
 
 void RunHeapQueueTests()

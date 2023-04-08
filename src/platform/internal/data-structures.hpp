@@ -27,7 +27,7 @@ namespace tl
 
 			void initialize(const MemorySpace& memory)
 			{
-				content = (T *)memory.content;
+				content = (T*)memory.content;
 				_capacity = (int)(memory.sizeInBytes / _itemSizeInBytes);
 			}
 
@@ -56,6 +56,11 @@ namespace tl
 				remainingSpaceDetails.content = addressOfNextItem;
 				remainingSpaceDetails.sizeInBytes = (unsigned long)(remaining * _itemSizeInBytes);
 				return remainingSpaceDetails;
+			}
+
+			void clear()
+			{
+				_length = 0;
 			}
 	};
 
