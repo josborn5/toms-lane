@@ -19,10 +19,14 @@ namespace tl
 
 			T* content;
 
-			HeapArray() {}
 			HeapArray(const MemorySpace& memory)
 			{
 				initialize(memory);
+			}
+			HeapArray(T* content, int capacity)
+			{
+				content = content;
+				_capacity = capacity;
 			}
 
 			void initialize(const MemorySpace& memory)

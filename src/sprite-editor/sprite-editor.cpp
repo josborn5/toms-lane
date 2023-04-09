@@ -10,6 +10,7 @@ static tl::Rect<float> gridRect;
 static tl::Rect<float> commandRect;
 
 static char commandBuffer[COMMAND_BUFFER_SIZE];
+tl::HeapArray<char> commands = tl::HeapArray<char>(commandBuffer, COMMAND_BUFFER_SIZE);
 
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
@@ -77,6 +78,16 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
+	// Update command buffer from input
+	if (tl::IsReleased(input, tl::KEY_A))
+	{
+		if (commands.length < COMMAND_BUFFER_SIZE)
+		{
+			commands.append('a');
+		}
+	}
+
+	// Render
 	const uint32_t commandBackgroundColor = 0x000000;
 	const uint32_t spriteBackgroundColor = 0x222222;
 	const uint32_t gridBorderColor = 0x444444;
