@@ -8,6 +8,7 @@ static tl::SpriteC sprite;
 static tl::Rect<float> spriteRect;
 static tl::Rect<float> gridRect;
 static tl::Rect<float> commandRect;
+static tl::Rect<float> commandCharFootprint;
 
 static char commandBuffer[COMMAND_BUFFER_SIZE];
 tl::HeapArray<char> commands = tl::HeapArray<char>(commandBuffer, COMMAND_BUFFER_SIZE);
@@ -39,6 +40,8 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 		50.0f
 	};
 	commandRect.position = tl::CopyVec2(commandRect.halfSize);
+	commandCharFootprint.halfSize = { 0.5f * commandRect.halfSize.y, commandRect.halfSize.y };
+	commandCharFootprint.position = tl::CopyVec2(commandCharFootprint.halfSize);
 	spriteRect.halfSize = {
 		commandRect.halfSize.x,
 		((float)windowHeight * 0.5f) - commandRect.halfSize.y
@@ -79,11 +82,19 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
 	// Update command buffer from input
-	if (tl::IsReleased(input, tl::KEY_A))
+	if (tl::IsReleased(input, tl::KEY_S))
 	{
-		if (commands.length < COMMAND_BUFFER_SIZE)
+		if (commands.length < commands.capacity)
 		{
-			commands.append('a');
+			commands.append('S');
+		}
+	}
+	else if (tl::IsReleased(input, tl::KEY_ENTER) || tl::IsReleased(input, tl::KEY_ESCAPE))
+	{
+		for (int i = 0; i < commands.capacity; i += 1)
+		{
+			commands.content[i] = '\0';
+			commands.clear();
 		}
 	}
 
@@ -91,6 +102,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	const uint32_t commandBackgroundColor = 0x000000;
 	const uint32_t spriteBackgroundColor = 0x222222;
 	const uint32_t gridBorderColor = 0x444444;
+	const uint32_t commandTextColor = 0xFFFFFF;
 	const float pixelBorderWidth = 2.0f;
 
 	tl::DrawRect(renderBuffer, commandBackgroundColor, commandRect);
@@ -125,6 +137,13 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 			tl::DrawRect(renderBuffer, color, pixelFootPrint);
 		}
 	}
+
+	tl::DrawAlphabetCharacters(
+			renderBuffer,
+			commandBuffer,
+			commandCharFootprint,
+			commandTextColor
+		);
 
 	return 0;
 }

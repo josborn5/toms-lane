@@ -23,9 +23,9 @@ namespace tl
 			{
 				initialize(memory);
 			}
-			HeapArray(T* content, int capacity)
+			HeapArray(T* pointer, int capacity)
 			{
-				content = content;
+				content = pointer;
 				_capacity = capacity;
 			}
 

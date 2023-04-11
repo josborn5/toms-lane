@@ -193,6 +193,8 @@ static void Win32_ProcessPendingMessages(Input* input)
 					Win32_ProcessKeyboardMessage(input, isDown, wasDown, vKCode, VK_DOWN, KEY_DOWN);
 					Win32_ProcessKeyboardMessage(input, isDown, wasDown, vKCode, VK_LEFT, KEY_LEFT);
 					Win32_ProcessKeyboardMessage(input, isDown, wasDown, vKCode, VK_RIGHT, KEY_RIGHT);
+					Win32_ProcessKeyboardMessage(input, isDown, wasDown, vKCode, VK_ESCAPE, KEY_ESCAPE);
+					Win32_ProcessKeyboardMessage(input, isDown, wasDown, vKCode, VK_RETURN, KEY_ENTER);
 				}
 
 				bool altKeyDown = ((Message.lParam & (1 << 29)) != 0);

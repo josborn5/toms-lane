@@ -985,7 +985,7 @@ namespace tl
 
 	// Render characters
 	const float CHARACTER_HEIGHT = 7.0f;
-	Sprite letters[26] = {
+	static Sprite letters[26] = {
 	LoadSprite("\
  00\n\
 0  0\n\
