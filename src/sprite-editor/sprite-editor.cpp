@@ -10,6 +10,45 @@ static tl::Rect<float> gridRect;
 static tl::Rect<float> commandRect;
 static tl::Rect<float> commandCharFootprint;
 
+static char keyMap[26] = {
+	'A',
+	'B',
+	'C',
+	'D',
+	'E',
+	'F',
+	'G',
+	'H',
+	'I',
+	'J',
+	'K',
+	'L',
+	'M',
+	'N',
+	'O',
+	'P',
+	'Q',
+	'R',
+	'S',
+	'T',
+	'U',
+	'V',
+	'W',
+	'X',
+	'Y',
+	'Z'
+};
+
+static char GetCharForKey(int key)
+{
+	if (key < tl::KEY_A || key > tl::KEY_Z)
+	{
+		return '\0';
+	}
+	int relativeIndex = key - tl::KEY_A;
+	return keyMap[relativeIndex];
+}
+
 static char commandBuffer[COMMAND_BUFFER_SIZE];
 tl::HeapArray<char> commands = tl::HeapArray<char>(commandBuffer, COMMAND_BUFFER_SIZE);
 
@@ -82,14 +121,18 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
 	// Update command buffer from input
-	if (tl::IsReleased(input, tl::KEY_S))
+	if (commands.length < commands.capacity)
 	{
-		if (commands.length < commands.capacity)
+		for (int key = tl::KEY_A; key <= tl::KEY_Z; key += 1)
 		{
-			commands.append('S');
+			if (tl::IsReleased(input, key))
+			{
+				char commandChar = GetCharForKey(key);
+				commands.append(commandChar);
+			}
 		}
 	}
-	else if (tl::IsReleased(input, tl::KEY_ENTER) || tl::IsReleased(input, tl::KEY_ESCAPE))
+	if (tl::IsReleased(input, tl::KEY_ENTER) || tl::IsReleased(input, tl::KEY_ESCAPE))
 	{
 		for (int i = 0; i < commands.capacity; i += 1)
 		{
