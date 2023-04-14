@@ -10,6 +10,8 @@ static tl::Rect<float> gridRect;
 static tl::Rect<float> commandRect;
 static tl::Rect<float> commandCharFootprint;
 
+static tl::MemorySpace fileWriteMemory;
+
 static char keyMap[26] = {
 	'A',
 	'B',
@@ -52,6 +54,15 @@ static char GetCharForKey(int key)
 static char commandBuffer[COMMAND_BUFFER_SIZE];
 tl::HeapArray<char> commands = tl::HeapArray<char>(commandBuffer, COMMAND_BUFFER_SIZE);
 
+static void ClearCommandBuffer()
+{
+	for (int i = 0; i < commands.capacity; i += 1)
+	{
+		commands.content[i] = '\0';
+		commands.clear();
+	}
+}
+
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
 	// Load file
@@ -68,6 +79,8 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	{
 		return 1;
 	}
+	fileWriteMemory.content = fileReadMemory.content;
+	fileWriteMemory.sizeInBytes = (unsigned long)fileSize;
 
 	for (int i = 0; i < COMMAND_BUFFER_SIZE; i += 1)
 	{
@@ -132,12 +145,28 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 			}
 		}
 	}
-	if (tl::IsReleased(input, tl::KEY_ENTER) || tl::IsReleased(input, tl::KEY_ESCAPE))
+	if (tl::IsReleased(input, tl::KEY_ESCAPE))
 	{
-		for (int i = 0; i < commands.capacity; i += 1)
+		ClearCommandBuffer();
+	}
+	else if (tl::IsReleased(input, tl::KEY_ENTER))
+	{
+		// DO save
+		if (tl::WriteFile(filePath, fileWriteMemory) == tl::Success)
 		{
-			commands.content[i] = '\0';
-			commands.clear();
+			commandBuffer[0] = 'S';
+			commandBuffer[1] = 'A';
+			commandBuffer[2] = 'V';
+			commandBuffer[3] = 'E';
+			commandBuffer[4] = 'D';
+		}
+		else
+		{
+			commandBuffer[0] = 'E';
+			commandBuffer[1] = 'R';
+			commandBuffer[2] = 'R';
+			commandBuffer[3] = 'O';
+			commandBuffer[4] = 'R';
 		}
 	}
 
