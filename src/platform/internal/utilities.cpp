@@ -41,6 +41,63 @@ namespace tl
 		return (isNegative) ? -1 * intValue : intValue;
 	}
 
+	int IntToCharString(int from, MemorySpace to)
+	{
+		// Picking 10 as a basic, cover most cases char limit for an int value
+		const int maxDigitCount = 10;
+		if (to.sizeInBytes < (maxDigitCount * sizeof(char)))
+		{
+			return 1;
+		}
+
+		char* target = (char*)to.content;
+
+		// Special case: zero
+		if (from == 0)
+		{
+			target[0] = '0';
+			target[1] = '\0';
+			return 0;
+		}
+
+		int charIndex = 0;
+
+		// Handle negative numbers
+		int safeNumber = (from < 0) ? -1 * from : from;
+		if (from < 0)
+		{
+			target[charIndex] = '-';
+			charIndex += 1;
+		}
+
+		int baseTenMultiplier = 1;
+		int digit = safeNumber / baseTenMultiplier;
+		int digitCount = 1;
+		while (digit > 0)
+		{
+			baseTenMultiplier *= 10;
+			digitCount += 1;
+			digit = safeNumber / baseTenMultiplier;
+		}
+
+		// Could do target memory space check here since digitCount is know here???
+
+		int workingNumber = safeNumber;
+		while (baseTenMultiplier >= 10)
+		{
+			baseTenMultiplier /= 10;
+			digit = workingNumber / baseTenMultiplier;
+
+			target[charIndex] = '0' + (char)digit;
+
+			workingNumber -= (digit * baseTenMultiplier);
+			charIndex += 1;
+		}
+
+		target[charIndex] = '\0';
+		return 0;
+	}
+
 	char* CopyToChar(char* from, char* to, const char endChar)
 	{
 		while (*from && *from != endChar)

@@ -13,7 +13,7 @@ void RunUtilitiesTests()
 	assert(a == 2);
 	assert(b == 3);
 
-	printf("\n===== CharToInt =====\n");
+	printf("\n===== CharStringToInt =====\n");
 	assert(tl::CharStringToInt("1") == 1);
 	assert(tl::CharStringToInt("0") == 0);
 	assert(tl::CharStringToInt("23") == 23);
@@ -26,6 +26,51 @@ void RunUtilitiesTests()
 	assert(tl::CharStringToInt("-23") == -23);
 	assert(tl::CharStringToInt("-654") == -654);
 	assert(tl::CharStringToInt("-6543210") == -6543210);
+
+	printf("\n===== IntToCharString =====\n");
+	char testBuffer[10];
+	for (int i = 0; i < 10; i += 1) testBuffer[i] = 'a';
+
+	tl::MemorySpace charStringBuffer;
+	charStringBuffer.content = testBuffer;
+	charStringBuffer.sizeInBytes = 10 * sizeof(char);
+	tl::IntToCharString(0, charStringBuffer);
+	printf(testBuffer);
+	printf("\n");
+	assert(testBuffer[0] == '0');
+	assert(testBuffer[1] == '\0');
+
+	for (int i = 0; i < 10; i += 1) testBuffer[i] = 'a';
+	tl::IntToCharString(9, charStringBuffer);
+
+	printf(testBuffer);
+	printf("\n");
+	assert(testBuffer[0] == '9');
+	assert(testBuffer[1] == '\0');
+
+
+	for (int i = 0; i < 10; i += 1) testBuffer[i] = 'a';
+	tl::IntToCharString(9876, charStringBuffer);
+
+	printf(testBuffer);
+	printf("\n");
+	assert(testBuffer[0] == '9');
+	assert(testBuffer[1] == '8');
+	assert(testBuffer[2] == '7');
+	assert(testBuffer[3] == '6');
+	assert(testBuffer[4] == '\0');
+
+	for (int i = 0; i < 10; i += 1) testBuffer[i] = 'a';
+	tl::IntToCharString(-9876, charStringBuffer);
+
+	printf(testBuffer);
+	printf("\n");
+	assert(testBuffer[0] == '-');
+	assert(testBuffer[1] == '9');
+	assert(testBuffer[2] == '8');
+	assert(testBuffer[3] == '7');
+	assert(testBuffer[4] == '6');
+	assert(testBuffer[5] == '\0');
 
 	printf("\n===== CopyToChar =====\n");
 	char* from = "aaa-aaa";
