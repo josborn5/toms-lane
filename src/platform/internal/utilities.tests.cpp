@@ -19,6 +19,7 @@ void RunUtilitiesTests()
 	assert(tl::CharStringToInt("23") == 23);
 	assert(tl::CharStringToInt("654") == 654);
 	assert(tl::CharStringToInt("6543210") == 6543210);
+	assert(tl::CharStringToInt("01") == 1);
 
 	assert(tl::CharStringToInt("-1") == -1);
 	assert(tl::CharStringToInt("-0") == 0);
