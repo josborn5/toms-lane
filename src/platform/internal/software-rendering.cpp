@@ -1439,8 +1439,7 @@ namespace tl
 		char *text,
 		const tl::Rect<float> &firstCharFootprint,
 		uint32_t color
-	)
-	{
+	) {
 		Rect<float> charRect;
 		charRect.halfSize = firstCharFootprint.halfSize;
 		charRect.position = tl::Vec2<float> { firstCharFootprint.position.x, firstCharFootprint.position.y };
@@ -1464,51 +1463,40 @@ namespace tl
 		int number,
 		const tl::Rect<float> &firstCharFootprint,
 		uint32_t color
-	)
-	{
+	) {
 		Rect<float> charRect;
 		charRect.halfSize = firstCharFootprint.halfSize;
 		charRect.position = tl::Vec2<float> { firstCharFootprint.position.x, firstCharFootprint.position.y };
 		float spaceWidth = 0.2f * firstCharFootprint.halfSize.x;
 		float charWidth = (2.0f * firstCharFootprint.halfSize.x) + spaceWidth;
 
-		// Special case: zero
-		if (number == 0)
+		char characterBuffer[10];
+		MemorySpace charBuffer;
+		charBuffer.content = characterBuffer;
+		charBuffer.sizeInBytes = 10;
+		if (IntToCharString(number, charBuffer) != 0)
 		{
-			tl::DrawSprite(renderBuffer, digits[0], charRect, color);
 			return;
 		}
 
-		// Handle negative numbers
-		int safeNumber = (number < 0) ? -1 * number : number;
-		if (number < 0)
+		char* intAsString = (char*)charBuffer.content;
+
+		while (*intAsString)
 		{
-			tl::DrawSprite(renderBuffer, negSprite, charRect, color);
-			charRect.position.x += charWidth;
-		}
-
-		int baseTenMultiplier = 1;
-		int digit = safeNumber / baseTenMultiplier;
-		int digitCount = 1;
-		while (digit > 0)
-		{
-			baseTenMultiplier *= 10;
-			digitCount += 1;
-			digit = safeNumber / baseTenMultiplier;
-		}
-
-		int workingNumber = safeNumber;
-		while (baseTenMultiplier >= 10)
-		{
-			baseTenMultiplier /= 10;
-			digit = workingNumber / baseTenMultiplier;
-
-			workingNumber -= (digit * baseTenMultiplier);
-
-			Sprite charDigit = digits[digit];
-			tl::DrawSprite(renderBuffer, charDigit, charRect, color);
+			char digit = *intAsString;
+			if (digit == '-')
+			{
+				tl::DrawSprite(renderBuffer, negSprite, charRect, color);
+			}
+			else
+			{
+				char digitIndex = (digit) - '0';
+				Sprite charDigit = digits[digitIndex];
+				tl::DrawSprite(renderBuffer, charDigit, charRect, color);
+			}
 
 			charRect.position.x += charWidth;
+			intAsString++;
 		}
 	}
 }
