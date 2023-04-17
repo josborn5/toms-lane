@@ -14,6 +14,7 @@ namespace tl
 
 	int CharStringToInt(char* toParse);
 	int IntToCharString(int from, MemorySpace to);
+	int IntToCharString(int from, char* to);
 
 	char* CopyToChar(char* from, char* to, const char toChar);
 

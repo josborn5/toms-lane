@@ -1,6 +1,7 @@
 #include "../platform/toms-lane-platform.hpp"
 #include "../win32/toms-lane-win32.hpp"
 #include "./sprite-editor-win32.cpp"
+#include "./sprite-operations.cpp"
 
 #define COMMAND_BUFFER_SIZE 5
 

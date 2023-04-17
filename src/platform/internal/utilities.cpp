@@ -41,22 +41,13 @@ namespace tl
 		return (isNegative) ? -1 * intValue : intValue;
 	}
 
-	int IntToCharString(int from, MemorySpace to)
+	int IntToCharString(int from, char* to)
 	{
-		// Picking 10 as a basic, cover most cases char limit for an int value
-		const int maxDigitCount = 10;
-		if (to.sizeInBytes < (maxDigitCount * sizeof(char)))
-		{
-			return 1;
-		}
-
-		char* target = (char*)to.content;
-
 		// Special case: zero
 		if (from == 0)
 		{
-			target[0] = '0';
-			target[1] = '\0';
+			to[0] = '0';
+			to[1] = '\0';
 			return 0;
 		}
 
@@ -66,7 +57,7 @@ namespace tl
 		int safeNumber = (from < 0) ? -1 * from : from;
 		if (from < 0)
 		{
-			target[charIndex] = '-';
+			to[charIndex] = '-';
 			charIndex += 1;
 		}
 
@@ -88,14 +79,28 @@ namespace tl
 			baseTenMultiplier /= 10;
 			digit = workingNumber / baseTenMultiplier;
 
-			target[charIndex] = '0' + (char)digit;
+			to[charIndex] = '0' + (char)digit;
 
 			workingNumber -= (digit * baseTenMultiplier);
 			charIndex += 1;
 		}
 
-		target[charIndex] = '\0';
+		to[charIndex] = '\0';
 		return 0;
+	}
+
+	int IntToCharString(int from, MemorySpace to)
+	{
+		// Picking 10 as a basic, cover most cases char limit for an int value
+		const int maxDigitCount = 10;
+		if (to.sizeInBytes < (maxDigitCount * sizeof(char)))
+		{
+			return 1;
+		}
+
+		char* target = (char*)to.content;
+
+		return IntToCharString(from, target);
 	}
 
 	char* CopyToChar(char* from, char* to, const char endChar)
