@@ -11,8 +11,6 @@ static tl::Rect<float> gridRect;
 static tl::Rect<float> commandRect;
 static tl::Rect<float> commandCharFootprint;
 
-static tl::MemorySpace fileWriteMemory;
-
 static char keyMap[26] = {
 	'A',
 	'B',
@@ -64,6 +62,31 @@ static void ClearCommandBuffer()
 	}
 }
 
+static void Save(const tl::GameMemory& gameMemory)
+{
+	// Serialize to string
+	int charCount = SpriteCToCharString(sprite, gameMemory.transient);
+	tl::MemorySpace toSaveToFile;
+	toSaveToFile.content = gameMemory.transient.content;
+	toSaveToFile.sizeInBytes = charCount * sizeof(char);
+	if (tl::WriteFile(filePath, toSaveToFile) == tl::Success)
+	{
+		commandBuffer[0] = 'S';
+		commandBuffer[1] = 'A';
+		commandBuffer[2] = 'V';
+		commandBuffer[3] = 'E';
+		commandBuffer[4] = 'D';
+	}
+	else
+	{
+		commandBuffer[0] = 'E';
+		commandBuffer[1] = 'R';
+		commandBuffer[2] = 'R';
+		commandBuffer[3] = 'O';
+		commandBuffer[4] = 'R';
+	}
+}
+
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
 	// Load file
@@ -80,8 +103,6 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	{
 		return 1;
 	}
-	fileWriteMemory.content = fileReadMemory.content;
-	fileWriteMemory.sizeInBytes = (unsigned long)fileSize;
 
 	for (int i = 0; i < COMMAND_BUFFER_SIZE; i += 1)
 	{
@@ -152,23 +173,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	}
 	else if (tl::IsReleased(input, tl::KEY_ENTER))
 	{
-		// DO save
-		if (tl::WriteFile(filePath, fileWriteMemory) == tl::Success)
-		{
-			commandBuffer[0] = 'S';
-			commandBuffer[1] = 'A';
-			commandBuffer[2] = 'V';
-			commandBuffer[3] = 'E';
-			commandBuffer[4] = 'D';
-		}
-		else
-		{
-			commandBuffer[0] = 'E';
-			commandBuffer[1] = 'R';
-			commandBuffer[2] = 'R';
-			commandBuffer[3] = 'O';
-			commandBuffer[4] = 'R';
-		}
+		Save(gameMemory);
 	}
 
 	// Render
@@ -212,11 +217,11 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	}
 
 	tl::DrawAlphabetCharacters(
-			renderBuffer,
-			commandBuffer,
-			commandCharFootprint,
-			commandTextColor
-		);
+		renderBuffer,
+		commandBuffer,
+		commandCharFootprint,
+		commandTextColor
+	);
 
 	return 0;
 }

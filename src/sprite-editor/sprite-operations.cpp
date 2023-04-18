@@ -1,5 +1,7 @@
+// Returns the number of chars
 int SpriteCToCharString(const tl::SpriteC& sprite, tl::MemorySpace memory)
 {
+	int charCount = 0;
 	int pixelCount = sprite.height * sprite.width;
 	int dimensionCount = 20; // 10 chars per x & y size
 
@@ -8,45 +10,76 @@ int SpriteCToCharString(const tl::SpriteC& sprite, tl::MemorySpace memory)
 
 	if (memory.sizeInBytes < (unsigned long)totalCharCount)
 	{
-		return 1;
+		return charCount;
 	}
 
 	char* cursor = (char*)memory.content;
 
-	tl::IntToCharString(sprite.width, memory);
-	while (*cursor) cursor++;
+	// Width
+	tl::IntToCharString(sprite.width, cursor);
+	while (*cursor)
+	{
+		cursor++;
+		charCount += 1;
+	}
 	*cursor = '\n';
 	cursor++;
+	charCount += 1;
 
-	tl::IntToCharString(sprite.height, memory);
-	while (*cursor) cursor++;
+	// Height
+	tl::IntToCharString(sprite.height, cursor);
+	while (*cursor)
+	{
+		cursor++;
+		charCount += 1;
+	}
 	*cursor = '\n';
 	cursor++;
+	charCount += 1;
 
 	for (int i = 0; i < pixelCount; i += 1)
 	{
 		tl::Color color = sprite.content[i];
 		tl::IntToCharString((int)(color.r * 255), cursor);
-		while (*cursor) cursor++;
+		while (*cursor)
+		{
+			cursor++;
+			charCount += 1;
+		}
 		*cursor = ' ';
 		cursor++;
+		charCount += 1;
 
 		tl::IntToCharString((int)(color.g * 255), cursor);
-		while (*cursor) cursor++;
+		while (*cursor)
+		{
+			cursor++;
+			charCount += 1;
+		}
 		*cursor = ' ';
 		cursor++;
+		charCount += 1;
 
 		tl::IntToCharString((int)(color.b * 255), cursor);
-		while (*cursor) cursor++;
+		while (*cursor)
+		{
+			cursor++;
+			charCount += 1;
+		}
 		*cursor = ' ';
 		cursor++;
+		charCount += 1;
 
 		tl::IntToCharString((int)(color.a * 255), cursor);
-		while (*cursor) cursor++;
+		while (*cursor)
+		{
+			cursor++;
+			charCount += 1;
+		}
 		*cursor = '\n';
 		cursor++;
+		charCount += 1;
 	}
-
 	*cursor = '\0';
-	return 0;
+	return charCount;
 }
