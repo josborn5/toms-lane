@@ -11,6 +11,8 @@ static tl::Rect<float> gridRect;
 static tl::Rect<float> commandRect;
 static tl::Rect<float> commandCharFootprint;
 
+static tl::MemorySpace spriteMemory;
+
 static char keyMap[26] = {
 	'A',
 	'B',
@@ -90,8 +92,13 @@ static void Save(const tl::GameMemory& gameMemory)
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
 	// Load file
-	tl::MemorySpace fileReadMemory = gameMemory.permanent;
-	tl::MemorySpace tempMemory = gameMemory.transient;
+	spriteMemory = gameMemory.permanent;
+	tl::MemorySpace fileReadMemory;
+	fileReadMemory.content = gameMemory.transient.content;
+	fileReadMemory.sizeInBytes = 512;
+	tl::MemorySpace tempMemory;
+	tempMemory.content = (char*)gameMemory.transient.content + (fileReadMemory.sizeInBytes * sizeof(char));
+	tempMemory.sizeInBytes = 512;
 
 	uint64_t fileSize = 0;
 	if (tl::GetFileSize(filePath, fileSize) != tl::Success)
@@ -123,10 +130,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	};
 
 	char* spriteCharArray = (char*)fileReadMemory.content;
-	uint64_t spriteCharArrayLength = fileSize / sizeof(char);
-	char* addressAfterSpriteCharArray = &spriteCharArray[spriteCharArrayLength];
-
-	sprite.content = (tl::Color*)addressAfterSpriteCharArray;
+	sprite.content = (tl::Color*)spriteMemory.content;
 	tl::LoadSpriteC(spriteCharArray, tempMemory, sprite);
 
 	float spriteAspectRatio = (float)sprite.height / (float)sprite.width;
