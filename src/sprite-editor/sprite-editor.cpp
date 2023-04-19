@@ -104,10 +104,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 		return 1;
 	}
 
-	for (int i = 0; i < COMMAND_BUFFER_SIZE; i += 1)
-	{
-		commandBuffer[i] = '\0';
-	}
+	ClearCommandBuffer();
 
 	commandRect.halfSize = {
 		(float)windowWidth * 0.5f,
@@ -173,7 +170,10 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	}
 	else if (tl::IsReleased(input, tl::KEY_ENTER))
 	{
-		Save(gameMemory);
+		if (commandBuffer[0] == 'S' && commandBuffer[1] == '\0')
+		{
+			Save(gameMemory);
+		}		
 	}
 
 	// Render
