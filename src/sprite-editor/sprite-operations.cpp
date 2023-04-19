@@ -83,3 +83,32 @@ int SpriteCToCharString(const tl::SpriteC& sprite, tl::MemorySpace memory)
 	*cursor = '\0';
 	return charCount;
 }
+
+int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory)
+{
+	// Check there is space to add a final row
+	int currentPixelCount = sprite.width * sprite.height;
+	unsigned long currentPixelSpace = currentPixelCount * sizeof(tl::Color);
+	unsigned long newPixelSpace = sprite.width * sizeof(tl::Color);
+	unsigned long availableSpace = spriteMemory.sizeInBytes - currentPixelSpace;
+
+	if (availableSpace < newPixelSpace)
+	{
+		return -1;
+	}
+
+	for (int i = 0; i < sprite.width; i += 1)
+	{
+		int pixelIndex = currentPixelCount + i;
+		tl::Color pixel;
+		pixel.r = 0.0f;
+		pixel.g = 0.0f;
+		pixel.b = 0.0f;
+		pixel.a = 0.0f;
+		sprite.content[pixelIndex] = pixel;
+	}
+
+	sprite.height += 1;
+
+	return 0;
+}

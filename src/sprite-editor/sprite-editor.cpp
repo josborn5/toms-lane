@@ -2,6 +2,7 @@
 #include "../win32/toms-lane-win32.hpp"
 #include "./sprite-editor-win32.cpp"
 #include "./sprite-operations.cpp"
+#include "./sprite-commands.cpp"
 
 #define COMMAND_BUFFER_SIZE 5
 
@@ -64,29 +65,26 @@ static void ClearCommandBuffer()
 	}
 }
 
-static void Save(const tl::GameMemory& gameMemory)
+static void SizeGridForSprite()
 {
-	// Serialize to string
-	int charCount = SpriteCToCharString(sprite, gameMemory.transient);
-	tl::MemorySpace toSaveToFile;
-	toSaveToFile.content = gameMemory.transient.content;
-	toSaveToFile.sizeInBytes = charCount * sizeof(char);
-	if (tl::WriteFile(filePath, toSaveToFile) == tl::Success)
+	float spriteAspectRatio = (float)sprite.height / (float)sprite.width;
+	float backgroundAspectRatio = spriteRect.halfSize.y / spriteRect.halfSize.x;
+	float relativeAspectRatio = spriteAspectRatio / backgroundAspectRatio;
+	if (relativeAspectRatio >= 1.0f)
 	{
-		commandBuffer[0] = 'S';
-		commandBuffer[1] = 'A';
-		commandBuffer[2] = 'V';
-		commandBuffer[3] = 'E';
-		commandBuffer[4] = 'D';
+		gridRect.halfSize.y = spriteRect.halfSize.y;
+		gridRect.halfSize.x = gridRect.halfSize.y * (float)sprite.width / (float)sprite.height;
 	}
 	else
 	{
-		commandBuffer[0] = 'E';
-		commandBuffer[1] = 'R';
-		commandBuffer[2] = 'R';
-		commandBuffer[3] = 'O';
-		commandBuffer[4] = 'R';
+		gridRect.halfSize.x = spriteRect.halfSize.x;
+		gridRect.halfSize.y = gridRect.halfSize.x * (float)sprite.height / (float)sprite.width;
 	}
+
+	gridRect.position = {
+		gridRect.halfSize.x,
+		gridRect.halfSize.y + commandRect.position.y + commandRect.halfSize.y
+	};
 }
 
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
@@ -133,24 +131,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	sprite.content = (tl::Color*)spriteMemory.content;
 	tl::LoadSpriteC(spriteCharArray, tempMemory, sprite);
 
-	float spriteAspectRatio = (float)sprite.height / (float)sprite.width;
-	float backgroundAspectRatio = spriteRect.halfSize.y / spriteRect.halfSize.x;
-	float relativeAspectRatio = spriteAspectRatio / backgroundAspectRatio;
-	if (relativeAspectRatio >= 1.0f)
-	{
-		gridRect.halfSize.y = spriteRect.halfSize.y;
-		gridRect.halfSize.x = gridRect.halfSize.y * (float)sprite.width / (float)sprite.height;
-	}
-	else
-	{
-		gridRect.halfSize.x = spriteRect.halfSize.x;
-		gridRect.halfSize.y = gridRect.halfSize.x * (float)sprite.height / (float)sprite.width;
-	}
-
-	gridRect.position = {
-		gridRect.halfSize.x,
-		gridRect.halfSize.y + commandRect.position.y + commandRect.halfSize.y
-	};
+	SizeGridForSprite();
 	return 0;
 }
 
@@ -174,10 +155,20 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	}
 	else if (tl::IsReleased(input, tl::KEY_ENTER))
 	{
-		if (commandBuffer[0] == 'S' && commandBuffer[1] == '\0')
+		if (commandBuffer[1] == '\0')
 		{
-			Save(gameMemory);
-		}		
+			switch (commandBuffer[0])
+			{
+				case 'S':
+					Save(gameMemory, sprite, commandBuffer);
+					break;
+				case 'A':
+					ClearCommandBuffer();
+					AppendRowToSpriteC(sprite, spriteMemory);
+					SizeGridForSprite();
+			}
+		}
+
 	}
 
 	// Render
