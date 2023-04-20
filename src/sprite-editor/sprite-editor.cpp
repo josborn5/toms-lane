@@ -166,9 +166,12 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 					ClearCommandBuffer();
 					AppendRowToSpriteC(sprite, spriteMemory);
 					SizeGridForSprite();
+				case 'C':
+					ClearCommandBuffer();
+					AppendColumnToSpriteC(sprite, spriteMemory);
+					SizeGridForSprite();
 			}
 		}
-
 	}
 
 	// Render
