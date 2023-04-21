@@ -140,9 +140,9 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
 	// Check for arrow key press to move selected pixel
+	int maxPixelIndex = (sprite.width * sprite.height) - 1;
 	if (tl::IsReleased(input, tl::KEY_RIGHT))
 	{
-		int maxPixelIndex = (sprite.width * sprite.height) - 1;
 		if (selectedPixelIndex < maxPixelIndex)
 		{
 			selectedPixelIndex += 1;
@@ -153,6 +153,22 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		if (selectedPixelIndex > 0)
 		{
 			selectedPixelIndex -= 1;
+		}
+	}
+	else if (tl::IsReleased(input, tl::KEY_DOWN))
+	{
+		int provisionalSelectedPixelIndex = selectedPixelIndex + sprite.width;
+		if (provisionalSelectedPixelIndex <= maxPixelIndex)
+		{
+			selectedPixelIndex = provisionalSelectedPixelIndex;
+		}
+	}
+	else if (tl::IsReleased(input, tl::KEY_UP))
+	{
+		int provisionalSelectedPixelIndex = selectedPixelIndex - sprite.width;
+		if (provisionalSelectedPixelIndex >= 0)
+		{
+			selectedPixelIndex = provisionalSelectedPixelIndex;
 		}
 	}
 	
