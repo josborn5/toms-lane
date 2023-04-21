@@ -12,6 +12,8 @@ static tl::Rect<float> gridRect;
 static tl::Rect<float> commandRect;
 static tl::Rect<float> commandCharFootprint;
 
+static int selectedPixelIndex = 0;
+
 static tl::MemorySpace spriteMemory;
 
 static char keyMap[26] = {
@@ -178,6 +180,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	const uint32_t commandBackgroundColor = 0x000000;
 	const uint32_t spriteBackgroundColor = 0x222222;
 	const uint32_t gridBorderColor = 0x444444;
+	const uint32_t selectedPixelColor = 0xFFFF00;
 	const uint32_t commandTextColor = 0xFFFFFF;
 	const float pixelBorderWidth = 2.0f;
 
@@ -203,6 +206,13 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 			pixelFootPrint.position = pixelPosition;
 
 			int pixelIndex = (j * sprite.width) + i;
+			if (pixelIndex == selectedPixelIndex)
+			{
+				tl::Rect<float> selectedFootprint;
+				selectedFootprint.position = pixelPosition;
+				selectedFootprint.halfSize = { pixelHalfSize.x + 1, pixelHalfSize.y + 1 };
+				tl::DrawRect(renderBuffer, selectedPixelColor, selectedFootprint);
+			}
 			tl::Color blockColor = sprite.content[pixelIndex];
 
 			uint32_t color = tl::GetColorFromRGB(
