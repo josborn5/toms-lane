@@ -148,6 +148,13 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 			selectedPixelIndex += 1;
 		}
 	}
+	else if (tl::IsReleased(input, tl::KEY_LEFT))
+	{
+		if (selectedPixelIndex > 0)
+		{
+			selectedPixelIndex -= 1;
+		}
+	}
 	
 	// Update command buffer from input
 	if (commands.length < commands.capacity)
