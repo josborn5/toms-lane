@@ -139,6 +139,16 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
+	// Check for arrow key press to move selected pixel
+	if (tl::IsReleased(input, tl::KEY_RIGHT))
+	{
+		int maxPixelIndex = (sprite.width * sprite.height) - 1;
+		if (selectedPixelIndex < maxPixelIndex)
+		{
+			selectedPixelIndex += 1;
+		}
+	}
+	
 	// Update command buffer from input
 	if (commands.length < commands.capacity)
 	{
