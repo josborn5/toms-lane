@@ -1326,6 +1326,11 @@ namespace tl
 		return c - 'A';
 	}
 
+	int GetDigitIndex(char c)
+	{
+		return c - '0';
+	}
+
 	tl::Vec2<int> GetContentDimensions(char* content)
 	{
 		int height = 0;
@@ -1449,10 +1454,24 @@ namespace tl
 		{
 			if (*letterAt != ' ')
 			{
-				int letterIndex = GetLetterIndex(*letterAt);
-				Sprite letter = letters[letterIndex];
+				int letterIndex = -1;
+				Sprite renderChar;
+				if (*letterAt >= 'A' && *letterAt <= 'Z')
+				{
+					letterIndex = GetLetterIndex(*letterAt);
+					renderChar = letters[letterIndex];
+				}
 
-				tl::DrawSprite(renderBuffer, letter, charRect, color);
+				if (*letterAt >= '0' && *letterAt <= '9')
+				{
+					letterIndex = GetDigitIndex(*letterAt);
+					renderChar = digits[letterIndex];
+				}
+
+				if (*letterAt != -1)
+				{
+					tl::DrawSprite(renderBuffer, renderChar, charRect, color);
+				}
 			}
 			charRect.position.x += charWidth;
 		}
