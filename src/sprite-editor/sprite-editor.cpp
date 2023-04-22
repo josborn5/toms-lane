@@ -4,7 +4,7 @@
 #include "./sprite-operations.cpp"
 #include "./sprite-commands.cpp"
 
-#define COMMAND_BUFFER_SIZE 5
+#define COMMAND_BUFFER_SIZE 15
 
 static tl::SpriteC sprite;
 static tl::Rect<float> spriteRect;
@@ -16,7 +16,7 @@ static int selectedPixelIndex = 0;
 
 static tl::MemorySpace spriteMemory;
 
-static char keyMap[26] = {
+static char alphaKeyMap[26] = {
 	'A',
 	'B',
 	'C',
@@ -45,14 +45,37 @@ static char keyMap[26] = {
 	'Z'
 };
 
-static char GetCharForKey(int key)
+static char digitKeyMap[10] = {
+	'0',
+	'1',
+	'2',
+	'3',
+	'4',
+	'5',
+	'6',
+	'7',
+	'8',
+	'9'
+};
+
+static char GetCharForAlphaKey(int key)
 {
 	if (key < tl::KEY_A || key > tl::KEY_Z)
 	{
 		return '\0';
 	}
 	int relativeIndex = key - tl::KEY_A;
-	return keyMap[relativeIndex];
+	return alphaKeyMap[relativeIndex];
+}
+
+static char GetCharForDigitKey(int key)
+{
+	if (key < tl::KEY_0 || key > tl::KEY_9)
+	{
+		return '\0';
+	}
+	int relativeIndex = key - tl::KEY_0;
+	return digitKeyMap[relativeIndex];
 }
 
 static char commandBuffer[COMMAND_BUFFER_SIZE];
@@ -179,9 +202,23 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		{
 			if (tl::IsReleased(input, key))
 			{
-				char commandChar = GetCharForKey(key);
+				char commandChar = GetCharForAlphaKey(key);
 				commands.append(commandChar);
 			}
+		}
+
+		for (int key = tl::KEY_0; key <= tl::KEY_9; key += 1)
+		{
+			if (tl::IsReleased(input, key))
+			{
+				char commandChar = GetCharForDigitKey(key);
+				commands.append(commandChar);
+			}
+		}
+
+		if (tl::IsReleased(input, tl::KEY_SPACE))
+		{
+			commands.append(' ');
 		}
 	}
 	if (tl::IsReleased(input, tl::KEY_ESCAPE))
@@ -190,22 +227,60 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	}
 	else if (tl::IsReleased(input, tl::KEY_ENTER))
 	{
-		if (commandBuffer[1] == '\0')
+		switch (commandBuffer[0])
 		{
-			switch (commandBuffer[0])
-			{
-				case 'S':
+			case 'S':
+				if (commandBuffer[1] == '\0')
+				{
 					Save(gameMemory, sprite, commandBuffer);
-					break;
-				case 'A':
+				}
+				break;
+			case 'R':
+				if (commandBuffer[1] == '\0')
+				{
 					ClearCommandBuffer();
 					AppendRowToSpriteC(sprite, spriteMemory);
 					SizeGridForSprite();
-				case 'C':
+				}
+				break;
+			case 'C':
+				if (commandBuffer[1] == '\0')
+				{
 					ClearCommandBuffer();
 					AppendColumnToSpriteC(sprite, spriteMemory);
 					SizeGridForSprite();
-			}
+				}
+				break;
+			case 'E':
+				char* pointer = &commandBuffer[1];
+				int rValue = 0;
+				int gValue = 0;
+				int bValue = 0;
+				if (*pointer)
+				{
+					rValue = CharStringToInt(pointer);
+					pointer = GetNextNumberChar(pointer);
+				}
+				if (*pointer)
+				{
+					gValue = CharStringToInt(pointer);
+					pointer = GetNextNumberChar(pointer);
+				}
+				if (*pointer)
+				{
+					bValue = CharStringToInt(pointer);
+				}
+				// TODO: parse alpha value!
+
+				tl::Color color;
+				color.r = (float)rValue / 255.0f;
+				color.g = (float)gValue / 255.0f;
+				color.b = (float)bValue / 255.0f;
+				color.a = 1.0f;
+				sprite.content[selectedPixelIndex] = color;
+
+				ClearCommandBuffer();
+				break;
 		}
 	}
 
