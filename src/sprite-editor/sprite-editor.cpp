@@ -137,15 +137,23 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	tempMemory.content = (char*)gameMemory.transient.content + (fileReadMemory.sizeInBytes * sizeof(char));
 	tempMemory.sizeInBytes = 512;
 
-	uint64_t fileSize = 0;
-	if (tl::GetFileSize(filePath, fileSize) != tl::Success)
+	if (filePath)
 	{
-		return 1;
-	}
+		uint64_t fileSize = 0;
+		if (tl::GetFileSize(filePath, fileSize) != tl::Success)
+		{
+			return 1;
+		}
 
-	if (tl::ReadFile(filePath, fileReadMemory) != tl::Success)
+		if (tl::ReadFile(filePath, fileReadMemory) != tl::Success)
+		{
+			return 1;
+		}	
+	}
+	else
 	{
-		return 1;
+		// Initialize default sprite
+		fileReadMemory.content = "1\n1\n0 0 0 0";
 	}
 
 	ClearCommandBuffer();
@@ -259,8 +267,13 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		{
 			case 'S': // save
 			{
-				if (commandBuffer[1] == '\0')
+				if (commandBuffer[1] == '\0') // save to current filePath
 				{
+					Save(gameMemory, sprite, displayBuffer);
+				}
+				else if (commandBuffer[1] == ' ' && commandBuffer[2]) // save to new filePath
+				{
+					filePath = &commandBuffer[2];
 					Save(gameMemory, sprite, displayBuffer);
 				}
 				break;

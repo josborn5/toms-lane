@@ -15,12 +15,10 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	settings.permanentSpaceInMegabytes = 1;
 	settings.transientSpaceInMegabytes = 1;
 
-	if (!*commandLine)
+	if (*commandLine)
 	{
-		return 1;
+		filePath = commandLine;
 	}
-
-	filePath = commandLine;
 
 	tl::Win32Main(instance, settings);
 
