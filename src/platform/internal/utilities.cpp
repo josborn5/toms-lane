@@ -117,6 +117,20 @@ namespace tl
 		return from;
 	}
 
+	char* CopyToEndOfNumberChar(char* from, char* to)
+	{
+		while (*from && *from >= '0' && *from <= '9')
+		{
+			*to = *from;
+
+			from++;
+			to++;
+		}
+		*to = '\0';
+
+		return from;
+	}
+
 	char* GetNextNumberChar(char* from)
 	{
 		while (*from && (*from < '0' || *from > '9'))

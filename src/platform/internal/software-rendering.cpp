@@ -1383,6 +1383,42 @@ namespace tl
 		return sprite;
 	}
 
+	Color ParseColorFromCharArray(char* content, MemorySpace& space)
+	{
+		char* buffer = (char*)space.content;
+		char* workingPointer = content;
+
+		/// RBG values
+		int rgbContent[3] = { 0, 0, 0 };
+
+		for (int j = 0; j < 3 && *workingPointer; j += 1)
+		{
+			workingPointer = GetNextNumberChar(workingPointer);
+			if (*workingPointer)
+			{
+				workingPointer = CopyToEndOfNumberChar(content, buffer);
+				rgbContent[j] = CharStringToInt(buffer);
+			}
+		}
+
+		// A value
+		int aValue = 255;
+		workingPointer = GetNextNumberChar(workingPointer);
+		if (workingPointer)
+		{
+			workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
+			aValue = CharStringToInt(buffer);
+		}
+
+		Color color;
+		color.r = (float)rgbContent[0] / 255.0f;
+		color.g = (float)rgbContent[1] / 255.0f;
+		color.b = (float)rgbContent[2] / 255.0f;
+		color.a = (float)aValue / 255.0f;
+
+		return color;
+	}
+
 	/*
 	* Assumed char* format is:
 	* width<int>\n
@@ -1393,16 +1429,15 @@ namespace tl
 	*/
 	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite)
 	{
-		char LF = '\n';
-		char* buffer = (char *)space.content;
+		char* buffer = (char*)space.content;
 		// Width
 		char* workingPointer = GetNextNumberChar(content);
-		workingPointer = CopyToChar(workingPointer, buffer, LF);
+		workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
 		int width = CharStringToInt(buffer);
 
 		// Height
 		workingPointer = GetNextNumberChar(workingPointer);
-		workingPointer = CopyToChar(workingPointer, buffer, LF);
+		workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
 		int height = CharStringToInt(buffer);
 
 		// Content
@@ -1419,14 +1454,14 @@ namespace tl
 			int rgbContent[3];
 			for (int j = 0; j < 3 && *workingPointer; j += 1)
 			{
-				workingPointer = CopyToChar(workingPointer, buffer, ' ');
+				workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
 				rgbContent[j] = CharStringToInt(buffer);
 				workingPointer = GetNextNumberChar(workingPointer);
 			}
 
 			// A value
 			workingPointer = GetNextNumberChar(workingPointer);
-			workingPointer = CopyToChar(workingPointer, buffer, LF);
+			workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
 			int aValue = CharStringToInt(buffer);
 
 			Color color;

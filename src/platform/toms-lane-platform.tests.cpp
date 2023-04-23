@@ -18,5 +18,7 @@ int main()
 	RunDataStructureTests();
 
 	RunUtilitiesTests();
+
+	printf("!!! ALL TESTS COMPLETE !!!");
 }
 

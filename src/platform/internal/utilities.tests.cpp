@@ -129,6 +129,11 @@ void RunUtilitiesTests()
 	assert(from[4] == 'a');
 	assert(from[5] == '\0');
 
+	printf("\n===== CopyToEndOfNumberChar =====\n");
+	char* copyNumberString = "123 ";
+	tl::CopyToEndOfNumberChar(copyNumberString, to);
+	assert(to[0] == '1');
+
 	free(to);
 
 	printf("\n===== GetNextNumberChar =====\n");

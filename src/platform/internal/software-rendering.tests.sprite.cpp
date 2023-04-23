@@ -60,8 +60,27 @@ void RunSpriteTests()
                         ";
 	TestSprite(inputSprite, 8, 24);
 
+	// ParseColorFromCharArray
+	printf("\n===== ParseColorFromCharArray =====\n");
+	tl::MemorySpace tempSpace;
+	tempSpace.content = malloc(8);
+	tl::Color testColor = ParseColorFromCharArray("255 255 255 255", tempSpace);
+	assert(testColor.r == 1.0f);
+	assert(testColor.g == 1.0f);
+	assert(testColor.b == 1.0f);
+	assert(testColor.a == 1.0f);
+
+	testColor = ParseColorFromCharArray("", tempSpace);
+	assert(testColor.r == 0.0f);
+	assert(testColor.g == 0.0f);
+	assert(testColor.b == 0.0f);
+	assert(testColor.a == 0.0f);
+
+	free(tempSpace.content);
+
 
 	// Load SpriteC
+	printf("\n===== LoadSpriteC =====\n");
 	tl::MemorySpace space;
 	space.content = malloc(8);
 	tl::SpriteC testSprite;
