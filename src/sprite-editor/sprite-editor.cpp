@@ -153,7 +153,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 
 	const float textAreaHeight = 30.0f;
 	commandRect.halfSize = {
-		(float)windowWidth * 0.5f,
+		(float)windowWidth * 0.25f,
 		textAreaHeight
 	};
 	commandRect.position = tl::CopyVec2(commandRect.halfSize);
@@ -172,7 +172,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	};
 
 	spriteRect.halfSize = {
-		commandRect.halfSize.x,
+		(float)windowWidth * 0.5f,
 		((float)windowHeight * 0.5f) - commandRect.halfSize.y
 	};
 	spriteRect.position = {
@@ -257,35 +257,69 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	{
 		switch (commandBuffer[0])
 		{
-			case 'S':
+			case 'S': // save
+			{
 				if (commandBuffer[1] == '\0')
 				{
 					Save(gameMemory, sprite, displayBuffer);
 				}
 				break;
-			case 'R':
+			}
+			case 'R': // append row
+			{
 				if (commandBuffer[1] == '\0')
 				{
-					ClearCommandBuffer();
 					AppendRowToSpriteC(sprite, spriteMemory);
 					SizeGridForSprite();
 				}
 				break;
-			case 'C':
+			}
+			case 'C': // append column
+			{
 				if (commandBuffer[1] == '\0')
 				{
-					ClearCommandBuffer();
 					AppendColumnToSpriteC(sprite, spriteMemory);
 					SizeGridForSprite();
 				}
 				break;
-			case 'E':
+			}
+			case 'E': // edit color of selected pixel
+			{
 				char* pointer = GetNextNumberChar(&commandBuffer[1]);
 				tl::MemorySpace transient = gameMemory.transient;
 				ParseColorFromCharArray(pointer, transient, sprite.content[selectedPixelIndex]);
 				ClearCommandBuffer();
 				break;
+			}
+			case 'I': // inspect color of selected pixel
+			{
+				if (commandBuffer[1] == '\0')
+				{
+					ClearDisplayBuffer();
+					tl::Color selectedColor = sprite.content[selectedPixelIndex];
+
+					int color = (int)(selectedColor.r * 255.0f);
+					char* cursor = display.content;
+					IntToCharString(color, cursor);
+
+					while (*cursor) cursor++;
+					*cursor = ' ';
+					cursor++;
+
+					color = (int)(selectedColor.g * 255.0f);
+					IntToCharString(color, cursor);
+
+					while (*cursor) cursor++;
+					*cursor = ' ';
+					cursor++;
+
+					color = (int)(selectedColor.b * 255.0f);
+					IntToCharString(color, cursor);
+				}
+				break;
+			}
 		}
+		ClearCommandBuffer();
 	}
 
 	// Render
