@@ -1388,32 +1388,23 @@ namespace tl
 		char* buffer = (char*)space.content;
 		char* workingPointer = content;
 
-		/// RBG values
-		int rgbContent[3] = { 0, 0, 0 };
+		/// RBGA values
+		int rgbaContent[4] = { 0, 0, 0, 255 }; // Default alpha to 100%
 
-		for (int j = 0; j < 3 && *workingPointer; j += 1)
+		for (int i = 0; i < 4 && *workingPointer; i += 1)
 		{
 			workingPointer = GetNextNumberChar(workingPointer);
 			if (*workingPointer)
 			{
 				workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
-				rgbContent[j] = CharStringToInt(buffer);
+				rgbaContent[i] = CharStringToInt(buffer);
 			}
 		}
 
-		// A value
-		int aValue = 255;
-		workingPointer = GetNextNumberChar(workingPointer);
-		if (workingPointer)
-		{
-			workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
-			aValue = CharStringToInt(buffer);
-		}
-
-		color.r = (float)rgbContent[0] / 255.0f;
-		color.g = (float)rgbContent[1] / 255.0f;
-		color.b = (float)rgbContent[2] / 255.0f;
-		color.a = (float)aValue / 255.0f;
+		color.r = (float)rgbaContent[0] / 255.0f;
+		color.g = (float)rgbaContent[1] / 255.0f;
+		color.b = (float)rgbaContent[2] / 255.0f;
+		color.a = (float)rgbaContent[3] / 255.0f;
 
 		return workingPointer;
 	}

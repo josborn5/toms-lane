@@ -75,7 +75,7 @@ void RunSpriteTests()
 	assert(testColor.r == 0.0f);
 	assert(testColor.g == 0.0f);
 	assert(testColor.b == 0.0f);
-	assert(testColor.a == 0.0f);
+	assert(testColor.a == 1.0f);
 
 	free(tempSpace.content);
 
