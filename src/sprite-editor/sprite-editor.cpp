@@ -153,7 +153,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	else
 	{
 		// Initialize default sprite
-		fileReadMemory.content = "1\n1\n0 0 0 0";
+		fileReadMemory.content = "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0";
 	}
 
 	ClearCommandBuffer();
