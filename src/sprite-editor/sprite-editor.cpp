@@ -21,6 +21,8 @@ static tl::Rect<float> displayRect;
 static tl::Rect<float> displayCharFootprint;
 
 static int selectedPixelIndex = 0;
+static bool hasCopied = false;
+static tl::Color copiedColor;
 
 static tl::MemorySpace spriteMemory;
 
@@ -200,139 +202,165 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 {
 	// Check for arrow key press to move selected pixel
 	int maxPixelIndex = (sprite.width * sprite.height) - 1;
-	if (tl::IsReleased(input, tl::KEY_RIGHT))
+	if (!input.buttons[KEY_CTRL].isDown)
 	{
-		if (selectedPixelIndex < maxPixelIndex)
+		if (tl::IsReleased(input, tl::KEY_RIGHT))
 		{
-			selectedPixelIndex += 1;
-		}
-	}
-	else if (tl::IsReleased(input, tl::KEY_LEFT))
-	{
-		if (selectedPixelIndex > 0)
-		{
-			selectedPixelIndex -= 1;
-		}
-	}
-	else if (tl::IsReleased(input, tl::KEY_DOWN))
-	{
-		int provisionalSelectedPixelIndex = selectedPixelIndex + sprite.width;
-		if (provisionalSelectedPixelIndex <= maxPixelIndex)
-		{
-			selectedPixelIndex = provisionalSelectedPixelIndex;
-		}
-	}
-	else if (tl::IsReleased(input, tl::KEY_UP))
-	{
-		int provisionalSelectedPixelIndex = selectedPixelIndex - sprite.width;
-		if (provisionalSelectedPixelIndex >= 0)
-		{
-			selectedPixelIndex = provisionalSelectedPixelIndex;
-		}
-	}
-	
-	// Update command buffer from input
-	if (commands.length < commands.capacity)
-	{
-		for (int key = tl::KEY_A; key <= tl::KEY_Z; key += 1)
-		{
-			if (tl::IsReleased(input, key))
+			if (selectedPixelIndex < maxPixelIndex)
 			{
-				char commandChar = GetCharForAlphaKey(key);
-				commands.append(commandChar);
+				selectedPixelIndex += 1;
+			}
+		}
+		else if (tl::IsReleased(input, tl::KEY_LEFT))
+		{
+			if (selectedPixelIndex > 0)
+			{
+				selectedPixelIndex -= 1;
+			}
+		}
+		else if (tl::IsReleased(input, tl::KEY_DOWN))
+		{
+			int provisionalSelectedPixelIndex = selectedPixelIndex + sprite.width;
+			if (provisionalSelectedPixelIndex <= maxPixelIndex)
+			{
+				selectedPixelIndex = provisionalSelectedPixelIndex;
+			}
+		}
+		else if (tl::IsReleased(input, tl::KEY_UP))
+		{
+			int provisionalSelectedPixelIndex = selectedPixelIndex - sprite.width;
+			if (provisionalSelectedPixelIndex >= 0)
+			{
+				selectedPixelIndex = provisionalSelectedPixelIndex;
 			}
 		}
 
-		for (int key = tl::KEY_0; key <= tl::KEY_9; key += 1)
+		// Update command buffer from input
+		if (commands.length < commands.capacity)
 		{
-			if (tl::IsReleased(input, key))
+			for (int key = tl::KEY_A; key <= tl::KEY_Z; key += 1)
 			{
-				char commandChar = GetCharForDigitKey(key);
-				commands.append(commandChar);
-			}
-		}
-
-		if (tl::IsReleased(input, tl::KEY_SPACE))
-		{
-			commands.append(' ');
-		}
-	}
-	if (tl::IsReleased(input, tl::KEY_ESCAPE))
-	{
-		ClearCommandBuffer();
-	}
-	else if (tl::IsReleased(input, tl::KEY_ENTER))
-	{
-		switch (commandBuffer[0])
-		{
-			case 'S': // save
-			{
-				if (commandBuffer[1] == '\0') // save to current filePath
+				if (tl::IsReleased(input, key))
 				{
-					Save(gameMemory, sprite, displayBuffer);
+					char commandChar = GetCharForAlphaKey(key);
+					commands.append(commandChar);
 				}
-				else if (commandBuffer[1] == ' ' && commandBuffer[2]) // save to new filePath
-				{
-					filePath = &commandBuffer[2];
-					Save(gameMemory, sprite, displayBuffer);
-				}
-				break;
 			}
-			case 'R': // append row
+
+			for (int key = tl::KEY_0; key <= tl::KEY_9; key += 1)
 			{
-				if (commandBuffer[1] == '\0')
+				if (tl::IsReleased(input, key))
 				{
-					AppendRowToSpriteC(sprite, spriteMemory);
-					SizeGridForSprite();
+					char commandChar = GetCharForDigitKey(key);
+					commands.append(commandChar);
 				}
-				break;
 			}
-			case 'C': // append column
+
+			if (tl::IsReleased(input, tl::KEY_SPACE))
 			{
-				if (commandBuffer[1] == '\0')
-				{
-					AppendColumnToSpriteC(sprite, spriteMemory);
-					SizeGridForSprite();
-				}
-				break;
-			}
-			case 'E': // edit color of selected pixel
-			{
-				char* pointer = GetNextNumberChar(&commandBuffer[1]);
-				tl::MemorySpace transient = gameMemory.transient;
-				ParseColorFromCharArray(pointer, transient, sprite.content[selectedPixelIndex]);
-				ClearCommandBuffer();
-				break;
-			}
-			case 'I': // inspect color of selected pixel
-			{
-				if (commandBuffer[1] == '\0')
-				{
-					ClearDisplayBuffer();
-					tl::Color selectedColor = sprite.content[selectedPixelIndex];
-
-					int color = (int)(selectedColor.r * 255.0f);
-					char* cursor = display.content;
-					IntToCharString(color, cursor);
-
-					while (*cursor) cursor++;
-					*cursor = ' ';
-					cursor++;
-
-					color = (int)(selectedColor.g * 255.0f);
-					IntToCharString(color, cursor);
-
-					while (*cursor) cursor++;
-					*cursor = ' ';
-					cursor++;
-
-					color = (int)(selectedColor.b * 255.0f);
-					IntToCharString(color, cursor);
-				}
-				break;
+				commands.append(' ');
 			}
 		}
-		ClearCommandBuffer();
+		if (tl::IsReleased(input, tl::KEY_ESCAPE))
+		{
+			ClearCommandBuffer();
+		}
+		else if (tl::IsReleased(input, tl::KEY_ENTER))
+		{
+			switch (commandBuffer[0])
+			{
+				case 'S': // save
+				{
+					if (commandBuffer[1] == '\0') // save to current filePath
+					{
+						Save(gameMemory, sprite, displayBuffer);
+					}
+					else if (commandBuffer[1] == ' ' && commandBuffer[2]) // save to new filePath
+					{
+						filePath = &commandBuffer[2];
+						Save(gameMemory, sprite, displayBuffer);
+					}
+					break;
+				}
+				case 'R': // append row
+				{
+					if (commandBuffer[1] == '\0')
+					{
+						AppendRowToSpriteC(sprite, spriteMemory);
+						SizeGridForSprite();
+					}
+					break;
+				}
+				case 'C': // append column
+				{
+					if (commandBuffer[1] == '\0')
+					{
+						AppendColumnToSpriteC(sprite, spriteMemory);
+						SizeGridForSprite();
+					}
+					break;
+				}
+				case 'E': // edit color of selected pixel
+				{
+					char* pointer = GetNextNumberChar(&commandBuffer[1]);
+					tl::MemorySpace transient = gameMemory.transient;
+					ParseColorFromCharArray(pointer, transient, sprite.content[selectedPixelIndex]);
+					ClearCommandBuffer();
+					break;
+				}
+				case 'I': // inspect color of selected pixel
+				{
+					if (commandBuffer[1] == '\0')
+					{
+						ClearDisplayBuffer();
+						tl::Color selectedColor = sprite.content[selectedPixelIndex];
+
+						int color = (int)(selectedColor.r * 255.0f);
+						char* cursor = display.content;
+						IntToCharString(color, cursor);
+
+						while (*cursor) cursor++;
+						*cursor = ' ';
+						cursor++;
+
+						color = (int)(selectedColor.g * 255.0f);
+						IntToCharString(color, cursor);
+
+						while (*cursor) cursor++;
+						*cursor = ' ';
+						cursor++;
+
+						color = (int)(selectedColor.b * 255.0f);
+						IntToCharString(color, cursor);
+					}
+					break;
+				}
+			}
+			ClearCommandBuffer();
+		}
+	}
+	else
+	{
+		if (tl::IsReleased(input, tl::KEY_C))
+		{
+			hasCopied = true;
+			copiedColor = sprite.content[selectedPixelIndex];
+			ClearDisplayBuffer();
+			display.append('C');
+			display.append('O');
+			display.append('P');
+			display.append('Y');
+		}
+		else if (hasCopied && tl::IsReleased(input, tl::KEY_V))
+		{
+			sprite.content[selectedPixelIndex] = copiedColor;
+			ClearDisplayBuffer();
+			display.append('P');
+			display.append('A');
+			display.append('S');
+			display.append('T');
+			display.append('E');
+		}
 	}
 
 	// Render

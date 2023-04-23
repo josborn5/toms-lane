@@ -17,9 +17,9 @@ namespace tl
 	{
 		KEY_ENTER,
 		KEY_SPACE,
-		KEY_L_SHIFT, KEY_R_SHIFT,
+		KEY_SHIFT,
 		KEY_TAB,
-		KEY_L_CTRL, KEY_R_CTRL,
+		KEY_CTRL,
 		KEY_L_ALT, KEY_R_ALT,
 		KEY_UP,
 		KEY_DOWN,
