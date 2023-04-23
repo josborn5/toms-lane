@@ -1,7 +1,7 @@
 void Save(
 	const tl::GameMemory& gameMemory,
 	const tl::SpriteC& sprite,
-	char* commandBuffer
+	char* displayBuffer
 ) {
 	// Serialize to string
 	int charCount = SpriteCToCharString(sprite, gameMemory.transient);
@@ -10,18 +10,20 @@ void Save(
 	toSaveToFile.sizeInBytes = charCount * sizeof(char);
 	if (tl::WriteFile(filePath, toSaveToFile) == tl::Success)
 	{
-		commandBuffer[0] = 'S';
-		commandBuffer[1] = 'A';
-		commandBuffer[2] = 'V';
-		commandBuffer[3] = 'E';
-		commandBuffer[4] = 'D';
+		displayBuffer[0] = 'S';
+		displayBuffer[1] = 'A';
+		displayBuffer[2] = 'V';
+		displayBuffer[3] = 'E';
+		displayBuffer[4] = 'D';
+		displayBuffer[5] = '\0';
 	}
 	else
 	{
-		commandBuffer[0] = 'E';
-		commandBuffer[1] = 'R';
-		commandBuffer[2] = 'R';
-		commandBuffer[3] = 'O';
-		commandBuffer[4] = 'R';
+		displayBuffer[0] = 'E';
+		displayBuffer[1] = 'R';
+		displayBuffer[2] = 'R';
+		displayBuffer[3] = 'O';
+		displayBuffer[4] = 'R';
+		displayBuffer[5] = '\0';
 	}
 }

@@ -5,12 +5,20 @@
 #include "./sprite-commands.cpp"
 
 #define COMMAND_BUFFER_SIZE 15
+#define DISPLAY_BUFFER_SIZE 15
+
+static char commandBuffer[COMMAND_BUFFER_SIZE];
+static char displayBuffer[DISPLAY_BUFFER_SIZE];
+tl::HeapArray<char> commands = tl::HeapArray<char>(commandBuffer, COMMAND_BUFFER_SIZE);
+tl::HeapArray<char> display = tl::HeapArray<char>(displayBuffer, DISPLAY_BUFFER_SIZE);
 
 static tl::SpriteC sprite;
 static tl::Rect<float> spriteRect;
 static tl::Rect<float> gridRect;
 static tl::Rect<float> commandRect;
 static tl::Rect<float> commandCharFootprint;
+static tl::Rect<float> displayRect;
+static tl::Rect<float> displayCharFootprint;
 
 static int selectedPixelIndex = 0;
 
@@ -78,15 +86,21 @@ static char GetCharForDigitKey(int key)
 	return digitKeyMap[relativeIndex];
 }
 
-static char commandBuffer[COMMAND_BUFFER_SIZE];
-tl::HeapArray<char> commands = tl::HeapArray<char>(commandBuffer, COMMAND_BUFFER_SIZE);
-
 static void ClearCommandBuffer()
 {
 	for (int i = 0; i < commands.capacity; i += 1)
 	{
 		commands.content[i] = '\0';
 		commands.clear();
+	}
+}
+
+static void ClearDisplayBuffer()
+{
+	for (int i = 0; i < display.capacity; i += 1)
+	{
+		display.content[i] = '\0';
+		display.clear();
 	}
 }
 
@@ -135,14 +149,28 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	}
 
 	ClearCommandBuffer();
+	ClearDisplayBuffer();
 
+	const float textAreaHeight = 30.0f;
 	commandRect.halfSize = {
 		(float)windowWidth * 0.5f,
-		50.0f
+		textAreaHeight
 	};
 	commandRect.position = tl::CopyVec2(commandRect.halfSize);
-	commandCharFootprint.halfSize = { 0.5f * commandRect.halfSize.y, commandRect.halfSize.y };
+	commandCharFootprint.halfSize = { 0.3f * commandRect.halfSize.y, commandRect.halfSize.y };
 	commandCharFootprint.position = tl::CopyVec2(commandCharFootprint.halfSize);
+
+	displayRect.halfSize = tl::CopyVec2(commandRect.halfSize);
+	displayRect.position = {
+		commandRect.position.x + commandRect.halfSize.x + displayRect.halfSize.x,
+		displayRect.halfSize.y
+	};
+	displayCharFootprint.halfSize = tl::CopyVec2(commandCharFootprint.halfSize);
+	displayCharFootprint.position = {
+		displayRect.position.x - displayRect.halfSize.x + displayCharFootprint.halfSize.x,
+		displayRect.halfSize.y
+	};
+
 	spriteRect.halfSize = {
 		commandRect.halfSize.x,
 		((float)windowHeight * 0.5f) - commandRect.halfSize.y
@@ -232,7 +260,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 			case 'S':
 				if (commandBuffer[1] == '\0')
 				{
-					Save(gameMemory, sprite, commandBuffer);
+					Save(gameMemory, sprite, displayBuffer);
 				}
 				break;
 			case 'R':
@@ -262,13 +290,16 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 
 	// Render
 	const uint32_t commandBackgroundColor = 0x000000;
+	const uint32_t displayBackgroundColor = 0x666666;
 	const uint32_t spriteBackgroundColor = 0x222222;
 	const uint32_t gridBorderColor = 0x444444;
 	const uint32_t selectedPixelColor = 0xFFFF00;
 	const uint32_t commandTextColor = 0xFFFFFF;
+	const uint32_t displayTextColor = 0xFFFF00;
 	const float pixelBorderWidth = 2.0f;
 
 	tl::DrawRect(renderBuffer, commandBackgroundColor, commandRect);
+	tl::DrawRect(renderBuffer, displayBackgroundColor, displayRect);
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, spriteRect);
 	tl::DrawRect(renderBuffer, gridBorderColor, gridRect);
 
@@ -313,6 +344,13 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		commandBuffer,
 		commandCharFootprint,
 		commandTextColor
+	);
+
+	tl::DrawAlphabetCharacters(
+		renderBuffer,
+		displayBuffer,
+		displayCharFootprint,
+		displayTextColor
 	);
 
 	return 0;
