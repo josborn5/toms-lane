@@ -64,13 +64,14 @@ void RunSpriteTests()
 	printf("\n===== ParseColorFromCharArray =====\n");
 	tl::MemorySpace tempSpace;
 	tempSpace.content = malloc(8);
-	tl::Color testColor = ParseColorFromCharArray("255 255 255 255", tempSpace);
+	tl::Color testColor;
+	ParseColorFromCharArray(" 255 255 255 255 ", tempSpace, testColor);
 	assert(testColor.r == 1.0f);
 	assert(testColor.g == 1.0f);
 	assert(testColor.b == 1.0f);
 	assert(testColor.a == 1.0f);
 
-	testColor = ParseColorFromCharArray("", tempSpace);
+	ParseColorFromCharArray("", tempSpace, testColor);
 	assert(testColor.r == 0.0f);
 	assert(testColor.g == 0.0f);
 	assert(testColor.b == 0.0f);

@@ -32,7 +32,7 @@ namespace tl
 		int height;
 		Color* content;
 	};
-	Color ParseColorFromCharArray(char* content, MemorySpace& space);
+	char* ParseColorFromCharArray(char* content, MemorySpace& space, Color& color);
 	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite);
 
 	/**

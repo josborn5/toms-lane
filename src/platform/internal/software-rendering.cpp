@@ -1383,7 +1383,7 @@ namespace tl
 		return sprite;
 	}
 
-	Color ParseColorFromCharArray(char* content, MemorySpace& space)
+	char* ParseColorFromCharArray(char* content, MemorySpace& space, Color& color)
 	{
 		char* buffer = (char*)space.content;
 		char* workingPointer = content;
@@ -1396,7 +1396,7 @@ namespace tl
 			workingPointer = GetNextNumberChar(workingPointer);
 			if (*workingPointer)
 			{
-				workingPointer = CopyToEndOfNumberChar(content, buffer);
+				workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
 				rgbContent[j] = CharStringToInt(buffer);
 			}
 		}
@@ -1410,13 +1410,12 @@ namespace tl
 			aValue = CharStringToInt(buffer);
 		}
 
-		Color color;
 		color.r = (float)rgbContent[0] / 255.0f;
 		color.g = (float)rgbContent[1] / 255.0f;
 		color.b = (float)rgbContent[2] / 255.0f;
 		color.a = (float)aValue / 255.0f;
 
-		return color;
+		return workingPointer;
 	}
 
 	/*
@@ -1448,27 +1447,7 @@ namespace tl
 
 		for (int i = 0; i < contentCount && *workingPointer; i += 1)
 		{
-			/// RBG values
-			int rgbContent[3];
-			for (int j = 0; j < 3 && *workingPointer; j += 1)
-			{
-				workingPointer = GetNextNumberChar(workingPointer);
-				workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
-				rgbContent[j] = CharStringToInt(buffer);
-			}
-
-			// A value
-			workingPointer = GetNextNumberChar(workingPointer);
-			workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
-			int aValue = CharStringToInt(buffer);
-
-			Color color;
-			color.r = (float)rgbContent[0] / 255.0f;
-			color.g = (float)rgbContent[1] / 255.0f;
-			color.b = (float)rgbContent[2] / 255.0f;
-			color.a = (float)aValue / 255.0f;
-
-			sprite.content[i] = color;
+			workingPointer = ParseColorFromCharArray(workingPointer, space, sprite.content[i]);
 		}
 	}
 
