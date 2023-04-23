@@ -252,33 +252,9 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 				}
 				break;
 			case 'E':
-				char* pointer = &commandBuffer[1];
-				int rValue = 0;
-				int gValue = 0;
-				int bValue = 0;
-				if (*pointer)
-				{
-					rValue = CharStringToInt(pointer);
-					pointer = GetNextNumberChar(pointer);
-				}
-				if (*pointer)
-				{
-					gValue = CharStringToInt(pointer);
-					pointer = GetNextNumberChar(pointer);
-				}
-				if (*pointer)
-				{
-					bValue = CharStringToInt(pointer);
-				}
-				// TODO: parse alpha value!
-
-				tl::Color color;
-				color.r = (float)rValue / 255.0f;
-				color.g = (float)gValue / 255.0f;
-				color.b = (float)bValue / 255.0f;
-				color.a = 1.0f;
-				sprite.content[selectedPixelIndex] = color;
-
+				char* pointer = GetNextNumberChar(&commandBuffer[1]);
+				tl::MemorySpace transient = gameMemory.transient;
+				ParseColorFromCharArray(pointer, transient, sprite.content[selectedPixelIndex]);
 				ClearCommandBuffer();
 				break;
 		}
