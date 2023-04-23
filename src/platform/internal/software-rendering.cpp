@@ -1448,15 +1448,13 @@ namespace tl
 
 		for (int i = 0; i < contentCount && *workingPointer; i += 1)
 		{
-			workingPointer = GetNextNumberChar(workingPointer);
-
 			/// RBG values
 			int rgbContent[3];
 			for (int j = 0; j < 3 && *workingPointer; j += 1)
 			{
+				workingPointer = GetNextNumberChar(workingPointer);
 				workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
 				rgbContent[j] = CharStringToInt(buffer);
-				workingPointer = GetNextNumberChar(workingPointer);
 			}
 
 			// A value
