@@ -18,6 +18,7 @@
 
 bool initialized = false;
 bool isPaused = false;
+tl::SpriteC regularBlockSprite;
 
 tl::Color testSpriteContent[4] = {
 	{ 1.0f, 0.0f, 0.0f, 1.0f },  { 0.0f, 1.0f, 0.0f, 1.0f },
@@ -29,6 +30,26 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 	gamestate.player.spriteTest.height = 2;
 	gamestate.player.spriteTest.width = 2;
 	gamestate.player.spriteTest.content = testSpriteContent;
+
+	tl::MemorySpace permanent = gameMemory.permanent;
+	tl::MemorySpace transient = gameMemory.transient;
+
+	// Read spritec files to temp space
+	uint64_t fileSize = 0;
+	tl::GetFileSize("brick.sprc", fileSize);
+	if (tl::ReadFile("brick.sprc", transient) != tl::Success)
+	{
+		return 1;
+	}
+
+	tl::MemorySpace tempMemory;
+	tempMemory.content = (char*)transient.content + fileSize;
+
+	// Generate SpriteCs in perm space
+	char* spriteCharArray = (char*)transient.content;
+	regularBlockSprite.content = (tl::Color*)permanent.content;
+	tl::LoadSpriteC(spriteCharArray, tempMemory, regularBlockSprite);
+
 	return 0;
 }
 
@@ -62,7 +83,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, co
 		UpdateGameState(&gamestate, pixelRect, input, dt, renderBuffer);
 	}
 
-	RenderGameState(renderBuffer, gamestate);
+	RenderGameState(renderBuffer, gamestate, regularBlockSprite);
 
 	float fontSize = 16.0f;
 	float infoHeight = 4.0f * fontSize;

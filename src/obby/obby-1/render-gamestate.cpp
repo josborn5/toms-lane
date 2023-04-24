@@ -28,8 +28,11 @@ char* jumpScare = "\
 ";
 tl::Sprite jumpScareSprite = tl::LoadSprite(jumpScare);
 
-static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameState &state)
-{
+static void RenderGameState(
+	const tl::RenderBuffer &renderBuffer,
+	const GameState &state,
+	const tl::SpriteC regularBlockSprite
+) {
 	if (state.mode == ReadyToStart)
 	{
 		tl::ClearScreen(renderBuffer, 0x050505);
@@ -142,7 +145,24 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	charFoot.position.y -= fontSize;
 	tl::DrawNumber(renderBuffer, (int)state.player.position.y, charFoot, 0x999999);
 
-	RenderBlocks(renderBuffer, state);
+	for (int i = 0; i < state.blockCount; i += 1)
+	{
+		Block block = state.blocks[i];
+		if (!block.exists) continue;
+
+		if (block.type == Regular)
+		{
+			tl::DrawSpriteC(
+				renderBuffer,
+				regularBlockSprite,
+				block
+			);
+		}
+		else
+		{
+			tl::DrawRect(renderBuffer, block.color, block);
+		}
+	}
 
 	tl::DrawSpriteC(
 		renderBuffer,
