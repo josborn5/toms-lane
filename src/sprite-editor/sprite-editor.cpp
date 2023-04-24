@@ -150,7 +150,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 		if (tl::ReadFile(filePath, fileReadMemory) != tl::Success)
 		{
 			return 1;
-		}	
+		}
 	}
 	else
 	{
