@@ -31,7 +31,8 @@ tl::Sprite jumpScareSprite = tl::LoadSprite(jumpScare);
 static void RenderGameState(
 	const tl::RenderBuffer &renderBuffer,
 	const GameState &state,
-	const tl::SpriteC regularBlockSprite
+	const tl::SpriteC& regularBlockSprite,
+	const tl::SpriteC& checkpointBlockSprite
 ) {
 	if (state.mode == ReadyToStart)
 	{
@@ -150,17 +151,30 @@ static void RenderGameState(
 		Block block = state.blocks[i];
 		if (!block.exists) continue;
 
-		if (block.type == Regular)
+		switch (block.type)
 		{
-			tl::DrawSpriteC(
-				renderBuffer,
-				regularBlockSprite,
-				block
-			);
-		}
-		else
-		{
-			tl::DrawRect(renderBuffer, block.color, block);
+			case Regular:
+			{
+				tl::DrawSpriteC(
+					renderBuffer,
+					regularBlockSprite,
+					block
+				);
+				break;
+			}
+			case Checkpoint:
+			{
+				tl::DrawSpriteC(
+					renderBuffer,
+					checkpointBlockSprite,
+					block
+				);
+				break;
+			}
+			default:
+			{
+				tl::DrawRect(renderBuffer, block.color, block);
+			}
 		}
 	}
 

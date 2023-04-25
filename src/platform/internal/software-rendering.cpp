@@ -1442,6 +1442,12 @@ namespace tl
 		}
 	}
 
+	uint64_t GetSpriteSpaceInBytes(const SpriteC& sprite)
+	{
+		int pixelCount = sprite.width * sprite.height;
+		return sizeof(Color) * pixelCount;
+	}
+
 	void DrawAlphabetCharacters(
 		const RenderBuffer &renderBuffer,
 		char *text,

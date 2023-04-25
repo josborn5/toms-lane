@@ -19,6 +19,7 @@
 bool initialized = false;
 bool isPaused = false;
 tl::SpriteC regularBlockSprite;
+tl::SpriteC checkpointBlockSprite;
 
 tl::Color testSpriteContent[4] = {
 	{ 1.0f, 0.0f, 0.0f, 1.0f },  { 0.0f, 1.0f, 0.0f, 1.0f },
@@ -49,6 +50,15 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 	char* spriteCharArray = (char*)transient.content;
 	regularBlockSprite.content = (tl::Color*)permanent.content;
 	tl::LoadSpriteC(spriteCharArray, tempMemory, regularBlockSprite);
+
+	tl::GetFileSize("checkpoint.sprc", fileSize);
+	if (tl::ReadFile("checkpoint.sprc", transient) != tl::Success)
+	{
+		return 1;
+	}
+	spriteCharArray = (char*)transient.content;
+	checkpointBlockSprite.content = regularBlockSprite.content + GetSpriteSpaceInBytes(regularBlockSprite);
+	tl::LoadSpriteC(spriteCharArray, tempMemory, checkpointBlockSprite);
 
 	return 0;
 }
@@ -83,7 +93,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, co
 		UpdateGameState(&gamestate, pixelRect, input, dt, renderBuffer);
 	}
 
-	RenderGameState(renderBuffer, gamestate, regularBlockSprite);
+	RenderGameState(renderBuffer, gamestate, regularBlockSprite, checkpointBlockSprite);
 
 	float fontSize = 16.0f;
 	float infoHeight = 4.0f * fontSize;

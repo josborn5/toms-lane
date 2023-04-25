@@ -34,6 +34,7 @@ namespace tl
 	};
 	char* ParseColorFromCharArray(char* content, MemorySpace& space, Color& color);
 	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite);
+	uint64_t GetSpriteSpaceInBytes(const SpriteC& sprite);
 
 	/**
 	 *	|---|---|---|
