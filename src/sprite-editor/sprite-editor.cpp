@@ -3,6 +3,8 @@
 #include "./sprite-editor-win32.cpp"
 #include "./sprite-operations.cpp"
 #include "./sprite-commands.cpp"
+#include "./editor.hpp"
+#include "./sprite-editor-render.cpp"
 
 #define COMMAND_BUFFER_SIZE 15
 #define DISPLAY_BUFFER_SIZE 15
@@ -12,15 +14,8 @@ static char displayBuffer[DISPLAY_BUFFER_SIZE];
 tl::HeapArray<char> commands = tl::HeapArray<char>(commandBuffer, COMMAND_BUFFER_SIZE);
 tl::HeapArray<char> display = tl::HeapArray<char>(displayBuffer, DISPLAY_BUFFER_SIZE);
 
-static tl::SpriteC sprite;
-static tl::Rect<float> spriteRect;
-static tl::Rect<float> gridRect;
-static tl::Rect<float> commandRect;
-static tl::Rect<float> commandCharFootprint;
-static tl::Rect<float> displayRect;
-static tl::Rect<float> displayCharFootprint;
+EditorState state;
 
-static int selectedPixelIndex = 0;
 static bool hasCopied = false;
 static tl::Color copiedColor;
 
@@ -106,30 +101,11 @@ static void ClearDisplayBuffer()
 	}
 }
 
-static void SizeGridForSprite()
-{
-	float spriteAspectRatio = (float)sprite.height / (float)sprite.width;
-	float backgroundAspectRatio = spriteRect.halfSize.y / spriteRect.halfSize.x;
-	float relativeAspectRatio = spriteAspectRatio / backgroundAspectRatio;
-	if (relativeAspectRatio >= 1.0f)
-	{
-		gridRect.halfSize.y = spriteRect.halfSize.y;
-		gridRect.halfSize.x = gridRect.halfSize.y * (float)sprite.width / (float)sprite.height;
-	}
-	else
-	{
-		gridRect.halfSize.x = spriteRect.halfSize.x;
-		gridRect.halfSize.y = gridRect.halfSize.x * (float)sprite.height / (float)sprite.width;
-	}
-
-	gridRect.position = {
-		gridRect.halfSize.x,
-		gridRect.halfSize.y + commandRect.position.y + commandRect.halfSize.y
-	};
-}
-
 int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
+	state.commandBuffer = commandBuffer;
+	state.displayBuffer = displayBuffer;
+	
 	// Load file
 	spriteMemory = gameMemory.permanent;
 	tl::MemorySpace fileReadMemory;
@@ -161,77 +137,50 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	ClearCommandBuffer();
 	ClearDisplayBuffer();
 
-	const float textAreaHeight = 30.0f;
-	commandRect.halfSize = {
-		(float)windowWidth * 0.25f,
-		textAreaHeight
-	};
-	commandRect.position = tl::CopyVec2(commandRect.halfSize);
-	commandCharFootprint.halfSize = { 0.3f * commandRect.halfSize.y, commandRect.halfSize.y };
-	commandCharFootprint.position = tl::CopyVec2(commandCharFootprint.halfSize);
-
-	displayRect.halfSize = tl::CopyVec2(commandRect.halfSize);
-	displayRect.position = {
-		commandRect.position.x + commandRect.halfSize.x + displayRect.halfSize.x,
-		displayRect.halfSize.y
-	};
-	displayCharFootprint.halfSize = tl::CopyVec2(commandCharFootprint.halfSize);
-	displayCharFootprint.position = {
-		displayRect.position.x - displayRect.halfSize.x + displayCharFootprint.halfSize.x,
-		displayRect.halfSize.y
-	};
-
-	spriteRect.halfSize = {
-		(float)windowWidth * 0.5f,
-		((float)windowHeight * 0.5f) - commandRect.halfSize.y
-	};
-	spriteRect.position = {
-		spriteRect.halfSize.x,
-		spriteRect.halfSize.y + commandRect.position.y + commandRect.halfSize.y
-	};
+	InitializeLayout();
 
 	char* spriteCharArray = (char*)fileReadMemory.content;
-	sprite.content = (tl::Color*)spriteMemory.content;
-	tl::LoadSpriteC(spriteCharArray, tempMemory, sprite);
+	state.sprite.content = (tl::Color*)spriteMemory.content;
+	tl::LoadSpriteC(spriteCharArray, tempMemory, state.sprite);
 
-	SizeGridForSprite();
+	SizeGridForSprite(state.sprite);
 	return 0;
 }
 
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
 	// Check for arrow key press to move selected pixel
-	int maxPixelIndex = (sprite.width * sprite.height) - 1;
+	int maxPixelIndex = (state.sprite.width * state.sprite.height) - 1;
 	if (!input.buttons[KEY_CTRL].isDown)
 	{
 		if (tl::IsReleased(input, tl::KEY_RIGHT))
 		{
-			if (selectedPixelIndex < maxPixelIndex)
+			if (state.selectedPixelIndex < maxPixelIndex)
 			{
-				selectedPixelIndex += 1;
+				state.selectedPixelIndex += 1;
 			}
 		}
 		else if (tl::IsReleased(input, tl::KEY_LEFT))
 		{
-			if (selectedPixelIndex > 0)
+			if (state.selectedPixelIndex > 0)
 			{
-				selectedPixelIndex -= 1;
+				state.selectedPixelIndex -= 1;
 			}
 		}
 		else if (tl::IsReleased(input, tl::KEY_DOWN))
 		{
-			int provisionalSelectedPixelIndex = selectedPixelIndex + sprite.width;
+			int provisionalSelectedPixelIndex = state.selectedPixelIndex + state.sprite.width;
 			if (provisionalSelectedPixelIndex <= maxPixelIndex)
 			{
-				selectedPixelIndex = provisionalSelectedPixelIndex;
+				state.selectedPixelIndex = provisionalSelectedPixelIndex;
 			}
 		}
 		else if (tl::IsReleased(input, tl::KEY_UP))
 		{
-			int provisionalSelectedPixelIndex = selectedPixelIndex - sprite.width;
+			int provisionalSelectedPixelIndex = state.selectedPixelIndex - state.sprite.width;
 			if (provisionalSelectedPixelIndex >= 0)
 			{
-				selectedPixelIndex = provisionalSelectedPixelIndex;
+				state.selectedPixelIndex = provisionalSelectedPixelIndex;
 			}
 		}
 
@@ -273,12 +222,12 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 				{
 					if (commandBuffer[1] == '\0') // save to current filePath
 					{
-						Save(gameMemory, sprite, displayBuffer);
+						Save(gameMemory, state.sprite, displayBuffer);
 					}
 					else if (commandBuffer[1] == ' ' && commandBuffer[2]) // save to new filePath
 					{
 						filePath = &commandBuffer[2];
-						Save(gameMemory, sprite, displayBuffer);
+						Save(gameMemory, state.sprite, displayBuffer);
 					}
 					break;
 				}
@@ -286,8 +235,8 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 				{
 					if (commandBuffer[1] == '\0')
 					{
-						AppendRowToSpriteC(sprite, spriteMemory);
-						SizeGridForSprite();
+						AppendRowToSpriteC(state.sprite, spriteMemory);
+						SizeGridForSprite(state.sprite);
 					}
 					break;
 				}
@@ -295,8 +244,8 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 				{
 					if (commandBuffer[1] == '\0')
 					{
-						AppendColumnToSpriteC(sprite, spriteMemory);
-						SizeGridForSprite();
+						AppendColumnToSpriteC(state.sprite, spriteMemory);
+						SizeGridForSprite(state.sprite);
 					}
 					break;
 				}
@@ -304,7 +253,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 				{
 					char* pointer = GetNextNumberChar(&commandBuffer[1]);
 					tl::MemorySpace transient = gameMemory.transient;
-					ParseColorFromCharArray(pointer, transient, sprite.content[selectedPixelIndex]);
+					ParseColorFromCharArray(pointer, transient, state.sprite.content[state.selectedPixelIndex]);
 					ClearCommandBuffer();
 					break;
 				}
@@ -313,7 +262,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 					if (commandBuffer[1] == '\0')
 					{
 						ClearDisplayBuffer();
-						tl::Color selectedColor = sprite.content[selectedPixelIndex];
+						tl::Color selectedColor = state.sprite.content[state.selectedPixelIndex];
 
 						int color = (int)(selectedColor.r * 255.0f);
 						char* cursor = display.content;
@@ -344,7 +293,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		if (tl::IsReleased(input, tl::KEY_C))
 		{
 			hasCopied = true;
-			copiedColor = sprite.content[selectedPixelIndex];
+			copiedColor = state.sprite.content[state.selectedPixelIndex];
 			ClearDisplayBuffer();
 			display.append('C');
 			display.append('O');
@@ -353,7 +302,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		}
 		else if (hasCopied && tl::IsReleased(input, tl::KEY_V))
 		{
-			sprite.content[selectedPixelIndex] = copiedColor;
+			state.sprite.content[state.selectedPixelIndex] = copiedColor;
 			ClearDisplayBuffer();
 			display.append('P');
 			display.append('A');
@@ -363,70 +312,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		}
 	}
 
-	// Render
-	const uint32_t commandBackgroundColor = 0x000000;
-	const uint32_t displayBackgroundColor = 0x666666;
-	const uint32_t spriteBackgroundColor = 0x222222;
-	const uint32_t gridBorderColor = 0x444444;
-	const uint32_t selectedPixelColor = 0xFFFF00;
-	const uint32_t commandTextColor = 0xFFFFFF;
-	const uint32_t displayTextColor = 0xFFFF00;
-	const float pixelBorderWidth = 2.0f;
-
-	tl::DrawRect(renderBuffer, commandBackgroundColor, commandRect);
-	tl::DrawRect(renderBuffer, displayBackgroundColor, displayRect);
-	tl::DrawRect(renderBuffer, spriteBackgroundColor, spriteRect);
-	tl::DrawRect(renderBuffer, gridBorderColor, gridRect);
-
-	float pixelDimensionWithBorder = (2.0f * gridRect.halfSize.x) / sprite.width;
-	float pixelDimension = pixelDimensionWithBorder - (2.0f * pixelBorderWidth);
-	tl::Vec2<float> pixelHalfSize = { 0.5F * pixelDimension, 0.5f * pixelDimension };
-
-	float yOriginalPosition = gridRect.position.y + gridRect.halfSize.y - (0.5f * pixelDimensionWithBorder);
-	for (int j = 0; j < sprite.height; j += 1)
-	{
-		float yPosition = yOriginalPosition - (j * pixelDimensionWithBorder);
-		for (int i = 0; i < sprite.width; i += 1)
-		{
-			float xPosition = (0.5f * pixelDimensionWithBorder) + (i * pixelDimensionWithBorder);
-
-			tl::Vec2<float> pixelPosition = { xPosition, yPosition };
-			tl::Rect<float> pixelFootPrint;
-			pixelFootPrint.halfSize = pixelHalfSize;
-			pixelFootPrint.position = pixelPosition;
-
-			int pixelIndex = (j * sprite.width) + i;
-			if (pixelIndex == selectedPixelIndex)
-			{
-				tl::Rect<float> selectedFootprint;
-				selectedFootprint.position = pixelPosition;
-				selectedFootprint.halfSize = { pixelHalfSize.x + 1, pixelHalfSize.y + 1 };
-				tl::DrawRect(renderBuffer, selectedPixelColor, selectedFootprint);
-			}
-			tl::Color blockColor = sprite.content[pixelIndex];
-
-			uint32_t color = tl::GetColorFromRGB(
-				(int)(255.0f * blockColor.r),
-				(int)(255.0f * blockColor.g),
-				(int)(255.0f * blockColor.b)
-			);
-			tl::DrawRect(renderBuffer, color, pixelFootPrint);
-		}
-	}
-
-	tl::DrawAlphabetCharacters(
-		renderBuffer,
-		commandBuffer,
-		commandCharFootprint,
-		commandTextColor
-	);
-
-	tl::DrawAlphabetCharacters(
-		renderBuffer,
-		displayBuffer,
-		displayCharFootprint,
-		displayTextColor
-	);
+	Render(renderBuffer, state);
 
 	return 0;
 }
