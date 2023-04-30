@@ -5,6 +5,8 @@ struct EditorState
 {
 	tl::SpriteC sprite;
 	int selectedPixelIndex = 0;
+	tl::SpriteC palette;
+	int selectedPaletteIndex = 0;
 	char* commandBuffer;
 	char* displayBuffer;
 };

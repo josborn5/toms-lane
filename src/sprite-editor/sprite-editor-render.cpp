@@ -7,6 +7,7 @@ static tl::Rect<float> commandRect;
 static tl::Rect<float> commandCharFootprint;
 static tl::Rect<float> displayRect;
 static tl::Rect<float> displayCharFootprint;
+static tl::Rect<float> paletteRect;
 
 void SizeGridForSprite(tl::SpriteC& sprite)
 {
@@ -52,13 +53,27 @@ void InitializeLayout()
 		displayRect.halfSize.y
 	};
 
+	float paletteHalfWidthPercent = 0.2f;
+	float windowHalfWidth = (float)windowWidth * 0.5f;
+	float visualYHalfSize = ((float)windowHeight * 0.5f) - commandRect.halfSize.y;
 	spriteRect.halfSize = {
-		(float)windowWidth * 0.5f,
-		((float)windowHeight * 0.5f) - commandRect.halfSize.y
+		windowHalfWidth * (1.0f - paletteHalfWidthPercent),
+		visualYHalfSize
 	};
+
+	float visualYPosition = spriteRect.halfSize.y + commandRect.position.y + commandRect.halfSize.y;
 	spriteRect.position = {
 		spriteRect.halfSize.x,
-		spriteRect.halfSize.y + commandRect.position.y + commandRect.halfSize.y
+		visualYPosition
+	};
+
+	paletteRect.halfSize = {
+		windowHalfWidth * paletteHalfWidthPercent,
+		visualYHalfSize
+	};
+	paletteRect.position = {
+		spriteRect.position.x + spriteRect.halfSize.x + paletteRect.halfSize.x,
+		visualYPosition
 	};
 }
 
@@ -68,6 +83,7 @@ void Render(const tl::RenderBuffer &renderBuffer, const EditorState state)
 	const uint32_t commandBackgroundColor = 0x000000;
 	const uint32_t displayBackgroundColor = 0x666666;
 	const uint32_t spriteBackgroundColor = 0x222222;
+	const uint32_t paletteBackgroundColor = 0x888888;
 	const uint32_t gridBorderColor = 0x444444;
 	const uint32_t selectedPixelColor = 0xFFFF00;
 	const uint32_t commandTextColor = 0xFFFFFF;
@@ -77,6 +93,7 @@ void Render(const tl::RenderBuffer &renderBuffer, const EditorState state)
 	tl::DrawRect(renderBuffer, commandBackgroundColor, commandRect);
 	tl::DrawRect(renderBuffer, displayBackgroundColor, displayRect);
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, spriteRect);
+	tl::DrawRect(renderBuffer, paletteBackgroundColor, paletteRect);
 	tl::DrawRect(renderBuffer, gridBorderColor, gridRect);
 
 	float pixelDimensionWithBorder = (2.0f * gridRect.halfSize.x) / state.sprite.width;
