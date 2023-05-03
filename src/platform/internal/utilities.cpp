@@ -1,5 +1,21 @@
 namespace tl
 {
+	MemorySpace CarveMemorySpace(unsigned long carveSizeInBytes, MemorySpace& toCarve)
+	{
+		unsigned long remainingSpace = toCarve.sizeInBytes - carveSizeInBytes;
+		MemorySpace remainingSlice = MemorySpace();
+		if (remainingSpace <= 0)
+		{
+			return remainingSlice;
+		}
+
+		remainingSlice.sizeInBytes = remainingSpace;
+		remainingSlice.content = (uint8_t*)toCarve.content + carveSizeInBytes;
+
+		toCarve.sizeInBytes = remainingSpace;
+
+		return remainingSlice;
+	}
 
 	int CharStringToInt(char* toParse)
 	{

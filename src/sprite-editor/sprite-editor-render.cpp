@@ -9,26 +9,34 @@ static tl::Rect<float> displayRect;
 static tl::Rect<float> displayCharFootprint;
 static tl::Rect<float> paletteRect;
 
-void SizeGridForSprite(tl::SpriteC& sprite)
+tl::Rect<float> SizeRectForSpriteInBoundingRect(const tl::SpriteC& sprite, const tl::Rect<float> boundingRect)
 {
+	tl::Rect<float> sizeRect;
 	float spriteAspectRatio = (float)sprite.height / (float)sprite.width;
-	float backgroundAspectRatio = spriteRect.halfSize.y / spriteRect.halfSize.x;
+	float backgroundAspectRatio = boundingRect.halfSize.y / boundingRect.halfSize.x;
 	float relativeAspectRatio = spriteAspectRatio / backgroundAspectRatio;
 	if (relativeAspectRatio >= 1.0f)
 	{
-		gridRect.halfSize.y = spriteRect.halfSize.y;
-		gridRect.halfSize.x = gridRect.halfSize.y * (float)sprite.width / (float)sprite.height;
+		sizeRect.halfSize.y = spriteRect.halfSize.y;
+		sizeRect.halfSize.x = sizeRect.halfSize.y * (float)sprite.width / (float)sprite.height;
 	}
 	else
 	{
-		gridRect.halfSize.x = spriteRect.halfSize.x;
-		gridRect.halfSize.y = gridRect.halfSize.x * (float)sprite.height / (float)sprite.width;
+		sizeRect.halfSize.x = spriteRect.halfSize.x;
+		sizeRect.halfSize.y = sizeRect.halfSize.x * (float)sprite.height / (float)sprite.width;
 	}
 
-	gridRect.position = {
-		gridRect.halfSize.x,
-		gridRect.halfSize.y + commandRect.position.y + commandRect.halfSize.y
+	sizeRect.position = {
+		spriteRect.position.x,
+		spriteRect.position.y
 	};
+
+	return sizeRect;
+}
+
+void SizeGridForSprite(tl::SpriteC& sprite)
+{
+	gridRect = SizeRectForSpriteInBoundingRect(sprite, spriteRect);
 }
 
 void InitializeLayout()

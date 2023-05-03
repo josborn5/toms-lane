@@ -142,5 +142,23 @@ void RunUtilitiesTests()
 	assert(*result == '1');
 	assert(result == &numberString[3]);
 
+	printf("\n===== CarveMemorySpace =====\n");
+	char* spaceTestContent = "0123456789";
+
+	tl::MemorySpace toCarve;
+	toCarve.content = spaceTestContent;
+	toCarve.sizeInBytes = 10 * sizeof(char);
+
+	unsigned long sliceSize = 2 * sizeof(char); // Carve of the first 2 chars
+	tl::MemorySpace remaining = CarveMemorySpace(sliceSize, toCarve);
+
+	char* original = (char*)toCarve.content;
+	char* remainingString = (char*)remaining.content;
+	printf(original);
+	printf("\n");
+	printf(remainingString);
+	printf("\n");
+	assert(((char*)remaining.content)[0] == '2');
+
 	printf("\nDONE!\n");
 }
