@@ -19,6 +19,7 @@ namespace tl
 
 			T* content;
 
+			HeapArray(){}
 			HeapArray(const MemorySpace& memory)
 			{
 				initialize(memory);
