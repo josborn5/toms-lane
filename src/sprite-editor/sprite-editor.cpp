@@ -5,6 +5,7 @@
 #include "./sprite-commands.cpp"
 #include "./editor.hpp"
 #include "./sprite-editor-render.cpp"
+#include "./sprite-editor-palettes.cpp"
 
 #define COMMAND_BUFFER_SIZE 15
 #define DISPLAY_BUFFER_SIZE 15
@@ -20,6 +21,7 @@ static bool hasCopied = false;
 static tl::Color copiedColor;
 
 static tl::MemorySpace spriteMemory;
+static tl::MemorySpace paletteMemory;
 
 static char alphaKeyMap[26] = {
 	'A',
@@ -105,16 +107,16 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 {
 	state.commandBuffer = commandBuffer;
 	state.displayBuffer = displayBuffer;
-	
-	// Load file
-	spriteMemory = gameMemory.permanent;
-	tl::MemorySpace fileReadMemory;
-	fileReadMemory.content = gameMemory.transient.content;
-	fileReadMemory.sizeInBytes = 512;
-	tl::MemorySpace tempMemory;
-	tempMemory.content = (char*)gameMemory.transient.content + (fileReadMemory.sizeInBytes * sizeof(char));
-	tempMemory.sizeInBytes = 512;
 
+	// Define memory slices
+	tl::MemorySpace perm = gameMemory.permanent;
+	spriteMemory = tl::CarveMemorySpace(512, perm);
+	paletteMemory = tl::CarveMemorySpace(512, perm);
+	tl::MemorySpace temp = gameMemory.transient;
+	tl::MemorySpace fileReadMemory = tl::CarveMemorySpace(512, temp);
+	tl::MemorySpace tempMemory = tl::CarveMemorySpace(512, temp);
+
+	// Load file
 	if (filePath)
 	{
 		uint64_t fileSize = 0;
@@ -138,6 +140,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	ClearDisplayBuffer();
 
 	InitializeLayout();
+	InitializePalettes(paletteMemory, tempMemory);
 
 	char* spriteCharArray = (char*)fileReadMemory.content;
 	state.sprite.content = (tl::Color*)spriteMemory.content;
@@ -235,7 +238,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 				{
 					if (commandBuffer[1] == '\0')
 					{
-						AppendRowToSpriteC(state.sprite, spriteMemory);
+						AppendRowToSpriteC(state.sprite, spriteMemory); // TODO: make the MemorySpace a field of the SpriteC struct. The pointer to the sprite content is shared between the two - make it a single pointer owner!
 						SizeGridForSprite(state.sprite);
 					}
 					break;
