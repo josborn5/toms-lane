@@ -1,6 +1,8 @@
 #ifndef TOMS_LANE_PLATFORM_H
 #define TOMS_LANE_PLATFORM_H
 
+#include <stdint.h>
+
 namespace tl
 {
 	struct WindowSettings
@@ -67,7 +69,7 @@ namespace tl
 	struct MemorySpace
 	{
 		void* content;
-		unsigned long sizeInBytes;
+		uint64_t sizeInBytes;
 	};
 
 	struct GameMemory

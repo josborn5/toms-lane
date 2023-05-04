@@ -32,7 +32,7 @@ namespace tl
 		}
 
 		LPDWORD bytesWritten = 0;
-		bool writeSuccess = ::WriteFile(fileHandle, writeBuffer.content, writeBuffer.sizeInBytes, bytesWritten, NULL);
+		bool writeSuccess = ::WriteFile(fileHandle, writeBuffer.content, (DWORD)writeBuffer.sizeInBytes, bytesWritten, NULL);
 		CloseHandle(fileHandle);
 
 		return writeSuccess ? Success : FileWriteError;

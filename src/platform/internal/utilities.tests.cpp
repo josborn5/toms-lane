@@ -149,7 +149,7 @@ void RunUtilitiesTests()
 	toCarve.content = spaceTestContent;
 	toCarve.sizeInBytes = 10 * sizeof(char);
 
-	unsigned long sliceSize = 2 * sizeof(char); // Carve of the first 2 chars
+	uint64_t sliceSize = 2 * (uint64_t)sizeof(char); // Carve of the first 2 chars
 	tl::MemorySpace remaining = CarveMemorySpace(sliceSize, toCarve);
 
 	char* original = (char*)toCarve.content;

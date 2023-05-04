@@ -1,8 +1,8 @@
 namespace tl
 {
-	MemorySpace CarveMemorySpace(unsigned long carveSizeInBytes, MemorySpace& toCarve)
+	MemorySpace CarveMemorySpace(uint64_t carveSizeInBytes, MemorySpace& toCarve)
 	{
-		unsigned long remainingSpace = toCarve.sizeInBytes - carveSizeInBytes;
+		uint64_t remainingSpace = toCarve.sizeInBytes - carveSizeInBytes;
 		MemorySpace remainingSlice = MemorySpace();
 		if (remainingSpace <= 0)
 		{

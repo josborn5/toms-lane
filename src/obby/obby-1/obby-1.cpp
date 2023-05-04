@@ -43,8 +43,7 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 		return 1;
 	}
 
-	tl::MemorySpace tempMemory;
-	tempMemory.content = (char*)transient.content + fileSize;
+	tl::MemorySpace tempMemory = CarveMemorySpace(fileSize, transient);
 
 	// Generate SpriteCs in perm space
 	char* spriteCharArray = (char*)transient.content;

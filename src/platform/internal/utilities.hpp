@@ -12,7 +12,7 @@ namespace tl
 		b = spare;
 	}
 
-	MemorySpace CarveMemorySpace(unsigned long carveSizeInBytes, MemorySpace& toCarve);
+	MemorySpace CarveMemorySpace(uint64_t carveSizeInBytes, MemorySpace& toCarve);
 
 	int CharStringToInt(char* toParse);
 	int IntToCharString(int from, MemorySpace to);

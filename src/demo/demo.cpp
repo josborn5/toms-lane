@@ -5,7 +5,7 @@
 #include "./demo-win32.cpp"
 
 tl::Camera<float> camera;
-tl::MeshArray<float> meshArray;
+tl::MeshArray<float> meshArray = tl::MeshArray<float>();
 tl::Matrix4x4<float> projectionMatrix;
 
 float theta = 0.0f;

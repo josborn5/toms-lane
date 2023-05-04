@@ -88,9 +88,9 @@ int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory)
 {
 	// Check there is space to add a final row
 	int currentPixelCount = sprite.width * sprite.height;
-	unsigned long currentPixelSpace = currentPixelCount * sizeof(tl::Color);
-	unsigned long newPixelSpace = sprite.width * sizeof(tl::Color);
-	unsigned long availableSpace = spriteMemory.sizeInBytes - currentPixelSpace;
+	uint64_t currentPixelSpace = currentPixelCount * sizeof(tl::Color);
+	uint64_t newPixelSpace = sprite.width * sizeof(tl::Color);
+	uint64_t availableSpace = spriteMemory.sizeInBytes - currentPixelSpace;
 
 	if (availableSpace < newPixelSpace)
 	{
@@ -117,9 +117,9 @@ int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory)
 {
 	// Check there is space to add a final row
 	int currentPixelCount = sprite.width * sprite.height;
-	unsigned long currentPixelSpace = currentPixelCount * sizeof(tl::Color);
-	unsigned long newPixelSpace = sprite.height * sizeof(tl::Color);
-	unsigned long availableSpace = spriteMemory.sizeInBytes - currentPixelSpace;
+	uint64_t currentPixelSpace = currentPixelCount * sizeof(tl::Color);
+	uint64_t newPixelSpace = sprite.height * sizeof(tl::Color);
+	uint64_t availableSpace = spriteMemory.sizeInBytes - currentPixelSpace;
 
 	if (availableSpace < newPixelSpace)
 	{
