@@ -8,35 +8,87 @@ static tl::Rect<float> commandCharFootprint;
 static tl::Rect<float> displayTextRect;
 static tl::Rect<float> displayCharFootprint;
 static tl::Rect<float> paletteContainerRect;
+static tl::Rect<float> paletteBoundingRect;
 
-tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::SpriteC& sprite, const tl::Rect<float> boundingRect)
+static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::SpriteC& sprite, const tl::Rect<float> containerRect)
 {
 	tl::Rect<float> sizeRect;
 	float spriteAspectRatio = (float)sprite.height / (float)sprite.width;
-	float backgroundAspectRatio = boundingRect.halfSize.y / boundingRect.halfSize.x;
+	float backgroundAspectRatio = containerRect.halfSize.y / containerRect.halfSize.x;
 	float relativeAspectRatio = spriteAspectRatio / backgroundAspectRatio;
 	if (relativeAspectRatio >= 1.0f)
 	{
-		sizeRect.halfSize.y = spriteContainerRect.halfSize.y;
+		sizeRect.halfSize.y = containerRect.halfSize.y;
 		sizeRect.halfSize.x = sizeRect.halfSize.y * (float)sprite.width / (float)sprite.height;
 	}
 	else
 	{
-		sizeRect.halfSize.x = spriteContainerRect.halfSize.x;
+		sizeRect.halfSize.x = containerRect.halfSize.x;
 		sizeRect.halfSize.y = sizeRect.halfSize.x * (float)sprite.height / (float)sprite.width;
 	}
 
 	sizeRect.position = {
-		spriteContainerRect.position.x,
-		spriteContainerRect.position.y
+		containerRect.position.x,
+		containerRect.position.y
 	};
 
 	return sizeRect;
 }
 
-void SizeGridForSprite(tl::SpriteC& sprite)
+static void RenderSpriteAsGrid(
+	const tl::SpriteC& sprite,
+	const tl::Rect<float>& boundingRect,
+	const tl::RenderBuffer& renderBuffer,
+	int selectedBlockIndex
+) {
+	const float pixelBorderWidth = 2.0f;
+	const uint32_t selectedPixelColor = 0xFFFF00;
+
+	float pixelDimensionWithBorder = (2.0f * boundingRect.halfSize.x) / sprite.width;
+	float pixelDimension = pixelDimensionWithBorder - (2.0f * pixelBorderWidth);
+	tl::Vec2<float> pixelHalfSize = { 0.5F * pixelDimension, 0.5f * pixelDimension };
+
+	float yOriginalPosition = boundingRect.position.y + boundingRect.halfSize.y - (0.5f * pixelDimensionWithBorder);
+	for (int j = 0; j < sprite.height; j += 1)
+	{
+		float yPosition = yOriginalPosition - (j * pixelDimensionWithBorder);
+		for (int i = 0; i < sprite.width; i += 1)
+		{
+			float xPosition = boundingRect.position.x - boundingRect.halfSize.x + (0.5f * pixelDimensionWithBorder) + (i * pixelDimensionWithBorder);
+
+			tl::Vec2<float> pixelPosition = { xPosition, yPosition };
+			tl::Rect<float> pixelFootPrint;
+			pixelFootPrint.halfSize = pixelHalfSize;
+			pixelFootPrint.position = pixelPosition;
+
+			int pixelIndex = (j * sprite.width) + i;
+			if (pixelIndex == selectedBlockIndex)
+			{
+				tl::Rect<float> selectedFootprint;
+				selectedFootprint.position = pixelPosition;
+				selectedFootprint.halfSize = { pixelHalfSize.x + 1, pixelHalfSize.y + 1 };
+				tl::DrawRect(renderBuffer, selectedPixelColor, selectedFootprint);
+			}
+			tl::Color blockColor = sprite.content[pixelIndex];
+
+			uint32_t color = tl::GetColorFromRGB(
+				(int)(255.0f * blockColor.r),
+				(int)(255.0f * blockColor.g),
+				(int)(255.0f * blockColor.b)
+			);
+			tl::DrawRect(renderBuffer, color, pixelFootPrint);
+		}
+	}
+}
+
+void SizeGridForSprite(const tl::SpriteC& sprite)
 {
 	spriteBoundingRect = SizeBoundingRectForSpriteInContainingRect(sprite, spriteContainerRect);
+}
+
+void SizePalette(const tl::SpriteC& palette)
+{
+	paletteBoundingRect = SizeBoundingRectForSpriteInContainingRect(palette, paletteContainerRect);
 }
 
 void InitializeLayout()
@@ -92,51 +144,27 @@ void Render(const tl::RenderBuffer &renderBuffer, const EditorState state)
 	const uint32_t displayBackgroundColor = 0x111111;
 	const uint32_t spriteBackgroundColor = 0x222222;
 	const uint32_t paletteBackgroundColor = 0x333333;
-	const uint32_t selectedPixelColor = 0xFFFF00;
 	const uint32_t commandTextColor = 0xFFFFFF;
 	const uint32_t displayTextColor = 0xFFFF00;
-	const float pixelBorderWidth = 2.0f;
 
 	tl::DrawRect(renderBuffer, commandBackgroundColor, commandTextRect);
 	tl::DrawRect(renderBuffer, displayBackgroundColor, displayTextRect);
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, spriteContainerRect);
 	tl::DrawRect(renderBuffer, paletteBackgroundColor, paletteContainerRect);
 
-	float pixelDimensionWithBorder = (2.0f * spriteBoundingRect.halfSize.x) / state.sprite.width;
-	float pixelDimension = pixelDimensionWithBorder - (2.0f * pixelBorderWidth);
-	tl::Vec2<float> pixelHalfSize = { 0.5F * pixelDimension, 0.5f * pixelDimension };
+	RenderSpriteAsGrid(
+		state.sprite,
+		spriteBoundingRect,
+		renderBuffer,
+		state.selectedPixelIndex
+	);
 
-	float yOriginalPosition = spriteBoundingRect.position.y + spriteBoundingRect.halfSize.y - (0.5f * pixelDimensionWithBorder);
-	for (int j = 0; j < state.sprite.height; j += 1)
-	{
-		float yPosition = yOriginalPosition - (j * pixelDimensionWithBorder);
-		for (int i = 0; i < state.sprite.width; i += 1)
-		{
-			float xPosition = (0.5f * pixelDimensionWithBorder) + (i * pixelDimensionWithBorder);
-
-			tl::Vec2<float> pixelPosition = { xPosition, yPosition };
-			tl::Rect<float> pixelFootPrint;
-			pixelFootPrint.halfSize = pixelHalfSize;
-			pixelFootPrint.position = pixelPosition;
-
-			int pixelIndex = (j * state.sprite.width) + i;
-			if (pixelIndex == state.selectedPixelIndex)
-			{
-				tl::Rect<float> selectedFootprint;
-				selectedFootprint.position = pixelPosition;
-				selectedFootprint.halfSize = { pixelHalfSize.x + 1, pixelHalfSize.y + 1 };
-				tl::DrawRect(renderBuffer, selectedPixelColor, selectedFootprint);
-			}
-			tl::Color blockColor = state.sprite.content[pixelIndex];
-
-			uint32_t color = tl::GetColorFromRGB(
-				(int)(255.0f * blockColor.r),
-				(int)(255.0f * blockColor.g),
-				(int)(255.0f * blockColor.b)
-			);
-			tl::DrawRect(renderBuffer, color, pixelFootPrint);
-		}
-	}
+	RenderSpriteAsGrid(
+		state.palette,
+		paletteBoundingRect,
+		renderBuffer,
+		-1
+	);
 
 	tl::DrawAlphabetCharacters(
 		renderBuffer,

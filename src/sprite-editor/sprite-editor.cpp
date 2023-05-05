@@ -140,13 +140,14 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	ClearDisplayBuffer();
 
 	InitializeLayout();
-	InitializePalettes(paletteMemory, tempMemory);
+	InitializePalettes(paletteMemory, tempMemory, state);
 
 	char* spriteCharArray = (char*)fileReadMemory.content;
 	state.sprite.content = (tl::Color*)spriteMemory.content;
 	tl::LoadSpriteC(spriteCharArray, tempMemory, state.sprite);
 
 	SizeGridForSprite(state.sprite);
+	SizePalette(state.palette);
 	return 0;
 }
 

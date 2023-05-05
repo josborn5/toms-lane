@@ -1,4 +1,5 @@
 #include "../platform/toms-lane-platform.hpp"
+#include "./editor.hpp"
 
 char* rgrPaletteContent = "\
 1\n\
@@ -10,8 +11,9 @@ char* rgrPaletteContent = "\
 
 tl::SpriteC rgrPalette;
 
-void InitializePalettes(const tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMemory)
+void InitializePalettes(const tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMemory, EditorState& state)
 {
 	rgrPalette.content = (tl::Color*)paletteMemory.content;
 	tl::LoadSpriteC(rgrPaletteContent, tempMemory, rgrPalette);
+	state.palette = rgrPalette;
 }
