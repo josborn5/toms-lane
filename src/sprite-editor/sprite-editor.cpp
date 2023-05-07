@@ -147,7 +147,6 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	tl::LoadSpriteC(spriteCharArray, tempMemory, state.sprite);
 
 	SizeGridForSprite(state.sprite);
-	SizePalette(*state.palette);
 	return 0;
 }
 

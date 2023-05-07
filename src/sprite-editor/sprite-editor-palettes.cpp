@@ -24,8 +24,8 @@ char* rgrPaletteContent = "\
 204 20 36 255";
 
 char* pollenPaletteContent = "\
-2\n\
-4\n\
+1\n\
+8\n\
 115 70 76 255\n\
 171 86 117 255\n\
 238 106 124 255\n\
@@ -36,8 +36,8 @@ char* pollenPaletteContent = "\
 52 172 186 255";
 
 char* sunsetCloudsPaletteContent = "\
-2\n\
-4\n\
+1\n\
+8\n\
 252 176 140 255\n\
 239 157 127 255\n\
 214 147 138 255\n\
@@ -59,6 +59,7 @@ tl::SpriteC rgrPalette;
 static void SelectPalette(EditorState& state)
 {
 	state.palette = &palettes[state.selectedPaletteIndex];
+	SizePalette(*state.palette);
 }
 
 void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMemory, EditorState& state)
