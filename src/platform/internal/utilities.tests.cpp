@@ -150,15 +150,16 @@ void RunUtilitiesTests()
 	toCarve.sizeInBytes = 10 * sizeof(char);
 
 	uint64_t sliceSize = 2 * (uint64_t)sizeof(char); // Carve of the first 2 chars
-	tl::MemorySpace remaining = CarveMemorySpace(sliceSize, toCarve);
+	tl::MemorySpace sliced = CarveMemorySpace(sliceSize, toCarve);
 
-	char* original = (char*)toCarve.content;
-	char* remainingString = (char*)remaining.content;
-	printf(original);
+	char* remainingString = (char*)toCarve.content;
+	char* slicedChars = (char*)sliced.content;
+	printf(slicedChars);
 	printf("\n");
 	printf(remainingString);
 	printf("\n");
-	assert(((char*)remaining.content)[0] == '2');
+	assert(((char*)toCarve.content)[0] == '2');
+	assert(((char*)sliced.content)[0] == '0');
 
 	printf("\nDONE!\n");
 }

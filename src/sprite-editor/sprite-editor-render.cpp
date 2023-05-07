@@ -160,7 +160,7 @@ void Render(const tl::RenderBuffer &renderBuffer, const EditorState state)
 	);
 
 	RenderSpriteAsGrid(
-		state.palette,
+		*state.palette,
 		paletteBoundingRect,
 		renderBuffer,
 		-1

@@ -15,5 +15,5 @@ void InitializePalettes(const tl::MemorySpace& paletteMemory, tl::MemorySpace& t
 {
 	rgrPalette.content = (tl::Color*)paletteMemory.content;
 	tl::LoadSpriteC(rgrPaletteContent, tempMemory, rgrPalette);
-	state.palette = rgrPalette;
+	state.palette = &rgrPalette;
 }

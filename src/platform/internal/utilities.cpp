@@ -2,19 +2,25 @@ namespace tl
 {
 	MemorySpace CarveMemorySpace(uint64_t carveSizeInBytes, MemorySpace& toCarve)
 	{
+		// This slices from the front of the address space.
+		// Not sure if it's better to slice from the front or the back :shrug:
+		MemorySpace carvedSlice;
+		carvedSlice.content = toCarve.content;
+		
 		uint64_t remainingSpace = toCarve.sizeInBytes - carveSizeInBytes;
-		MemorySpace remainingSlice = MemorySpace();
-		if (remainingSpace <= 0)
+		if (remainingSpace < 0)
 		{
-			return remainingSlice;
+			carvedSlice.sizeInBytes = toCarve.sizeInBytes;
+			return carvedSlice;
 		}
 
-		remainingSlice.sizeInBytes = remainingSpace;
-		remainingSlice.content = (uint8_t*)toCarve.content + carveSizeInBytes;
+		carvedSlice.sizeInBytes = carveSizeInBytes;
+		
+		toCarve.content = (uint8_t*)toCarve.content + carveSizeInBytes;
 
 		toCarve.sizeInBytes = remainingSpace;
 
-		return remainingSlice;
+		return carvedSlice;
 	}
 
 	int CharStringToInt(char* toParse)

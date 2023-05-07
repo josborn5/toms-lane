@@ -110,8 +110,8 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 
 	// Define memory slices
 	tl::MemorySpace perm = gameMemory.permanent;
-	spriteMemory = tl::CarveMemorySpace(512, perm);
 	paletteMemory = tl::CarveMemorySpace(512, perm);
+	spriteMemory = tl::CarveMemorySpace(512, perm);
 	tl::MemorySpace temp = gameMemory.transient;
 	tl::MemorySpace fileReadMemory = tl::CarveMemorySpace(512, temp);
 	tl::MemorySpace tempMemory = tl::CarveMemorySpace(512, temp);
@@ -147,7 +147,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	tl::LoadSpriteC(spriteCharArray, tempMemory, state.sprite);
 
 	SizeGridForSprite(state.sprite);
-	SizePalette(state.palette);
+	SizePalette(*state.palette);
 	return 0;
 }
 
