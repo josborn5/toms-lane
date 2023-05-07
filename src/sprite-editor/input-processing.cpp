@@ -41,5 +41,7 @@ static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprit
 
 void ProcessCursorMovement(const tl::Input &input, EditorState& state)
 {
-	MoveCursorForSprite(input, state.sprite, state.selectedPixelIndex);
+	tl::SpriteC& activeSprite = (state.activeControl == SpriteGrid) ? state.sprite : *state.palette;
+	int& activeIndex = (state.activeControl == SpriteGrid) ? state.selectedPixelIndex : state.selectedPalettePixelIndex;
+	MoveCursorForSprite(input, activeSprite, activeIndex);
 }

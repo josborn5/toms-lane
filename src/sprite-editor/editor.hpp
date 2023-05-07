@@ -1,6 +1,12 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+enum EditorControl
+{
+	SpriteGrid,
+	PaletteGrid
+};
+
 struct EditorState
 {
 	tl::SpriteC sprite;
@@ -10,6 +16,7 @@ struct EditorState
 	int selectedPalettePixelIndex = 0;
 	char* commandBuffer;
 	char* displayBuffer;
+	EditorControl activeControl = SpriteGrid;
 };
 
 #endif
