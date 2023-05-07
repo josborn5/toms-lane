@@ -110,8 +110,8 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 
 	// Define memory slices
 	tl::MemorySpace perm = gameMemory.permanent;
-	paletteMemory = tl::CarveMemorySpace(512, perm);
-	spriteMemory = tl::CarveMemorySpace(512, perm);
+	paletteMemory = tl::CarveMemorySpace(1024, perm);
+	spriteMemory = tl::CarveMemorySpace(1024, perm);
 	tl::MemorySpace temp = gameMemory.transient;
 	tl::MemorySpace fileReadMemory = tl::CarveMemorySpace(512, temp);
 	tl::MemorySpace tempMemory = tl::CarveMemorySpace(512, temp);
@@ -285,6 +285,14 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 
 						color = (int)(selectedColor.b * 255.0f);
 						IntToCharString(color, cursor);
+					}
+					break;
+				}
+				case 'P': // switch palette
+				{
+					if (commandBuffer[1] == '\0')
+					{
+						SwitchPalette(state);
 					}
 					break;
 				}

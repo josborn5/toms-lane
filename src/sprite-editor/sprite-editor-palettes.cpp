@@ -8,7 +8,7 @@ char* rgrPaletteContent = "\
 8\n\
 255 249 179 255\n\
 185 197 204 255\n\
-71 116 179 255 \n\
+71 116 179 255\n\
 20 75 102 255\n\
 143 179 71 255\n\
 46 153 78 255\n\
@@ -56,6 +56,11 @@ char* paletteContents[PALETTE_COUNT] = {
 tl::SpriteC palettes[PALETTE_COUNT];
 tl::SpriteC rgrPalette;
 
+static void SelectPalette(EditorState& state)
+{
+	state.palette = &palettes[state.selectedPaletteIndex];
+}
+
 void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMemory, EditorState& state)
 {
 	int totalPaletteMemorySize = 512;
@@ -66,5 +71,12 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 		palettes[i].content = (tl::Color*)paletteSpace.content;
 		tl::LoadSpriteC(paletteContents[i], tempMemory, palettes[i]);
 	}
-	state.palette = &palettes[2];
+	SelectPalette(state);
+}
+
+void SwitchPalette(EditorState& state)
+{
+	int nextPaletteIndex = state.selectedPaletteIndex += 1;
+	state.selectedPaletteIndex = (nextPaletteIndex >= PALETTE_COUNT) ? 0 : nextPaletteIndex;
+	SelectPalette(state);
 }

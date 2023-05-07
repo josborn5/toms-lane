@@ -7,6 +7,7 @@ struct EditorState
 	int selectedPixelIndex = 0;
 	tl::SpriteC* palette; // Palette can change, so store a pointer to the selected one.
 	int selectedPaletteIndex = 0;
+	int selectedPalettePixelIndex = 0;
 	char* commandBuffer;
 	char* displayBuffer;
 };
