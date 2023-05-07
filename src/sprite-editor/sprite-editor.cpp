@@ -153,8 +153,8 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
-	// Check for arrow key press to move selected pixel
-	ProcessCursorMovement(input, state);
+	ProcessActiveControl(input, state);
+	ProcessCursorMovementInput(input, state);
 
 	if (!input.buttons[KEY_CTRL].isDown)
 	{

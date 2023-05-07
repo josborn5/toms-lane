@@ -152,18 +152,19 @@ void Render(const tl::RenderBuffer &renderBuffer, const EditorState state)
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, spriteContainerRect);
 	tl::DrawRect(renderBuffer, paletteBackgroundColor, paletteContainerRect);
 
+	int displaySelectedPixelIndex = (state.activeControl == SpriteGrid) ? state.selectedPixelIndex : -1;
 	RenderSpriteAsGrid(
 		state.sprite,
 		spriteBoundingRect,
 		renderBuffer,
-		state.selectedPixelIndex
+		displaySelectedPixelIndex
 	);
 
 	RenderSpriteAsGrid(
 		*state.palette,
 		paletteBoundingRect,
 		renderBuffer,
-		-1
+		state.selectedPalettePixelIndex
 	);
 
 	tl::DrawAlphabetCharacters(

@@ -39,9 +39,21 @@ static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprit
 	}
 }
 
-void ProcessCursorMovement(const tl::Input &input, EditorState& state)
+void ProcessCursorMovementInput(const tl::Input &input, EditorState& state)
 {
 	tl::SpriteC& activeSprite = (state.activeControl == SpriteGrid) ? state.sprite : *state.palette;
 	int& activeIndex = (state.activeControl == SpriteGrid) ? state.selectedPixelIndex : state.selectedPalettePixelIndex;
 	MoveCursorForSprite(input, activeSprite, activeIndex);
+}
+
+void ProcessActiveControl(const tl::Input &input, EditorState& state)
+{
+	if (!input.buttons[tl::KEY_CTRL].isDown)
+	{
+		if (tl::IsReleased(input, tl::KEY_TAB))
+		{
+			int nextActiveControlIndex = state.activeControl + 1;
+			state.activeControl = (nextActiveControlIndex < EditorControlCount) ? (EditorControl)nextActiveControlIndex : SpriteGrid;
+		}
+	}
 }

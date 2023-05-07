@@ -4,7 +4,9 @@
 enum EditorControl
 {
 	SpriteGrid,
-	PaletteGrid
+	PaletteGrid,
+
+	EditorControlCount
 };
 
 struct EditorState

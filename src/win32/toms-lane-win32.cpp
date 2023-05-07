@@ -195,6 +195,7 @@ static void Win32_ProcessPendingMessages(Input* input)
 					Win32_ProcessKeyboardMessage(input, isDown, wasDown, vKCode, VK_RIGHT, KEY_RIGHT);
 					Win32_ProcessKeyboardMessage(input, isDown, wasDown, vKCode, VK_ESCAPE, KEY_ESCAPE);
 					Win32_ProcessKeyboardMessage(input, isDown, wasDown, vKCode, VK_RETURN, KEY_ENTER);
+					Win32_ProcessKeyboardMessage(input, isDown, wasDown, vKCode, VK_TAB, KEY_TAB);
 
 					Win32_ProcessKeyboardMessage(input, isDown, wasDown, vKCode, VK_CONTROL, KEY_CTRL);
 				}
