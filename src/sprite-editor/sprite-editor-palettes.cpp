@@ -1,7 +1,7 @@
 #include "../platform/toms-lane-platform.hpp"
 #include "./editor.hpp"
 
-#define PALETTE_COUNT 2
+#define PALETTE_COUNT 3
 
 char* rgrPaletteContent = "\
 2\n\
@@ -35,9 +35,22 @@ char* pollenPaletteContent = "\
 114 220 187 255\n\
 52 172 186 255";
 
+char* sunsetCloudsPaletteContent = "\
+2\n\
+4\n\
+252 176 140 255\n\
+239 157 127 255\n\
+214 147 138 255\n\
+180 141 146 255\n\
+165 151 161 255\n\
+143 169 191 255\n\
+154 171 201 255\n\
+165 183 212 255";
+
 char* paletteContents[PALETTE_COUNT] = {
 	rgrPaletteContent,
-	pollenPaletteContent
+	pollenPaletteContent,
+	sunsetCloudsPaletteContent
 };
 
 tl::SpriteC palettes[PALETTE_COUNT];
@@ -53,5 +66,5 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 		palettes[i].content = (tl::Color*)paletteSpace.content;
 		tl::LoadSpriteC(paletteContents[i], tempMemory, palettes[i]);
 	}
-	state.palette = &palettes[1];
+	state.palette = &palettes[2];
 }
