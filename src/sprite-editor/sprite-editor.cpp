@@ -6,6 +6,7 @@
 #include "./editor.hpp"
 #include "./sprite-editor-render.cpp"
 #include "./sprite-editor-palettes.cpp"
+#include "./input-processing.cpp"
 
 #define COMMAND_BUFFER_SIZE 15
 #define DISPLAY_BUFFER_SIZE 15
@@ -153,40 +154,10 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
 	// Check for arrow key press to move selected pixel
-	int maxPixelIndex = (state.sprite.width * state.sprite.height) - 1;
+	ProcessCursorMovement(input, state);
+
 	if (!input.buttons[KEY_CTRL].isDown)
 	{
-		if (tl::IsReleased(input, tl::KEY_RIGHT))
-		{
-			if (state.selectedPixelIndex < maxPixelIndex)
-			{
-				state.selectedPixelIndex += 1;
-			}
-		}
-		else if (tl::IsReleased(input, tl::KEY_LEFT))
-		{
-			if (state.selectedPixelIndex > 0)
-			{
-				state.selectedPixelIndex -= 1;
-			}
-		}
-		else if (tl::IsReleased(input, tl::KEY_DOWN))
-		{
-			int provisionalSelectedPixelIndex = state.selectedPixelIndex + state.sprite.width;
-			if (provisionalSelectedPixelIndex <= maxPixelIndex)
-			{
-				state.selectedPixelIndex = provisionalSelectedPixelIndex;
-			}
-		}
-		else if (tl::IsReleased(input, tl::KEY_UP))
-		{
-			int provisionalSelectedPixelIndex = state.selectedPixelIndex - state.sprite.width;
-			if (provisionalSelectedPixelIndex >= 0)
-			{
-				state.selectedPixelIndex = provisionalSelectedPixelIndex;
-			}
-		}
-
 		// Update command buffer from input
 		if (commands.length < commands.capacity)
 		{
