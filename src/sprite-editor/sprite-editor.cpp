@@ -267,7 +267,10 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 				}
 				case '\0': // Apply active color from palette
 				{
-					state.sprite.content[state.selectedPixelIndex] = state.currentColor;
+					if (state.activeControl == SpriteGrid)
+					{
+						state.sprite.content[state.selectedPixelIndex] = state.currentColor;
+					}
 					break;
 				}
 			}
