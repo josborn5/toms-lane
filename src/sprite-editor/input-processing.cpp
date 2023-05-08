@@ -39,11 +39,17 @@ static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprit
 	}
 }
 
+void UpdateCurrentColor(EditorState& state)
+{
+	state.currentColor = state.palette->content[state.selectedPalettePixelIndex];
+}
+
 void ProcessCursorMovementInput(const tl::Input &input, EditorState& state)
 {
 	tl::SpriteC& activeSprite = (state.activeControl == SpriteGrid) ? state.sprite : *state.palette;
 	int& activeIndex = (state.activeControl == SpriteGrid) ? state.selectedPixelIndex : state.selectedPalettePixelIndex;
 	MoveCursorForSprite(input, activeSprite, activeIndex);
+	UpdateCurrentColor(state);
 }
 
 void ProcessActiveControl(const tl::Input &input, EditorState& state)

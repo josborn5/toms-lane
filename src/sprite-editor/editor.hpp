@@ -19,6 +19,8 @@ struct EditorState
 	char* commandBuffer;
 	char* displayBuffer;
 	EditorControl activeControl = SpriteGrid;
+	tl::Color currentColor;
+	tl::Color copiedColor;
 };
 
 #endif

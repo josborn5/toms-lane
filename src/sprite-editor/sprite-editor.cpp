@@ -19,7 +19,6 @@ tl::HeapArray<char> display = tl::HeapArray<char>(displayBuffer, DISPLAY_BUFFER_
 EditorState state;
 
 static bool hasCopied = false;
-static tl::Color copiedColor;
 
 static tl::MemorySpace spriteMemory;
 static tl::MemorySpace paletteMemory;
@@ -266,6 +265,11 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 					}
 					break;
 				}
+				case '\0': // Apply active color from palette
+				{
+					state.sprite.content[state.selectedPixelIndex] = state.currentColor;
+					break;
+				}
 			}
 			ClearCommandBuffer();
 		}
@@ -275,7 +279,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		if (tl::IsReleased(input, tl::KEY_C))
 		{
 			hasCopied = true;
-			copiedColor = state.sprite.content[state.selectedPixelIndex];
+			state.copiedColor = state.sprite.content[state.selectedPixelIndex];
 			ClearDisplayBuffer();
 			display.append('C');
 			display.append('O');
@@ -284,7 +288,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		}
 		else if (hasCopied && tl::IsReleased(input, tl::KEY_V))
 		{
-			state.sprite.content[state.selectedPixelIndex] = copiedColor;
+			state.sprite.content[state.selectedPixelIndex] = state.copiedColor;
 			ClearDisplayBuffer();
 			display.append('P');
 			display.append('A');
