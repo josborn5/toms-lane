@@ -21,17 +21,8 @@ bool isPaused = false;
 tl::SpriteC regularBlockSprite;
 tl::SpriteC checkpointBlockSprite;
 
-tl::Color testSpriteContent[4] = {
-	{ 1.0f, 0.0f, 0.0f, 1.0f },  { 0.0f, 1.0f, 0.0f, 1.0f },
-	{ 0.0f, 0.0f, 1.0f, 1.0f },  { 1.0f, 0.0f, 1.0f, 1.0f }
-};
-
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
-	gamestate.player.spriteTest.height = 2;
-	gamestate.player.spriteTest.width = 2;
-	gamestate.player.spriteTest.content = testSpriteContent;
-
 	tl::MemorySpace permanent = gameMemory.permanent;
 	tl::MemorySpace transient = gameMemory.transient;
 
@@ -49,6 +40,7 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 	char* spriteCharArray = (char*)tempFileContentMemory.content;
 	regularBlockSprite.content = (tl::Color*)permanent.content;
 	tl::LoadSpriteC(spriteCharArray, transient, regularBlockSprite);
+	tl::CarveMemorySpace(GetSpriteSpaceInBytes(regularBlockSprite), permanent);
 
 	tl::GetFileSize("checkpoint.sprc", fileSize);
 	if (tl::ReadFile("checkpoint.sprc", transient) != tl::Success)
@@ -57,8 +49,20 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 	}
 	tempFileContentMemory = tl::CarveMemorySpace(fileSize, transient);
 	spriteCharArray = (char*)tempFileContentMemory.content;
-	checkpointBlockSprite.content = regularBlockSprite.content + GetSpriteSpaceInBytes(regularBlockSprite);
+	checkpointBlockSprite.content = (tl::Color*)permanent.content;
 	tl::LoadSpriteC(spriteCharArray, transient, checkpointBlockSprite);
+	tl::CarveMemorySpace(GetSpriteSpaceInBytes(checkpointBlockSprite), permanent);
+
+	tl::GetFileSize("player.sprc", fileSize);
+	if (tl::ReadFile("player.sprc", transient) != tl::Success)
+	{
+		return 1;
+	}
+	tempFileContentMemory = tl::CarveMemorySpace(fileSize, transient);
+	spriteCharArray = (char*)tempFileContentMemory.content;
+	gamestate.player.spriteTest.content = (tl::Color*)permanent.content;
+	tl::LoadSpriteC(spriteCharArray, transient, gamestate.player.spriteTest);
+	tl::CarveMemorySpace(GetSpriteSpaceInBytes(gamestate.player.spriteTest), permanent);
 
 	return 0;
 }
