@@ -110,11 +110,13 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 
 	// Define memory slices
 	tl::MemorySpace perm = gameMemory.permanent;
-	paletteMemory = tl::CarveMemorySpace(1024, perm);
-	spriteMemory = tl::CarveMemorySpace(1024, perm);
+	const uint64_t oneKiloByteInBytes = 1024;
+	const uint64_t oneMegaByteInBytes = oneKiloByteInBytes * 1024;
+	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, perm);
+	spriteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, perm);
 	tl::MemorySpace temp = gameMemory.transient;
-	tl::MemorySpace fileReadMemory = tl::CarveMemorySpace(512, temp);
-	tl::MemorySpace tempMemory = tl::CarveMemorySpace(512, temp);
+	tl::MemorySpace fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
+	tl::MemorySpace tempMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
 
 	// Load file
 	if (filePath)

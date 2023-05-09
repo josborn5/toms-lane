@@ -13,7 +13,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	settings.height = windowHeight;
 	settings.targetFPS = 60;
 	settings.permanentSpaceInMegabytes = 2;
-	settings.transientSpaceInMegabytes = 1;
+	settings.transientSpaceInMegabytes = 2;
 
 	if (*commandLine)
 	{

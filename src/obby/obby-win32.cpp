@@ -8,7 +8,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	settings.width = 1280;
 	settings.height = 720;
 	settings.targetFPS = 60;
-	settings.permanentSpaceInMegabytes = 1;
+	settings.permanentSpaceInMegabytes = 2;
 	settings.transientSpaceInMegabytes = 1;
 
 	tl::Win32Main(instance, settings);
