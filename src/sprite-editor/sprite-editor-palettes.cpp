@@ -64,13 +64,12 @@ static void SelectPalette(EditorState& state)
 
 void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMemory, EditorState& state)
 {
-	int totalPaletteMemorySize = 512;
-	int perPalleteMemorySize = totalPaletteMemorySize / PALETTE_COUNT;
 	for (int i = 0; i < PALETTE_COUNT; i += 1)
 	{
-		tl::MemorySpace paletteSpace = tl::CarveMemorySpace(perPalleteMemorySize, paletteMemory);
-		palettes[i].content = (tl::Color*)paletteSpace.content;
+		palettes[i].content = (tl::Color*)paletteMemory.content;
 		tl::LoadSpriteC(paletteContents[i], tempMemory, palettes[i]);
+		uint64_t paletteSize = tl::GetSpriteSpaceInBytes(palettes[i]);
+		tl::CarveMemorySpace(paletteSize, paletteMemory);
 	}
 	SelectPalette(state);
 }
