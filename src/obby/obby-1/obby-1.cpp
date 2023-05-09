@@ -37,27 +37,28 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 
 	// Read spritec files to temp space
 	uint64_t fileSize = 0;
+	tl::MemorySpace tempFileContentMemory;
 	tl::GetFileSize("brick.sprc", fileSize);
 	if (tl::ReadFile("brick.sprc", transient) != tl::Success)
 	{
 		return 1;
 	}
-
-	tl::MemorySpace tempMemory = CarveMemorySpace(fileSize, transient);
+	tempFileContentMemory = tl::CarveMemorySpace(fileSize, transient);
 
 	// Generate SpriteCs in perm space
-	char* spriteCharArray = (char*)transient.content;
+	char* spriteCharArray = (char*)tempFileContentMemory.content;
 	regularBlockSprite.content = (tl::Color*)permanent.content;
-	tl::LoadSpriteC(spriteCharArray, tempMemory, regularBlockSprite);
+	tl::LoadSpriteC(spriteCharArray, transient, regularBlockSprite);
 
 	tl::GetFileSize("checkpoint.sprc", fileSize);
 	if (tl::ReadFile("checkpoint.sprc", transient) != tl::Success)
 	{
 		return 1;
 	}
-	spriteCharArray = (char*)transient.content;
+	tempFileContentMemory = tl::CarveMemorySpace(fileSize, transient);
+	spriteCharArray = (char*)tempFileContentMemory.content;
 	checkpointBlockSprite.content = regularBlockSprite.content + GetSpriteSpaceInBytes(regularBlockSprite);
-	tl::LoadSpriteC(spriteCharArray, tempMemory, checkpointBlockSprite);
+	tl::LoadSpriteC(spriteCharArray, transient, checkpointBlockSprite);
 
 	return 0;
 }
