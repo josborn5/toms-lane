@@ -21,48 +21,55 @@ bool isPaused = false;
 tl::SpriteC regularBlockSprite;
 tl::SpriteC checkpointBlockSprite;
 
+static int LoadSpriteFromFile(
+	char* fileName,
+	tl::SpriteC& spriteTarget,
+	tl::MemorySpace& permanent,
+	tl::MemorySpace transient // Purposefully don't pass as a reference so as not to modify the transient space - it can be overwritten after the function call
+) {
+	uint64_t fileSize = 0;
+	tl::GetFileSize(fileName, fileSize);
+	if (tl::ReadFile(fileName, transient) != tl::Success)
+	{
+		return 1;
+	}
+	tl::MemorySpace tempFileContentMemory = tl::CarveMemorySpace(fileSize, transient);
+
+	// Generate SpriteCs in perm space
+	char* spriteCharArray = (char*)tempFileContentMemory.content;
+	spriteTarget.content = (tl::Color*)permanent.content;
+	tl::LoadSpriteC(spriteCharArray, transient, spriteTarget);
+	tl::CarveMemorySpace(GetSpriteSpaceInBytes(spriteTarget), permanent);
+
+	return 0;
+}
+
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
 	tl::MemorySpace permanent = gameMemory.permanent;
 	tl::MemorySpace transient = gameMemory.transient;
 
-	// Read spritec files to temp space
-	uint64_t fileSize = 0;
-	tl::MemorySpace tempFileContentMemory;
-	tl::GetFileSize("brick.sprc", fileSize);
-	if (tl::ReadFile("brick.sprc", transient) != tl::Success)
-	{
-		return 1;
-	}
-	tempFileContentMemory = tl::CarveMemorySpace(fileSize, transient);
+	// Read spritec files
+	LoadSpriteFromFile(
+		"brick.sprc",
+		regularBlockSprite,
+		permanent,
+		transient
+	);
 
-	// Generate SpriteCs in perm space
-	char* spriteCharArray = (char*)tempFileContentMemory.content;
-	regularBlockSprite.content = (tl::Color*)permanent.content;
-	tl::LoadSpriteC(spriteCharArray, transient, regularBlockSprite);
-	tl::CarveMemorySpace(GetSpriteSpaceInBytes(regularBlockSprite), permanent);
+	LoadSpriteFromFile(
+		"checkpoint.sprc",
+		checkpointBlockSprite,
+		permanent,
+		transient
+	);
 
-	tl::GetFileSize("checkpoint.sprc", fileSize);
-	if (tl::ReadFile("checkpoint.sprc", transient) != tl::Success)
-	{
-		return 1;
-	}
-	tempFileContentMemory = tl::CarveMemorySpace(fileSize, transient);
-	spriteCharArray = (char*)tempFileContentMemory.content;
-	checkpointBlockSprite.content = (tl::Color*)permanent.content;
-	tl::LoadSpriteC(spriteCharArray, transient, checkpointBlockSprite);
-	tl::CarveMemorySpace(GetSpriteSpaceInBytes(checkpointBlockSprite), permanent);
-
-	tl::GetFileSize("player.sprc", fileSize);
-	if (tl::ReadFile("player.sprc", transient) != tl::Success)
-	{
-		return 1;
-	}
-	tempFileContentMemory = tl::CarveMemorySpace(fileSize, transient);
-	spriteCharArray = (char*)tempFileContentMemory.content;
-	gamestate.player.spriteTest.content = (tl::Color*)permanent.content;
-	tl::LoadSpriteC(spriteCharArray, transient, gamestate.player.spriteTest);
-	tl::CarveMemorySpace(GetSpriteSpaceInBytes(gamestate.player.spriteTest), permanent);
+	LoadSpriteFromFile(
+		"player.sprc",
+		gamestate.player.spriteTest,
+		permanent,
+		transient
+	);
 
 	return 0;
 }
