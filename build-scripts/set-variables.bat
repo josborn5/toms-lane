@@ -12,10 +12,8 @@ if "%1"=="-d" (
 	@echo off
 	set COMPILER_FLAGS=%DEBUG_COMPILER_FLAGS%
 ) else (
-	set COMPILER_FLAGS="%DEBUG_COMPILER_FLAGS% /O2"
+	set COMPILER_FLAGS=%DEBUG_COMPILER_FLAGS% /O2
 )
-
-set COMPILER_FLAGS=%DEBUG_COMPILER_FLAGS% /O2
 
 set TL_PLATFORM=toms-lane-platform
 set TL_WIN32=toms-lane-win32
