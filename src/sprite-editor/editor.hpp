@@ -21,6 +21,7 @@ struct EditorState
 	EditorControl activeControl = SpriteGrid;
 	tl::Color currentColor;
 	tl::Color copiedColor;
+	tl::Vec2<int> mouse = { 0, 0 };
 };
 
 #endif

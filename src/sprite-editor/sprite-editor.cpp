@@ -4,7 +4,7 @@
 #include "./sprite-operations.cpp"
 #include "./sprite-commands.cpp"
 #include "./editor.hpp"
-#include "./sprite-editor-render.cpp"
+#include "./render.cpp"
 #include "./sprite-editor-palettes.cpp"
 #include "./input-processing.cpp"
 
@@ -156,6 +156,9 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 {
 	ProcessActiveControl(input, state);
 	ProcessCursorMovementInput(input, state);
+
+	state.mouse.x = input.mouse.x;
+	state.mouse.y = input.mouse.y;
 
 	if (!input.buttons[KEY_CTRL].isDown)
 	{
