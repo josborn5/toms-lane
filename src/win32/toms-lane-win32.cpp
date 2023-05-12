@@ -104,14 +104,19 @@ LRESULT CALLBACK Win32_MainWindowCallback(HWND window, UINT Message, WPARAM wPar
 	return Result;
 }
 
+static void ProcessButtonState(Button* button, int isDown, int wasDown)
+{
+	button->isDown = (isDown != 0);
+	button->wasDown = (wasDown != 0);
+	button->keyUp = (!button->isDown && button->wasDown);
+}
+
 static void Win32_ProcessKeyboardMessage(Button* inputButton, int isDown, int wasDown, int vkCode, int vkButton, KEY key)
 {
 	if (vkCode == vkButton)
 	{
 		Button* button = &inputButton[key];
-		button->isDown = (isDown != 0);
-		button->wasDown = (wasDown != 0);
-		button->keyUp = (!button->isDown && button->wasDown);
+		ProcessButtonState(button, isDown, wasDown);
 	}
 }
 
@@ -214,6 +219,13 @@ static void Win32_ProcessPendingMessages(Input* input)
 				{
 					IsRunning = false;
 				}
+			} break;
+			case WM_LBUTTONDOWN:
+			case WM_LBUTTONUP:
+			{
+				bool wasMouseDown = ((Message.lParam & (1 << 30)) != 0); // Bit #30 of the LParam tells us what the previous key was
+				bool isMouseDown = ((Message.lParam & (1 << 31)) == 0); // Bit #31 of the LParam tells us what the current key is
+				ProcessButtonState(&input->mouse.buttons[MOUSE_BUTTON_LEFT], isMouseDown, wasMouseDown);
 			} break;
 			default: {
 				TranslateMessage(&Message);
