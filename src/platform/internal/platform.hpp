@@ -32,7 +32,15 @@ namespace tl
 
 		KEY_ESCAPE,
 
-		BUTTON_COUNT
+		KEY_COUNT
+	};
+
+	enum MOUSE_BUTTON
+	{
+		MOUSE_BUTTON_LEFT,
+		MOUSE_BUTTON_RIGHT,
+
+		MOUSE_BUTTON_COUNT
 	};
 
 	struct RenderBuffer
@@ -56,12 +64,13 @@ namespace tl
 	{
 		int x;
 		int y;
+		Button buttons[MOUSE_BUTTON_COUNT];
 	};
 
 	struct Input
 	{
 		Mouse mouse;
-		Button buttons[BUTTON_COUNT];
+		Button buttons[KEY_COUNT];
 	};
 
 	bool IsReleased(const Input &input, int button);
