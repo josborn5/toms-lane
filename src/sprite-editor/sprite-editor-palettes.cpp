@@ -59,6 +59,7 @@ tl::SpriteC rgrPalette;
 static void SelectPalette(EditorState& state)
 {
 	state.palette = &palettes[state.selectedPaletteIndex];
+	state.selectedPalettePixelIndex = 0;
 	SizePalette(*state.palette);
 }
 
