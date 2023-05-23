@@ -5,6 +5,9 @@
 #include "../platform_common.cpp"
 
 #include "./levels.cpp"
+
+tl::SpriteC backgroundSprite;
+
 #include "./render-gamestate.cpp"
 #include "./update-gamestate.cpp"
 
@@ -21,6 +24,17 @@ bool isPaused = false;
 
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
+	tl::MemorySpace permanent = gameMemory.permanent;
+	tl::MemorySpace transient = gameMemory.transient;
+
+	// Read spritec files
+	LoadSpriteFromFile(
+		"background.sprc",
+		backgroundSprite,
+		permanent,
+		transient
+	);
+
 	return 0;
 }
 

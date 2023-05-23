@@ -176,7 +176,14 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	}
 
 	// background
-    tl::ClearScreen(renderBuffer, BACKGROUND_COLOR);
+	tl::Rect<float> backgroundRect;
+	backgroundRect.halfSize = { 640.0f, 360.0f };
+	backgroundRect.position = { 640.0f, 360.0f };
+	tl::DrawSpriteC(
+		renderBuffer,
+		backgroundSprite,
+		backgroundRect
+	);
 
 	// Show info about z-position
 	float fontSize = 16.0f;
