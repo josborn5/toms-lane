@@ -59,13 +59,40 @@ namespace tl
 				_capacity = _length;
 				MemorySpace remainingSpaceDetails;
 				remainingSpaceDetails.content = addressOfNextItem;
-				remainingSpaceDetails.sizeInBytes = (unsigned long)(remaining * _itemSizeInBytes);
+				remainingSpaceDetails.sizeInBytes = (uint64_t)(remaining * _itemSizeInBytes);
 				return remainingSpaceDetails;
 			}
 
 			void clear()
 			{
 				_length = 0;
+			}
+
+			int deleteContent(int inclusiveStartIndex, int inclusiveEndIndex)
+			{
+				if (inclusiveStartIndex >= _length || inclusiveEndIndex >= _length)
+				{
+					return 1;
+				}
+
+				if (inclusiveStartIndex > inclusiveEndIndex || inclusiveStartIndex < 0 || inclusiveEndIndex < 0)
+				{
+					return 1;
+				}
+
+				int startCopyIndex = inclusiveEndIndex + 1;
+				int offset = startCopyIndex - inclusiveStartIndex;
+				for (int sourceIndex = startCopyIndex; sourceIndex < _length; sourceIndex += 1)
+				{
+					int targetIndex = sourceIndex - offset;
+					T copyValue = content[sourceIndex];
+					content[targetIndex] = copyValue;
+				}
+
+				int subtractionCount = inclusiveEndIndex - inclusiveStartIndex + 1;
+				_length -= subtractionCount;
+
+				return 0;
 			}
 	};
 
