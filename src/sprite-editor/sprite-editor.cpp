@@ -278,6 +278,18 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 					}
 					break;
 				}
+				case 'D': // Delete
+				{
+					if (commandBuffer[1] == 'R' && commandBuffer[2] == '\0')
+					{
+						// Get start and end index of row
+
+						// Call tl::DeleteFromArray with the sprite content
+
+						// Subtract 1 from the sprite height
+					}
+					break;
+				}
 			}
 			ClearCommandBuffer();
 		}

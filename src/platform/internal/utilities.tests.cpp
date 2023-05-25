@@ -162,4 +162,29 @@ void RunUtilitiesTests()
 	assert(((char*)sliced.content)[0] == '0');
 
 	printf("\nDONE!\n");
+
+	printf("\n===== DeleteFromArray =====\n");
+	for (int i = 0; i < 10; i += 1) testBuffer[i] = 'a' + (char)i;
+	assert(testBuffer[0] == 'a');
+	assert(testBuffer[1] == 'b');
+	assert(testBuffer[2] == 'c');
+	assert(testBuffer[3] == 'd');
+	assert(testBuffer[4] == 'e');
+
+	DeleteFromArray(testBuffer, 2, 3, 5);
+
+	assert(testBuffer[0] == 'a');
+	assert(testBuffer[1] == 'b');
+	assert(testBuffer[2] == 'e');
+	assert(testBuffer[3] == 'd');
+	assert(testBuffer[4] == 'e');
+
+	for (int i = 0; i < 10; i += 1) testBuffer[i] = 'a' + (char)i;
+	DeleteFromArray(testBuffer, 0, 3, 10);
+
+	assert(testBuffer[0] == 'e');
+	assert(testBuffer[1] == 'f');
+	assert(testBuffer[2] == 'g');
+	assert(testBuffer[3] == 'h');
+	assert(testBuffer[4] == 'i');
 }
