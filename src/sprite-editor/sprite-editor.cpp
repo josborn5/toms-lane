@@ -280,13 +280,25 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 				}
 				case 'D': // Delete
 				{
-					if (commandBuffer[1] == 'R' && commandBuffer[2] == '\0')
+					if (commandBuffer[1] == 'R' && commandBuffer[2] == '\0' && state.sprite.height > 1)
 					{
 						// Get start and end index of row
+						int rowIndex = (int)(state.selectedPixelIndex / state.sprite.width);
+						unsigned int startDeleteIndex = rowIndex * state.sprite.width;
+						unsigned int endDeleteIndex = rowIndex + state.sprite.width - 1;
+						unsigned int spriteLength = state.sprite.width * state.sprite.height;
 
 						// Call tl::DeleteFromArray with the sprite content
+						tl::DeleteFromArray(state.sprite.content, startDeleteIndex, endDeleteIndex, spriteLength);
 
 						// Subtract 1 from the sprite height
+						state.sprite.height -= 1;
+					}
+					else if (commandBuffer[1] == 'C' && commandBuffer[2] == '\0' && state.sprite.height > 1)
+					{
+						// get the column index
+						unsigned int columnIndex = state.selectedPixelIndex % state.sprite.width;
+
 					}
 					break;
 				}
