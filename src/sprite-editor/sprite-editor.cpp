@@ -293,12 +293,23 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 
 						// Subtract 1 from the sprite height
 						state.sprite.height -= 1;
+
+						SizeGridForSprite(state.sprite);
 					}
-					else if (commandBuffer[1] == 'C' && commandBuffer[2] == '\0' && state.sprite.height > 1)
+					else if (commandBuffer[1] == 'C' && commandBuffer[2] == '\0' && state.sprite.width > 1)
 					{
 						// get the column index
 						unsigned int columnIndex = state.selectedPixelIndex % state.sprite.width;
+						unsigned int spriteLength = state.sprite.width * state.sprite.height;
+						for (int i = state.sprite.height - 1; i >= 0; i -= 1)
+						{
+							unsigned int deleteIndex = (i * state.sprite.width) + columnIndex;
+							tl::DeleteFromArray(state.sprite.content, deleteIndex, deleteIndex, spriteLength);
+							spriteLength -= 1;
+						}
+						state.sprite.width -= 1;
 
+						SizeGridForSprite(state.sprite);
 					}
 					break;
 				}

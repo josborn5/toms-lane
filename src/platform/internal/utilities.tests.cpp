@@ -187,4 +187,13 @@ void RunUtilitiesTests()
 	assert(testBuffer[2] == 'g');
 	assert(testBuffer[3] == 'h');
 	assert(testBuffer[4] == 'i');
+
+	for (int i = 0; i < 10; i += 1) testBuffer[i] = 'a' + (char)i;
+	DeleteFromArray(testBuffer, 2, 2, 10);
+
+	assert(testBuffer[0] == 'a');
+	assert(testBuffer[1] == 'b');
+	assert(testBuffer[2] == 'd');
+	assert(testBuffer[3] == 'e');
+	assert(testBuffer[4] == 'f');
 }
