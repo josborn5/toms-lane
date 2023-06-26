@@ -1,6 +1,7 @@
 #include "./internal/math.cpp"
 #include "./internal/geometry.cpp"
 #include "./internal/software-rendering.cpp"
+#include "./internal/software-rendering.sprite.cpp"
 #include "./internal/collision.cpp"
 #include "./internal/utilities.cpp"
 #include "./internal/platform.cpp"

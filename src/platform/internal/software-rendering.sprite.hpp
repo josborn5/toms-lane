@@ -1,0 +1,55 @@
+#ifndef TOMS_LANE_SOFTWARE_RENDERING_SPRITE_H
+#define TOMS_LANE_SOFTWARE_RENDERING_SPRITE_H
+
+#include "./math.hpp"
+#include "./geometry.hpp"
+
+namespace tl
+{
+	struct Sprite
+	{
+		char* content;
+		int height;
+		int width;
+	};
+
+	struct Color
+	{
+		float r = 0.0f;
+		float g = 0.0f;
+		float b = 0.0f;
+		float a = 0.0f;
+	};
+
+	struct SpriteC
+	{
+		int width;
+		int height;
+		Color* content;
+	};
+
+	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite);
+
+	// Draw a sprite of a size determined by the given sprite string and blockHalfSize value
+	void DrawSprite(
+		const RenderBuffer &renderBuffer,
+		const Sprite &sprite,
+		const Rect<float> &footprint,
+		uint32_t color
+	);
+
+	void DrawSpriteC(
+		const RenderBuffer &renderBuffer,
+		const SpriteC &sprite,
+		const Rect<float> &footprint
+	);
+	void DrawSpriteC(
+		const RenderBuffer &renderBuffer,
+		const SpriteC &sprite,
+		const Vec2<float> &position,
+		const float contentHalfSize
+	);
+
+}
+
+#endif
