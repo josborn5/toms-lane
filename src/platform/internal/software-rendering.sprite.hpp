@@ -6,6 +6,7 @@
 
 namespace tl
 {
+	// monochrome sprite
 	struct Sprite
 	{
 		char* content;
@@ -13,6 +14,19 @@ namespace tl
 		int width;
 	};
 
+	Sprite LoadSprite(char* content);
+	Vec2<int> GetContentDimensions(char* content);
+
+	// Draw a sprite of a size determined by the given sprite string and blockHalfSize value
+	void DrawSprite(
+		const RenderBuffer &renderBuffer,
+		const Sprite &sprite,
+		const Rect<float> &footprint,
+		uint32_t color
+	);
+
+
+	// full-color sprite
 	struct Color
 	{
 		float r = 0.0f;
@@ -28,15 +42,9 @@ namespace tl
 		Color* content;
 	};
 
+	char* ParseColorFromCharArray(char* content, MemorySpace& space, Color& color);
+	uint64_t GetSpriteSpaceInBytes(const SpriteC& sprite);
 	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite);
-
-	// Draw a sprite of a size determined by the given sprite string and blockHalfSize value
-	void DrawSprite(
-		const RenderBuffer &renderBuffer,
-		const Sprite &sprite,
-		const Rect<float> &footprint,
-		uint32_t color
-	);
 
 	void DrawSpriteC(
 		const RenderBuffer &renderBuffer,

@@ -1,21 +1,14 @@
 #ifndef TOMS_LANE_SOFTWARE_RENDERING_H
 #define TOMS_LANE_SOFTWARE_RENDERING_H
 
+#include "./software-rendering.sprite.hpp"
 #include "./platform.hpp"
 #include "./math.hpp"
 #include "./geometry.hpp"
 #include <stdint.h>
-#include "./software-rendering.sprite.hpp"
 
 namespace tl
 {
-	Vec2<int> GetContentDimensions(char* content);
-	Sprite LoadSprite(char* content);
-
-
-	char* ParseColorFromCharArray(char* content, MemorySpace& space, Color& color);
-	uint64_t GetSpriteSpaceInBytes(const SpriteC& sprite);
-
 	/**
 	 *	|---|---|---|
 	 *	| 0 | 1 | 2 |	pixel ordinals

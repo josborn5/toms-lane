@@ -3,37 +3,56 @@
 
 namespace tl
 {
-	/*
-	* Assumed char* format is:
-	* width<int>\n
-	* height<int>\n
-	* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // 1st pixel
-	* :
-	* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // Nth pixel
-	*/
-	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite)
+	tl::Vec2<int> GetContentDimensions(char* content)
 	{
-		char* buffer = (char*)space.content;
-		// Width
-		char* workingPointer = GetNextNumberChar(content);
-		workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
-		int width = CharStringToInt(buffer);
-
-		// Height
-		workingPointer = GetNextNumberChar(workingPointer);
-		workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
-		int height = CharStringToInt(buffer);
-
-		// Content
-		int contentCount = height * width;
-
-		sprite.width = width;
-		sprite.height = height;
-
-		for (int i = 0; i < contentCount && *workingPointer; i += 1)
+		int height = 0;
+		int width = 0;
+		int rowCounter = 0;
+		while (*content)
 		{
-			workingPointer = ParseColorFromCharArray(workingPointer, space, sprite.content[i]);
+			if (rowCounter == 0 && height == 0)
+			{
+				height += 1;
+			}
+			if (*content == '\n')
+			{
+				if (width < rowCounter)
+				{
+					width = rowCounter;
+				}
+				rowCounter = 0;
+				height += 1;
+			}
+			else
+			{
+				rowCounter += 1;
+			}
+			content++;
 		}
+
+		// Check the final row (it may not end in a \n char)
+		if (width < rowCounter)
+		{
+			width = rowCounter;
+		}
+
+		// Set the width value if no newline char exists in the content
+		if (height == 1)
+		{
+			width = rowCounter;
+		}
+		tl::Vec2<int> dim = { width, height };
+		return dim;
+	}
+
+	Sprite LoadSprite(char* content)
+	{
+		Sprite sprite = Sprite();
+		sprite.content = content;
+		tl::Vec2<int> dimensions = GetContentDimensions(content);
+		sprite.height = dimensions.y;
+		sprite.width = dimensions.x;
+		return sprite;
 	}
 
 	void DrawSprite(
@@ -82,6 +101,74 @@ namespace tl
 			content++;
 		}
 	}
+
+
+	char* ParseColorFromCharArray(char* content, MemorySpace& space, Color& color)
+	{
+		char* buffer = (char*)space.content;
+		char* workingPointer = content;
+
+		/// RBGA values
+		int rgbaContent[4] = { 0, 0, 0, 255 }; // Default alpha to 100%
+
+		for (int i = 0; i < 4 && *workingPointer; i += 1)
+		{
+			workingPointer = GetNextNumberChar(workingPointer);
+			if (*workingPointer)
+			{
+				workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
+				rgbaContent[i] = CharStringToInt(buffer);
+			}
+		}
+
+		color.r = (float)rgbaContent[0] / 255.0f;
+		color.g = (float)rgbaContent[1] / 255.0f;
+		color.b = (float)rgbaContent[2] / 255.0f;
+		color.a = (float)rgbaContent[3] / 255.0f;
+
+		return workingPointer;
+	}
+
+	uint64_t GetSpriteSpaceInBytes(const SpriteC& sprite)
+	{
+		int pixelCount = sprite.width * sprite.height;
+		return sizeof(Color) * pixelCount;
+	}
+
+
+	/*
+	* Assumed char* format is:
+	* width<int>\n
+	* height<int>\n
+	* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // 1st pixel
+	* :
+	* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // Nth pixel
+	*/
+	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite)
+	{
+		char* buffer = (char*)space.content;
+		// Width
+		char* workingPointer = GetNextNumberChar(content);
+		workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
+		int width = CharStringToInt(buffer);
+
+		// Height
+		workingPointer = GetNextNumberChar(workingPointer);
+		workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
+		int height = CharStringToInt(buffer);
+
+		// Content
+		int contentCount = height * width;
+
+		sprite.width = width;
+		sprite.height = height;
+
+		for (int i = 0; i < contentCount && *workingPointer; i += 1)
+		{
+			workingPointer = ParseColorFromCharArray(workingPointer, space, sprite.content[i]);
+		}
+	}
+
 
 	void DrawSpriteC(
 		const RenderBuffer &renderBuffer,
