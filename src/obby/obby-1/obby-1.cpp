@@ -47,6 +47,7 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 		permanent,
 		transient
 	);
+	gamestate.player.pixelHalfSize = 2.0f;
 
 	return 0;
 }

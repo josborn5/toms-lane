@@ -52,8 +52,8 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	worldPosition.x = worldHalfX;
 	worldPosition.y = worldHalfY;
 
-	state->player.halfSize.x = 25.0f;
-	state->player.halfSize.y = 25.0f;
+	state->player.halfSize.x = state->player.spriteTest.width * state->player.pixelHalfSize;
+	state->player.halfSize.y = state->player.spriteTest.height * state->player.pixelHalfSize;
 
 	minPlayerX = 0.0f + state->player.halfSize.x;
 	maxPlayerX = (float)pixelRect.x - state->player.halfSize.x;

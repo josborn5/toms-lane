@@ -169,33 +169,25 @@ namespace tl
 		}
 	}
 
-
-	void DrawSpriteC(
+	void DrawSpriteCInner(
 		const RenderBuffer &renderBuffer,
 		const SpriteC &sprite,
-		const Rect<float> &footprint
+		const Rect<float> &startBlock
 	) {
-		// Work out the size of each block in the sprite
-		float footprintHeight = footprint.halfSize.y * 2.0f;
-		float footprintWidth = footprint.halfSize.x * 2.0f;
-
-		float blockWidth = footprintWidth / (float)sprite.width;
-		float blockHeight = footprintHeight / (float)sprite.height;
-		Vec2<float> blockHalf = { 0.5f * blockWidth, 0.5f * blockHeight };
-
-		// Calculate the cursor area over which to position each block. Position is measured fro the center
-		// so apply an offset for the block size
-		Vec2<float> pCopy = Vec2<float>
-		{
-			footprint.position.x - footprint.halfSize.x + blockHalf.x,
-			footprint.position.y + footprint.halfSize.y - blockHalf.y
-		};
 
 		// iterate through the sprite content and fill blocks in the render buffer
-		float xMinCursorPos = pCopy.x;
+		float xMinCursorPos = startBlock.position.x;
 		Color* content = sprite.content;
 		int contentLength = sprite.height * sprite.width;
 		int rowCounter = 0;
+		Rect<float> blockRect;
+		blockRect.position = {
+			startBlock.position.x,
+			startBlock.position.y
+		};
+		blockRect.halfSize = startBlock.halfSize;
+		float blockHeight = startBlock.halfSize.y * 2.0f;
+		float blockWidth = startBlock.halfSize.x * 2.0f;
 		for (int i = 0; i < contentLength; i += 1)
 		{
 			Color blockColor = content[i];
@@ -203,9 +195,6 @@ namespace tl
 			// TODO: handle the color.a value (0.0f means transparent)
 			if (blockColor.a > 0.0f)
 			{
-				Rect<float> blockRect;
-				blockRect.position = pCopy;
-				blockRect.halfSize = blockHalf;
 				uint32_t color = GetColorFromRGB(
 					(int)(255.0f * blockColor.r),
 					(int)(255.0f * blockColor.g),
@@ -218,14 +207,69 @@ namespace tl
 			if (rowCounter >= sprite.width)
 			{
 				rowCounter = 0;
-				pCopy.y -= blockHeight;	// We're populating blocks in the sprint left to right, top to bottom. So y is decreasing.
-				pCopy.x = xMinCursorPos; // reset cursor to start of next row
+				blockRect.position.y -= blockHeight;	// We're populating blocks in the sprint left to right, top to bottom. So y is decreasing.
+				blockRect.position.x = xMinCursorPos; // reset cursor to start of next row
 			}
 			else
 			{
-				pCopy.x += blockWidth;
+				blockRect.position.x += blockWidth;
 			}
 		}
+	}
+
+	void DrawSpriteC(
+		const RenderBuffer &renderBuffer,
+		const SpriteC &sprite,
+		const Rect<float> &footprint
+	) {
+		// Work out the size of each block in the sprite
+		float footprintHeight = footprint.halfSize.y * 2.0f;
+		float footprintWidth = footprint.halfSize.x * 2.0f;
+
+		float blockWidth = footprintWidth / (float)sprite.width;
+		float blockHeight = footprintHeight / (float)sprite.height;
+
+		Rect<float> startBlockRect;
+		startBlockRect.halfSize = { 0.5f * blockWidth, 0.5f * blockHeight };
+		// Calculate the cursor area over which to position each block. Position is measured fro the center
+		// so apply an offset for the block size
+		startBlockRect.position = {
+			footprint.position.x - footprint.halfSize.x + startBlockRect.halfSize.x,
+			footprint.position.y + footprint.halfSize.y - startBlockRect.halfSize.y
+		};
+
+		DrawSpriteCInner(
+			renderBuffer,
+			sprite,
+			startBlockRect
+		);
+	}
+
+
+	void DrawSpriteC(
+		const RenderBuffer &renderBuffer,
+		const SpriteC &sprite,
+		const Vec2<float> &position,
+		const float contentHalfSize
+	) {
+		Rect<float> startBlockRect;
+		startBlockRect.halfSize = {
+			contentHalfSize,
+			contentHalfSize
+		};
+
+		float spriteHalfSizeX = sprite.width * contentHalfSize;
+		float spriteHalfSizeY = sprite.height * contentHalfSize;
+		startBlockRect.position = {
+			position.x - spriteHalfSizeX + contentHalfSize,
+			position.y + spriteHalfSizeY - contentHalfSize
+		};
+
+		DrawSpriteCInner(
+			renderBuffer,
+			sprite,
+			startBlockRect
+		);
 	}
 }
 
