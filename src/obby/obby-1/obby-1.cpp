@@ -1,4 +1,4 @@
-#include "../game.hpp"
+#include "./game.hpp"
 #include "../../platform/toms-lane-platform.hpp"
 
 #include "../obby-win32.cpp"
@@ -33,6 +33,7 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 		permanent,
 		transient
 	);
+	gamestate.blockPixelHalfSize = 2.0f;
 
 	LoadSpriteFromFile(
 		"checkpoint.sprc",

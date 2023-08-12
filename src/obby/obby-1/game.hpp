@@ -1,7 +1,7 @@
-#ifndef OBBY_GAME_H
-#define OBBY_GAME_H
+#ifndef OBBY1_GAME_H
+#define OBBY1_GAME_H
 
-#include "../platform/toms-lane-platform.hpp"
+#include "../../platform/toms-lane-platform.hpp"
 
 #define BLOCK_ARRAY_SIZE 512
 #define BALL_ARRAY_SIZE 9999
