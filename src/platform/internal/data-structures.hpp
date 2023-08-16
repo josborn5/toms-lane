@@ -112,7 +112,6 @@ namespace tl
 
 					return headItem;
 				}
-				
 				throw;
 			}
 	};
