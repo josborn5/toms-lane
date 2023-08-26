@@ -4,6 +4,7 @@
 #include "./internal/collision.tests.cpp"
 #include "./internal/data-structures.tests.cpp"
 #include "./internal/utilities.tests.cpp"
+#include "./internal/quad-tree.tests.cpp"
 
 int main()
 {
@@ -18,6 +19,8 @@ int main()
 	RunDataStructureTests();
 
 	RunUtilitiesTests();
+
+	RunQuadTreeTests();
 
 	printf("!!! ALL TESTS COMPLETE !!!");
 }

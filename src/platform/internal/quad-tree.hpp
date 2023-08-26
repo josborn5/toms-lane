@@ -1,25 +1,46 @@
 #ifndef TOMS_LANE_QUAD_TREE_H
 #define TOMS_LANE_QUAD_TREE_H
+
+#include "./platform.hpp"
+
 namespace tl
 {
 	template<typename T>
 	struct QuadTreeNode
 	{
-		const int capacity = 4;
-		int valueCount = 0;
-		T* values[4];
-		Rect<float> place;
-		bool hasChildren;
-		QuadTreeNode* nwChild;
-		QuadTreeNode* neChild;
-		QuadTreeNode* seChild;
-		QuadTreeNode* swChild;
-	}
+		public:
+			QuadTreeNode(const Rect<float> footprint)
+			{
+				_footprint = footprint;
+			}
 
-	template<typename T>
-	int InsertValueInQuadTree(QuadTreeNode& root, T* value, const Vec2<float>& position);
+			int insert(const T& value, const Vec2<float> position)
+			{
+				if (_valueCount < _capacity)
+				{
+					_values[_valueCount] = value;
+					_valueCount += 1;
 
-	template<typename T>
-	int QueryValuesInRect(const QuadTreeNode& root, const Vec2<float>& position, HeapArray<T*>& foundValues);
+					return 0;
+				}
+				return 1;
+			}
+
+			int query(const Rect<float> footprint, HeapArray<T>& foundValues)
+			{
+				return foundValues.append(_values[0]);
+			}
+
+		private:
+			const int _capacity = 4;
+			bool _hasChildren = false;
+			Rect<float> _footprint;
+			T _values[4];
+			int _valueCount = 0;
+			QuadTreeNode<T>* nwChild;
+			QuadTreeNode<T>* neChild;
+			QuadTreeNode<T>* seChild;
+			QuadTreeNode<T>* swChild;
+	};
 }
 #endif

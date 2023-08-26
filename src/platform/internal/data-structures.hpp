@@ -36,6 +36,11 @@ namespace tl
 				_capacity = (int)(memory.sizeInBytes / _itemSizeInBytes);
 			}
 
+			T get(int index)
+			{
+				return content[index];
+			}
+
 			int append(const T& item)
 			{
 				if (_length < _capacity)
