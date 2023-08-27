@@ -42,8 +42,9 @@ namespace tl
 
 			int query(const Rect<float> footprint, HeapArray<T>& foundValues)
 			{
-				if (_valueCount > 0) {
-					foundValues.append(_values[0]);
+				for (int i = 0; i < _valueCount; i += 1)
+				{
+					foundValues.append(_values[i]);
 				}
 
 				return 0;

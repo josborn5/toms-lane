@@ -76,6 +76,28 @@ void RejectsSingleValueOutsideOfFootprint()
 	assert(found == notFound);
 }
 
+void InsertFourValues()
+{
+	Rect<float> rootFootprint = Get1x1Footprint();
+
+	QuadTreeNode<int> rootNode = QuadTreeNode<int>(rootFootprint);
+
+	rootNode.insert(1, { 0.5f, 0.5f });
+	rootNode.insert(2, { 0.5f, 1.5f });
+	rootNode.insert(3, { 1.5f, 0.5f });
+	rootNode.insert(4, { 1.5f, 1.5f });
+
+	int queryResultStore[5] = { 0, 0, 0, 0, 0};
+	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 5);
+
+	rootNode.query(rootFootprint, queryResults);
+
+	assert(queryResults.get(0) == 1);
+	assert(queryResults.get(1) == 2);
+	assert(queryResults.get(2) == 3);
+	assert(queryResults.get(3) == 4);
+}
+
 void RunQuadTreeTests()
 {
 	printf("========= Quad Tree Tests ========\n\n");
@@ -85,5 +107,7 @@ void RunQuadTreeTests()
 	InsertSingleReferenceValue();
 
 	RejectsSingleValueOutsideOfFootprint();
+
+	InsertFourValues();
 }
 
