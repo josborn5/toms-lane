@@ -2,12 +2,18 @@
 #include <stdio.h>
 #include <assert.h>
 
+Rect<float> Get1x1Footprint()
+{
+	Rect<float> footprint;
+	footprint.position = { 1.0f, 1.0f };
+	footprint.halfSize = { 1.0f, 1.0f };
+	return footprint;
+}
+
 void InsertSingleIntValue()
 {
 	int insertValue = 1234;
-	Rect<float> rootFootprint;
-	rootFootprint.position = { 1.0f, 1.0f };
-	rootFootprint.halfSize = { 1.0f, 1.0f };
+	Rect<float> rootFootprint = Get1x1Footprint();
 
 	QuadTreeNode<int> rootNode = QuadTreeNode<int>(rootFootprint);
 
@@ -26,9 +32,7 @@ void InsertSingleReferenceValue()
 {
 	Rect<float> insertValue;
 	insertValue.position = { 0.0f, 2.0f };
-	Rect<float> rootFootprint;
-	rootFootprint.position = { 1.0f, 1.0f };
-	rootFootprint.halfSize = { 1.0f, 1.0f };
+	Rect<float> rootFootprint = Get1x1Footprint();
 
 	QuadTreeNode<Rect<float>*> rootNode = QuadTreeNode<Rect<float>*>(rootFootprint);
 
@@ -53,6 +57,24 @@ void InsertSingleReferenceValue()
 	assert(shouldBeNull == nullptr);
 }
 
+void RejectsSingleValueOutsideOfFootprint()
+{
+	int insertValue = 1234;
+	Rect<float> rootFootprint = Get1x1Footprint();
+
+	QuadTreeNode<int> rootNode = QuadTreeNode<int>(rootFootprint);
+
+	rootNode.insert(insertValue, { 4.0f, 4.0f });
+
+	int notFound = -1;
+	int queryResultStore[5] = { notFound };
+	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 5);
+
+	rootNode.query(rootFootprint, queryResults);
+
+	int found = queryResults.get(0);
+	assert(found == notFound);
+}
 
 void RunQuadTreeTests()
 {
@@ -61,5 +83,7 @@ void RunQuadTreeTests()
 	InsertSingleIntValue();
 
 	InsertSingleReferenceValue();
+
+	RejectsSingleValueOutsideOfFootprint();
 }
 
