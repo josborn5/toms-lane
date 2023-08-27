@@ -9,12 +9,19 @@ namespace tl
 	struct QuadTreeNode
 	{
 		public:
-			QuadTreeNode(const Rect<float> footprint)
+			QuadTreeNode() {}
+
+			QuadTreeNode(const Rect<float>& footprint)
 			{
 				_footprint = footprint;
 			}
 
-			int insert(const T& value, const Vec2<float> position)
+			QuadTreeNode(const Rect<float>& footprint, HeapArray<QuadTreeNode<T>>& space)
+			{
+				_footprint = footprint;
+			}
+
+			int insert(const T& value, const Vec2<float>& position)
 			{
 				float minFootprintX = _footprint.position.x - _footprint.halfSize.x;
 				float maxFootprintX = _footprint.position.x + _footprint.halfSize.x;
@@ -26,7 +33,7 @@ namespace tl
 					position.y < minFootprintY ||
 					position.y > maxFootprintY)
 				{
-					return 1;
+					return 0;
 				}
 
 				if (_valueCount < _capacity)
@@ -36,8 +43,18 @@ namespace tl
 
 					return 0;
 				}
+				if (!_hasChildren)
+				{
+					return 1;
+				}
 
-				return 1;
+				int returnValue = 0;
+				returnValue = nwChild->insert(value, position);
+				returnValue = neChild->insert(value, position);
+				returnValue = swChild->insert(value, position);
+				returnValue = seChild->insert(value, position);
+
+				return returnValue;
 			}
 
 			int query(const Rect<float> footprint, HeapArray<T>& foundValues)
