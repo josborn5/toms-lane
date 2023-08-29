@@ -87,7 +87,7 @@ static char GetCharForDigitKey(int key)
 
 static void ClearCommandBuffer()
 {
-	for (int i = 0; i < commands.capacity; i += 1)
+	for (int i = 0; i < commands.capacity(); i += 1)
 	{
 		commands.content[i] = '\0';
 		commands.clear();
@@ -96,7 +96,7 @@ static void ClearCommandBuffer()
 
 static void ClearDisplayBuffer()
 {
-	for (int i = 0; i < display.capacity; i += 1)
+	for (int i = 0; i < display.capacity(); i += 1)
 	{
 		display.content[i] = '\0';
 		display.clear();
@@ -163,7 +163,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	if (!input.buttons[KEY_CTRL].isDown)
 	{
 		// Update command buffer from input
-		if (commands.length < commands.capacity)
+		if (commands.length() < commands.capacity())
 		{
 			for (int key = tl::KEY_A; key <= tl::KEY_Z; key += 1)
 			{

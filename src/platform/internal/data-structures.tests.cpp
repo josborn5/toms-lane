@@ -23,15 +23,15 @@ void RunHeapArrayTests()
 
 	HeapArray<int> array2 = HeapArray<int>(&sixInts[1], 4);
 	HeapArray<int> array = HeapArray<int>(fourInts);
-	assert(array.length == 0);
-	assert(array.capacity == 4);
-	assert(array2.length == 0);
-	assert(array2.capacity == 4);
+	assert(array.length() == 0);
+	assert(array.capacity() == 4);
+	assert(array2.length() == 0);
+	assert(array2.capacity() == 4);
 
 	array.append(5);
 	assert(array.content[0] == 5);
-	assert(array.length == 1);
-	assert(array.capacity == 4);
+	assert(array.length() == 1);
+	assert(array.capacity() == 4);
 	assert(array2.content[0] == 5); // screwed up assertion and test, but it found a defect
 	assert(sixInts[0] == originalMemValue);
 	assert(sixInts[5] == originalMemValue);
@@ -39,16 +39,16 @@ void RunHeapArrayTests()
 	array.append(4);
 	assert(array.content[0] == 5);
 	assert(array.content[1] == 4);
-	assert(array.length == 2);
-	assert(array.capacity == 4);
+	assert(array.length() == 2);
+	assert(array.capacity() == 4);
 	assert(sixInts[0] == originalMemValue);
 	assert(sixInts[5] == originalMemValue);
 
 	MemorySpace remaining = array.sizeToCurrentLength();
 	assert(array.content[0] == 5);
 	assert(array.content[1] == 4);
-	assert(array.length == 2);
-	assert(array.capacity == 2);
+	assert(array.length() == 2);
+	assert(array.capacity() == 2);
 	assert(sixInts[0] == originalMemValue);
 	assert(sixInts[5] == originalMemValue);
 
@@ -61,9 +61,9 @@ void RunHeapArrayTests()
 	assert(array.content[0] == 5);
 	assert(array.content[1] == 4);
 
-	assert(array.length == 2);
+	assert(array.length() == 2);
 	array.clear();
-	assert(array.length == 0);
+	assert(array.length() == 0);
 }
 
 void RunHeapQueueTests()

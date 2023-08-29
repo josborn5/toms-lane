@@ -100,7 +100,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 		positionIncrement = 0.1f;
 	}
 
-	for (int i = 0; i < meshArray.triangles.length; i += 1)
+	for (int i = 0; i < meshArray.triangles.length(); i += 1)
 	{
 		Triangle4d<float> tri = meshArray.triangles.content[i];
 		if (tri.p[0].x > max.x) max.x = tri.p[0].x;
@@ -330,7 +330,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	charFoot.position = { 400.0f, infoHeight };
 	tl::DrawAlphabetCharacters(renderBuffer, "MESH", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, meshArray.triangles.length, charFoot, 0xAAAAAA);
+	tl::DrawNumber(renderBuffer, meshArray.triangles.length(), charFoot, 0xAAAAAA);
 
 	// Draw the map
 	tl::DrawRect(renderBuffer, 0x333399, map);

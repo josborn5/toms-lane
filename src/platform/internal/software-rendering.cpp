@@ -726,7 +726,7 @@ namespace tl
 		Plane<T> leftOfScreen = { (T)0, (T)0, (T)0,							(T)1, (T)0, (T)0 };
 		Plane<T> rightOfScreen = { (T)(renderBuffer.width - 1), (T)0, (T)0,	(T)-1, (T)0, (T)0 };
 
-		for (int h = 0; h < mesh.triangles.length; h += 1)
+		for (int h = 0; h < mesh.triangles.length(); h += 1)
 		{
 			Triangle4d<T> tri = mesh.triangles.content[h];
 			Triangle4d<T> transformed;
@@ -796,7 +796,7 @@ namespace tl
 
 		tl::MemorySpace remainingTransient = trianglesToDrawArray.sizeToCurrentLength();
 
-		for (int n = 0; n < trianglesToDrawArray.length; n += 1)
+		for (int n = 0; n < trianglesToDrawArray.length(); n += 1)
 		{
 			Triangle4d<T> triToRender = trianglesToDrawArray.content[n];
 			Triangle4d<T> clipped[2];

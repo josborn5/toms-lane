@@ -14,9 +14,6 @@ namespace tl
 			size_t _itemSizeInBytes = sizeof(T);
 
 		public :
-			const int& length = _length;
-			const int& capacity = _capacity;
-
 			T* content;
 
 			HeapArray(){}
@@ -39,6 +36,16 @@ namespace tl
 			T get(int index)
 			{
 				return content[index];
+			}
+
+			int capacity() const
+			{
+				return _capacity;
+			}
+
+			int length() const
+			{
+				return _length;
 			}
 
 			int append(const T& item)

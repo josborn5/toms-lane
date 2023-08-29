@@ -16,9 +16,13 @@ namespace tl
 				_footprint = footprint;
 			}
 
-			QuadTreeNode(const Rect<float>& footprint, HeapArray<QuadTreeNode<T>>& space)
+			QuadTreeNode(
+				const Rect<float>& footprint,
+				HeapArray<QuadTreeNode<T>>& space
+			)
 			{
 				_footprint = footprint;
+				_space = &space;
 			}
 
 			int insert(const T& value, const Vec2<float>& position)
@@ -71,6 +75,7 @@ namespace tl
 			const int _capacity = 4;
 			bool _hasChildren = false;
 			Rect<float> _footprint;
+			HeapArray<QuadTreeNode<T>>* _space = nullptr;
 			T _values[4] = { 0 };
 			int _valueCount = 0;
 			QuadTreeNode<T>* nwChild;
