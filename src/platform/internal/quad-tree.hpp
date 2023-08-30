@@ -49,42 +49,35 @@ namespace tl
 				}
 				if (!_hasChildren)
 				{
-					Vec2<float> childHalfSize = {
-						0.5f * _footprint.halfSize.x,
-						0.5f * _footprint.halfSize.y
-					};
-					Vec2<float> nwChildPos = {
-						_footprint.position.x - childHalfSize.x,
-						_footprint.position.y + childHalfSize.y
-					};
-					Rect<float> nwFootprint;
-					nwFootprint.halfSize = childHalfSize;
-					nwFootprint.position = nwChildPos;
-					QuadTreeNode<T> nw = QuadTreeNode(nwFootprint, _space);
-					return 1;
+					split();
 				}
 
 				int returnValue = 0;
 				returnValue = nwChild->insert(value, position);
-				returnValue = neChild->insert(value, position);
-				returnValue = swChild->insert(value, position);
-				returnValue = seChild->insert(value, position);
+				// returnValue = neChild->insert(value, position);
+				// returnValue = swChild->insert(value, position);
+				// returnValue = seChild->insert(value, position);
 
 				return returnValue;
 			}
 
-			int query(const Rect<float> footprint, HeapArray<T>& foundValues)
+			int query(const Rect<float>& footprint, HeapArray<T>& foundValues)
 			{
 				for (int i = 0; i < _valueCount; i += 1)
 				{
 					foundValues.append(_values[i]);
 				}
 
+				if (_hasChildren)
+				{
+					nwChild->query(footprint, foundValues);
+				}
+
 				return 0;
 			}
 
 		private:
-			const int _capacity = 4;
+			int _capacity = 4;
 			bool _hasChildren = false;
 			Rect<float> _footprint;
 			HeapArray<QuadTreeNode<T>>* _space = nullptr;
@@ -94,6 +87,27 @@ namespace tl
 			QuadTreeNode<T>* neChild;
 			QuadTreeNode<T>* seChild;
 			QuadTreeNode<T>* swChild;
+
+			void split()
+			{
+				Vec2<float> childHalfSize = {
+					0.5f * _footprint.halfSize.x,
+					0.5f * _footprint.halfSize.y
+				};
+				Vec2<float> nwChildPos = {
+					_footprint.position.x - childHalfSize.x,
+					_footprint.position.y + childHalfSize.y
+				};
+				Rect<float> nwFootprint;
+				nwFootprint.halfSize = childHalfSize;
+				nwFootprint.position = nwChildPos;
+				QuadTreeNode<T> nw = QuadTreeNode(nwFootprint, _space);
+				int placementIndex = _space->length();
+				_space->append(nw);
+				nwChild = &_space->content[placementIndex];
+
+				_hasChildren = true;
+			}
 	};
 }
 #endif

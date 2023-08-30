@@ -112,7 +112,7 @@ void InsertFiveValues()
 	rootNode.insert(2, { 0.5f, 1.5f });
 	rootNode.insert(3, { 1.5f, 0.5f });
 	rootNode.insert(4, { 1.5f, 1.5f });
-	rootNode.insert(5, { 0.5f, 0.5f });
+	rootNode.insert(5, { 0.5f, 1.5f });
 
 	int queryResultStore[5] = { 0, 0, 0, 0, 0};
 	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 5);
@@ -123,7 +123,7 @@ void InsertFiveValues()
 	assert(queryResults.get(1) == 2);
 	assert(queryResults.get(2) == 3);
 	assert(queryResults.get(3) == 4);
-	assert(queryResults.get(4) == 0);
+	assert(queryResults.get(4) == 5);
 }
 
 void RunQuadTreeTests()
