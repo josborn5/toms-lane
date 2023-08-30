@@ -90,8 +90,14 @@ namespace tl
 			T* _ogHead;
 
 		public:
-			const int& length = _length;
-			const int& capacity = _capacity;
+			int length() const
+			{
+				return _length;
+			}
+			int capacity() const
+			{
+				return _capacity;
+			}
 			T* content;
 
 			HeapQueue(const MemorySpace& memory)

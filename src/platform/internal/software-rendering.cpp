@@ -845,10 +845,10 @@ namespace tl
 					}
 				}
 
-				newTriangles = triangleHeapQueue.length;
+				newTriangles = triangleHeapQueue.length();
 			}
 
-			for (int i = 0; i < triangleHeapQueue.length; i += 1)
+			for (int i = 0; i < triangleHeapQueue.length(); i += 1)
 			{
 				Triangle4d<T> draw = triangleHeapQueue.content[i];
 				// Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
