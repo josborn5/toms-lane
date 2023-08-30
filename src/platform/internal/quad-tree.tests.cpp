@@ -106,7 +106,7 @@ void InsertFiveValues()
 	QuadTreeNode<int> nodeArray[5];
 	HeapArray<QuadTreeNode<int>> nodes = HeapArray<QuadTreeNode<int>>(nodeArray, 5);
 
-	QuadTreeNode<int> rootNode = QuadTreeNode<int>(rootFootprint, nodes);
+	QuadTreeNode<int> rootNode = QuadTreeNode<int>(rootFootprint, &nodes);
 
 	rootNode.insert(1, { 0.5f, 0.5f });
 	rootNode.insert(2, { 0.5f, 1.5f });

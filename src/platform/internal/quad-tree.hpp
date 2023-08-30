@@ -18,11 +18,11 @@ namespace tl
 
 			QuadTreeNode(
 				const Rect<float>& footprint,
-				HeapArray<QuadTreeNode<T>>& space
+				HeapArray<QuadTreeNode<T>>* space
 			)
 			{
 				_footprint = footprint;
-				_space = &space;
+				_space = space;
 			}
 
 			int insert(const T& value, const Vec2<float>& position)
@@ -49,6 +49,18 @@ namespace tl
 				}
 				if (!_hasChildren)
 				{
+					Vec2<float> childHalfSize = {
+						0.5f * _footprint.halfSize.x,
+						0.5f * _footprint.halfSize.y
+					};
+					Vec2<float> nwChildPos = {
+						_footprint.position.x - childHalfSize.x,
+						_footprint.position.y + childHalfSize.y
+					};
+					Rect<float> nwFootprint;
+					nwFootprint.halfSize = childHalfSize;
+					nwFootprint.position = nwChildPos;
+					QuadTreeNode<T> nw = QuadTreeNode(nwFootprint, _space);
 					return 1;
 				}
 
