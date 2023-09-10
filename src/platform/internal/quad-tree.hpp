@@ -56,7 +56,7 @@ namespace tl
 				returnValue = nwChild->insert(value, position);
 				returnValue = neChild->insert(value, position);
 				returnValue = seChild->insert(value, position);
-
+				returnValue = swChild->insert(value, position);
 				return returnValue;
 			}
 
@@ -72,6 +72,7 @@ namespace tl
 					nwChild->query(footprint, foundValues);
 					neChild->query(footprint, foundValues);
 					seChild->query(footprint, foundValues);
+					swChild->query(footprint, foundValues);
 				}
 
 				return 0;
@@ -94,6 +95,8 @@ namespace tl
 					0.5f * _footprint.halfSize.x,
 					0.5f * _footprint.halfSize.y
 				};
+
+				// north west
 				Vec2<float> childPos = {
 					_footprint.position.x - childHalfSize.x,
 					_footprint.position.y + childHalfSize.y
@@ -116,6 +119,12 @@ namespace tl
 				QuadTreeNode<T> se = QuadTreeNode(footprint, _space);
 				_space->append(se);
 				seChild = _space->getTailPointer();
+
+				// south west
+				footprint.position.x -= _footprint.halfSize.x;
+				QuadTreeNode<T> sw = QuadTreeNode(footprint, _space);
+				_space->append(sw);
+				swChild = _space->getTailPointer();
 			}
 	};
 }

@@ -99,7 +99,7 @@ void InsertFourValues()
 	assert(queryResults.get(4) == 0);
 }
 
-void InsertSevenValues()
+void InsertEightValues()
 {
 	Rect<float> rootFootprint = Get1x1Footprint();
 
@@ -113,13 +113,14 @@ void InsertSevenValues()
 	Vec2<float> swPos = { 0.5f, 0.5f };
 	Vec2<float> sePos = { 1.5f, 0.5f };
 
-	rootNode.insert(1, swPos);
-	rootNode.insert(2, nwPos);
-	rootNode.insert(3, nePos);
-	rootNode.insert(4, sePos);
+	rootNode.insert(1, nwPos);
+	rootNode.insert(2, nePos);
+	rootNode.insert(3, sePos);
+	rootNode.insert(4, swPos);
 	rootNode.insert(5, nwPos);
 	rootNode.insert(6, nePos);
 	rootNode.insert(7, sePos);
+	rootNode.insert(8, swPos);
 
 	int queryResultStore[10] = { 0 };
 	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 10);
@@ -133,6 +134,7 @@ void InsertSevenValues()
 	assert(queryResults.get(4) == 5);
 	assert(queryResults.get(5) == 6);
 	assert(queryResults.get(6) == 7);
+	assert(queryResults.get(7) == 8);
 }
 
 void RunQuadTreeTests()
@@ -147,5 +149,5 @@ void RunQuadTreeTests()
 
 	InsertFourValues();
 
-	InsertSevenValues();
+	InsertEightValues();
 }
