@@ -47,7 +47,7 @@ namespace tl
 
 					return 0;
 				}
-				if (!_hasChildren)
+				if (nwChild == nullptr)
 				{
 					split();
 				}
@@ -68,7 +68,7 @@ namespace tl
 					foundValues.append(_values[i]);
 				}
 
-				if (_hasChildren)
+				if (nwChild != nullptr)
 				{
 					nwChild->query(footprint, foundValues);
 				}
@@ -78,7 +78,6 @@ namespace tl
 
 		private:
 			int _capacity = 4;
-			bool _hasChildren = false;
 			Rect<float> _footprint;
 			HeapArray<QuadTreeNode<T>>* _space = nullptr;
 			T _values[4] = { 0 };
@@ -104,8 +103,6 @@ namespace tl
 				QuadTreeNode<T> nw = QuadTreeNode(nwFootprint, _space);
 				_space->append(nw);
 				nwChild = _space->getTailPointer();
-
-				_hasChildren = true;
 			}
 	};
 }
