@@ -4,8 +4,31 @@
 
 using namespace tl;
 
+void RunHeapArrayTailTest()
+{
+	int fourIntsStack[4] = { 0 };
+	MemorySpace fourInts;
+	fourInts.content = &fourIntsStack[0];
+	fourInts.sizeInBytes = 4 * sizeof(int);
+
+	HeapArray<int> heapArray = HeapArray<int>(fourInts);
+
+	heapArray.append(1);
+
+	int* tail = heapArray.getTailPointer();
+
+	assert(tail == &fourIntsStack[0]);
+
+	heapArray.append(2);
+	tail = heapArray.getTailPointer();
+
+	assert(tail == &fourIntsStack[1]);
+}
+
 void RunHeapArrayTests()
 {
+	RunHeapArrayTailTest();
+
 	const int originalMemValue = 8;
 	int sixInts[6] = {
 		originalMemValue,

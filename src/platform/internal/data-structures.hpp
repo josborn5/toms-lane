@@ -79,6 +79,11 @@ namespace tl
 			{
 				_length = 0;
 			}
+
+			T* getTailPointer()
+			{
+				return &content[_length - 1];
+			}
 	};
 
 	template<typename T>
