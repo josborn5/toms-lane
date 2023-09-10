@@ -83,10 +83,10 @@ namespace tl
 			HeapArray<QuadTreeNode<T>>* _space = nullptr;
 			T _values[4] = { 0 };
 			int _valueCount = 0;
-			QuadTreeNode<T>* nwChild;
-			QuadTreeNode<T>* neChild;
-			QuadTreeNode<T>* seChild;
-			QuadTreeNode<T>* swChild;
+			QuadTreeNode<T>* nwChild = nullptr;
+			QuadTreeNode<T>* neChild = nullptr;
+			QuadTreeNode<T>* seChild = nullptr;
+			QuadTreeNode<T>* swChild = nullptr;
 
 			void split()
 			{
@@ -102,9 +102,8 @@ namespace tl
 				nwFootprint.halfSize = childHalfSize;
 				nwFootprint.position = nwChildPos;
 				QuadTreeNode<T> nw = QuadTreeNode(nwFootprint, _space);
-				int placementIndex = _space->length();
 				_space->append(nw);
-				nwChild = &_space->content[placementIndex];
+				nwChild = _space->getTailPointer();
 
 				_hasChildren = true;
 			}
