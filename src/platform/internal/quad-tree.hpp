@@ -55,8 +55,7 @@ namespace tl
 				int returnValue = 0;
 				returnValue = nwChild->insert(value, position);
 				returnValue = neChild->insert(value, position);
-				// returnValue = swChild->insert(value, position);
-				// returnValue = seChild->insert(value, position);
+				returnValue = seChild->insert(value, position);
 
 				return returnValue;
 			}
@@ -72,6 +71,7 @@ namespace tl
 				{
 					nwChild->query(footprint, foundValues);
 					neChild->query(footprint, foundValues);
+					seChild->query(footprint, foundValues);
 				}
 
 				return 0;
@@ -110,6 +110,12 @@ namespace tl
 				QuadTreeNode<T> ne = QuadTreeNode(footprint, _space);
 				_space->append(ne);
 				neChild = _space->getTailPointer();
+
+				// south east
+				footprint.position.y -= _footprint.halfSize.y;
+				QuadTreeNode<T> se = QuadTreeNode(footprint, _space);
+				_space->append(se);
+				seChild = _space->getTailPointer();
 			}
 	};
 }

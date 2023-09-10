@@ -99,12 +99,12 @@ void InsertFourValues()
 	assert(queryResults.get(4) == 0);
 }
 
-void InsertSixValues()
+void InsertSevenValues()
 {
 	Rect<float> rootFootprint = Get1x1Footprint();
 
-	QuadTreeNode<int> nodeArray[6];
-	HeapArray<QuadTreeNode<int>> nodes = HeapArray<QuadTreeNode<int>>(nodeArray, 6);
+	QuadTreeNode<int> nodeArray[7];
+	HeapArray<QuadTreeNode<int>> nodes = HeapArray<QuadTreeNode<int>>(nodeArray, 7);
 
 	QuadTreeNode<int> rootNode = QuadTreeNode<int>(rootFootprint, &nodes);
 
@@ -119,9 +119,10 @@ void InsertSixValues()
 	rootNode.insert(4, sePos);
 	rootNode.insert(5, nwPos);
 	rootNode.insert(6, nePos);
+	rootNode.insert(7, sePos);
 
-	int queryResultStore[6] = { 0, 0, 0, 0, 0, 0 };
-	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 6);
+	int queryResultStore[10] = { 0 };
+	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 10);
 
 	rootNode.query(rootFootprint, queryResults);
 
@@ -131,6 +132,7 @@ void InsertSixValues()
 	assert(queryResults.get(3) == 4);
 	assert(queryResults.get(4) == 5);
 	assert(queryResults.get(5) == 6);
+	assert(queryResults.get(6) == 7);
 }
 
 void RunQuadTreeTests()
@@ -145,5 +147,5 @@ void RunQuadTreeTests()
 
 	InsertFourValues();
 
-	InsertSixValues();
+	InsertSevenValues();
 }
