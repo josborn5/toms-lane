@@ -109,7 +109,14 @@ static void StartLevel(int newLevel)
 
 	ResetBalls();
 
-	PopulateBlocksForLevel(newLevel, gamestate.blocks, BLOCK_ARRAY_SIZE, BLOCK_AREA, BLOCK_AREA_POS);
+	PopulateBlocksForLevel(
+		newLevel,
+		gamestate.blocks,
+		BLOCK_ARRAY_SIZE,
+		BLOCK_AREA,
+		BLOCK_AREA_POS,
+		&gamestate.blockTree
+	);
 }
 
 static void InitializeGameState(GameState *state, const tl::Vec2<int>& pixelRect, const tl::Input& input)
@@ -127,13 +134,19 @@ static void InitializeGameState(GameState *state, const tl::Vec2<int>& pixelRect
 		state->balls[i].halfSize = BALL_HALF_SIZE;
 	}
 
+	tl::Rect<float> worldRect;
+	worldRect.position = worldPosition;
+	worldRect.halfSize = worldHalfSize;
+
+	state->blockTree.descendents = tl::HeapArray<tl::QuadTreeNode<Block*>>(&state->blockTree.storage[0], BLOCK_ARRAY_SIZE);
+	state->blockTree.root = tl::QuadTreeNode<Block*>(worldRect, &state->blockTree.descendents);
+
 	state->player.halfSize.x = BAT_WIDTH;
 	state->player.halfSize.y = BAT_HEIGHT;
 
 	minPlayerX = 0.0f;
 	maxPlayerX = (float)X_DIM_BASE;
 
-	// state->player.position.x = TransformPixelCoordToGameCoord(pixelRect, GAME_RECT, input.mouse.x, input.mouse.y).x;
 	state->player.position.x = (float)input.mouse.x;
 	state->player.position.x = ClampFloat(minPlayerX, state->player.position.x, maxPlayerX);
 	state->player.position.y = 200;
@@ -203,7 +216,6 @@ static void UpdateGameState(GameState *state, const tl::Vec2<int>& pixelRect, co
 	// Update player state
 	tl::Rect<float> newPlayerState;
 	newPlayerState.halfSize = state->player.halfSize;
-	// newPlayerState.position.x = TransformPixelCoordToGameCoord(pixelRect, GAME_RECT, input.mouse.x, input.mouse.y).x;
 	newPlayerState.position.x = ClampFloat(minPlayerX, (float)input.mouse.x, maxPlayerX);
 	newPlayerState.position.y = state->player.position.y;
 	newPlayerState.velocity.x = (newPlayerState.position.x - state->player.position.x) / dt;
@@ -232,20 +244,38 @@ static void UpdateGameState(GameState *state, const tl::Vec2<int>& pixelRect, co
 				checkCollision = true;
 			}
 
-			int blockHitIndex = NO_BLOCK_HIT_INDEX;
+			Block *block = nullptr;
 
 			tl::CollisionResult blockBallCollisionResult;
 			tl::CollisionResult hitBlockResult;
 			hitBlockResult.collisions[1].side = tl::None;
+
+			// query the block tree for collision candidates
+			tl::Rect<float> ballFootprint;
+			float ballDistanceCoveredX = state->balls[i].velocity.x * dt;
+			float ballDistanceCoveredY = state->balls[i].velocity.y * dt;
+			ballFootprint.position = state->balls[i].position;
+			ballFootprint.halfSize = { 
+				ballDistanceCoveredX,
+				ballDistanceCoveredY
+			 };
+
+			Block* candidateStorage[BLOCK_ARRAY_SIZE];
+			tl::HeapArray<Block*> candidates = tl::HeapArray<Block*>(
+				&candidateStorage[0],
+				BLOCK_ARRAY_SIZE
+			);
+			state->blockTree.root.query(ballFootprint, candidates);
+
 			// check for collision between ball and blocks
-			for (int j = 0; j < BLOCK_ARRAY_SIZE; j += 1)
+			for (int j = 0; j < candidates.length(); j += 1)
 			{
-				Block block = state->blocks[j];
-				if (!block.exists) continue;
-				blockBallCollisionResult = tl::CheckCollisionBetweenRects(block, state->balls[i], minCollisionTime);
+				Block* checkBlock = candidates.get(j);
+				if (!checkBlock->exists) continue;
+				blockBallCollisionResult = tl::CheckCollisionBetweenRects(*checkBlock, state->balls[i], minCollisionTime);
 				if (blockBallCollisionResult.collisions[1].side != tl::None)
 				{
-					blockHitIndex = j;
+					block = checkBlock;
 					minCollisionTime = blockBallCollisionResult.time;
 					hitBlockResult = blockBallCollisionResult;
 					checkCollision = true;
@@ -300,7 +330,6 @@ static void UpdateGameState(GameState *state, const tl::Vec2<int>& pixelRect, co
 					newBallState.velocity.x = -newBallState.velocity.x;
 				}
 
-				Block *block = &state->blocks[blockHitIndex]; // Use derefence operator to update data in the blocks array here
 				block->exists = false;
 				state->score += BLOCK_SCORE;
 

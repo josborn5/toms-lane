@@ -23,7 +23,14 @@ CCCCCCCCCCCC",
      MM"
 };
 
-static void PopulateBlocksForLevel(int level, Block* block, int blockArraySize, tl::Vec2<float> blockArea, tl::Vec2<float> blockAreaPosition)
+static void PopulateBlocksForLevel(
+	int level,
+	Block* block,
+	int blockArraySize,
+	tl::Vec2<float> blockArea,
+	tl::Vec2<float> blockAreaPosition,
+	BlockQuadTree* blockTree
+)
 {
 	// clear out any remaining blocks in the block array
 	Block* firstBlock = block;
@@ -129,6 +136,8 @@ static void PopulateBlocksForLevel(int level, Block* block, int blockArraySize, 
 				}
 
 				blockCount += 1;
+
+				blockTree->root.insert(block, block->position);
 			}
 
 			blockPosition.x += blockWidth;

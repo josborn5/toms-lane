@@ -55,6 +55,13 @@ struct Block : tl::Rect<float> {
 	PowerUp powerUp;
 };
 
+struct BlockQuadTree
+{
+	tl::QuadTreeNode<Block*> root;
+	tl::QuadTreeNode<Block*> storage[BLOCK_ARRAY_SIZE];
+	tl::HeapArray<tl::QuadTreeNode<Block*>> descendents;
+};
+
 struct GameState {
 	tl::Rect<float> player;
 	Ball balls[BALL_ARRAY_SIZE];
@@ -65,6 +72,7 @@ struct GameState {
 	int lives;
 	Mode mode;
 	float levelTransitionTimer;
+	BlockQuadTree blockTree;
 };
 
 #endif
