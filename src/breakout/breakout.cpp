@@ -101,6 +101,7 @@ static void ResetBalls(GameState* state)
 
 static void StartLevel(int newLevel, GameState* state)
 {
+	state->level = newLevel;
 	state->mode = ReadyToStart;
 
 	state->isCometActive = false;
@@ -152,8 +153,7 @@ static void InitializeGameState(GameState *state, const tl::Vec2<int>& pixelRect
 
 	state->score = 0;
 	state->lives = STARTING_LIVES;
-	state->level = 1;
-	StartLevel(state->level, state);
+	StartLevel(1, state);
 }
 
 static WallCollision CheckWallCollision(const Ball &ball, float minimumTime)
@@ -454,8 +454,7 @@ static void UpdateGameState(GameState *state, const tl::Vec2<int>& pixelRect, co
 
 	if (allBlocksGoneResult)
 	{
-		state->level += 1;
-		StartLevel(state->level, state);
+		StartLevel(state->level + 1, state);
 	}
 }
 
