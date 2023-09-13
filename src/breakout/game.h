@@ -71,7 +71,6 @@ struct GameState {
 	int score;
 	int lives;
 	Mode mode;
-	float levelTransitionTimer;
 	BlockQuadTree blockTree;
 };
 

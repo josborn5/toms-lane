@@ -77,7 +77,6 @@ GameState gamestate = {0};
 
 bool initialized = false;
 bool isPaused = false;
-bool allBlocksCleared = false;;
 
 char debugStringBuffer[256];
 
@@ -87,35 +86,34 @@ struct WallCollision
 	tl::CollisionResult result;
 };
 
-static void ResetBalls()
+static void ResetBalls(GameState* state)
 {
 	for (int i = 0; i < BALL_ARRAY_SIZE; i += 1)
 	{
-		gamestate.balls[i].exists = (i == 0);
-		gamestate.balls[i].velocity.y = MIN_BALL_SPEED;
-		gamestate.balls[i].velocity.x = MIN_BALL_SPEED;
+		state->balls[i].exists = (i == 0);
+		state->balls[i].velocity.y = MIN_BALL_SPEED;
+		state->balls[i].velocity.x = MIN_BALL_SPEED;
 
-		gamestate.balls[i].position.y = 100 + gamestate.balls[i].halfSize.y;
-		gamestate.balls[i].position.x = 100 + gamestate.balls[i].halfSize.x;
+		state->balls[i].position.y = 100 + state->balls[i].halfSize.y;
+		state->balls[i].position.x = 100 + state->balls[i].halfSize.x;
 	}
 }
 
-static void StartLevel(int newLevel)
+static void StartLevel(int newLevel, GameState* state)
 {
-	allBlocksCleared = false;
+	state->mode = ReadyToStart;
 
-	gamestate.isCometActive = false;
-	gamestate.levelTransitionTimer = 5000.0f;
+	state->isCometActive = false;
 
-	ResetBalls();
+	ResetBalls(state);
 
 	PopulateBlocksForLevel(
 		newLevel,
-		gamestate.blocks,
+		&state->blocks[0],
 		BLOCK_ARRAY_SIZE,
 		BLOCK_AREA,
 		BLOCK_AREA_POS,
-		&gamestate.blockTree
+		&state->blockTree
 	);
 }
 
@@ -155,7 +153,7 @@ static void InitializeGameState(GameState *state, const tl::Vec2<int>& pixelRect
 	state->score = 0;
 	state->lives = STARTING_LIVES;
 	state->level = 1;
-	StartLevel(state->level);
+	StartLevel(state->level, state);
 }
 
 static WallCollision CheckWallCollision(const Ball &ball, float minimumTime)
@@ -352,7 +350,7 @@ static void UpdateGameState(GameState *state, const tl::Vec2<int>& pixelRect, co
 				{
 					newBallState.velocity.y = -newBallState.velocity.y;
 				}
-				else if (ballWallCollision.wall.side == Bottom && !allBlocksCleared)
+				else if (ballWallCollision.wall.side == Bottom && state->mode != StartingNextLevel)
 				{
 					newBallState.exists = false;
 
@@ -376,7 +374,7 @@ static void UpdateGameState(GameState *state, const tl::Vec2<int>& pixelRect, co
 						}
 						else
 						{
-							ResetBalls();
+							ResetBalls(state);
 							return;
 						}
 					}
@@ -400,9 +398,14 @@ static void UpdateGameState(GameState *state, const tl::Vec2<int>& pixelRect, co
 	}
 
 	// Update power up state
+	bool allBlocksGoneResult = true;
 	for (int i = 0; i < BLOCK_ARRAY_SIZE; i += 1)
 	{
 		Block *block = &state->blocks[i];
+		if (allBlocksGoneResult && block->exists)
+		{
+			allBlocksGoneResult = false;
+		}
 		if (!block->powerUp.exists) continue;
 
 		block->powerUp.position = tl::AddVectors(block->powerUp.position, tl::MultiplyVectorByScalar(block->powerUp.velocity, dt));
@@ -449,14 +452,10 @@ static void UpdateGameState(GameState *state, const tl::Vec2<int>& pixelRect, co
 		}
 	}
 
-	if (allBlocksCleared)
+	if (allBlocksGoneResult)
 	{
-		state->levelTransitionTimer -= dt;
-		if (state->levelTransitionTimer < 0)
-		{
-			state->level += 1;
-			StartLevel(state->level);
-		}
+		state->level += 1;
+		StartLevel(state->level, state);
 	}
 }
 
@@ -535,13 +534,11 @@ static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameStat
 	tl::DrawRect(renderBuffer, BAT_COLOR, state.player);
 
 	// blocks & powerups
-	allBlocksCleared = true;
 	for (int i = 0; i < BLOCK_ARRAY_SIZE; i += 1)
 	{
 		Block block = state.blocks[i];
 		if (block.exists) {
 			tl::DrawRect(renderBuffer, block.color, block);
-			allBlocksCleared = false;
 		}
 
 		if (block.powerUp.exists) {
