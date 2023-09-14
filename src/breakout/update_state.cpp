@@ -43,9 +43,9 @@ static void ResetBalls(GameState* state)
 	}
 }
 
-static void StartLevel(int newLevel, GameState* state)
+static void StartNextLevel(GameState* state)
 {
-	state->level = newLevel;
+	state->level += 1;
 	state->mode = ReadyToStart;
 
 	state->isCometActive = false;
@@ -53,7 +53,7 @@ static void StartLevel(int newLevel, GameState* state)
 	ResetBalls(state);
 
 	PopulateBlocksForLevel(
-		newLevel,
+		state->level,
 		&state->blocks[0],
 		BLOCK_ARRAY_SIZE,
 		BLOCK_AREA,
@@ -93,7 +93,7 @@ static void InitializeGameState(GameState *state, const tl::Input& input)
 
 	state->score = 0;
 	state->lives = STARTING_LIVES;
-	StartLevel(1, state);
+	state->level = 0;
 }
 
 static WallCollision CheckWallCollision(const Ball &ball, float minimumTime)
@@ -146,6 +146,7 @@ static void UpdateGameState(GameState *state, const tl::Input& input, float dt)
 	{
 		if (tl::IsReleased(input, tl::KEY_S))
 		{
+			StartNextLevel(state);
 			state->mode = Started;
 		}
 		return;
@@ -394,6 +395,6 @@ static void UpdateGameState(GameState *state, const tl::Input& input, float dt)
 
 	if (allBlocksGoneResult)
 	{
-		StartLevel(state->level + 1, state);
+		StartNextLevel(state);
 	}
 }
