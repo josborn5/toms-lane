@@ -64,6 +64,7 @@ struct BlockQuadTree
 
 struct GameState {
 	tl::Rect<float> player;
+	tl::Rect<float> world;
 	Ball balls[BALL_ARRAY_SIZE];
 	Block blocks[BLOCK_ARRAY_SIZE];
 	bool isCometActive;
