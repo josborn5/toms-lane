@@ -27,7 +27,6 @@ enum Mode
 {
 	ReadyToStart,
 	Started,
-	StartingNextLevel,
 	GameOver
 };
 

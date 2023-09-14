@@ -62,7 +62,7 @@ static void StartNextLevel(GameState* state)
 	);
 }
 
-static void InitializeGameState(GameState *state, const tl::Input& input)
+static void InitializeGameState(GameState *state)
 {
 	state->mode = ReadyToStart;
 	float worldHalfX = 0.5f * (float)X_DIM_BASE;
@@ -86,8 +86,7 @@ static void InitializeGameState(GameState *state, const tl::Input& input)
 	minPlayerX = 0.0f;
 	maxPlayerX = (float)X_DIM_BASE;
 
-	state->player.position.x = (float)input.mouse.x;
-	state->player.position.x = ClampFloat(minPlayerX, state->player.position.x, maxPlayerX);
+	state->player.position.x = minPlayerX;
 	state->player.position.y = 200;
 	state->player.velocity = tl::Vec2<float> { 0.0f, 0.0f };
 
@@ -142,7 +141,7 @@ static WallCollision CheckWallCollision(const Ball &ball, float minimumTime)
 
 static void UpdateGameState(GameState *state, const tl::Input& input, float dt)
 {
-	if (state->mode == ReadyToStart)
+	if (state->mode != Started)
 	{
 		if (tl::IsReleased(input, tl::KEY_S))
 		{
@@ -291,7 +290,7 @@ static void UpdateGameState(GameState *state, const tl::Input& input, float dt)
 				{
 					newBallState.velocity.y = -newBallState.velocity.y;
 				}
-				else if (ballWallCollision.wall.side == Bottom && state->mode != StartingNextLevel)
+				else if (ballWallCollision.wall.side == Bottom)
 				{
 					newBallState.exists = false;
 

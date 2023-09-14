@@ -50,7 +50,7 @@ char debugStringBuffer[256];
 
 static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& state)
 {
-	if (state.mode == ReadyToStart)
+	if (state.mode != Started)
 	{
 		tl::ClearScreen(renderBuffer, 0x050505);
 
@@ -163,20 +163,15 @@ static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameStat
 
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
+	InitializeGameState(&gamestate);
 	return 0;
 }
 
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
-	if (tl::IsReleased(input, tl::KEY_R))
+	if (tl::IsReleased(input, tl::KEY_R) || gamestate.mode == GameOver)
 	{
-		initialized = false;
-	}
-
-	if (!initialized || gamestate.mode == GameOver)
-	{
-		initialized = true;
-		InitializeGameState(&gamestate, input);
+		InitializeGameState(&gamestate);
 	}
 
 	if (tl::IsReleased(input, tl::KEY_SPACE))
