@@ -62,7 +62,7 @@ static void StartLevel(int newLevel, GameState* state)
 	);
 }
 
-static void InitializeGameState(GameState *state, const tl::Vec2<int>& pixelRect, const tl::Input& input)
+static void InitializeGameState(GameState *state, const tl::Input& input)
 {
 	state->mode = ReadyToStart;
 	float worldHalfX = 0.5f * (float)X_DIM_BASE;
@@ -140,7 +140,7 @@ static WallCollision CheckWallCollision(const Ball &ball, float minimumTime)
 	return wallCollision;
 }
 
-static void UpdateGameState(GameState *state, const tl::Vec2<int>& pixelRect, const tl::Input& input, float dt)
+static void UpdateGameState(GameState *state, const tl::Input& input, float dt)
 {
 	if (state->mode == ReadyToStart)
 	{

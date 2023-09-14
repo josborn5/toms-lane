@@ -168,10 +168,6 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
-	tl::Vec2<int> pixelRect;
-	pixelRect.x = renderBuffer.width;
-	pixelRect.y = renderBuffer.height;
-
 	if (tl::IsReleased(input, tl::KEY_R))
 	{
 		initialized = false;
@@ -180,7 +176,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	if (!initialized || gamestate.mode == GameOver)
 	{
 		initialized = true;
-		InitializeGameState(&gamestate, pixelRect, input);
+		InitializeGameState(&gamestate, input);
 	}
 
 	if (tl::IsReleased(input, tl::KEY_SPACE))
@@ -190,7 +186,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 
 	if (!isPaused)
 	{
-		UpdateGameState(&gamestate, pixelRect, input, dt);
+		UpdateGameState(&gamestate, input, dt);
 	}
 
 	RenderGameState(renderBuffer, gamestate);
