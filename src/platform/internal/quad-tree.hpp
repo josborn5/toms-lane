@@ -78,6 +78,18 @@ namespace tl
 				return 0;
 			}
 
+			void clear()
+			{
+				_valueCount = 0;
+				if (nwChild != nullptr)
+				{
+					nwChild->clear();
+					neChild->clear();
+					seChild->clear();
+					swChild->clear();
+				}
+			}
+
 		private:
 			int _capacity = 4;
 			Rect<float> _footprint;

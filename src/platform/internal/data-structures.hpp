@@ -62,7 +62,7 @@ namespace tl
 			/*
 			 * Sets capacity to current length
 			 * and returns details of any
-			  * remaining MemorySpace
+			 * remaining MemorySpace
 			 */
 			MemorySpace sizeToCurrentLength()
 			{
