@@ -27,15 +27,7 @@ namespace tl
 
 			int insert(const T& value, const Vec2<float>& position)
 			{
-				float minFootprintX = _footprint.position.x - _footprint.halfSize.x;
-				float maxFootprintX = _footprint.position.x + _footprint.halfSize.x;
-				float minFootprintY = _footprint.position.y - _footprint.halfSize.y;
-				float maxFootprintY = _footprint.position.y + _footprint.halfSize.y;
-
-				if (position.x < minFootprintX ||
-					position.x > maxFootprintX ||
-					position.y < minFootprintY ||
-					position.y > maxFootprintY)
+				if (!footprintContainsPosition(_footprint, position))
 				{
 					return 0;
 				}
@@ -43,6 +35,7 @@ namespace tl
 				if (_valueCount < _capacity)
 				{
 					_values[_valueCount] = value;
+					_positions[_valueCount] = { position.x, position.y };
 					_valueCount += 1;
 
 					return 0;
@@ -62,9 +55,15 @@ namespace tl
 
 			int query(const Rect<float>& footprint, HeapArray<T>& foundValues)
 			{
+				// TODO: if input footprint doesn't overlap node footprint, return
+
 				for (int i = 0; i < _valueCount; i += 1)
 				{
-					foundValues.append(_values[i]);
+					T checkValue = _values[i];
+					if (footprintContainsPosition(footprint, _positions[i]))
+					{
+						foundValues.append(checkValue);
+					}
 				}
 
 				if (nwChild != nullptr)
@@ -95,6 +94,7 @@ namespace tl
 			Rect<float> _footprint;
 			HeapArray<QuadTreeNode<T>>* _space = nullptr;
 			T _values[4] = { 0 };
+			Vec2<float> _positions[4] = { 0 };
 			int _valueCount = 0;
 			QuadTreeNode<T>* nwChild = nullptr;
 			QuadTreeNode<T>* neChild = nullptr;
@@ -137,6 +137,23 @@ namespace tl
 				QuadTreeNode<T> sw = QuadTreeNode(footprint, _space);
 				_space->append(sw);
 				swChild = _space->getTailPointer();
+			}
+
+			bool footprintContainsPosition
+			(
+				const Rect<float> footprint,
+				const Vec2<float>& position
+			)
+			{
+				float minFootprintX = footprint.position.x - footprint.halfSize.x;
+				float maxFootprintX = footprint.position.x + footprint.halfSize.x;
+				float minFootprintY = footprint.position.y - footprint.halfSize.y;
+				float maxFootprintY = footprint.position.y + footprint.halfSize.y;
+
+				return position.x > minFootprintX &&
+						position.x <= maxFootprintX &&
+						position.y > minFootprintY &&
+						position.y <= maxFootprintY;
 			}
 	};
 }

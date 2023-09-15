@@ -187,6 +187,40 @@ void InsertEightValuesAndClear()
 	assert(queryResults.length() == 5);
 }
 
+void QueryForSubSectionOfFootprint()
+{
+	Rect<float> rootFootprint = Get1x1Footprint();
+
+	QuadTreeNode<int> nodeArray[7];
+	HeapArray<QuadTreeNode<int>> nodes = HeapArray<QuadTreeNode<int>>(nodeArray, 7);
+
+	QuadTreeNode<int> rootNode = QuadTreeNode<int>(rootFootprint, &nodes);
+
+	Vec2<float> nwPos = { 0.5f, 1.5f };
+	Vec2<float> nePos = { 1.5f, 1.5f };
+	Vec2<float> swPos = { 0.5f, 0.5f };
+	Vec2<float> sePos = { 1.5f, 0.5f };
+
+	rootNode.insert(1, nwPos);
+	rootNode.insert(2, nePos);
+	rootNode.insert(3, sePos);
+	rootNode.insert(4, swPos);
+	rootNode.insert(5, nwPos);
+	rootNode.insert(6, nePos);
+	rootNode.insert(7, sePos);
+	rootNode.insert(8, swPos);
+
+	int queryResultStore[10] = { 0 };
+	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 10);
+
+	Rect<float> queryFootprint;
+	queryFootprint.position = sePos;
+	queryFootprint.halfSize = { 0.1f, 0.1f };
+	rootNode.query(queryFootprint, queryResults);
+
+	assert(queryResults.length() == 2);
+}
+
 void RunQuadTreeTests()
 {
 	printf("========= Quad Tree Tests ========\n\n");
@@ -202,4 +236,6 @@ void RunQuadTreeTests()
 	InsertEightValues();
 
 	InsertEightValuesAndClear();
+
+	QueryForSubSectionOfFootprint();
 }
