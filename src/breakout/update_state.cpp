@@ -210,12 +210,15 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 
 			// query the block tree for collision candidates
 			tl::Rect<float> ballFootprint;
-			float ballDistanceCoveredX = gamestate.balls[i].velocity.x * dt;
-			float ballDistanceCoveredY = gamestate.balls[i].velocity.y * dt;
+			float ballDistanceCoveredX = gamestate.balls[i].velocity.x * dt * 10;
+			float ballDistanceCoveredY = gamestate.balls[i].velocity.y * dt * 10;
+
+			if (ballDistanceCoveredX < 0) ballDistanceCoveredX *= -1;
+			if (ballDistanceCoveredY < 0) ballDistanceCoveredY *= -1;
 			ballFootprint.position = gamestate.balls[i].position;
 			ballFootprint.halfSize = { 
-				ballDistanceCoveredX,
-				ballDistanceCoveredY
+				gamestate.balls[i].halfSize.x + ballDistanceCoveredX,
+				gamestate.balls[i].halfSize.y + ballDistanceCoveredY
 			 };
 
 			Block* candidateStorage[BLOCK_ARRAY_SIZE];
@@ -223,7 +226,11 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 				&candidateStorage[0],
 				BLOCK_ARRAY_SIZE
 			);
+
+			gamestate.checkArea[i] = ballFootprint;
 			gamestate.blockTree.root.query(ballFootprint, candidates);
+
+			gamestate.score = candidates.length();
 
 			// check for collision between ball and blocks
 			for (int j = 0; j < candidates.length(); j += 1)
@@ -289,7 +296,7 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 				}
 
 				block->exists = false;
-				gamestate.score += BLOCK_SCORE;
+				// gamestate.score += BLOCK_SCORE;
 
 				// Check for powerup
 				if (block->powerUp.type != Nothing)

@@ -73,6 +73,7 @@ struct GameState {
 	int lives;
 	Mode mode;
 	BlockQuadTree blockTree;
+	tl::Rect<float> checkArea[BALL_ARRAY_SIZE];
 };
 
 #endif

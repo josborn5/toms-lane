@@ -129,6 +129,7 @@ static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameStat
 	{
 		if (!state.balls[i].exists) continue;
 
+		tl::DrawRect(renderBuffer, 0x000000, state.checkArea[i]);
 		tl::DrawRect(renderBuffer, BALL_COLOR, state.balls[i]);
 	}
 
