@@ -33,6 +33,7 @@ static void PopulateBlocksForLevel(
 )
 {
 	// clear out any remaining blocks in the block array
+	blockTree->root.clear();
 	Block* firstBlock = block;
 	tl::Vec2<float> originVector = tl::Vec2<float> { 0.0f, 0.0f };
 	for (int i = 0; i < blockArraySize; i += 1)
