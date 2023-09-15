@@ -38,14 +38,6 @@ const float TITLE_FONT_SIZE = 120.0f;
 
 int rainbowColor = 0;
 
-tl::Vec2<float> worldPosition = ZERO_VECTOR;
-tl::Vec2<float> worldHalfSize = ZERO_VECTOR;
-
-GameState gamestate = {0};
-
-bool initialized = false;
-bool isPaused = false;
-
 char debugStringBuffer[256];
 
 static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& state)
@@ -163,28 +155,15 @@ static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameStat
 
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
-	InitializeGameState(&gamestate);
+	InitializeGameState();
 	return 0;
 }
 
 int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
 {
-	if (tl::IsReleased(input, tl::KEY_R) || gamestate.mode == GameOver)
-	{
-		InitializeGameState(&gamestate);
-	}
+	GameState* state = UpdateGameState(input, dt);
 
-	if (tl::IsReleased(input, tl::KEY_SPACE))
-	{
-		isPaused = !isPaused;
-	}
-
-	if (!isPaused)
-	{
-		UpdateGameState(&gamestate, input, dt);
-	}
-
-	RenderGameState(renderBuffer, gamestate);
+	RenderGameState(renderBuffer, *state);
 
 	return 0;
 }
