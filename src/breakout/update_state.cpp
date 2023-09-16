@@ -4,19 +4,10 @@
 const float MIN_BALL_SPEED = 400.0f;
 const int BLOCK_SCORE = 10;
 
-const int X_DIM_ORIGIN = 0;
-const int X_DIM_BASE = 1280;
-const int Y_DIM_ORIGIN = 0;
-const int Y_DIM_BASE = 720;
-const int STARTING_LIVES = 3;
-
-const Boundary topBoundary = { Top, Y_DIM_BASE, -1.0f };
-const Boundary bottomBoundary = { Bottom, Y_DIM_ORIGIN, 1.0f };
-const Boundary leftBoundary = { Left, X_DIM_ORIGIN, 1.0f };
-const Boundary rightBoundary = { Right, X_DIM_BASE, -1.0f };
-
-float minPlayerX;
-float maxPlayerX;
+const Boundary topBoundary = { Top, 720, -1.0f };
+const Boundary bottomBoundary = { Bottom, 0, 1.0f };
+const Boundary leftBoundary = { Left, 0, 1.0f };
+const Boundary rightBoundary = { Right, 1280, -1.0f };
 
 static GameState gamestate = {0};
 
@@ -61,8 +52,8 @@ static void StartNextLevel()
 static void InitializeGameState()
 {
 	gamestate.mode = ReadyToStart;
-	float worldHalfX = 0.5f * (float)X_DIM_BASE;
-	float worldHalfY = 0.5f * (float)Y_DIM_BASE;
+	float worldHalfX = 0.5f * (float)rightBoundary.position;
+	float worldHalfY = 0.5f * (float)topBoundary.position;
 	gamestate.world.halfSize.x = worldHalfX;
 	gamestate.world.halfSize.y = worldHalfY;
 	gamestate.world.position.x = worldHalfX;
@@ -79,15 +70,12 @@ static void InitializeGameState()
 	gamestate.player.halfSize.x = 100.0f;
 	gamestate.player.halfSize.y = 10.0f;
 
-	minPlayerX = 0.0f;
-	maxPlayerX = (float)X_DIM_BASE;
-
-	gamestate.player.position.x = minPlayerX;
+	gamestate.player.position.x = (float)leftBoundary.position;
 	gamestate.player.position.y = 200;
 	gamestate.player.velocity = tl::Vec2<float> { 0.0f, 0.0f };
 
 	gamestate.score = 0;
-	gamestate.lives = STARTING_LIVES;
+	gamestate.lives = 3;
 	gamestate.level = 0;
 }
 
@@ -168,7 +156,7 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 	// Update player gamestate
 	tl::Rect<float> newPlayerState;
 	newPlayerState.halfSize = gamestate.player.halfSize;
-	newPlayerState.position.x = ClampFloat(minPlayerX, (float)input.mouse.x, maxPlayerX);
+	newPlayerState.position.x = ClampFloat((float)leftBoundary.position, (float)input.mouse.x, (float)rightBoundary.position);
 	newPlayerState.position.y = gamestate.player.position.y;
 	newPlayerState.velocity.x = (newPlayerState.position.x - gamestate.player.position.x) / dt;
 	newPlayerState.velocity.y = 0.0f;
@@ -365,8 +353,16 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 		}
 
 		// final bounds check to make sure ball doesn't leave the world
-		gamestate.balls[i].position.x = ClampFloat(0 + gamestate.balls[i].halfSize.x, gamestate.balls[i].position.x, X_DIM_BASE - gamestate.balls[i].halfSize.x);
-		gamestate.balls[i].position.y = ClampFloat(0 + gamestate.balls[i].halfSize.y, gamestate.balls[i].position.y, Y_DIM_BASE - gamestate.balls[i].halfSize.y);
+		gamestate.balls[i].position.x = ClampFloat(
+			leftBoundary.position + gamestate.balls[i].halfSize.x,
+			gamestate.balls[i].position.x,
+			rightBoundary.position - gamestate.balls[i].halfSize.x
+		);
+		gamestate.balls[i].position.y = ClampFloat(
+			bottomBoundary.position + gamestate.balls[i].halfSize.y,
+			gamestate.balls[i].position.y,
+			topBoundary.position - gamestate.balls[i].halfSize.y
+		);
 	}
 
 	// Update power up gamestate
@@ -383,7 +379,7 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 		block->powerUp.position = tl::AddVectors(block->powerUp.position, tl::MultiplyVectorByScalar(block->powerUp.velocity, dt));
 
 		// Can get away with a super simple position check for the power up falling off screen here
-		if (block->powerUp.position.y < Y_DIM_ORIGIN)
+		if (block->powerUp.position.y < bottomBoundary.position)
 		{
 			block->powerUp.exists = false;
 		}
