@@ -56,6 +56,24 @@ namespace tl
 			int query(const Rect<float>& footprint, HeapArray<T>& foundValues)
 			{
 				// TODO: if input footprint doesn't overlap node footprint, return
+				float minFootprintX = footprint.position.x - footprint.halfSize.x;
+				float maxFootprintX = footprint.position.x + footprint.halfSize.x;
+				float minFootprintY = footprint.position.y - footprint.halfSize.y;
+				float maxFootprintY = footprint.position.y + footprint.halfSize.y;
+
+				float _minFootprintX = _footprint.position.x - _footprint.halfSize.x;
+				float _maxFootprintX = _footprint.position.x + _footprint.halfSize.x;
+				float _minFootprintY = _footprint.position.y - _footprint.halfSize.y;
+				float _maxFootprintY = _footprint.position.y + _footprint.halfSize.y;
+
+				if ((minFootprintX > _maxFootprintX) ||
+					(maxFootprintX < _minFootprintX) ||
+					(minFootprintY > _maxFootprintY) ||
+					(maxFootprintY < _minFootprintY)
+				)
+				{
+					return 0;
+				}
 
 				for (int i = 0; i < _valueCount; i += 1)
 				{
