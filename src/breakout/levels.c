@@ -108,6 +108,7 @@ static void PopulateBlocksForLevel(
 				block->halfSize = blockHalfSize;
 				block->position = blockPosition;
 				block->color = MakeColorFromGrey((uint8_t)(blockCount * 20));
+				block->ogColor = block->color;
 				switch (*blockLayoutForLevel)
 				{
 					case 'M':

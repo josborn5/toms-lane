@@ -1,6 +1,5 @@
 #define BLOCK_AREA tl::Vec2<float> { 800.0f, 200.0f }
 #define BLOCK_AREA_POS tl::Vec2<float> { 300.0f, 600.0f }
-#define BALL_HALF_SIZE tl::Vec2<float> { 10.0f, 10.0f }
 
 const float MIN_BALL_SPEED = 400.0f;
 const int BLOCK_SCORE = 10;
@@ -15,11 +14,6 @@ const Boundary topBoundary = { Top, Y_DIM_BASE, -1.0f };
 const Boundary bottomBoundary = { Bottom, Y_DIM_ORIGIN, 1.0f };
 const Boundary leftBoundary = { Left, X_DIM_ORIGIN, 1.0f };
 const Boundary rightBoundary = { Right, X_DIM_BASE, -1.0f };
-
-tl::Vec2<int> GAME_RECT = { X_DIM_BASE, Y_DIM_BASE };
-
-const float BAT_WIDTH = 100.0f;
-const float BAT_HEIGHT = 10.0f;
 
 float minPlayerX;
 float maxPlayerX;
@@ -76,14 +70,14 @@ static void InitializeGameState()
 
 	for (int i = 0; i < BALL_ARRAY_SIZE; i += 1)
 	{
-		gamestate.balls[i].halfSize = BALL_HALF_SIZE;
+		gamestate.balls[i].halfSize = { 10.0f, 10.0f };
 	}
 
 	gamestate.blockTree.descendents = tl::HeapArray<tl::QuadTreeNode<Block*>>(&gamestate.blockTree.storage[0], BLOCK_ARRAY_SIZE);
 	gamestate.blockTree.root = tl::QuadTreeNode<Block*>(gamestate.world, &gamestate.blockTree.descendents);
 
-	gamestate.player.halfSize.x = BAT_WIDTH;
-	gamestate.player.halfSize.y = BAT_HEIGHT;
+	gamestate.player.halfSize.x = 100.0f;
+	gamestate.player.halfSize.y = 10.0f;
 
 	minPlayerX = 0.0f;
 	maxPlayerX = (float)X_DIM_BASE;
@@ -216,9 +210,14 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 			if (ballDistanceCoveredX < 0) ballDistanceCoveredX *= -1;
 			if (ballDistanceCoveredY < 0) ballDistanceCoveredY *= -1;
 			ballFootprint.position = gamestate.balls[i].position;
+
+			// Blocks are stored in the quad tree by their center position.
+			// So the footpring to check needs to be at least the halfSize
+			// of the block.
+
 			ballFootprint.halfSize = { 
-				gamestate.balls[i].halfSize.x + ballDistanceCoveredX,
-				gamestate.balls[i].halfSize.y + ballDistanceCoveredY
+				gamestate.balls[i].halfSize.x + ballDistanceCoveredX + gamestate.blocks[0].halfSize.x,
+				gamestate.balls[i].halfSize.y + ballDistanceCoveredY + gamestate.blocks[0].halfSize.y
 			 };
 
 			Block* candidateStorage[BLOCK_ARRAY_SIZE];
@@ -227,7 +226,12 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 				BLOCK_ARRAY_SIZE
 			);
 
-			gamestate.checkArea[i] = ballFootprint;
+			for (int x = 0; x < BLOCK_ARRAY_SIZE; x += 1)
+			{
+				gamestate.blocks[x].color = gamestate.blocks[x].ogColor;
+			}
+
+//			gamestate.checkArea[i] = ballFootprint;
 			gamestate.blockTree.root.query(ballFootprint, candidates);
 
 			gamestate.score = candidates.length();
@@ -237,6 +241,7 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 			{
 				Block* checkBlock = candidates.get(j);
 				if (!checkBlock->exists) continue;
+				checkBlock->color = 0xFF0000;
 				blockBallCollisionResult = tl::CheckCollisionBetweenRects(*checkBlock, gamestate.balls[i], minCollisionTime);
 				if (blockBallCollisionResult.collisions[1].side != tl::None)
 				{

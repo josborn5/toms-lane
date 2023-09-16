@@ -51,6 +51,7 @@ struct Ball : tl::Rect<float> {
 
 struct Block : tl::Rect<float> {
 	int color;
+	int ogColor;
 	bool exists;
 	PowerUp powerUp;
 };
