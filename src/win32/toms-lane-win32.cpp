@@ -296,6 +296,12 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 		{
 			IsRunning = true;
 
+			// Open console if settings indicate it
+			if (settings.openConsole)
+			{
+				AllocConsole();
+			}
+
 			// Initialize Visual
 			Win32_SizeglobalRenderBufferToCurrentWindow(window);
 
