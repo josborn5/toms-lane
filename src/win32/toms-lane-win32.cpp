@@ -1,9 +1,11 @@
 #include <windows.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #include "toms-lane-win32.hpp"
 
 #include "toms-lane-win32-file.cpp"
+#include "toms-lane-win32-console.cpp"
 
 namespace tl
 {
@@ -299,7 +301,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			// Open console if settings indicate it
 			if (settings.openConsole)
 			{
-				AllocConsole();
+				openConsole();
 			}
 
 			// Initialize Visual
@@ -406,6 +408,13 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				debugInfo.msPerFrame = msPerFrame;
 				debugInfo.framesPerSecond = FPS;
 				debugInfo.megaCyclesPerFrame = MCPF;
+
+				if (settings.openConsole)
+				{
+					TCHAR writeBuffer[256];
+					sprintf_s(writeBuffer, "target: %.02f actual: %.02f\n", targetSecondsPerFrame, msPerFrame);
+					writeToConsole(writeBuffer);
+				}
 
 				// Reset measurementsfor next frame
 				LastCounter = EndCounter;
