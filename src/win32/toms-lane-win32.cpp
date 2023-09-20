@@ -1,6 +1,5 @@
 #include <windows.h>
 #include <stdint.h>
-#include <stdio.h>
 
 #include "toms-lane-win32.hpp"
 
@@ -18,7 +17,7 @@ namespace tl
 static bool IsRunning = false;
 static RenderBuffer globalRenderBuffer = {0};
 static BITMAPINFO bitmapInfo = {0};	// platform dependent
-static int64_t GlobalPerfCountFrequency;
+static int64_t win32PerformanceCountsPerSecond;
 
 static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 {
@@ -250,24 +249,24 @@ inline LARGE_INTEGER Win32_GetWallClock()
 	return Result;
 }
 
-inline float Win32_GetSecondsElapsed(LARGE_INTEGER Start, LARGE_INTEGER End)
+inline double Win32_GetSecondsElapsed(LARGE_INTEGER Start, LARGE_INTEGER End)
 {
-	uint64_t CounterElapsed = End.QuadPart - Start.QuadPart;
-	float secondsElapsedForWork = ((float)CounterElapsed / (float)GlobalPerfCountFrequency);
+	uint64_t counterElapsed = End.QuadPart - Start.QuadPart;
+	double secondsElapsedForWork = ((double)counterElapsed / (double)win32PerformanceCountsPerSecond);
 	return secondsElapsedForWork;
 }
 
-inline float Win32_GetMilliSecondsElapsed(LARGE_INTEGER start, LARGE_INTEGER end)
+inline int Win32_GetMicroSecondsElapsed(LARGE_INTEGER start, LARGE_INTEGER end)
 {
-	float secondsElapsed = Win32_GetSecondsElapsed(start, end);
-	return secondsElapsed * 1000.0f;
+	double secondsElapsed = Win32_GetSecondsElapsed(start, end);
+	return (int)(secondsElapsed * 1000000.0f);
 }
 
 int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSettings())
 {
-	LARGE_INTEGER PerfCounterFrequencyResult;
-	QueryPerformanceFrequency(&PerfCounterFrequencyResult);
-	GlobalPerfCountFrequency = PerfCounterFrequencyResult.QuadPart;
+	LARGE_INTEGER perfCounterFrequencyResult;
+	QueryPerformanceFrequency(&perfCounterFrequencyResult);
+	win32PerformanceCountsPerSecond = perfCounterFrequencyResult.QuadPart;
 
 	// Set the Windows schedular granularity to 1ms to help our Sleep() function call be granular
 	UINT DesiredSchedulerMS = 1;
@@ -281,7 +280,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 	windowClass.lpszClassName = "Window Class";
 
 	int gameUpdateHz = (settings.targetFPS >= 10) ? settings.targetFPS : 30;
-	float targetMilliSecondsPerFrame = 1000.0f / (float)gameUpdateHz;
+	int targetMicroSecondsPerFrame = 1000000 / gameUpdateHz;
 
 	if(RegisterClassA(&windowClass))
 	{
@@ -335,7 +334,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			}
 
 			// Initialize frame timers
-			float lastDtInSeconds = targetMilliSecondsPerFrame / 1000.0f;
+			float lastDtInSeconds = (float)targetMicroSecondsPerFrame / 1000000.0f;
 			LARGE_INTEGER frameStartCounter = Win32_GetWallClock();
 
 			// Main loop
@@ -351,10 +350,10 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				gameInput.mouse.y = globalRenderBuffer.height - mousePointer.y;
 
 
-				LARGE_INTEGER appStartTime = Win32_GetWallClock();
+				LARGE_INTEGER appFrameStartCounter = Win32_GetWallClock();
 				int updateResult = UpdateAndRender(GameMemory, gameInput, globalRenderBuffer, lastDtInSeconds);
-				float appFrameTime = Win32_GetMilliSecondsElapsed(appStartTime, Win32_GetWallClock());
-				float waitTime = targetMilliSecondsPerFrame - appFrameTime;
+				int appFrameTimeInMicroSeconds = Win32_GetMicroSecondsElapsed(appFrameStartCounter, Win32_GetWallClock());
+				int waitTimeInMicroSeconds = targetMicroSecondsPerFrame - appFrameTimeInMicroSeconds;
 				if (updateResult != 0)
 				{
 					return updateResult;
@@ -369,20 +368,20 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				ReleaseDC(window, deviceContext);
 
 				// wait before starting next frame
-				float milliSecondsElapsedForFrame = Win32_GetMilliSecondsElapsed(frameStartCounter, Win32_GetWallClock());
-				if (milliSecondsElapsedForFrame < targetMilliSecondsPerFrame)
+				int microSecondsElapsedForFrame = Win32_GetMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
+				if (microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
 				{
 					if (SleepIsGranular)
 					{
-						DWORD sleepMS = (DWORD)(targetMilliSecondsPerFrame - milliSecondsElapsedForFrame);
+						DWORD sleepMS = (DWORD)(targetMicroSecondsPerFrame - microSecondsElapsedForFrame) / 1000;
 						if (sleepMS > 0)
 						{
 							Sleep(sleepMS);
 						}
 					}
-					while(milliSecondsElapsedForFrame < targetMilliSecondsPerFrame)
+					while(microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
 					{
-						milliSecondsElapsedForFrame = Win32_GetMilliSecondsElapsed(frameStartCounter, Win32_GetWallClock());
+						microSecondsElapsedForFrame = Win32_GetMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
 					}
 				}
 				else
@@ -394,7 +393,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				if (settings.openConsole)
 				{
 					TCHAR writeBuffer[256];
-					sprintf_s(writeBuffer, "actualFrame: %.4f, targetFrame: %.4f, wait: %0.4f\n", appFrameTime, targetMilliSecondsPerFrame, waitTime);
+					wsprintf(writeBuffer, "actualFrame: %d, targetFrame: %d, wait: %d\n", appFrameTimeInMicroSeconds, targetMicroSecondsPerFrame, waitTimeInMicroSeconds);
 					writeToConsole(writeBuffer);
 				}
 
@@ -402,7 +401,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				LARGE_INTEGER frameEndCounter = Win32_GetWallClock();
 
 				// Work out elapsed time for current frame
-				lastDtInSeconds = Win32_GetSecondsElapsed(frameStartCounter, frameEndCounter);
+				lastDtInSeconds = (float)Win32_GetSecondsElapsed(frameStartCounter, frameEndCounter);
 				// Reset measurementsfor next frame
 				frameStartCounter = frameEndCounter;
 			}
