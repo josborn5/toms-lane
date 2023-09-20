@@ -316,12 +316,11 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			GameMemory.transient.sizeInBytes = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
 
 			uint64_t totalStorageSpace = GameMemory.permanent.sizeInBytes + GameMemory.transient.sizeInBytes;
-			bool successfulMemoryAllocation = true;
 			GameMemory.permanent.content = VirtualAlloc(0, (size_t)totalStorageSpace, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
 			if(GameMemory.permanent.content == NULL)
 			{
-				successfulMemoryAllocation = false;
 				DisplayLastWin32Error();
+				return -1;
 			}
 
 			GameMemory.transient.content = (uint8_t*)GameMemory.permanent.content + GameMemory.permanent.sizeInBytes;
@@ -329,21 +328,18 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			// Initialize input state
 			Input gameInput = {0};
 
-			// Initialize timers
-			float lastDtInSeconds = targetMilliSecondsPerFrame / 1000.0f;
-			LARGE_INTEGER LastCounter = Win32_GetWallClock();
-			int64_t LastCycleCount = __rdtsc();
-
-
 			int initResult = Initialize(GameMemory, globalRenderBuffer);
 			if (initResult != 0)
 			{
 				return initResult;
 			}
 
+			// Initialize frame timers
+			float lastDtInSeconds = targetMilliSecondsPerFrame / 1000.0f;
+			LARGE_INTEGER frameStartCounter = Win32_GetWallClock();
 
 			// Main loop
-			while (successfulMemoryAllocation && IsRunning)
+			while (IsRunning)
 			{
 				Win32_ProcessPendingMessages(&gameInput);
 
@@ -373,7 +369,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				ReleaseDC(window, deviceContext);
 
 				// wait before starting next frame
-				float milliSecondsElapsedForFrame = Win32_GetMilliSecondsElapsed(LastCounter, Win32_GetWallClock());
+				float milliSecondsElapsedForFrame = Win32_GetMilliSecondsElapsed(frameStartCounter, Win32_GetWallClock());
 				if (milliSecondsElapsedForFrame < targetMilliSecondsPerFrame)
 				{
 					if (SleepIsGranular)
@@ -386,20 +382,13 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					}
 					while(milliSecondsElapsedForFrame < targetMilliSecondsPerFrame)
 					{
-						milliSecondsElapsedForFrame = Win32_GetMilliSecondsElapsed(LastCounter, Win32_GetWallClock());
+						milliSecondsElapsedForFrame = Win32_GetMilliSecondsElapsed(frameStartCounter, Win32_GetWallClock());
 					}
 				}
 				else
 				{
 					// TODO MISSED FRAME RATE
 				}
-
-				// Take end of frame measurements
-				LARGE_INTEGER EndCounter = Win32_GetWallClock();
-				int64_t EndCycleCount = __rdtsc();
-
-				// Work out elapsed time for current frame
-				lastDtInSeconds = Win32_GetSecondsElapsed(LastCounter, EndCounter);
 
 				// Output frame time information
 				if (settings.openConsole)
@@ -409,9 +398,13 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					writeToConsole(writeBuffer);
 				}
 
+				// Take end of frame measurements
+				LARGE_INTEGER frameEndCounter = Win32_GetWallClock();
+
+				// Work out elapsed time for current frame
+				lastDtInSeconds = Win32_GetSecondsElapsed(frameStartCounter, frameEndCounter);
 				// Reset measurementsfor next frame
-				LastCounter = EndCounter;
-				LastCycleCount = EndCycleCount;
+				frameStartCounter = frameEndCounter;
 			}
 		}
 		else
