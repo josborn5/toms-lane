@@ -10,8 +10,6 @@
 namespace tl
 {
 
-#define DEBUG_BUFFER_SIZE 256
-
 #define Kilobytes(value) ((value) * 1024LL)
 #define Megabytes(value) (Kilobytes(value) * 1024LL)
 #define Gigabytes(value) (Megabytes(value) * 1024LL)
@@ -255,10 +253,15 @@ inline LARGE_INTEGER Win32_GetWallClock()
 inline float Win32_GetSecondsElapsed(LARGE_INTEGER Start, LARGE_INTEGER End)
 {
 	uint64_t CounterElapsed = End.QuadPart - Start.QuadPart;
-	float SecondsElapsedForWork = ((float)CounterElapsed / (float)GlobalPerfCountFrequency);
-	return SecondsElapsedForWork;
+	float secondsElapsedForWork = ((float)CounterElapsed / (float)GlobalPerfCountFrequency);
+	return secondsElapsedForWork;
 }
 
+inline float Win32_GetMilliSecondsElapsed(LARGE_INTEGER start, LARGE_INTEGER end)
+{
+	float secondsElapsed = Win32_GetSecondsElapsed(start, end);
+	return secondsElapsed * 1000.0f;
+}
 
 int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSettings())
 {
@@ -278,7 +281,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 	windowClass.lpszClassName = "Window Class";
 
 	int gameUpdateHz = (settings.targetFPS >= 10) ? settings.targetFPS : 30;
-	float targetSecondsPerFrame = 1.0f / (float)gameUpdateHz;
+	float targetMilliSecondsPerFrame = 1000.0f / (float)gameUpdateHz;
 
 	if(RegisterClassA(&windowClass))
 	{
@@ -327,7 +330,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			Input gameInput = {0};
 
 			// Initialize timers
-			float lastDt = targetSecondsPerFrame;
+			float lastDtInSeconds = targetMilliSecondsPerFrame / 1000.0f;
 			LARGE_INTEGER LastCounter = Win32_GetWallClock();
 			int64_t LastCycleCount = __rdtsc();
 
@@ -352,7 +355,10 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				gameInput.mouse.y = globalRenderBuffer.height - mousePointer.y;
 
 
-				int updateResult = UpdateAndRender(GameMemory, gameInput, globalRenderBuffer, lastDt);
+				LARGE_INTEGER appStartTime = Win32_GetWallClock();
+				int updateResult = UpdateAndRender(GameMemory, gameInput, globalRenderBuffer, lastDtInSeconds);
+				float appFrameTime = Win32_GetMilliSecondsElapsed(appStartTime, Win32_GetWallClock());
+				float waitTime = targetMilliSecondsPerFrame - appFrameTime;
 				if (updateResult != 0)
 				{
 					return updateResult;
@@ -367,21 +373,20 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				ReleaseDC(window, deviceContext);
 
 				// wait before starting next frame
-				float secondsElapsedForFrame = Win32_GetSecondsElapsed(LastCounter, Win32_GetWallClock());
-				float workTime = 1000.0f * secondsElapsedForFrame;
-				if (secondsElapsedForFrame < targetSecondsPerFrame)
+				float milliSecondsElapsedForFrame = Win32_GetMilliSecondsElapsed(LastCounter, Win32_GetWallClock());
+				if (milliSecondsElapsedForFrame < targetMilliSecondsPerFrame)
 				{
 					if (SleepIsGranular)
 					{
-						DWORD SleepMS = (DWORD)(1000.0f * (targetSecondsPerFrame - secondsElapsedForFrame));
-						if (SleepMS > 0)
+						DWORD sleepMS = (DWORD)(targetMilliSecondsPerFrame - milliSecondsElapsedForFrame);
+						if (sleepMS > 0)
 						{
-							Sleep(SleepMS);
+							Sleep(sleepMS);
 						}
 					}
-					while(secondsElapsedForFrame < targetSecondsPerFrame)
+					while(milliSecondsElapsedForFrame < targetMilliSecondsPerFrame)
 					{
-						secondsElapsedForFrame = Win32_GetSecondsElapsed(LastCounter, Win32_GetWallClock());
+						milliSecondsElapsedForFrame = Win32_GetMilliSecondsElapsed(LastCounter, Win32_GetWallClock());
 					}
 				}
 				else
@@ -394,25 +399,13 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				int64_t EndCycleCount = __rdtsc();
 
 				// Work out elapsed time for current frame
-				lastDt = Win32_GetSecondsElapsed(LastCounter, EndCounter);
+				lastDtInSeconds = Win32_GetSecondsElapsed(LastCounter, EndCounter);
 
 				// Output frame time information
-				uint64_t counterElapsed = LastCounter.QuadPart - EndCounter.QuadPart;
-				double FPS = (double)GlobalPerfCountFrequency / (double)counterElapsed;
-				int64_t CyclesElapsed = EndCycleCount - LastCycleCount;
-				double MCPF = (double)CyclesElapsed / (1000.0f * 1000.0f);
-				float msPerFrame = 1000.0f * lastDt;
-
-				DebugInfo debugInfo;
-				debugInfo.workTime = workTime;
-				debugInfo.msPerFrame = msPerFrame;
-				debugInfo.framesPerSecond = FPS;
-				debugInfo.megaCyclesPerFrame = MCPF;
-
 				if (settings.openConsole)
 				{
 					TCHAR writeBuffer[256];
-					sprintf_s(writeBuffer, "target: %.02f actual: %.02f\n", targetSecondsPerFrame, msPerFrame);
+					sprintf_s(writeBuffer, "actualFrame: %.4f, targetFrame: %.4f, wait: %0.4f\n", appFrameTime, targetMilliSecondsPerFrame, waitTime);
 					writeToConsole(writeBuffer);
 				}
 
