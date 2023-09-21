@@ -19,6 +19,8 @@ static RenderBuffer globalRenderBuffer = {0};
 static BITMAPINFO bitmapInfo = {0};	// platform dependent
 static int64_t win32PerformanceCountsPerSecond;
 
+int maxAppFrameTimeInMicroSeconds = 0;
+
 static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 {
 	RECT clientRect = {0};
@@ -392,8 +394,19 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				// Output frame time information
 				if (settings.openConsole)
 				{
+					if (appFrameTimeInMicroSeconds > maxAppFrameTimeInMicroSeconds)
+					{
+						maxAppFrameTimeInMicroSeconds = appFrameTimeInMicroSeconds;
+					}
 					TCHAR writeBuffer[256];
-					wsprintf(writeBuffer, "actualFrame: %d, targetFrame: %d, wait: %d\n", appFrameTimeInMicroSeconds, targetMicroSecondsPerFrame, waitTimeInMicroSeconds);
+					wsprintf(
+						writeBuffer,
+						"max: %d\nactual: %d, target: %d, wait: %d\n",
+						maxAppFrameTimeInMicroSeconds,
+						appFrameTimeInMicroSeconds,
+						targetMicroSecondsPerFrame,
+						waitTimeInMicroSeconds
+					);
 					writeToConsole(writeBuffer);
 				}
 
