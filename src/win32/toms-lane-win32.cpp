@@ -277,7 +277,7 @@ struct SoundOutput
 {
 	int samplesPerSecond;
 	int bytesPerSample;
-	int bufferSizeInBytes;
+	DWORD bufferSizeInBytes;
 };
 
 int Win32SoundSetup(int samplesPerSecond, HWND window, int bufferSizeInBytes)
@@ -354,6 +354,43 @@ int Win32SoundSetup(int samplesPerSecond, HWND window, int bufferSizeInBytes)
 	return 0;
 }
 
+int Win32ClearBuffer(SoundOutput& soundOutput)
+{
+	VOID* region1;
+	DWORD region1Size;
+	VOID* region2;
+	DWORD region2Size;
+
+	if (!SUCCEEDED(globalSecondarySoundBuffer->Lock(
+		0,
+		soundOutput.bufferSizeInBytes,
+		&region1,
+		&region1Size,
+		&region2,
+		&region2Size,
+		0
+	)))
+	{
+		return -1;
+	}
+
+	uint8_t* destinationSample = (uint8_t*)region1;
+	for (DWORD byteIndex = 0; byteIndex < region1Size; byteIndex += 1)
+	{
+		*destinationSample = 0;
+		destinationSample++;
+	}
+
+	globalSecondarySoundBuffer->Unlock(
+		region1,
+		region1Size,
+		region2,
+		region2Size
+	);
+
+	return 0;
+}
+
 int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSettings())
 {
 	LARGE_INTEGER perfCounterFrequencyResult;
@@ -401,6 +438,29 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			// Initialize Visual
 			Win32_SizeglobalRenderBufferToCurrentWindow(window);
 
+			// Initialize sound
+			// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
+			SoundOutput soundOutput = {};
+			soundOutput.samplesPerSecond = 48000;
+			soundOutput.bytesPerSample = 2 * sizeof(int16_t);
+			soundOutput.bufferSizeInBytes = soundOutput.samplesPerSecond * soundOutput.bytesPerSample;
+
+			int soundSetupResult = Win32SoundSetup(
+				soundOutput.samplesPerSecond,
+				window,
+				soundOutput.bufferSizeInBytes
+			);
+
+			if (soundSetupResult == 0)
+			{
+				Win32ClearBuffer(soundOutput);
+				globalSecondarySoundBuffer->Play(
+					0,
+					0,
+					DSBPLAY_LOOPING
+				);
+			}
+
 			// Initialize general use memory
 			GameMemory GameMemory;
 			GameMemory.permanent.sizeInBytes = Megabytes(settings.permanentSpaceInMegabytes);
@@ -416,18 +476,16 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 			GameMemory.transient.content = (uint8_t*)GameMemory.permanent.content + GameMemory.permanent.sizeInBytes;
 
-			// Initialize sound
-			SoundOutput soundOutput = {};
-			soundOutput.samplesPerSecond = 48000;
-			soundOutput.bytesPerSample = 2 * sizeof(int16_t);
-			soundOutput.bufferSizeInBytes = soundOutput.samplesPerSecond * soundOutput.bytesPerSample;
-
-			Win32SoundSetup(
-				soundOutput.samplesPerSecond,
-				window,
-				soundOutput.bufferSizeInBytes
-			);
-
+			uint16_t* samples = nullptr;
+			if (soundSetupResult == 0)
+			{
+				samples = (uint16_t*)VirtualAlloc(
+					0,
+					soundOutput.bufferSizeInBytes,
+					MEM_RESERVE|MEM_COMMIT,
+					PAGE_READWRITE
+				);
+			}
 
 			// Initialize input state
 			Input gameInput = {0};
