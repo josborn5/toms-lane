@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <dsound.h>
 #include <stdint.h>
 
 #include "toms-lane-win32.hpp"
@@ -18,8 +19,8 @@ static bool IsRunning = false;
 static RenderBuffer globalRenderBuffer = {0};
 static BITMAPINFO bitmapInfo = {0};	// platform dependent
 static int64_t win32PerformanceCountsPerSecond;
-
-int maxAppFrameTimeInMicroSeconds = 0;
+LPDIRECTSOUNDBUFFER globalSecondarySoundBuffer;
+static int maxAppFrameTimeInMicroSeconds = 0;
 
 static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 {
@@ -264,6 +265,95 @@ inline int Win32_GetMicroSecondsElapsed(LARGE_INTEGER start, LARGE_INTEGER end)
 	return (int)(secondsElapsed * 1000000.0f);
 }
 
+// Define a function type that mirrors the signature of the
+// DirectSound function being called
+typedef HRESULT WINAPI direct_sound_create(
+	LPCGUID pcGuidDevice,
+	LPDIRECTSOUND* ppDS,
+	LPUNKNOWN pUnkOuter
+);
+
+struct SoundOutput
+{
+	int samplesPerSecond;
+	int bytesPerSample;
+	int bufferSizeInBytes;
+};
+
+int Win32SoundSetup(int samplesPerSecond, HWND window, int bufferSizeInBytes)
+{
+	HMODULE directSoundLibrary = LoadLibraryA("dsound.dll");
+	if (!directSoundLibrary)
+	{
+		return -1;
+	}
+
+	direct_sound_create* directSoundCreateFunction = (direct_sound_create*)GetProcAddress(directSoundLibrary, "DirectSoundCreate");
+
+	LPDIRECTSOUND directSound;
+
+	if (!directSoundCreateFunction)
+	{
+		return -2;
+	}
+
+	if (!SUCCEEDED(directSoundCreateFunction(0, &directSound, 0)))
+	{
+		return -3;
+	}
+
+	WORD numberOfChannels = 2;
+	WORD bitsPerSample = 16;
+	WORD blockAlign = (WORD)(numberOfChannels * bitsPerSample / 8);
+
+	WAVEFORMATEX waveFormat = {};
+	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
+	waveFormat.nChannels = numberOfChannels;
+	waveFormat.nSamplesPerSec = samplesPerSecond;
+	waveFormat.wBitsPerSample = bitsPerSample;
+	waveFormat.nBlockAlign = blockAlign;
+	waveFormat.nAvgBytesPerSec = (samplesPerSecond * blockAlign);
+	waveFormat.cbSize = 0;
+
+	if (!SUCCEEDED(directSound->SetCooperativeLevel(window, DSSCL_PRIORITY)))
+	{
+		return -4;
+	}
+
+	DSBUFFERDESC primaryBufferDescription = {};
+	primaryBufferDescription.dwSize = sizeof(primaryBufferDescription);
+	primaryBufferDescription.dwFlags = DSBCAPS_PRIMARYBUFFER;
+
+	LPDIRECTSOUNDBUFFER primaryBuffer;
+	if (!SUCCEEDED(directSound->CreateSoundBuffer(
+		&primaryBufferDescription,
+		&primaryBuffer,
+		0
+	)))
+	{
+		return -5;
+	}
+
+	HRESULT formatSetResult = primaryBuffer->SetFormat(&waveFormat);
+	if (!SUCCEEDED(formatSetResult))
+	{
+		return -6;
+	}
+
+	DSBUFFERDESC secondaryBufferDescription = {};
+	secondaryBufferDescription.dwSize = sizeof(secondaryBufferDescription);
+	secondaryBufferDescription.dwFlags = DSBCAPS_GETCURRENTPOSITION2;
+	secondaryBufferDescription.dwBufferBytes = bufferSizeInBytes;
+	secondaryBufferDescription.lpwfxFormat = &waveFormat;
+
+	if (!SUCCEEDED(directSound->CreateSoundBuffer(&secondaryBufferDescription, &globalSecondarySoundBuffer, 0)))
+	{
+		return -7;
+	}
+
+	return 0;
+}
+
 int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSettings())
 {
 	LARGE_INTEGER perfCounterFrequencyResult;
@@ -325,6 +415,19 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			}
 
 			GameMemory.transient.content = (uint8_t*)GameMemory.permanent.content + GameMemory.permanent.sizeInBytes;
+
+			// Initialize sound
+			SoundOutput soundOutput = {};
+			soundOutput.samplesPerSecond = 48000;
+			soundOutput.bytesPerSample = 2 * sizeof(int16_t);
+			soundOutput.bufferSizeInBytes = soundOutput.samplesPerSecond * soundOutput.bytesPerSample;
+
+			Win32SoundSetup(
+				soundOutput.samplesPerSecond,
+				window,
+				soundOutput.bufferSizeInBytes
+			);
+
 
 			// Initialize input state
 			Input gameInput = {0};
