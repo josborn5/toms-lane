@@ -14,6 +14,7 @@ namespace tl
 		unsigned long permanentSpaceInMegabytes = 1;
 		unsigned long transientSpaceInMegabytes = 1;
 		bool openConsole = false;
+		bool playSound = false;
 	};
 
 	enum KEY

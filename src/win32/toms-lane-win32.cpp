@@ -441,24 +441,28 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			// Initialize sound
 			// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
 			SoundOutput soundOutput = {};
-			soundOutput.samplesPerSecond = 48000;
-			soundOutput.bytesPerSample = 2 * sizeof(int16_t);
-			soundOutput.bufferSizeInBytes = soundOutput.samplesPerSecond * soundOutput.bytesPerSample;
-
-			int soundSetupResult = Win32SoundSetup(
-				soundOutput.samplesPerSecond,
-				window,
-				soundOutput.bufferSizeInBytes
-			);
-
-			if (soundSetupResult == 0)
+			int soundSetupResult = 1;
+			if (settings.playSound)
 			{
-				Win32ClearBuffer(soundOutput);
-				globalSecondarySoundBuffer->Play(
-					0,
-					0,
-					DSBPLAY_LOOPING
+				soundOutput.samplesPerSecond = 48000;
+				soundOutput.bytesPerSample = 2 * sizeof(int16_t);
+				soundOutput.bufferSizeInBytes = soundOutput.samplesPerSecond * soundOutput.bytesPerSample;
+
+				soundSetupResult = Win32SoundSetup(
+					soundOutput.samplesPerSecond,
+					window,
+					soundOutput.bufferSizeInBytes
 				);
+
+				if (soundSetupResult == 0)
+				{
+					Win32ClearBuffer(soundOutput);
+					globalSecondarySoundBuffer->Play(
+						0,
+						0,
+						DSBPLAY_LOOPING
+					);
+				}
 			}
 
 			// Initialize general use memory
