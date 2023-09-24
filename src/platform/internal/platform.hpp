@@ -55,6 +55,13 @@ namespace tl
 		float* depth;
 	};
 
+	struct SoundBuffer
+	{
+		int samplesPerSecond;
+		int sampleCount;
+		int16_t* samples;
+	};
+
 	struct Button
 	{
 		bool isDown;

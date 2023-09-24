@@ -12,8 +12,6 @@ namespace tl
 
 #define Kilobytes(value) ((value) * 1024LL)
 #define Megabytes(value) (Kilobytes(value) * 1024LL)
-#define Gigabytes(value) (Megabytes(value) * 1024LL)
-#define Terabytes(value) (Gigabytes(value) * 1024LL)
 
 static bool IsRunning = false;
 static RenderBuffer globalRenderBuffer = {0};
@@ -480,10 +478,10 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 			GameMemory.transient.content = (uint8_t*)GameMemory.permanent.content + GameMemory.permanent.sizeInBytes;
 
-			uint16_t* samples = nullptr;
+			int16_t* samples = nullptr;
 			if (soundSetupResult == 0)
 			{
-				samples = (uint16_t*)VirtualAlloc(
+				samples = (int16_t*)VirtualAlloc(
 					0,
 					soundOutput.bufferSizeInBytes,
 					MEM_RESERVE|MEM_COMMIT,
@@ -526,13 +524,54 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					return updateResult;
 				}
 
-
 				ResetButtons(&gameInput);
 
 				// render visual
 				HDC deviceContext = GetDC(window);
 				Win32_DisplayglobalRenderBufferInWindow(deviceContext);
 				ReleaseDC(window, deviceContext);
+
+				// Audio
+				if (settings.playSound)
+				{
+					DWORD playCursor;
+					DWORD writeCursor;
+					if (globalSecondarySoundBuffer->GetCurrentPosition(&playCursor, &writeCursor) == DS_OK)
+					{
+						int runningSampleIndex = writeCursor / soundOutput.bytesPerSample;
+
+						DWORD expectedBytesPerFrame = soundOutput.samplesPerSecond * soundOutput.bytesPerSample / gameUpdateHz;
+
+						int frameDurationToAudioStart = Win32_GetMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
+						int microSecondsToFrameEnd = targetMicroSecondsPerFrame - frameDurationToAudioStart;
+
+						DWORD expectedBytesToFrameEnd = (DWORD)((microSecondsToFrameEnd / targetMicroSecondsPerFrame) * expectedBytesPerFrame);
+						DWORD expectedFrameEndByte = playCursor + expectedBytesToFrameEnd;
+
+						DWORD safeWriteCursor = writeCursor;
+						if (safeWriteCursor < playCursor)
+						{
+							safeWriteCursor += soundOutput.bufferSizeInBytes;
+						}
+
+
+						DWORD targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
+						targetCursor = targetCursor % soundOutput.bufferSizeInBytes;
+
+						DWORD byteToLock = (runningSampleIndex * soundOutput.bytesPerSample) % soundOutput.bufferSizeInBytes;
+
+						DWORD bytesToWrite = (byteToLock > targetCursor)
+							? targetCursor - byteToLock + soundOutput.bufferSizeInBytes
+							: targetCursor - byteToLock;
+
+						SoundBuffer soundBuffer = {0};
+						soundBuffer.samplesPerSecond = soundOutput.samplesPerSecond;
+						soundBuffer.sampleCount = bytesToWrite / soundOutput.bytesPerSample;
+
+						bytesToWrite = soundBuffer.sampleCount * soundOutput.bytesPerSample;
+						soundBuffer.samples = samples;
+					}
+				}
 
 				// wait before starting next frame
 				int microSecondsElapsedForFrame = Win32_GetMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
