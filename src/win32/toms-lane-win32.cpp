@@ -352,7 +352,7 @@ int Win32SoundSetup(int samplesPerSecond, HWND window, int bufferSizeInBytes)
 	return 0;
 }
 
-int Win32ClearBuffer(SoundOutput& soundOutput)
+int Win32ClearSoundBuffer(SoundOutput& soundOutput)
 {
 	VOID* region1;
 	DWORD region1Size;
@@ -377,6 +377,64 @@ int Win32ClearBuffer(SoundOutput& soundOutput)
 	{
 		*destinationSample = 0;
 		destinationSample++;
+	}
+
+	destinationSample = (uint8_t*)region2;
+	for (DWORD byteIndex = 0; byteIndex < region2Size; byteIndex += 1)
+	{
+		*destinationSample = 0;
+		destinationSample++;
+	}
+
+	globalSecondarySoundBuffer->Unlock(
+		region1,
+		region1Size,
+		region2,
+		region2Size
+	);
+
+	return 0;
+}
+
+int Win32FillSoundBuffer(
+	DWORD byteToLock,
+	DWORD bytesToWrite,
+	SoundBuffer& sourceSound
+)
+{
+	VOID* region1;
+	DWORD region1Size;
+	VOID* region2;
+	DWORD region2Size;
+
+	if (!SUCCEEDED(globalSecondarySoundBuffer->Lock(
+		byteToLock,
+		bytesToWrite,
+		&region1,
+		&region1Size,
+		&region2,
+		&region2Size,
+		0
+	)))
+	{
+		return -1;
+	}
+
+	int16_t* targetSample = (int16_t*)region1;
+	int16_t* sourceSample = sourceSound.samples;
+	for (DWORD byteIndex = 0; byteIndex < region1Size; byteIndex += 1)
+	{
+		*targetSample = *sourceSample;
+		targetSample++;
+		sourceSample++;
+	}
+
+	targetSample = (int16_t*)region2;
+	for (DWORD byteIndex = 0; byteIndex < region2Size; byteIndex += 1)
+	{
+		*targetSample = *sourceSample;
+		targetSample++;
+		sourceSample++;
 	}
 
 	globalSecondarySoundBuffer->Unlock(
@@ -454,7 +512,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 				if (soundSetupResult == 0)
 				{
-					Win32ClearBuffer(soundOutput);
+					Win32ClearSoundBuffer(soundOutput);
 					globalSecondarySoundBuffer->Play(
 						0,
 						0,
@@ -571,7 +629,20 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 						bytesToWrite = soundBuffer.sampleCount * soundOutput.bytesPerSample;
 						soundBuffer.samples = samples;
 
+						// Call into the application to fill the sound buffer
 						UpdateSound(soundBuffer);
+
+						DWORD unwrappedWriteCursor = writeCursor;
+						if (unwrappedWriteCursor < playCursor)
+						{
+							unwrappedWriteCursor += soundOutput.bufferSizeInBytes;
+						}
+
+						Win32FillSoundBuffer(
+							byteToLock,
+							bytesToWrite,
+							soundBuffer
+						);
 					}
 				}
 

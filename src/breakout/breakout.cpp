@@ -171,5 +171,18 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 
 int tl::UpdateSound(const SoundBuffer& soundBuffer)
 {
+	static float tSineWave;
+	int toneVolume = 3000;
+	int wavePeriod = soundBuffer.samplesPerSecond / 256;
+	int16_t* sampleOutput = soundBuffer.samples;
+
+	for (int i = 0; i < soundBuffer.sampleCount; i += 1)
+	{
+		float sineValue = sinf(tSineWave);
+		int16_t sampleValue = (int16_t)(sineValue * toneVolume);
+		*sampleOutput = sampleValue;
+		sampleOutput++;
+		tSineWave += 2.0f * 3.14159f * 1.0f / (float)wavePeriod;
+	}
 	return 0;
 }
