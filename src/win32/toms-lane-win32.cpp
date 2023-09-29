@@ -570,6 +570,8 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 						bytesToWrite = soundBuffer.sampleCount * soundOutput.bytesPerSample;
 						soundBuffer.samples = samples;
+
+						UpdateSound(soundBuffer);
 					}
 				}
 

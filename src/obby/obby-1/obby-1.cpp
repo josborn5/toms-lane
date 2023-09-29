@@ -102,3 +102,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, co
 	return 0;
 }
 
+int tl::UpdateSound(const SoundBuffer& soundBuffer)
+{
+	return 0;
+}
