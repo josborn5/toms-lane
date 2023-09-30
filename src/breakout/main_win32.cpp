@@ -9,6 +9,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	settings.height = 720;
 	settings.targetFPS = 60;
 	settings.openConsole = true;
+	settings.playSound = true;
 
 	tl::Win32Main(instance, settings);
 }

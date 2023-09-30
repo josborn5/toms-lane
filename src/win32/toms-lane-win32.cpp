@@ -271,7 +271,7 @@ typedef HRESULT WINAPI direct_sound_create(
 	LPUNKNOWN pUnkOuter
 );
 
-struct SoundOutput
+struct SoundConfig
 {
 	int samplesPerSecond;
 	int bytesPerSample;
@@ -338,13 +338,13 @@ int Win32SoundSetup(int samplesPerSecond, HWND window, int bufferSizeInBytes)
 		return -6;
 	}
 
-	DSBUFFERDESC secondaryBufferDescription = {};
-	secondaryBufferDescription.dwSize = sizeof(secondaryBufferDescription);
-	secondaryBufferDescription.dwFlags = DSBCAPS_GETCURRENTPOSITION2;
-	secondaryBufferDescription.dwBufferBytes = bufferSizeInBytes;
-	secondaryBufferDescription.lpwfxFormat = &waveFormat;
+	DSBUFFERDESC directSoundBufferConfig = {};
+	directSoundBufferConfig.dwSize = sizeof(directSoundBufferConfig);
+	directSoundBufferConfig.dwFlags = DSBCAPS_GETCURRENTPOSITION2;
+	directSoundBufferConfig.dwBufferBytes = bufferSizeInBytes;
+	directSoundBufferConfig.lpwfxFormat = &waveFormat;
 
-	if (!SUCCEEDED(directSound->CreateSoundBuffer(&secondaryBufferDescription, &globalSecondarySoundBuffer, 0)))
+	if (!SUCCEEDED(directSound->CreateSoundBuffer(&directSoundBufferConfig, &globalSecondarySoundBuffer, 0)))
 	{
 		return -7;
 	}
@@ -352,7 +352,7 @@ int Win32SoundSetup(int samplesPerSecond, HWND window, int bufferSizeInBytes)
 	return 0;
 }
 
-int Win32ClearSoundBuffer(SoundOutput& soundOutput)
+int Win32ClearSoundBuffer(const SoundConfig& soundConfig)
 {
 	VOID* region1;
 	DWORD region1Size;
@@ -361,7 +361,7 @@ int Win32ClearSoundBuffer(SoundOutput& soundOutput)
 
 	if (!SUCCEEDED(globalSecondarySoundBuffer->Lock(
 		0,
-		soundOutput.bufferSizeInBytes,
+		soundConfig.bufferSizeInBytes,
 		&region1,
 		&region1Size,
 		&region2,
@@ -397,9 +397,10 @@ int Win32ClearSoundBuffer(SoundOutput& soundOutput)
 }
 
 int Win32FillSoundBuffer(
+	const SoundConfig& soundConfig,
 	DWORD byteToLock,
 	DWORD bytesToWrite,
-	SoundBuffer& sourceSound
+	const SoundBuffer& sourceSound
 )
 {
 	VOID* region1;
@@ -422,16 +423,38 @@ int Win32FillSoundBuffer(
 
 	int16_t* targetSample = (int16_t*)region1;
 	int16_t* sourceSample = sourceSound.samples;
-	for (DWORD byteIndex = 0; byteIndex < region1Size; byteIndex += 1)
+	DWORD region1SampleCount = region1Size / soundConfig.bytesPerSample;
+	for (
+		DWORD sampleIndex = 0;
+		sampleIndex < region1SampleCount;
+		sampleIndex += 1
+	)
 	{
+		// Left Channel
+		*targetSample = *sourceSample;
+		targetSample++;
+		sourceSample++;
+
+		// Right Channel
 		*targetSample = *sourceSample;
 		targetSample++;
 		sourceSample++;
 	}
 
 	targetSample = (int16_t*)region2;
-	for (DWORD byteIndex = 0; byteIndex < region2Size; byteIndex += 1)
+	DWORD region2SampleCount = region2Size / soundConfig.bytesPerSample;
+	for (
+		DWORD sampleIndex = 0;
+		sampleIndex < region2SampleCount;
+		sampleIndex += 1
+	)
 	{
+		// Left Channel
+		*targetSample = *sourceSample;
+		targetSample++;
+		sourceSample++;
+
+		// Right Channel
 		*targetSample = *sourceSample;
 		targetSample++;
 		sourceSample++;
@@ -496,23 +519,23 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 			// Initialize sound
 			// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
-			SoundOutput soundOutput = {};
+			SoundConfig soundConfig = {};
 			int soundSetupResult = 1;
 			if (settings.playSound)
 			{
-				soundOutput.samplesPerSecond = 48000;
-				soundOutput.bytesPerSample = 2 * sizeof(int16_t);
-				soundOutput.bufferSizeInBytes = soundOutput.samplesPerSecond * soundOutput.bytesPerSample;
+				soundConfig.samplesPerSecond = 48000;
+				soundConfig.bytesPerSample = 2 * sizeof(int16_t);
+				soundConfig.bufferSizeInBytes = soundConfig.samplesPerSecond * soundConfig.bytesPerSample;
 
 				soundSetupResult = Win32SoundSetup(
-					soundOutput.samplesPerSecond,
+					soundConfig.samplesPerSecond,
 					window,
-					soundOutput.bufferSizeInBytes
+					soundConfig.bufferSizeInBytes
 				);
 
 				if (soundSetupResult == 0)
 				{
-					Win32ClearSoundBuffer(soundOutput);
+					Win32ClearSoundBuffer(soundConfig);
 					globalSecondarySoundBuffer->Play(
 						0,
 						0,
@@ -541,7 +564,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			{
 				samples = (int16_t*)VirtualAlloc(
 					0,
-					soundOutput.bufferSizeInBytes,
+					soundConfig.bufferSizeInBytes,
 					MEM_RESERVE|MEM_COMMIT,
 					PAGE_READWRITE
 				);
@@ -596,9 +619,9 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					DWORD writeCursor;
 					if (globalSecondarySoundBuffer->GetCurrentPosition(&playCursor, &writeCursor) == DS_OK)
 					{
-						int runningSampleIndex = writeCursor / soundOutput.bytesPerSample;
+						int runningSampleIndex = writeCursor / soundConfig.bytesPerSample;
 
-						DWORD expectedBytesPerFrame = soundOutput.samplesPerSecond * soundOutput.bytesPerSample / gameUpdateHz;
+						DWORD expectedBytesPerFrame = soundConfig.samplesPerSecond * soundConfig.bytesPerSample / gameUpdateHz;
 
 						int frameDurationToAudioStart = Win32_GetMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
 						int microSecondsToFrameEnd = targetMicroSecondsPerFrame - frameDurationToAudioStart;
@@ -609,24 +632,24 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 						DWORD safeWriteCursor = writeCursor;
 						if (safeWriteCursor < playCursor)
 						{
-							safeWriteCursor += soundOutput.bufferSizeInBytes;
+							safeWriteCursor += soundConfig.bufferSizeInBytes;
 						}
 
 
 						DWORD targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
-						targetCursor = targetCursor % soundOutput.bufferSizeInBytes;
+						targetCursor = targetCursor % soundConfig.bufferSizeInBytes;
 
-						DWORD byteToLock = (runningSampleIndex * soundOutput.bytesPerSample) % soundOutput.bufferSizeInBytes;
+						DWORD byteToLock = (runningSampleIndex * soundConfig.bytesPerSample) % soundConfig.bufferSizeInBytes;
 
 						DWORD bytesToWrite = (byteToLock > targetCursor)
-							? targetCursor - byteToLock + soundOutput.bufferSizeInBytes
+							? targetCursor - byteToLock + soundConfig.bufferSizeInBytes
 							: targetCursor - byteToLock;
 
 						SoundBuffer soundBuffer = {0};
-						soundBuffer.samplesPerSecond = soundOutput.samplesPerSecond;
-						soundBuffer.sampleCount = bytesToWrite / soundOutput.bytesPerSample;
+						soundBuffer.samplesPerSecond = soundConfig.samplesPerSecond;
+						soundBuffer.sampleCount = bytesToWrite / soundConfig.bytesPerSample;
 
-						bytesToWrite = soundBuffer.sampleCount * soundOutput.bytesPerSample;
+						bytesToWrite = soundBuffer.sampleCount * soundConfig.bytesPerSample;
 						soundBuffer.samples = samples;
 
 						// Call into the application to fill the sound buffer
@@ -635,10 +658,11 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 						DWORD unwrappedWriteCursor = writeCursor;
 						if (unwrappedWriteCursor < playCursor)
 						{
-							unwrappedWriteCursor += soundOutput.bufferSizeInBytes;
+							unwrappedWriteCursor += soundConfig.bufferSizeInBytes;
 						}
 
 						Win32FillSoundBuffer(
+							soundConfig,
 							byteToLock,
 							bytesToWrite,
 							soundBuffer
