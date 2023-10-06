@@ -288,29 +288,9 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 			// Initialize sound
 			// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
-			SoundConfig soundConfig = {};
-			int soundSetupResult = 1;
 			if (settings.playSound)
 			{
-				soundConfig.samplesPerSecond = 48000;
-				soundConfig.bytesPerSample = 2 * sizeof(int16_t);
-				soundConfig.bufferSizeInBytes = soundConfig.samplesPerSecond * soundConfig.bytesPerSample;
-
-				soundSetupResult = Win32SoundSetup(
-					soundConfig.samplesPerSecond,
-					window,
-					soundConfig.bufferSizeInBytes
-				);
-
-				if (soundSetupResult == 0)
-				{
-					Win32ClearSoundBuffer(soundConfig);
-					globalSecondarySoundBuffer->Play(
-						0,
-						0,
-						DSBPLAY_LOOPING
-					);
-				}
+				Win32SoundSetup(window);
 			}
 
 			// Initialize general use memory
@@ -327,17 +307,6 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			}
 
 			GameMemory.transient.content = (uint8_t*)GameMemory.permanent.content + GameMemory.permanent.sizeInBytes;
-
-			int16_t* samples = nullptr;
-			if (soundSetupResult == 0)
-			{
-				samples = (int16_t*)VirtualAlloc(
-					0,
-					soundConfig.bufferSizeInBytes,
-					MEM_RESERVE|MEM_COMMIT,
-					PAGE_READWRITE
-				);
-			}
 
 			// Initialize input state
 			Input gameInput = {0};
@@ -385,11 +354,9 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				if (settings.playSound)
 				{
 					ProcessSound(
-						soundConfig,
 						gameUpdateHz,
 						frameStartCounter,
-						targetMicroSecondsPerFrame,
-						samples
+						targetMicroSecondsPerFrame
 					);
 				}
 
