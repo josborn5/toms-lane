@@ -4,6 +4,7 @@
 #include "toms-lane-win32.hpp"
 #include "toms-lane-win32-file.cpp"
 #include "toms-lane-win32-console.cpp"
+#include "toms-lane-win32-time.cpp"
 #include "toms-lane-win32-sound.cpp"
 
 namespace tl
@@ -15,7 +16,6 @@ namespace tl
 static bool IsRunning = false;
 static RenderBuffer globalRenderBuffer = {0};
 static BITMAPINFO bitmapInfo = {0};	// platform dependent
-static int64_t win32PerformanceCountsPerSecond;
 static int maxAppFrameTimeInMicroSeconds = 0;
 
 static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
@@ -241,31 +241,9 @@ void DisplayLastWin32Error()
 	wsprintf(ErrorCodeBuffer, "VirtualAlloc error code: %d\n", ErrorCode);
 }
 
-inline LARGE_INTEGER Win32_GetWallClock()
-{
-	LARGE_INTEGER Result;
-	QueryPerformanceCounter(&Result);
-	return Result;
-}
-
-inline double Win32_GetSecondsElapsed(LARGE_INTEGER Start, LARGE_INTEGER End)
-{
-	uint64_t counterElapsed = End.QuadPart - Start.QuadPart;
-	double secondsElapsedForWork = ((double)counterElapsed / (double)win32PerformanceCountsPerSecond);
-	return secondsElapsedForWork;
-}
-
-inline int Win32_GetMicroSecondsElapsed(LARGE_INTEGER start, LARGE_INTEGER end)
-{
-	double secondsElapsed = Win32_GetSecondsElapsed(start, end);
-	return (int)(secondsElapsed * 1000000.0f);
-}
-
 int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSettings())
 {
-	LARGE_INTEGER perfCounterFrequencyResult;
-	QueryPerformanceFrequency(&perfCounterFrequencyResult);
-	win32PerformanceCountsPerSecond = perfCounterFrequencyResult.QuadPart;
+	InitializeTime();
 
 	// Set the Windows schedular granularity to 1ms to help our Sleep() function call be granular
 	UINT DesiredSchedulerMS = 1;
@@ -406,59 +384,13 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				// Audio
 				if (settings.playSound)
 				{
-					DWORD playCursor;
-					DWORD writeCursor;
-					if (globalSecondarySoundBuffer->GetCurrentPosition(&playCursor, &writeCursor) == DS_OK)
-					{
-						int runningSampleIndex = writeCursor / soundConfig.bytesPerSample;
-
-						DWORD expectedBytesPerFrame = soundConfig.samplesPerSecond * soundConfig.bytesPerSample / gameUpdateHz;
-
-						int frameDurationToAudioStart = Win32_GetMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
-						int microSecondsToFrameEnd = targetMicroSecondsPerFrame - frameDurationToAudioStart;
-
-						DWORD expectedBytesToFrameEnd = (DWORD)((microSecondsToFrameEnd / targetMicroSecondsPerFrame) * expectedBytesPerFrame);
-						DWORD expectedFrameEndByte = playCursor + expectedBytesToFrameEnd;
-
-						DWORD safeWriteCursor = writeCursor;
-						if (safeWriteCursor < playCursor)
-						{
-							safeWriteCursor += soundConfig.bufferSizeInBytes;
-						}
-
-
-						DWORD targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
-						targetCursor = targetCursor % soundConfig.bufferSizeInBytes;
-
-						DWORD byteToLock = (runningSampleIndex * soundConfig.bytesPerSample) % soundConfig.bufferSizeInBytes;
-
-						DWORD bytesToWrite = (byteToLock > targetCursor)
-							? targetCursor - byteToLock + soundConfig.bufferSizeInBytes
-							: targetCursor - byteToLock;
-
-						SoundBuffer soundBuffer = {0};
-						soundBuffer.samplesPerSecond = soundConfig.samplesPerSecond;
-						soundBuffer.sampleCount = bytesToWrite / soundConfig.bytesPerSample;
-
-						bytesToWrite = soundBuffer.sampleCount * soundConfig.bytesPerSample;
-						soundBuffer.samples = samples;
-
-						// Call into the application to fill the sound buffer
-						UpdateSound(soundBuffer);
-
-						DWORD unwrappedWriteCursor = writeCursor;
-						if (unwrappedWriteCursor < playCursor)
-						{
-							unwrappedWriteCursor += soundConfig.bufferSizeInBytes;
-						}
-
-						Win32FillSoundBuffer(
-							soundConfig,
-							byteToLock,
-							bytesToWrite,
-							soundBuffer
-						);
-					}
+					ProcessSound(
+						soundConfig,
+						gameUpdateHz,
+						frameStartCounter,
+						targetMicroSecondsPerFrame,
+						samples
+					);
 				}
 
 				// wait before starting next frame

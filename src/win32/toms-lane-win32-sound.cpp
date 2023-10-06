@@ -20,7 +20,11 @@ struct SoundConfig
 	DWORD bufferSizeInBytes;
 };
 
-int Win32SoundSetup(int samplesPerSecond, HWND window, int bufferSizeInBytes)
+int Win32SoundSetup(
+	int samplesPerSecond,
+	HWND window,
+	int bufferSizeInBytes
+)
 {
 	HMODULE directSoundLibrary = LoadLibraryA("dsound.dll");
 	if (!directSoundLibrary)
@@ -208,6 +212,71 @@ int Win32FillSoundBuffer(
 		region2,
 		region2Size
 	);
+
+	return 0;
+}
+
+int ProcessSound(
+	const SoundConfig& soundConfig,
+	int gameUpdateHz,
+	LARGE_INTEGER frameStartCounter,
+	int targetMicroSecondsPerFrame,
+	int16_t* samples
+)
+{
+	DWORD playCursor;
+	DWORD writeCursor;
+	if (globalSecondarySoundBuffer->GetCurrentPosition(&playCursor, &writeCursor) == DS_OK)
+	{
+		int runningSampleIndex = writeCursor / soundConfig.bytesPerSample;
+
+		DWORD expectedBytesPerFrame = soundConfig.samplesPerSecond * soundConfig.bytesPerSample / gameUpdateHz;
+
+		int frameDurationToAudioStart = Win32_GetMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
+		int microSecondsToFrameEnd = targetMicroSecondsPerFrame - frameDurationToAudioStart;
+
+		DWORD expectedBytesToFrameEnd = (DWORD)((microSecondsToFrameEnd / targetMicroSecondsPerFrame) * expectedBytesPerFrame);
+		DWORD expectedFrameEndByte = playCursor + expectedBytesToFrameEnd;
+
+		DWORD safeWriteCursor = writeCursor;
+		if (safeWriteCursor < playCursor)
+		{
+			safeWriteCursor += soundConfig.bufferSizeInBytes;
+		}
+
+
+		DWORD targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
+		targetCursor = targetCursor % soundConfig.bufferSizeInBytes;
+
+		DWORD byteToLock = (runningSampleIndex * soundConfig.bytesPerSample) % soundConfig.bufferSizeInBytes;
+
+		DWORD bytesToWrite = (byteToLock > targetCursor)
+			? targetCursor - byteToLock + soundConfig.bufferSizeInBytes
+			: targetCursor - byteToLock;
+
+		SoundBuffer soundBuffer = {0};
+		soundBuffer.samplesPerSecond = soundConfig.samplesPerSecond;
+		soundBuffer.sampleCount = bytesToWrite / soundConfig.bytesPerSample;
+
+		bytesToWrite = soundBuffer.sampleCount * soundConfig.bytesPerSample;
+		soundBuffer.samples = samples;
+
+		// Call into the application to fill the sound buffer
+		UpdateSound(soundBuffer);
+
+		DWORD unwrappedWriteCursor = writeCursor;
+		if (unwrappedWriteCursor < playCursor)
+		{
+			unwrappedWriteCursor += soundConfig.bufferSizeInBytes;
+		}
+
+		Win32FillSoundBuffer(
+			soundConfig,
+			byteToLock,
+			bytesToWrite,
+			soundBuffer
+		);
+	}
 
 	return 0;
 }
