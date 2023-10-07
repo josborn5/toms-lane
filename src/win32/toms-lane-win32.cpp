@@ -337,7 +337,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 				LARGE_INTEGER appFrameStartCounter = Win32_GetWallClock();
 				int updateResult = UpdateAndRender(GameMemory, gameInput, globalRenderBuffer, lastDtInSeconds);
-				int appFrameTimeInMicroSeconds = timer.getMicroSecondsElapsed(appFrameStartCounter, Win32_GetWallClock());
+				int appFrameTimeInMicroSeconds = timer.getMicroSecondsElapsed(appFrameStartCounter);
 				int waitTimeInMicroSeconds = targetMicroSecondsPerFrame - appFrameTimeInMicroSeconds;
 				if (updateResult != 0)
 				{
@@ -363,7 +363,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				}
 
 				// wait before starting next frame
-				int microSecondsElapsedForFrame = timer.getMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
+				int microSecondsElapsedForFrame = timer.getMicroSecondsElapsed(frameStartCounter);
 				if (microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
 				{
 					if (SleepIsGranular)
@@ -376,7 +376,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					}
 					while(microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
 					{
-						microSecondsElapsedForFrame = timer.getMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
+						microSecondsElapsedForFrame = timer.getMicroSecondsElapsed(frameStartCounter);
 					}
 				}
 				else

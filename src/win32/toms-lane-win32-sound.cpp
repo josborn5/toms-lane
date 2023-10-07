@@ -254,7 +254,7 @@ int ProcessSound(
 
 	DWORD expectedBytesPerFrame = soundConfig.samplesPerSecond * soundConfig.bytesPerSample / gameUpdateHz;
 
-	int frameDurationToAudioStart = timer.getMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
+	int frameDurationToAudioStart = timer.getMicroSecondsElapsed(frameStartCounter);
 	int microSecondsToFrameEnd = targetMicroSecondsPerFrame - frameDurationToAudioStart;
 
 	DWORD expectedBytesToFrameEnd = (DWORD)((microSecondsToFrameEnd / targetMicroSecondsPerFrame) * expectedBytesPerFrame);

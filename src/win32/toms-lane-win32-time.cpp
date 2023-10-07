@@ -22,8 +22,9 @@ public:
 		return secondsElapsedForWork;
 	}
 
-	int getMicroSecondsElapsed(LARGE_INTEGER start, LARGE_INTEGER end) const
+	int getMicroSecondsElapsed(LARGE_INTEGER start) const
 	{
+		LARGE_INTEGER end = Win32_GetWallClock();
 		double secondsElapsed = getSecondsElapsed(start, end);
 		return (int)(secondsElapsed * 1000000.0f);
 	}
