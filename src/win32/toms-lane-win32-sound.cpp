@@ -239,7 +239,8 @@ int Win32FillSoundBuffer(
 int ProcessSound(
 	int gameUpdateHz,
 	LARGE_INTEGER frameStartCounter,
-	int targetMicroSecondsPerFrame
+	int targetMicroSecondsPerFrame,
+	const Win32Time& timer
 )
 {
 	DWORD playCursor;
@@ -253,7 +254,7 @@ int ProcessSound(
 
 	DWORD expectedBytesPerFrame = soundConfig.samplesPerSecond * soundConfig.bytesPerSample / gameUpdateHz;
 
-	int frameDurationToAudioStart = Win32_GetMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
+	int frameDurationToAudioStart = timer.getMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
 	int microSecondsToFrameEnd = targetMicroSecondsPerFrame - frameDurationToAudioStart;
 
 	DWORD expectedBytesToFrameEnd = (DWORD)((microSecondsToFrameEnd / targetMicroSecondsPerFrame) * expectedBytesPerFrame);

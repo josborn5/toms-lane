@@ -1,12 +1,3 @@
-static int64_t win32PerformanceCountsPerSecond;
-
-inline void InitializeTime()
-{
-	LARGE_INTEGER perfCounterFrequencyResult;
-	QueryPerformanceFrequency(&perfCounterFrequencyResult);
-	win32PerformanceCountsPerSecond = perfCounterFrequencyResult.QuadPart;
-}
-
 inline LARGE_INTEGER Win32_GetWallClock()
 {
 	LARGE_INTEGER Result;
@@ -14,15 +5,30 @@ inline LARGE_INTEGER Win32_GetWallClock()
 	return Result;
 }
 
-inline double Win32_GetSecondsElapsed(LARGE_INTEGER Start, LARGE_INTEGER End)
+class Win32Time
 {
-	uint64_t counterElapsed = End.QuadPart - Start.QuadPart;
-	double secondsElapsedForWork = ((double)counterElapsed / (double)win32PerformanceCountsPerSecond);
-	return secondsElapsedForWork;
-}
+public:
+	void initialize()
+	{
+		LARGE_INTEGER perfCounterFrequencyResult;
+		QueryPerformanceFrequency(&perfCounterFrequencyResult);
+		_performanceCountsPerSecond = perfCounterFrequencyResult.QuadPart;
+	}
 
-inline int Win32_GetMicroSecondsElapsed(LARGE_INTEGER start, LARGE_INTEGER end)
-{
-	double secondsElapsed = Win32_GetSecondsElapsed(start, end);
-	return (int)(secondsElapsed * 1000000.0f);
-}
+	double getSecondsElapsed(LARGE_INTEGER Start, LARGE_INTEGER End) const
+	{
+		uint64_t counterElapsed = End.QuadPart - Start.QuadPart;
+		double secondsElapsedForWork = ((double)counterElapsed / (double)_performanceCountsPerSecond);
+		return secondsElapsedForWork;
+	}
+
+	int getMicroSecondsElapsed(LARGE_INTEGER start, LARGE_INTEGER end) const
+	{
+		double secondsElapsed = getSecondsElapsed(start, end);
+		return (int)(secondsElapsed * 1000000.0f);
+	}
+
+private:
+	int64_t _performanceCountsPerSecond;
+};
+

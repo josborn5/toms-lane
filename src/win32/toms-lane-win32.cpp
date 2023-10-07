@@ -243,7 +243,8 @@ void DisplayLastWin32Error()
 
 int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSettings())
 {
-	InitializeTime();
+	Win32Time timer = Win32Time();
+	timer.initialize();
 
 	// Set the Windows schedular granularity to 1ms to help our Sleep() function call be granular
 	UINT DesiredSchedulerMS = 1;
@@ -336,7 +337,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 				LARGE_INTEGER appFrameStartCounter = Win32_GetWallClock();
 				int updateResult = UpdateAndRender(GameMemory, gameInput, globalRenderBuffer, lastDtInSeconds);
-				int appFrameTimeInMicroSeconds = Win32_GetMicroSecondsElapsed(appFrameStartCounter, Win32_GetWallClock());
+				int appFrameTimeInMicroSeconds = timer.getMicroSecondsElapsed(appFrameStartCounter, Win32_GetWallClock());
 				int waitTimeInMicroSeconds = targetMicroSecondsPerFrame - appFrameTimeInMicroSeconds;
 				if (updateResult != 0)
 				{
@@ -356,12 +357,13 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					ProcessSound(
 						gameUpdateHz,
 						frameStartCounter,
-						targetMicroSecondsPerFrame
+						targetMicroSecondsPerFrame,
+						timer
 					);
 				}
 
 				// wait before starting next frame
-				int microSecondsElapsedForFrame = Win32_GetMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
+				int microSecondsElapsedForFrame = timer.getMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
 				if (microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
 				{
 					if (SleepIsGranular)
@@ -374,7 +376,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					}
 					while(microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
 					{
-						microSecondsElapsedForFrame = Win32_GetMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
+						microSecondsElapsedForFrame = timer.getMicroSecondsElapsed(frameStartCounter, Win32_GetWallClock());
 					}
 				}
 				else
@@ -405,7 +407,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				LARGE_INTEGER frameEndCounter = Win32_GetWallClock();
 
 				// Work out elapsed time for current frame
-				lastDtInSeconds = (float)Win32_GetSecondsElapsed(frameStartCounter, frameEndCounter);
+				lastDtInSeconds = (float)timer.getSecondsElapsed(frameStartCounter, frameEndCounter);
 				// Reset measurementsfor next frame
 				frameStartCounter = frameEndCounter;
 			}
