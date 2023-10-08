@@ -289,9 +289,10 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 			// Initialize sound
 			// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
+			Win32DirectSound directSound = Win32DirectSound();
 			if (settings.playSound)
 			{
-				Win32SoundSetup(window);
+				directSound.initialize(window);
 			}
 
 			// Initialize general use memory
@@ -354,7 +355,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				// Audio
 				if (settings.playSound)
 				{
-					ProcessSound(
+					directSound.processSound(
 						gameUpdateHz,
 						frameStartCounter,
 						targetMicroSecondsPerFrame,
