@@ -229,6 +229,14 @@ public:
 		return 0;
 	}
 
+private:
+	LPDIRECTSOUNDBUFFER _secondarySoundBuffer;
+	int16_t* _samples = nullptr;
+	DWORD _byteToLock;
+	DWORD _bytesToWrite;
+	int _bytesPerSample;
+	int _samplesPerSecond;
+	DWORD _bufferSizeInBytes;
 
 	int clearSoundBuffer()
 	{
@@ -273,17 +281,6 @@ public:
 
 		return 0;
 	}
-
-
-
-private:
-	LPDIRECTSOUNDBUFFER _secondarySoundBuffer;
-	int16_t* _samples = nullptr;
-	DWORD _byteToLock;
-	DWORD _bytesToWrite;
-	int _bytesPerSample;
-	int _samplesPerSecond;
-	DWORD _bufferSizeInBytes;
 };
 
 }
