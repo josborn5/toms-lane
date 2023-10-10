@@ -11,13 +11,6 @@ typedef HRESULT WINAPI direct_sound_create(
 	LPUNKNOWN pUnkOuter
 );
 
-struct SoundConfig
-{
-	int samplesPerSecond;
-	int bytesPerSample;
-	DWORD bufferSizeInBytes;
-};
-
 class Win32DirectSound
 {
 public:
@@ -25,12 +18,9 @@ public:
 		HWND window
 	)
 	{
-		_soundConfig.samplesPerSecond = 48000;
-		_soundConfig.bytesPerSample = 2 * sizeof(int16_t);
-		_soundConfig.bufferSizeInBytes = _soundConfig.samplesPerSecond * _soundConfig.bytesPerSample;
-
-		int samplesPerSecond = _soundConfig.samplesPerSecond;
-		int bufferSizeInBytes = _soundConfig.bufferSizeInBytes;
+		_samplesPerSecond = 48000;
+		_bytesPerSample = 2 * sizeof(int16_t);
+		_bufferSizeInBytes = _samplesPerSecond * _bytesPerSample;
 
 		HMODULE directSoundLibrary = LoadLibraryA("dsound.dll");
 		if (!directSoundLibrary)
@@ -59,10 +49,10 @@ public:
 		WAVEFORMATEX waveFormat = {};
 		waveFormat.wFormatTag = WAVE_FORMAT_PCM;
 		waveFormat.nChannels = numberOfChannels;
-		waveFormat.nSamplesPerSec = samplesPerSecond;
+		waveFormat.nSamplesPerSec = _samplesPerSecond;
 		waveFormat.wBitsPerSample = bitsPerSample;
 		waveFormat.nBlockAlign = blockAlign;
-		waveFormat.nAvgBytesPerSec = (samplesPerSecond * blockAlign);
+		waveFormat.nAvgBytesPerSec = (_samplesPerSecond * blockAlign);
 		waveFormat.cbSize = 0;
 
 		if (!SUCCEEDED(directSound->SetCooperativeLevel(window, DSSCL_PRIORITY)))
@@ -93,7 +83,7 @@ public:
 		DSBUFFERDESC directSoundBufferConfig = {};
 		directSoundBufferConfig.dwSize = sizeof(directSoundBufferConfig);
 		directSoundBufferConfig.dwFlags = DSBCAPS_GETCURRENTPOSITION2;
-		directSoundBufferConfig.dwBufferBytes = bufferSizeInBytes;
+		directSoundBufferConfig.dwBufferBytes = _bufferSizeInBytes;
 		directSoundBufferConfig.lpwfxFormat = &waveFormat;
 
 		if (!SUCCEEDED(directSound->CreateSoundBuffer(&directSoundBufferConfig, &_secondarySoundBuffer, 0)))
@@ -110,7 +100,7 @@ public:
 
 		_samples = (int16_t*)VirtualAlloc(
 			0,
-			_soundConfig.bufferSizeInBytes,
+			_bufferSizeInBytes,
 			MEM_RESERVE|MEM_COMMIT,
 			PAGE_READWRITE
 		);
@@ -134,9 +124,9 @@ public:
 			return -1;
 		}
 
-		int runningSampleIndex = writeCursor / _soundConfig.bytesPerSample;
+		int runningSampleIndex = writeCursor / _bytesPerSample;
 
-		DWORD expectedBytesPerFrame = _soundConfig.samplesPerSecond * _soundConfig.bytesPerSample / gameUpdateHz;
+		DWORD expectedBytesPerFrame = _samplesPerSecond * _bytesPerSample / gameUpdateHz;
 
 		int frameDurationToAudioStart = timer.getMicroSecondsElapsed(frameStartCounter);
 		int microSecondsToFrameEnd = targetMicroSecondsPerFrame - frameDurationToAudioStart;
@@ -147,22 +137,22 @@ public:
 		DWORD safeWriteCursor = writeCursor;
 		if (safeWriteCursor < playCursor)
 		{
-			safeWriteCursor += _soundConfig.bufferSizeInBytes;
+			safeWriteCursor += _bufferSizeInBytes;
 		}
 
 		DWORD targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
-		targetCursor = targetCursor % _soundConfig.bufferSizeInBytes;
+		targetCursor = targetCursor % _bufferSizeInBytes;
 
-		_byteToLock = (runningSampleIndex * _soundConfig.bytesPerSample) % _soundConfig.bufferSizeInBytes;
+		_byteToLock = (runningSampleIndex * _bytesPerSample) % _bufferSizeInBytes;
 
 		_bytesToWrite = (_byteToLock > targetCursor)
-			? targetCursor - _byteToLock + _soundConfig.bufferSizeInBytes
+			? targetCursor - _byteToLock + _bufferSizeInBytes
 			: targetCursor - _byteToLock;
 
-		soundBuffer->samplesPerSecond = _soundConfig.samplesPerSecond;
-		soundBuffer->sampleCount = _bytesToWrite / _soundConfig.bytesPerSample;
+		soundBuffer->samplesPerSecond = _samplesPerSecond;
+		soundBuffer->sampleCount = _bytesToWrite / _bytesPerSample;
 
-		_bytesToWrite = soundBuffer->sampleCount * _soundConfig.bytesPerSample;
+		_bytesToWrite = soundBuffer->sampleCount * _bytesPerSample;
 		soundBuffer->samples = _samples;
 
 		return 0;
@@ -192,7 +182,7 @@ public:
 
 		int16_t* targetSample = (int16_t*)region1;
 		int16_t* sourceSample = sourceSound.samples;
-		DWORD region1SampleCount = region1Size / _soundConfig.bytesPerSample;
+		DWORD region1SampleCount = region1Size / _bytesPerSample;
 		for (
 			DWORD sampleIndex = 0;
 			sampleIndex < region1SampleCount;
@@ -211,7 +201,7 @@ public:
 		}
 
 		targetSample = (int16_t*)region2;
-		DWORD region2SampleCount = region2Size / _soundConfig.bytesPerSample;
+		DWORD region2SampleCount = region2Size / _bytesPerSample;
 		for (
 			DWORD sampleIndex = 0;
 			sampleIndex < region2SampleCount;
@@ -249,7 +239,7 @@ public:
 
 		if (!SUCCEEDED(_secondarySoundBuffer->Lock(
 			0,
-			_soundConfig.bufferSizeInBytes,
+			_bufferSizeInBytes,
 			&region1,
 			&region1Size,
 			&region2,
@@ -288,10 +278,12 @@ public:
 
 private:
 	LPDIRECTSOUNDBUFFER _secondarySoundBuffer;
-	SoundConfig _soundConfig = {};
 	int16_t* _samples = nullptr;
 	DWORD _byteToLock;
 	DWORD _bytesToWrite;
+	int _bytesPerSample;
+	int _samplesPerSecond;
+	DWORD _bufferSizeInBytes;
 };
 
 }
