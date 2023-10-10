@@ -361,7 +361,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 						frameStartCounter,
 						targetMicroSecondsPerFrame,
 						timer,
-						&soundBuffer
+						soundBuffer
 					);
 
 					// Call into the application to fill the sound buffer

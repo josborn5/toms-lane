@@ -114,7 +114,7 @@ public:
 		LARGE_INTEGER frameStartCounter,
 		int targetMicroSecondsPerFrame,
 		const Win32Time& timer,
-		SoundBuffer* soundBuffer
+		SoundBuffer& soundBuffer
 	)
 	{
 		DWORD playCursor;
@@ -149,11 +149,11 @@ public:
 			? targetCursor - _byteToLock + _bufferSizeInBytes
 			: targetCursor - _byteToLock;
 
-		soundBuffer->samplesPerSecond = _samplesPerSecond;
-		soundBuffer->sampleCount = _bytesToWrite / _bytesPerSample;
+		soundBuffer.samplesPerSecond = _samplesPerSecond;
+		soundBuffer.sampleCount = _bytesToWrite / _bytesPerSample;
 
-		_bytesToWrite = soundBuffer->sampleCount * _bytesPerSample;
-		soundBuffer->samples = _samples;
+		_bytesToWrite = soundBuffer.sampleCount * _bytesPerSample;
+		soundBuffer.samples = _samples;
 
 		return 0;
 	}
