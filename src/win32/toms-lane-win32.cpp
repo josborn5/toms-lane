@@ -355,12 +355,19 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				// Audio
 				if (settings.playSound)
 				{
-					directSound.processSound(
+					SoundBuffer soundBuffer = {0};
+					directSound.initializeSoundBuffer(
 						gameUpdateHz,
 						frameStartCounter,
 						targetMicroSecondsPerFrame,
-						timer
+						timer,
+						&soundBuffer
 					);
+
+					// Call into the application to fill the sound buffer
+					UpdateSound(soundBuffer);
+
+					directSound.processSoundBuffer(soundBuffer);
 				}
 
 				// wait before starting next frame

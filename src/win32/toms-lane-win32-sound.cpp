@@ -119,11 +119,12 @@ public:
 	}
 
 
-	int processSound(
+	int initializeSoundBuffer(
 		int gameUpdateHz,
 		LARGE_INTEGER frameStartCounter,
 		int targetMicroSecondsPerFrame,
-		const Win32Time& timer
+		const Win32Time& timer,
+		SoundBuffer* soundBuffer
 	)
 	{
 		DWORD playCursor;
@@ -152,41 +153,22 @@ public:
 		DWORD targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
 		targetCursor = targetCursor % _soundConfig.bufferSizeInBytes;
 
-		DWORD byteToLock = (runningSampleIndex * _soundConfig.bytesPerSample) % _soundConfig.bufferSizeInBytes;
+		_byteToLock = (runningSampleIndex * _soundConfig.bytesPerSample) % _soundConfig.bufferSizeInBytes;
 
-		DWORD bytesToWrite = (byteToLock > targetCursor)
-			? targetCursor - byteToLock + _soundConfig.bufferSizeInBytes
-			: targetCursor - byteToLock;
+		_bytesToWrite = (_byteToLock > targetCursor)
+			? targetCursor - _byteToLock + _soundConfig.bufferSizeInBytes
+			: targetCursor - _byteToLock;
 
-		SoundBuffer soundBuffer = {0};
-		soundBuffer.samplesPerSecond = _soundConfig.samplesPerSecond;
-		soundBuffer.sampleCount = bytesToWrite / _soundConfig.bytesPerSample;
+		soundBuffer->samplesPerSecond = _soundConfig.samplesPerSecond;
+		soundBuffer->sampleCount = _bytesToWrite / _soundConfig.bytesPerSample;
 
-		bytesToWrite = soundBuffer.sampleCount * _soundConfig.bytesPerSample;
-		soundBuffer.samples = _samples;
-
-		// Call into the application to fill the sound buffer
-		UpdateSound(soundBuffer);
-
-		DWORD unwrappedWriteCursor = writeCursor;
-		if (unwrappedWriteCursor < playCursor)
-		{
-			unwrappedWriteCursor += _soundConfig.bufferSizeInBytes;
-		}
-
-		fillSoundBuffer(
-			byteToLock,
-			bytesToWrite,
-			soundBuffer
-		);
+		_bytesToWrite = soundBuffer->sampleCount * _soundConfig.bytesPerSample;
+		soundBuffer->samples = _samples;
 
 		return 0;
 	}
 
-
-	int fillSoundBuffer(
-		DWORD byteToLock,
-		DWORD bytesToWrite,
+	int processSoundBuffer(
 		const SoundBuffer& sourceSound
 	)
 	{
@@ -196,8 +178,8 @@ public:
 		DWORD region2Size;
 
 		if (!SUCCEEDED(_secondarySoundBuffer->Lock(
-			byteToLock,
-			bytesToWrite,
+			_byteToLock,
+			_bytesToWrite,
 			&region1,
 			&region1Size,
 			&region2,
@@ -308,6 +290,8 @@ private:
 	LPDIRECTSOUNDBUFFER _secondarySoundBuffer;
 	SoundConfig _soundConfig = {};
 	int16_t* _samples = nullptr;
+	DWORD _byteToLock;
+	DWORD _bytesToWrite;
 };
 
 }
