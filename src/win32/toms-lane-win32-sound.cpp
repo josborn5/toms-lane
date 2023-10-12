@@ -117,32 +117,25 @@ public:
 		SoundBuffer& soundBuffer
 	)
 	{
-		DWORD playCursor;
-		DWORD writeCursor;
-		if (_secondarySoundBuffer->GetCurrentPosition(&playCursor, &writeCursor) != DS_OK)
-		{
-			return -1;
-		}
-
-		int runningSampleIndex = writeCursor / _bytesPerSample;
-
 		DWORD expectedBytesPerFrame = _samplesPerSecond * _bytesPerSample / gameUpdateHz;
 
 		int frameDurationToAudioStart = timer.getMicroSecondsElapsed(frameStartCounter);
 		int microSecondsToFrameEnd = targetMicroSecondsPerFrame - frameDurationToAudioStart;
 
 		DWORD expectedBytesToFrameEnd = (DWORD)((microSecondsToFrameEnd / targetMicroSecondsPerFrame) * expectedBytesPerFrame);
-		DWORD expectedFrameEndByte = playCursor + expectedBytesToFrameEnd;
 
-		DWORD safeWriteCursor = writeCursor;
-		if (safeWriteCursor < playCursor)
+		DWORD playCursor;
+		DWORD writeCursor;
+		if (_secondarySoundBuffer->GetCurrentPosition(&playCursor, &writeCursor) != DS_OK)
 		{
-			safeWriteCursor += _bufferSizeInBytes;
+			return -1;
 		}
+		DWORD expectedFrameEndByte = playCursor + expectedBytesToFrameEnd;
 
 		DWORD targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
 		targetCursor = targetCursor % _bufferSizeInBytes;
 
+		int runningSampleIndex = writeCursor / _bytesPerSample;
 		_byteToLock = (runningSampleIndex * _bytesPerSample) % _bufferSizeInBytes;
 
 		_bytesToWrite = (_byteToLock > targetCursor)
@@ -229,6 +222,16 @@ public:
 		return 0;
 	}
 
+	int byteToLock()
+	{
+		return (int)_byteToLock;
+	}
+
+	uint32_t bufferSizeInBytes()
+	{
+		return (uint32_t)_bufferSizeInBytes;
+	}
+
 private:
 	LPDIRECTSOUNDBUFFER _secondarySoundBuffer;
 	int16_t* _samples = nullptr;
@@ -237,6 +240,7 @@ private:
 	int _bytesPerSample;
 	int _samplesPerSecond;
 	DWORD _bufferSizeInBytes;
+	DWORD _minByte;
 
 	int clearSoundBuffer()
 	{

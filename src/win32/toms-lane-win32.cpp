@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <stdint.h>
+#include <assert.h>
 
 #include "toms-lane-win32.hpp"
 #include "toms-lane-win32-file.cpp"
@@ -347,11 +348,6 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 				ResetButtons(&gameInput);
 
-				// render visual
-				HDC deviceContext = GetDC(window);
-				Win32_DisplayglobalRenderBufferInWindow(deviceContext);
-				ReleaseDC(window, deviceContext);
-
 				// Audio
 				if (settings.playSound)
 				{
@@ -368,7 +364,27 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					UpdateSound(soundBuffer);
 
 					directSound.processSoundBuffer(soundBuffer);
+
+					// debug print buffer positions
+					uint32_t bufferSizeInBytes = directSound.bufferSizeInBytes();
+					uint32_t byteToLock = directSound.byteToLock();
+
+					float pixelsPerByte = (float)globalRenderBuffer.width / (float)bufferSizeInBytes;
+					// assume 0 is byte 0 at the start of the memory space of the buffer
+					int xOrdinal = (int)(pixelsPerByte * (float)byteToLock);
+					for (int i = 0; i < 100; i += 1)
+					{
+						unsigned int* pixelToPlot = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels + xOrdinal;
+
+						*pixelToPlot = 0xffffff;
+
+					}
 				}
+
+				// render visual
+				HDC deviceContext = GetDC(window);
+				Win32_DisplayglobalRenderBufferInWindow(deviceContext);
+				ReleaseDC(window, deviceContext);
 
 				// wait before starting next frame
 				int microSecondsElapsedForFrame = timer.getMicroSecondsElapsed(frameStartCounter);
