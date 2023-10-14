@@ -130,6 +130,10 @@ public:
 		{
 			return -1;
 		}
+
+		_playCursor = playCursor;
+		_writeCursor = writeCursor;
+
 		DWORD expectedFrameEndByte = playCursor + expectedBytesToFrameEnd;
 
 		DWORD targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
@@ -232,6 +236,16 @@ public:
 		return (uint32_t)_bufferSizeInBytes;
 	}
 
+	int playCursor()
+	{
+		return _playCursor;
+	}
+
+	int writeCursor()
+	{
+		return _writeCursor;
+	}
+
 private:
 	LPDIRECTSOUNDBUFFER _secondarySoundBuffer;
 	int16_t* _samples = nullptr;
@@ -241,6 +255,8 @@ private:
 	int _samplesPerSecond;
 	DWORD _bufferSizeInBytes;
 	DWORD _minByte;
+	DWORD _playCursor;
+	DWORD _writeCursor;
 
 	int clearSoundBuffer()
 	{
