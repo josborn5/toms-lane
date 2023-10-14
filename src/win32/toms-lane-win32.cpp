@@ -369,11 +369,14 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					uint32_t bufferSizeInBytes = directSound.bufferSizeInBytes();
 					int byteToLock = directSound.byteToLock();
 					int playCursor = directSound.playCursor();
+					int writeCursor = directSound.writeCursor();
 
 					float pixelsPerByte = (float)globalRenderBuffer.width / (float)bufferSizeInBytes;
 					// assume 0 is byte 0 at the start of the memory space of the buffer
 					int byteLockX = (int)(pixelsPerByte * (float)byteToLock);
 					int playCursorX = (int)(pixelsPerByte * (float)playCursor);
+					int writeCursorX = (int)(pixelsPerByte * (float)writeCursor);
+		
 					for (int i = 0; i < 100; i += 1)
 					{
 						unsigned int* zeroX = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels;
@@ -382,6 +385,9 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 						pixelToPlot = zeroX + playCursorX;
 						*pixelToPlot = 0xff0000;
+
+						pixelToPlot = zeroX + writeCursorX;
+						*pixelToPlot = 0x0000ff;
 					}
 				}
 
