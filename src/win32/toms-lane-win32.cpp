@@ -376,17 +376,23 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					int byteLockX = (int)(pixelsPerByte * (float)byteToLock);
 					int playCursorX = (int)(pixelsPerByte * (float)playCursor);
 					int writeCursorX = (int)(pixelsPerByte * (float)writeCursor);
-		
-					for (int i = 0; i < 100; i += 1)
+
+					for (int i = 20; i < 50; i += 1)
 					{
 						unsigned int* zeroX = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels;
 						unsigned int* pixelToPlot = zeroX + byteLockX;
 						*pixelToPlot = 0xffffff;
-
-						pixelToPlot = zeroX + playCursorX;
+					}
+					for (int i = 50; i < 80; i += 1)
+					{
+						unsigned int* zeroX = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels;
+						unsigned int* pixelToPlot = zeroX + playCursorX;
 						*pixelToPlot = 0xff0000;
-
-						pixelToPlot = zeroX + writeCursorX;
+					}
+					for (int i = 80; i < 110; i += 1)
+					{
+						unsigned int* zeroX = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels;
+						unsigned int* pixelToPlot = zeroX + writeCursorX;
 						*pixelToPlot = 0x0000ff;
 					}
 				}
