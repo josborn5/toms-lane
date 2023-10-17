@@ -231,6 +231,11 @@ public:
 		return (int)_byteToLock;
 	}
 
+	int bytesToWrite()
+	{
+		return (int)_bytesToWrite;
+	}
+
 	uint32_t bufferSizeInBytes()
 	{
 		return (uint32_t)_bufferSizeInBytes;

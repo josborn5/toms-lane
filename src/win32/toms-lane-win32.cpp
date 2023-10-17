@@ -368,12 +368,14 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					// debug print buffer positions
 					uint32_t bufferSizeInBytes = directSound.bufferSizeInBytes();
 					int byteToLock = directSound.byteToLock();
+					int bytesToWrite = directSound.bytesToWrite();
 					int playCursor = directSound.playCursor();
 					int writeCursor = directSound.writeCursor();
 
 					float pixelsPerByte = (float)globalRenderBuffer.width / (float)bufferSizeInBytes;
 					// assume 0 is byte 0 at the start of the memory space of the buffer
 					int byteLockX = (int)(pixelsPerByte * (float)byteToLock);
+					int bytesToWriteX = (int)(pixelsPerByte * (float)bytesToWrite);
 					int playCursorX = (int)(pixelsPerByte * (float)playCursor);
 					int writeCursorX = (int)(pixelsPerByte * (float)writeCursor);
 
@@ -386,10 +388,16 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					for (int i = 50; i < 80; i += 1)
 					{
 						unsigned int* zeroX = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels;
+						unsigned int* pixelToPlot = zeroX + bytesToWriteX;
+						*pixelToPlot = 0x00ff00;
+					}
+					for (int i = 80; i < 110; i += 1)
+					{
+						unsigned int* zeroX = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels;
 						unsigned int* pixelToPlot = zeroX + playCursorX;
 						*pixelToPlot = 0xff0000;
 					}
-					for (int i = 80; i < 110; i += 1)
+					for (int i = 110; i < 140; i += 1)
 					{
 						unsigned int* zeroX = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels;
 						unsigned int* pixelToPlot = zeroX + writeCursorX;
