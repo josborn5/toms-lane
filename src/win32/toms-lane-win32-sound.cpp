@@ -11,6 +11,7 @@ typedef HRESULT WINAPI direct_sound_create(
 	LPUNKNOWN pUnkOuter
 );
 
+//https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee416967(v=vs.85) 
 class Win32DirectSound
 {
 public:
@@ -20,6 +21,7 @@ public:
 	{
 		_samplesPerSecond = 48000;
 		_bytesPerSample = 2 * sizeof(int16_t);
+		// size buffer to fill sound for 1s
 		_bufferSizeInBytes = _samplesPerSecond * _bytesPerSample;
 
 		HMODULE directSoundLibrary = LoadLibraryA("dsound.dll");
