@@ -375,32 +375,28 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					float pixelsPerByte = (float)globalRenderBuffer.width / (float)bufferSizeInBytes;
 					// assume 0 is byte 0 at the start of the memory space of the buffer
 					int byteLockX = (int)(pixelsPerByte * (float)byteToLock);
-					int bytesToWriteX = (int)(pixelsPerByte * (float)bytesToWrite);
 					int playCursorX = (int)(pixelsPerByte * (float)playCursor);
 					int writeCursorX = (int)(pixelsPerByte * (float)writeCursor);
 
-					for (int i = 20; i < 50; i += 1)
+					for (int j = 20; j < 50; j += 1)
 					{
-						unsigned int* zeroX = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels;
-						unsigned int* pixelToPlot = zeroX + byteLockX;
-						*pixelToPlot = 0xffffff;
+						int zeroX = (globalRenderBuffer.width * j) + byteLockX;
+						for (int i = 0; i < bytesToWrite; i += 1)
+						{
+							unsigned int* pixelToPlot = globalRenderBuffer.pixels + zeroX + i;
+							*pixelToPlot = 0x00ff00;
+						}
 					}
-					for (int i = 50; i < 80; i += 1)
+					for (int j = 50; j < 80; j += 1)
 					{
-						unsigned int* zeroX = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels;
-						unsigned int* pixelToPlot = zeroX + bytesToWriteX;
-						*pixelToPlot = 0x00ff00;
-					}
-					for (int i = 80; i < 110; i += 1)
-					{
-						unsigned int* zeroX = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels;
-						unsigned int* pixelToPlot = zeroX + playCursorX;
+						int zeroX = (globalRenderBuffer.width * j) + playCursorX;
+						unsigned int* pixelToPlot = globalRenderBuffer.pixels + zeroX;
 						*pixelToPlot = 0xff0000;
 					}
-					for (int i = 110; i < 140; i += 1)
+					for (int j = 80; j < 110; j += 1)
 					{
-						unsigned int* zeroX = (globalRenderBuffer.width * i) + globalRenderBuffer.pixels;
-						unsigned int* pixelToPlot = zeroX + writeCursorX;
+						int zeroX = (globalRenderBuffer.width * j) + writeCursorX;
+						unsigned int* pixelToPlot = globalRenderBuffer.pixels + zeroX;
 						*pixelToPlot = 0x0000ff;
 					}
 				}
