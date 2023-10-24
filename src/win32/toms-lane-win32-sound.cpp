@@ -124,7 +124,7 @@ public:
 		int frameDurationToAudioStart = timer.getMicroSecondsElapsed(frameStartCounter);
 		int microSecondsToFrameEnd = targetMicroSecondsPerFrame - frameDurationToAudioStart;
 
-		DWORD expectedBytesToFrameEnd = (DWORD)((microSecondsToFrameEnd / targetMicroSecondsPerFrame) * expectedBytesPerFrame);
+		DWORD expectedBytesToFrameEnd = (DWORD)(microSecondsToFrameEnd * expectedBytesPerFrame / targetMicroSecondsPerFrame);
 
 		DWORD playCursor;
 		DWORD writeCursor;
@@ -136,6 +136,11 @@ public:
 		_playCursor = playCursor;
 		_writeCursor = writeCursor;
 
+		// | current frame         | next frame          | 
+		// +-----------------------+---------------------+
+		// |--------|--------------|---------------------|
+		// play     |              frame end byte        target cursor
+		// cursor   write cursor
 		DWORD expectedFrameEndByte = playCursor + expectedBytesToFrameEnd;
 
 		DWORD targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
