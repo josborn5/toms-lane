@@ -61,6 +61,17 @@ static void Win32_DisplayglobalRenderBufferInWindow(HDC deviceContext)
 		globalRenderBuffer.pixels, &bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
 }
 
+
+static void temp_PlotSoundDebug(int yStart, int xMeasureValue, int soundZeroX)
+{
+	for (int j = yStart; j < yStart + 30; j += 1)
+	{
+		int zeroX = (globalRenderBuffer.width * j) + soundZeroX + xMeasureValue;
+		unsigned int* pixelToPlot = globalRenderBuffer.pixels + zeroX;
+		*pixelToPlot = 0x00ff00;
+	}
+}
+
 LRESULT CALLBACK Win32_MainWindowCallback(HWND window, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT Result = -1;
@@ -372,33 +383,20 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					int playCursor = directSound.playCursor();
 					int writeCursor = directSound.writeCursor();
 
-					float pixelsPerByte = (float)globalRenderBuffer.width / (float)bufferSizeInBytes;
+					int soundWidth = globalRenderBuffer.width / 3;
+					int soundZeroX = globalRenderBuffer.width / 2;
+
+					float pixelsPerByte = (float)soundWidth / (float)bufferSizeInBytes;
 					// assume 0 is byte 0 at the start of the memory space of the buffer
 					int byteLockX = (int)(pixelsPerByte * (float)byteToLock);
 					int playCursorX = (int)(pixelsPerByte * (float)playCursor);
 					int writeCursorX = (int)(pixelsPerByte * (float)writeCursor);
+					int bytesToWriteX = (int)(pixelsPerByte * (float)bytesToWrite);
 
-					for (int j = 20; j < 50; j += 1)
-					{
-						int zeroX = (globalRenderBuffer.width * j) + byteLockX;
-						for (int i = 0; i < bytesToWrite; i += 1)
-						{
-							unsigned int* pixelToPlot = globalRenderBuffer.pixels + zeroX + i;
-							*pixelToPlot = 0x00ff00;
-						}
-					}
-					for (int j = 50; j < 80; j += 1)
-					{
-						int zeroX = (globalRenderBuffer.width * j) + playCursorX;
-						unsigned int* pixelToPlot = globalRenderBuffer.pixels + zeroX;
-						*pixelToPlot = 0xff0000;
-					}
-					for (int j = 80; j < 110; j += 1)
-					{
-						int zeroX = (globalRenderBuffer.width * j) + writeCursorX;
-						unsigned int* pixelToPlot = globalRenderBuffer.pixels + zeroX;
-						*pixelToPlot = 0x0000ff;
-					}
+					temp_PlotSoundDebug(20, byteLockX, soundZeroX);
+					temp_PlotSoundDebug(50, bytesToWriteX, soundZeroX);
+					temp_PlotSoundDebug(80, playCursorX, soundZeroX);
+					temp_PlotSoundDebug(110, writeCursorX, soundZeroX);
 				}
 
 				// render visual
