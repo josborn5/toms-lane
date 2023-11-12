@@ -136,15 +136,34 @@ public:
 		_playCursor = playCursor;
 		_writeCursor = writeCursor;
 
+
+		DWORD expectedFrameEndByte = playCursor + expectedBytesToFrameEnd;
+		DWORD targetCursor = 0;
+		_expectedFrameEndByte = expectedFrameEndByte;
+
 		// | current frame         | next frame          | 
 		// +-----------------------+---------------------+
 		// |--------|--------------|---------------------|
 		// play     |              frame end byte        target cursor
 		// cursor   write cursor
-		DWORD expectedFrameEndByte = playCursor + expectedBytesToFrameEnd;
+		if (expectedFrameEndByte > writeCursor)
+		{
 
-		DWORD targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
+			targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
+
+		}
+
+		// | current frame         | next frame          | next frame
+		// +-----------------------+---------------------+-----------
+		// |-----------------------|-----------|--------------------|
+		// play                    frame       |                    target cursor
+		// cursor                  end byte    write cursor
+		else
+		{
+			targetCursor = writeCursor + expectedBytesPerFrame;
+		}
 		targetCursor = targetCursor % _bufferSizeInBytes;
+		_targetCursor = targetCursor;
 
 		int runningSampleIndex = writeCursor / _bytesPerSample;
 		_byteToLock = (runningSampleIndex * _bytesPerSample) % _bufferSizeInBytes;
@@ -258,6 +277,16 @@ public:
 		return _writeCursor;
 	}
 
+	int expectedFrameEndByte()
+	{
+		return _expectedFrameEndByte;
+	}
+
+	int targetCursor()
+	{
+		return _targetCursor;
+	}
+
 private:
 	LPDIRECTSOUNDBUFFER _secondarySoundBuffer;
 	int16_t* _samples = nullptr;
@@ -269,6 +298,8 @@ private:
 	DWORD _minByte;
 	DWORD _playCursor;
 	DWORD _writeCursor;
+	DWORD _expectedFrameEndByte;
+	DWORD _targetCursor;
 
 	int clearSoundBuffer()
 	{

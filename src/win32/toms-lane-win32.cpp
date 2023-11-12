@@ -382,6 +382,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					int bytesToWrite = directSound.bytesToWrite();
 					int playCursor = directSound.playCursor();
 					int writeCursor = directSound.writeCursor();
+					int frameEndByte = directSound.expectedFrameEndByte();
 
 					int soundWidth = globalRenderBuffer.width / 3;
 					int soundZeroX = globalRenderBuffer.width / 2;
@@ -392,11 +393,16 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					int playCursorX = (int)(pixelsPerByte * (float)playCursor);
 					int writeCursorX = (int)(pixelsPerByte * (float)writeCursor);
 					int bytesToWriteX = (int)(pixelsPerByte * (float)bytesToWrite);
+					int frameEndByteX = (int)(pixelsPerByte * (float)frameEndByte);
+					int targetCursorX = (int)(pixelsPerByte * (float)directSound.targetCursor());
 
 					temp_PlotSoundDebug(20, byteLockX, soundZeroX);
 					temp_PlotSoundDebug(50, bytesToWriteX, soundZeroX);
-					temp_PlotSoundDebug(80, playCursorX, soundZeroX);
-					temp_PlotSoundDebug(110, writeCursorX, soundZeroX);
+					temp_PlotSoundDebug(80, frameEndByteX, soundZeroX);
+					temp_PlotSoundDebug(110, targetCursorX, soundZeroX);
+
+					temp_PlotSoundDebug(200, playCursorX, soundZeroX);
+					temp_PlotSoundDebug(230, writeCursorX, soundZeroX);
 				}
 
 				// render visual
