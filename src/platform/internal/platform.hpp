@@ -60,6 +60,8 @@ namespace tl
 		int samplesPerSecond;
 		int sampleCount;
 		int16_t* samples;
+		float firstSampleTime; // 'buffer time' for first sample
+		int runningSampleIndex;
 	};
 
 	struct Button

@@ -19,10 +19,9 @@ public:
 		HWND window
 	)
 	{
-		_samplesPerSecond = 48000;
+		_samplesPerMillisecond = 48;
 		_bytesPerSample = 2 * sizeof(int16_t);
-		// size buffer to fill sound for 1s
-		_bufferSizeInBytes = _samplesPerSecond * _bytesPerSample;
+		_bufferSizeInBytes = _bufferSizeInMilliseconds * _samplesPerMillisecond * _bytesPerSample;
 
 		HMODULE directSoundLibrary = LoadLibraryA("dsound.dll");
 		if (!directSoundLibrary)
@@ -51,10 +50,10 @@ public:
 		WAVEFORMATEX waveFormat = {};
 		waveFormat.wFormatTag = WAVE_FORMAT_PCM;
 		waveFormat.nChannels = numberOfChannels;
-		waveFormat.nSamplesPerSec = _samplesPerSecond;
+		waveFormat.nSamplesPerSec = _samplesPerMillisecond * 1000;
 		waveFormat.wBitsPerSample = bitsPerSample;
 		waveFormat.nBlockAlign = blockAlign;
-		waveFormat.nAvgBytesPerSec = (_samplesPerSecond * blockAlign);
+		waveFormat.nAvgBytesPerSec = (_samplesPerMillisecond * 1000 * blockAlign);
 		waveFormat.cbSize = 0;
 
 		if (!SUCCEEDED(directSound->SetCooperativeLevel(window, DSSCL_PRIORITY)))
@@ -119,7 +118,7 @@ public:
 		SoundBuffer& soundBuffer
 	)
 	{
-		DWORD expectedBytesPerFrame = _samplesPerSecond * _bytesPerSample / gameUpdateHz;
+		DWORD expectedBytesPerFrame = _samplesPerMillisecond * 1000 * _bytesPerSample / gameUpdateHz;
 
 		int frameDurationToAudioStart = timer.getMicroSecondsElapsed(frameStartCounter);
 		int microSecondsToFrameEnd = targetMicroSecondsPerFrame - frameDurationToAudioStart;
@@ -172,8 +171,10 @@ public:
 			? targetCursor - _byteToLock + _bufferSizeInBytes
 			: targetCursor - _byteToLock;
 
-		soundBuffer.samplesPerSecond = _samplesPerSecond;
+		soundBuffer.samplesPerSecond = _samplesPerMillisecond * 1000;
 		soundBuffer.sampleCount = _bytesToWrite / _bytesPerSample;
+		soundBuffer.runningSampleIndex = runningSampleIndex;
+		soundBuffer.firstSampleTime = (float)runningSampleIndex / (float)(_bufferSizeInMilliseconds * _samplesPerMillisecond);
 
 		_bytesToWrite = soundBuffer.sampleCount * _bytesPerSample;
 		soundBuffer.samples = _samples;
@@ -292,8 +293,9 @@ private:
 	int16_t* _samples = nullptr;
 	DWORD _byteToLock;
 	DWORD _bytesToWrite;
+	int _bufferSizeInMilliseconds = 1000;
 	int _bytesPerSample;
-	int _samplesPerSecond;
+	int _samplesPerMillisecond;
 	DWORD _bufferSizeInBytes;
 	DWORD _minByte;
 	DWORD _playCursor;
