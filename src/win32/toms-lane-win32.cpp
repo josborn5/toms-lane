@@ -6,7 +6,7 @@
 #include "toms-lane-win32-file.cpp"
 #include "toms-lane-win32-console.cpp"
 #include "toms-lane-win32-time.cpp"
-#include "toms-lane-win32-sound.cpp"
+#include "toms-lane-win32-directsound.cpp"
 
 namespace tl
 {
