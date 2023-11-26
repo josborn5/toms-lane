@@ -172,7 +172,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 int tl::UpdateSound(const SoundBuffer& soundBuffer)
 {
 	float tSineWave = soundBuffer.firstSampleTime;
-	int toneVolume = 3000;
+	int toneVolume = 1500;
 	int wavePeriod = soundBuffer.samplesPerSecond / 256;
 	int16_t* sampleOutput = soundBuffer.samples;
 
