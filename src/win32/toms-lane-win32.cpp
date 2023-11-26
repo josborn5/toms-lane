@@ -6,7 +6,7 @@
 #include "toms-lane-win32-file.cpp"
 #include "toms-lane-win32-console.cpp"
 #include "toms-lane-win32-time.cpp"
-#include "toms-lane-win32-directsound.cpp"
+#include "./sound/toms-lane-win32-directsound.cpp"
 
 namespace tl
 {
@@ -301,10 +301,10 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 			// Initialize sound
 			// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
-			Win32DirectSound directSound = Win32DirectSound();
+			Win32Sound sound;
 			if (settings.playSound)
 			{
-				directSound.initialize(window);
+				win32_sound_interface_initialize(sound, window);
 			}
 
 			// Initialize general use memory
@@ -363,7 +363,8 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				if (settings.playSound)
 				{
 					SoundBuffer soundBuffer = {0};
-					directSound.initializeSoundBuffer(
+					win32_sound_interface_buffer_initialize(
+						sound,
 						gameUpdateHz,
 						frameStartCounter,
 						targetMicroSecondsPerFrame,
@@ -374,27 +375,21 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					// Call into the application to fill the sound buffer
 					UpdateSound(soundBuffer);
 
-					directSound.processSoundBuffer(soundBuffer);
+					win32_sound_interface_buffer_process(sound, soundBuffer);
 
 					// debug print buffer positions
-					uint32_t bufferSizeInBytes = directSound.bufferSizeInBytes();
-					int byteToLock = directSound.byteToLock();
-					int bytesToWrite = directSound.bytesToWrite();
-					int playCursor = directSound.playCursor();
-					int writeCursor = directSound.writeCursor();
-					int frameEndByte = directSound.expectedFrameEndByte();
-
+					uint32_t bufferSizeInBytes = win32_sound_buffer_size_get(sound);
 					int soundWidth = globalRenderBuffer.width / 3;
 					int soundZeroX = globalRenderBuffer.width / 2;
 
 					float pixelsPerByte = (float)soundWidth / (float)bufferSizeInBytes;
 					// assume 0 is byte 0 at the start of the memory space of the buffer
-					int byteLockX = (int)(pixelsPerByte * (float)byteToLock);
-					int playCursorX = (int)(pixelsPerByte * (float)playCursor);
-					int writeCursorX = (int)(pixelsPerByte * (float)writeCursor);
-					int bytesToWriteX = (int)(pixelsPerByte * (float)bytesToWrite);
-					int frameEndByteX = (int)(pixelsPerByte * (float)frameEndByte);
-					int targetCursorX = (int)(pixelsPerByte * (float)directSound.targetCursor());
+					int byteLockX = (int)(pixelsPerByte * (float)sound._byteToLock);
+					int playCursorX = (int)(pixelsPerByte * (float)sound._playCursor);
+					int writeCursorX = (int)(pixelsPerByte * (float)sound._writeCursor);
+					int bytesToWriteX = (int)(pixelsPerByte * (float)sound._bytesToWrite);
+					int frameEndByteX = (int)(pixelsPerByte * (float)sound._expectedFrameEndByte);
+					int targetCursorX = (int)(pixelsPerByte * (float)sound._targetCursor);
 
 					temp_PlotSoundDebug(20, byteLockX, soundZeroX);
 					temp_PlotSoundDebug(50, bytesToWriteX, soundZeroX);
