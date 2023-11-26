@@ -3,14 +3,10 @@
 set NAME=%1
 set DEBUG_FLAG=%2
 
-call ./build-scripts/set-variables.bat %DEBUG_FLAG%
-
-pushd %OUTPUT_DIR%
+call .\build-scripts\set-variables.bat %DEBUG_FLAG%
 
 if "%DEBUG_FLAG%"=="-d" (
-	devenv "%NAME%.exe"
+	devenv "%OUTPUT_DIR%\%NAME%\%NAME%.exe"
 ) else (
-	call "%NAME%.exe"
+	call "%OUTPUT_DIR%\%NAME%\%NAME%.exe"
 )
-
-popd

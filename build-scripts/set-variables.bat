@@ -1,7 +1,7 @@
 @echo off
 
-set CODE_DIR="%~dp0../src/"
-set OUTPUT_DIR="%~dp0../bin/"
+set CODE_DIR=%~dp0..\src
+set OUTPUT_DIR=%~dp0..\bin
 
 REM https://docs.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-alphabetically
 set DEBUG_COMPILER_FLAGS=-MT -nologo -Gm- -GR- -EHa- -Oi -WX -W4 -wd4100 -wd4201 -FC -Z7 /EHsc -Fm
