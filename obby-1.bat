@@ -1,15 +1,11 @@
 call .\build-scripts\compile-project.bat obby-1 obby\obby-1\obby-1.cpp %1
 
-pushd %OUTPUT_DIR%
+set APP_DIR=%OUTPUT_DIR%\obby-1\
 
-del .\brick.sprc
-del .\checkpoint.sprc
-del .\player.sprc
+xcopy "%CODE_DIR%\obby\brick.sprc" "%APP_DIR%\"
+xcopy "%CODE_DIR%\obby\checkpoint.sprc" "%APP_DIR%\"
+xcopy "%CODE_DIR%\obby\player.sprc" "%APP_DIR%\"
 
-xcopy ..\%CODE_DIR%\obby\brick.sprc .
-xcopy ..\%CODE_DIR%\obby\checkpoint.sprc .
-xcopy ..\%CODE_DIR%\obby\player.sprc .
-
+pushd "%APP_DIR%\"
+call .\obby-1.exe %1
 popd
-
-call .\build-scripts\run-project.bat obby-1 %1

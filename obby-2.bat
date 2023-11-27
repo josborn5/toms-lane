@@ -1,11 +1,9 @@
 call .\build-scripts\compile-project.bat obby-2 obby\obby-2\obby-2.cpp %1
 
-pushd %OUTPUT_DIR%
+set APP_DIR=%OUTPUT_DIR%\obby-2\
 
-del .\background.sprc
+xcopy "%CODE_DIR%\obby\background.sprc" "%APP_DIR%\"
 
-xcopy ..\%CODE_DIR%\obby\background.sprc .
-
+pushd "%APP_DIR%\"
+call .\obby-2.exe %1
 popd
-
-call .\build-scripts\run-project.bat obby-2 %1
