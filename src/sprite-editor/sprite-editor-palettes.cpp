@@ -1,7 +1,7 @@
 #include "../platform/toms-lane-platform.hpp"
 #include "./editor.hpp"
 
-#define PALETTE_COUNT 3
+#define PALETTE_COUNT 4
 
 char* rgrPaletteContent = "\
 2\n\
@@ -47,10 +47,31 @@ char* sunsetCloudsPaletteContent = "\
 154 171 201 255\n\
 165 183 212 255";
 
+char* fantasyConsolePaletteContent = "\
+2\n\
+8\n\
+  0   0   0 255\n\
+255 252 255 255\n\
+230 255 242 255\n\
+178 183 225 255\n\
+ 89  91 125 255\n\
+123 138 198 255\n\
+255 217 244 255\n\
+225 173 195 255\n\
+173 128 166 255\n\
+251 162 215 255\n\
+250 224 199 255\n\
+240 171 171 255\n\
+151 196 170 255\n\
+191 237 245 255\n\
+115 201 235 255\n\
+202 175 245 255";
+
 char* paletteContents[PALETTE_COUNT] = {
 	rgrPaletteContent,
 	pollenPaletteContent,
-	sunsetCloudsPaletteContent
+	sunsetCloudsPaletteContent,
+	fantasyConsolePaletteContent
 };
 
 tl::SpriteC palettes[PALETTE_COUNT];
