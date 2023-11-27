@@ -1,4 +1,5 @@
 #include <dsound.h>
+#include <stdint.h>
 
 namespace tl
 {
