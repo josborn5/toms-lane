@@ -332,7 +332,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			}
 
 			// Initialize frame timers
-			float lastDtInSeconds = (float)targetMicroSecondsPerFrame / 1000000.0f;
+			float lastDtInSeconds = 1.0f / (float)gameUpdateHz;
 			LARGE_INTEGER frameStartCounter = Win32_GetWallClock();
 
 			// Main loop
@@ -446,13 +446,10 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					writeToConsole(writeBuffer);
 				}
 
-				// Take end of frame measurements
-				LARGE_INTEGER frameEndCounter = Win32_GetWallClock();
-
 				// Work out elapsed time for current frame
-				lastDtInSeconds = (float)timer.getSecondsElapsed(frameStartCounter, frameEndCounter);
+				lastDtInSeconds = (float)timer.getSecondsElapsed(frameStartCounter);
 				// Reset measurementsfor next frame
-				frameStartCounter = frameEndCounter;
+				frameStartCounter = Win32_GetWallClock();
 			}
 		}
 		else
