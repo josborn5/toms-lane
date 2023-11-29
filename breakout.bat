@@ -1,5 +1,8 @@
-call .\build-scripts\set-variables.bat %DEBUG_FLAG%
+call .\build-scripts\set-variables.bat %1
 
-call .\build-scripts\compile.bat breakout breakout\breakout.cpp %1
-call .\build-scripts\link.bat "%APP_DIR%\%NAME%.obj" %OUTPUT_DIR%\%TL_PLATFORM%.lib %OUTPUT_DIR%\%TL_WIN32%.lib
-call .\build-scripts\run.bat breakout %1
+set NAME=breakout
+set APP_DIR=%~dp0\bin-breakout
+
+call .\build-scripts\compile.bat "%~dp0\src\breakout\breakout.cpp", "%APP_DIR%" %1
+call .\build-scripts\link.bat "%APP_DIR%\breakout.obj" "%~dp0\bin-tl-platform\toms-lane-platform.obj" "%~dp0\bin-tl-win32\toms-lane-win32.obj"
+call .\build-scripts\run.bat "%APP_DIR%\%NAME%.exe" %1

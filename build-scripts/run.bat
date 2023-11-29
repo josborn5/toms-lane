@@ -1,12 +1,10 @@
 @echo off
 
-set NAME=%1
+set EXE_PATH=%1
 set DEBUG_FLAG=%2
 
-call .\build-scripts\set-variables.bat %DEBUG_FLAG%
-
-if "%DEBUG_FLAG%"=="-d" (
-	devenv "%OUTPUT_DIR%_%NAME%\%NAME%.exe"
+if "%2"=="-d" (
+	devenv "%EXE_PATH%"
 ) else (
-	call "%OUTPUT_DIR%_%NAME%\%NAME%.exe"
+	call "%EXE_PATH%"
 )
