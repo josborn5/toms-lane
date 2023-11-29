@@ -1,5 +1,3 @@
-call .\build-scripts\set-variables.bat %1
-
 set NAME=driving
 set APP_DIR=%~dp0\bin-driving
 

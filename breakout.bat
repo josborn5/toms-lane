@@ -1,5 +1,3 @@
-call .\build-scripts\set-variables.bat %1
-
 set NAME=breakout
 set APP_DIR=%~dp0\bin-breakout
 
