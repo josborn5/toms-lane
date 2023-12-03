@@ -1,4 +1,5 @@
 #include <windows.h>
+#include "../win32-file.hpp"
 
 namespace tl
 {
@@ -8,7 +9,7 @@ namespace tl
 		Write
 	};
 
-	HANDLE Win32GetFileHandle(char* fileName, FileAccess access)
+	static HANDLE Win32GetFileHandle(char* fileName, FileAccess access)
 	{
 		if (access == Write)
 		{
@@ -17,7 +18,7 @@ namespace tl
 		return CreateFileA(fileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
 	}
 
-	int WriteFile(char* fileName, const MemorySpace& writeBuffer)
+	int win32_file_interface_write(char* fileName, const MemorySpace& writeBuffer)
 	{
 		if(!writeBuffer.content)
 		{
@@ -32,13 +33,13 @@ namespace tl
 		}
 
 		LPDWORD bytesWritten = 0;
-		bool writeSuccess = ::WriteFile(fileHandle, writeBuffer.content, (DWORD)writeBuffer.sizeInBytes, bytesWritten, NULL);
+		bool writeSuccess = WriteFile(fileHandle, writeBuffer.content, (DWORD)writeBuffer.sizeInBytes, bytesWritten, NULL);
 		CloseHandle(fileHandle);
 
 		return writeSuccess ? Success : FileWriteError;
 	}
 
-	int GetFileSize(char* fileName, uint64_t& size)
+	int win32_file_interface_size_get(char* fileName, uint64_t& size)
 	{
 		HANDLE fileHandle = Win32GetFileHandle(fileName, Read);
 
@@ -65,7 +66,7 @@ namespace tl
 		return Success;
 	}
 	
-	int ReadFile(char* fileName, const MemorySpace& readBuffer)
+	int win32_file_interface_read(char* fileName, const MemorySpace& readBuffer)
 	{
 		if(!readBuffer.content)
 		{
@@ -73,7 +74,7 @@ namespace tl
 		}
 
 		uint64_t fileSize;
-		int fileReadResult = GetFileSize(fileName, fileSize);
+		int fileReadResult = win32_file_interface_size_get(fileName, fileSize);
 		if (fileReadResult != Success)
 		{
 			return fileReadResult;
@@ -89,7 +90,7 @@ namespace tl
 
 		HANDLE fileHandle = Win32GetFileHandle(fileName, Read);
 		DWORD bytesToRead;
-		bool readSuccess = ::ReadFile(fileHandle, readBuffer.content, fileSize32, &bytesToRead, 0);
+		bool readSuccess = ReadFile(fileHandle, readBuffer.content, fileSize32, &bytesToRead, 0);
 		CloseHandle(fileHandle);
 
 		return readSuccess ? Success : FileReadError;

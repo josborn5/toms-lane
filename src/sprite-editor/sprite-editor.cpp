@@ -122,12 +122,12 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	if (filePath)
 	{
 		uint64_t fileSize = 0;
-		if (tl::GetFileSize(filePath, fileSize) != tl::Success)
+		if (tl::win32_file_interface_size_get(filePath, fileSize) != tl::Success)
 		{
 			return 1;
 		}
 
-		if (tl::ReadFile(filePath, fileReadMemory) != tl::Success)
+		if (tl::win32_file_interface_read(filePath, fileReadMemory) != tl::Success)
 		{
 			return 1;
 		}

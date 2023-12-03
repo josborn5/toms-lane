@@ -8,7 +8,7 @@ void Save(
 	tl::MemorySpace toSaveToFile;
 	toSaveToFile.content = gameMemory.transient.content;
 	toSaveToFile.sizeInBytes = charCount * sizeof(char);
-	if (tl::WriteFile(filePath, toSaveToFile) == tl::Success)
+	if (tl::win32_file_interface_write(filePath, toSaveToFile) == tl::Success)
 	{
 		displayBuffer[0] = 'S';
 		displayBuffer[1] = 'A';

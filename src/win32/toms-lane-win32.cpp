@@ -3,7 +3,6 @@
 #include <assert.h>
 
 #include "toms-lane-win32.hpp"
-#include "toms-lane-win32-file.cpp"
 #include "toms-lane-win32-console.cpp"
 #include "win32-time.hpp"
 #include "win32-sound.hpp"

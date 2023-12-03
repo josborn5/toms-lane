@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
-#include "./toms-lane-win32.hpp"
-#include "toms-lane-win32-file.cpp"
+#include "./win32-file.hpp"
 
 using namespace tl;
 
@@ -20,15 +19,15 @@ int main()
 	testSpace2.content = &testBuffer2[0];
 
 	// Read file that does not exist returns non-zero result
-	int readFileResult = tl::ReadFile("test-file.dat", testSpace);
+	int readFileResult = tl::win32_file_interface_read("test-file.dat", testSpace);
 	assert(readFileResult == tl::FileDoesNotExist);
 
 	// Create new file
-	int writeFileResult = tl::WriteFile("test-file.dat", testSpace2);
+	int writeFileResult = tl::win32_file_interface_write("test-file.dat", testSpace2);
 	assert(writeFileResult == 0);
 
 	// Read the written file
-	readFileResult = tl::ReadFile("test-file.dat", testSpace);
+	readFileResult = tl::win32_file_interface_read("test-file.dat", testSpace);
 	assert(readFileResult == 0);
 	assert(testBuffer[0] == 1);
 	assert(testBuffer[1] == 2);

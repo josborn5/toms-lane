@@ -303,8 +303,8 @@ static int LoadSpriteFromFile(
 	tl::MemorySpace transient // Purposefully don't pass as a reference so as not to modify the transient space - it can be overwritten after the function call
 ) {
 	uint64_t fileSize = 0;
-	tl::GetFileSize(fileName, fileSize);
-	if (tl::ReadFile(fileName, transient) != tl::Success)
+	tl::win32_file_interface_size_get(fileName, fileSize);
+	if (tl::win32_file_interface_read(fileName, transient) != tl::Success)
 	{
 		return 1;
 	}
