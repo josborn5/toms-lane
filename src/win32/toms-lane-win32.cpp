@@ -1,9 +1,8 @@
 #include <windows.h>
 #include <stdint.h>
-#include <assert.h>
 
 #include "toms-lane-win32.hpp"
-#include "toms-lane-win32-console.cpp"
+#include "win32-console.hpp"
 #include "win32-time.hpp"
 #include "win32-sound.hpp"
 
@@ -278,7 +277,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			// Open console if settings indicate it
 			if (settings.openConsole)
 			{
-				openConsole();
+				win32_console_interface_open();
 			}
 
 			// Initialize Visual
@@ -403,7 +402,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 						targetMicroSecondsPerFrame,
 						waitTimeInMicroSeconds
 					);
-					writeToConsole(writeBuffer);
+					win32_console_interface_write(writeBuffer);
 				}
 
 				// Work out elapsed time for current frame

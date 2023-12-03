@@ -6,6 +6,7 @@ call .\build-scripts\compile.bat "@%~dp0\src\win32\file-manifest.txt" "%~dp0\bin
 
 lib.exe /OUT:"%~dp0\bin-tl-win32\tl-win32.lib"^
  "%~dp0\bin-tl-win32\toms-lane-win32.obj"^
+ "%~dp0\bin-tl-win32\toms-lane-win32-console.obj"^
  "%~dp0\bin-tl-win32\toms-lane-win32-file.obj"^
  "%~dp0\bin-tl-win32\toms-lane-win32-time.obj"^
  "%~dp0\bin-tl-win32\toms-lane-win32-directsound.obj"
