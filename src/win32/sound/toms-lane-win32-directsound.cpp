@@ -1,5 +1,7 @@
 #include <dsound.h>
 #include <stdint.h>
+#include "../win32-time.hpp"
+#include "../../platform/toms-lane-platform.hpp"
 
 namespace tl
 {
@@ -29,19 +31,21 @@ struct Win32Sound
 	DWORD _targetCursor;
 };
 
-static DWORD win32_sound_buffer_size_get(const Win32Sound& sound)
+static Win32Sound sound;
+
+static DWORD win32_sound_buffer_size_get()
 {
 	return sound._bufferSizeInMilliseconds * sound._samplesPerMillisecond * sound._bytesPerSample;
 }
 
-static int win32_sound_buffer_clear(const Win32Sound& sound)
+static int win32_sound_buffer_clear()
 {
 	VOID* region1;
 	DWORD region1Size;
 	VOID* region2;
 	DWORD region2Size;
 
-	int bufferSizeInBytes = win32_sound_buffer_size_get(sound);
+	int bufferSizeInBytes = win32_sound_buffer_size_get();
 
 	if (!SUCCEEDED(sound._secondarySoundBuffer->Lock(
 		0,
@@ -80,13 +84,13 @@ static int win32_sound_buffer_clear(const Win32Sound& sound)
 	return 0;
 }
 
-int win32_sound_interface_initialize(Win32Sound& sound, HWND window)
+int win32_sound_interface_initialize(HWND window)
 {
 	sound._bufferSizeInMilliseconds = 1000;
 	sound._samplesPerMillisecond = 48;
 	sound._bytesPerSample = 2 * sizeof (sound._samplesPerMillisecond);
 
-	int bufferSizeInBytes = win32_sound_buffer_size_get(sound);
+	int bufferSizeInBytes = win32_sound_buffer_size_get();
 
 	HMODULE directSoundLibrary = LoadLibraryA("dsound.dll");
 	if (!directSoundLibrary)
@@ -157,7 +161,7 @@ int win32_sound_interface_initialize(Win32Sound& sound, HWND window)
 		return -7;
 	}
 
-	win32_sound_buffer_clear(sound);
+	win32_sound_buffer_clear();
 	sound._secondarySoundBuffer->Play(
 		0,
 		0,
@@ -175,17 +179,15 @@ int win32_sound_interface_initialize(Win32Sound& sound, HWND window)
 }
 
 int win32_sound_interface_buffer_initialize(
-	Win32Sound& sound,
 	int gameUpdateHz,
 	LARGE_INTEGER frameStartCounter,
 	int targetMicroSecondsPerFrame,
-	const Win32Time& timer,
 	SoundBuffer& soundBuffer
 )
 {
 	DWORD expectedBytesPerFrame = sound._samplesPerMillisecond * 1000 * sound._bytesPerSample / gameUpdateHz;
 
-	int frameDurationToAudioStart = timer.getMicroSecondsElapsed(frameStartCounter);
+	int frameDurationToAudioStart = win32_time_interface_elapsed_microseconds_get(frameStartCounter);
 	int microSecondsToFrameEnd = targetMicroSecondsPerFrame - frameDurationToAudioStart;
 
 	DWORD expectedBytesToFrameEnd = (DWORD)(microSecondsToFrameEnd * expectedBytesPerFrame / targetMicroSecondsPerFrame);
@@ -226,7 +228,7 @@ int win32_sound_interface_buffer_initialize(
 	{
 		targetCursor = writeCursor + expectedBytesPerFrame;
 	}
-	int bufferSizeInBytes = win32_sound_buffer_size_get(sound);
+	int bufferSizeInBytes = win32_sound_buffer_size_get();
 	targetCursor = targetCursor % bufferSizeInBytes;
 	sound._targetCursor = targetCursor;
 
@@ -250,7 +252,6 @@ int win32_sound_interface_buffer_initialize(
 
 
 int win32_sound_interface_buffer_process(
-	const Win32Sound& sound,
 	const SoundBuffer& soundBuffer
 )
 {

@@ -1,0 +1,3 @@
+src\win32\toms-lane-win32.cpp
+src\win32\toms-lane-win32-time.cpp
+src\win32\sound\toms-lane-win32-directsound.cpp

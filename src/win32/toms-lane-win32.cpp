@@ -5,8 +5,8 @@
 #include "toms-lane-win32.hpp"
 #include "toms-lane-win32-file.cpp"
 #include "toms-lane-win32-console.cpp"
-#include "toms-lane-win32-time.cpp"
-#include "./sound/toms-lane-win32-directsound.cpp"
+#include "win32-time.hpp"
+#include "win32-sound.hpp"
 
 namespace tl
 {
@@ -59,17 +59,6 @@ static void Win32_DisplayglobalRenderBufferInWindow(HDC deviceContext)
 		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
 		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
 		globalRenderBuffer.pixels, &bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
-}
-
-
-static void temp_PlotSoundDebug(int yStart, int xMeasureValue, int soundZeroX)
-{
-	for (int j = yStart; j < yStart + 30; j += 1)
-	{
-		int zeroX = (globalRenderBuffer.width * j) + soundZeroX + xMeasureValue;
-		unsigned int* pixelToPlot = globalRenderBuffer.pixels + zeroX;
-		*pixelToPlot = 0x00ff00;
-	}
 }
 
 LRESULT CALLBACK Win32_MainWindowCallback(HWND window, UINT Message, WPARAM wParam, LPARAM lParam)
@@ -255,9 +244,6 @@ void DisplayLastWin32Error()
 
 int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSettings())
 {
-	Win32Time timer = Win32Time();
-	timer.initialize();
-
 	// Set the Windows schedular granularity to 1ms to help our Sleep() function call be granular
 	UINT DesiredSchedulerMS = 1;
 	MMRESULT setSchedularGranularityResult = timeBeginPeriod(DesiredSchedulerMS);
@@ -301,10 +287,10 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 			// Initialize sound
 			// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
-			Win32Sound sound;
+			int soundInitResult;
 			if (settings.playSound)
 			{
-				win32_sound_interface_initialize(sound, window);
+				soundInitResult = win32_sound_interface_initialize(window);
 			}
 
 			// Initialize general use memory
@@ -333,7 +319,8 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 			// Initialize frame timers
 			float lastDtInSeconds = 1.0f / (float)gameUpdateHz;
-			LARGE_INTEGER frameStartCounter = Win32_GetWallClock();
+			LARGE_INTEGER frameStartCounter = win32_time_interface_wallclock_get();
+			win32_time_interface_initialize();
 
 			// Main loop
 			while (IsRunning)
@@ -348,9 +335,9 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				gameInput.mouse.y = globalRenderBuffer.height - mousePointer.y;
 
 
-				LARGE_INTEGER appFrameStartCounter = Win32_GetWallClock();
+				LARGE_INTEGER appFrameStartCounter = win32_time_interface_wallclock_get();
 				int updateResult = UpdateAndRender(GameMemory, gameInput, globalRenderBuffer, lastDtInSeconds);
-				int appFrameTimeInMicroSeconds = timer.getMicroSecondsElapsed(appFrameStartCounter);
+				int appFrameTimeInMicroSeconds = win32_time_interface_elapsed_microseconds_get(appFrameStartCounter);
 				int waitTimeInMicroSeconds = targetMicroSecondsPerFrame - appFrameTimeInMicroSeconds;
 				if (updateResult != 0)
 				{
@@ -364,40 +351,14 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				{
 					SoundBuffer soundBuffer = {0};
 					win32_sound_interface_buffer_initialize(
-						sound,
 						gameUpdateHz,
 						frameStartCounter,
 						targetMicroSecondsPerFrame,
-						timer,
 						soundBuffer
 					);
 
 					// Call into the application to fill the sound buffer
 					UpdateSound(soundBuffer);
-
-					win32_sound_interface_buffer_process(sound, soundBuffer);
-
-					// debug print buffer positions
-					uint32_t bufferSizeInBytes = win32_sound_buffer_size_get(sound);
-					int soundWidth = globalRenderBuffer.width / 3;
-					int soundZeroX = globalRenderBuffer.width / 2;
-
-					float pixelsPerByte = (float)soundWidth / (float)bufferSizeInBytes;
-					// assume 0 is byte 0 at the start of the memory space of the buffer
-					int byteLockX = (int)(pixelsPerByte * (float)sound._byteToLock);
-					int playCursorX = (int)(pixelsPerByte * (float)sound._playCursor);
-					int writeCursorX = (int)(pixelsPerByte * (float)sound._writeCursor);
-					int bytesToWriteX = (int)(pixelsPerByte * (float)sound._bytesToWrite);
-					int frameEndByteX = (int)(pixelsPerByte * (float)sound._expectedFrameEndByte);
-					int targetCursorX = (int)(pixelsPerByte * (float)sound._targetCursor);
-
-					temp_PlotSoundDebug(20, byteLockX, soundZeroX);
-					temp_PlotSoundDebug(50, bytesToWriteX, soundZeroX);
-					temp_PlotSoundDebug(80, frameEndByteX, soundZeroX);
-					temp_PlotSoundDebug(110, targetCursorX, soundZeroX);
-
-					temp_PlotSoundDebug(200, playCursorX, soundZeroX);
-					temp_PlotSoundDebug(230, writeCursorX, soundZeroX);
 				}
 
 				// render visual
@@ -406,7 +367,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				ReleaseDC(window, deviceContext);
 
 				// wait before starting next frame
-				int microSecondsElapsedForFrame = timer.getMicroSecondsElapsed(frameStartCounter);
+				int microSecondsElapsedForFrame = win32_time_interface_elapsed_microseconds_get(frameStartCounter);
 				if (microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
 				{
 					if (SleepIsGranular)
@@ -419,7 +380,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					}
 					while(microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
 					{
-						microSecondsElapsedForFrame = timer.getMicroSecondsElapsed(frameStartCounter);
+						microSecondsElapsedForFrame = win32_time_interface_elapsed_microseconds_get(frameStartCounter);
 					}
 				}
 				else
@@ -447,9 +408,9 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				}
 
 				// Work out elapsed time for current frame
-				lastDtInSeconds = (float)timer.getSecondsElapsed(frameStartCounter);
+				lastDtInSeconds = (float)win32_time_interface_elapsed_seconds_get(frameStartCounter);
 				// Reset measurementsfor next frame
-				frameStartCounter = Win32_GetWallClock();
+				frameStartCounter = win32_time_interface_wallclock_get();
 			}
 		}
 		else
