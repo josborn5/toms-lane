@@ -357,6 +357,10 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 					// Call into the application to fill the sound buffer
 					UpdateSound(soundBuffer);
+
+					win32_sound_interface_buffer_process(
+						soundBuffer
+					);
 				}
 
 				// render visual
