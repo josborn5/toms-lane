@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <stdint.h>
 
-#include "toms-lane-win32.hpp"
+#include "../platform/toms-lane-application.hpp"
 #include "win32-console.hpp"
 #include "win32-time.hpp"
 #include "win32-sound.hpp"

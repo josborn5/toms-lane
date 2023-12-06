@@ -1,7 +1,7 @@
 #ifndef TOMS_LANE_APPLICATION_H
 #define TOMS_LANE_APPLICATION_H
 
-#include "./platform.hpp"
+#include "./internal/platform.hpp"
 
 namespace tl
 {
