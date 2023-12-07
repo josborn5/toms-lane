@@ -169,7 +169,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	return 0;
 }
 
-int tl::UpdateSound(const SoundBuffer& soundBuffer)
+int UpdateSound(const tl::SoundBuffer& soundBuffer)
 {
 	float tSineWave = soundBuffer.firstSampleTime;
 	int toneVolume = 1500;
@@ -196,7 +196,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	settings.targetFPS = 60;
 	settings.openConsole = true;
 	settings.playSound = true;
-	settings.updateSoundCallback = tl::UpdateSound;
+	settings.updateSoundCallback = UpdateSound;
 
 	tl::Win32Main(instance, settings);
 }

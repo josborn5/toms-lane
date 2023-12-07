@@ -1,8 +1,11 @@
 #ifndef TOMS_LANE_WIN32_H
 #define TOMS_LANE_WIN32_H
 
+/* referenced */
 #include <windows.h>
-#include "../platform/toms-lane-platform.hpp"
+#include "../platform/toms-lane-application.hpp"
+
+/* offerred */
 #include "./win32-file.hpp"
 
 namespace tl
