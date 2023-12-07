@@ -44,8 +44,3 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 
 	return 0;
 }
-
-int tl::UpdateSound(const SoundBuffer& soundBuffer)
-{
-	return 0;
-}

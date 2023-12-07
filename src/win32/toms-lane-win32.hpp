@@ -3,6 +3,7 @@
 
 #include <windows.h>
 #include "../platform/toms-lane-platform.hpp"
+#include "./win32-file.hpp"
 
 namespace tl
 {
