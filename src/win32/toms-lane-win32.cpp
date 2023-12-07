@@ -286,7 +286,8 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			// Initialize sound
 			// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
 			int soundInitResult;
-			if (settings.playSound)
+			bool playSound = settings.updateSoundCallback != nullptr;
+			if (playSound)
 			{
 				soundInitResult = win32_sound_interface_initialize(window);
 			}
@@ -345,7 +346,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				ResetButtons(&gameInput);
 
 				// Audio
-				if (settings.playSound)
+				if (playSound)
 				{
 					SoundBuffer soundBuffer = {0};
 					win32_sound_interface_buffer_initialize(
@@ -356,7 +357,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 					);
 
 					// Call into the application to fill the sound buffer
-					UpdateSound(soundBuffer);
+					(settings.updateSoundCallback)(soundBuffer);
 
 					win32_sound_interface_buffer_process(
 						soundBuffer

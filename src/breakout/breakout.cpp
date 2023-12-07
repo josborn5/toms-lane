@@ -18,14 +18,14 @@ TODO (in no particular order):
 
 */
 
+#include <windows.h>
+#include "../win32/toms-lane-win32.hpp"
 #include "game.h"
 #include "../platform/toms-lane-platform.hpp"
-
 #include <math.h>
 #include "math.c"
 #include "platform_common.c"
 #include "levels.c"
-#include "main_win32.cpp"
 #include "update_state.cpp"
 
 const uint32_t BACKGROUND_COLOR = 0x551100;
@@ -185,4 +185,18 @@ int tl::UpdateSound(const SoundBuffer& soundBuffer)
 		tSineWave += 2.0f * 3.14159f * 1.0f / (float)wavePeriod;
 	}
 	return 0;
+}
+
+int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
+{
+	tl::WindowSettings settings;
+	settings.title = "Breakout";
+	settings.width = 1280;
+	settings.height = 720;
+	settings.targetFPS = 60;
+	settings.openConsole = true;
+	settings.playSound = true;
+	settings.updateSoundCallback = tl::UpdateSound;
+
+	tl::Win32Main(instance, settings);
 }

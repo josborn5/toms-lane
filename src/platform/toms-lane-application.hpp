@@ -5,18 +5,6 @@
 
 namespace tl
 {
-	struct WindowSettings
-	{
-		int width;
-		int height;
-		char* title;
-		int targetFPS;
-		unsigned long permanentSpaceInMegabytes = 1;
-		unsigned long transientSpaceInMegabytes = 1;
-		bool openConsole = false;
-		bool playSound = false;
-	};
-
 	enum KEY
 	{
 		KEY_ENTER,
@@ -62,6 +50,22 @@ namespace tl
 		int16_t* samples;
 		float firstSampleTime; // 'buffer time' for first sample
 		int runningSampleIndex;
+	};
+
+	// Define function signature of updating the sound buffer
+	typedef int (*UpdateSoundCallback)(const SoundBuffer& soundBuffer);
+
+	struct WindowSettings
+	{
+		int width;
+		int height;
+		char* title;
+		int targetFPS;
+		unsigned long permanentSpaceInMegabytes = 1;
+		unsigned long transientSpaceInMegabytes = 1;
+		bool openConsole = false;
+		bool playSound = false;
+		UpdateSoundCallback updateSoundCallback = nullptr;
 	};
 
 	struct Button
