@@ -95,4 +95,35 @@ namespace tl
 
 		return readSuccess ? Success : FileReadError;
 	}
+
+	int win32_file_interface_location_get(MemorySpace& space)
+	{
+		DWORD bufferSize = (DWORD)space.sizeInBytes;
+		LPSTR fileName = (LPSTR)space.content;
+		DWORD outputPathCount = GetModuleFileNameA(
+			NULL,
+			fileName,
+			bufferSize
+		);
+		// output includes the name of the executable. strip that from the result
+		char* endStringPointer = (char*)space.content;
+
+		// locate the end of the string
+		endStringPointer += outputPathCount;
+
+		// wind back to the last '\' char in the string
+		while (endStringPointer && *endStringPointer != '\\')
+		{
+			endStringPointer--;
+		}
+
+		// trim anything past the last '\' char
+		if (*endStringPointer == '\\')
+		{
+			endStringPointer++;
+			*endStringPointer = '\0';
+		}
+
+		return 0;
+	}
 }

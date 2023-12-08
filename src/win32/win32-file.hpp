@@ -34,6 +34,10 @@ int win32_file_interface_size_get(
 	uint64_t& size
 );
 
+int win32_file_interface_location_get(
+	MemorySpace& space
+);
+
 }
 
 #endif

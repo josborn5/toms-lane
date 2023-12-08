@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "./win32-file.hpp"
 
 using namespace tl;
@@ -35,6 +36,16 @@ int main()
 	assert(testBuffer[3] == 4);
 	assert(testBuffer[4] == 5);
 
+	printf("\n===== Location =====\n");
+
+	size_t fileLocationBufferBytes = 1000 * sizeof(char);
+	MemorySpace fileLocationSpace;
+	fileLocationSpace.sizeInBytes = fileLocationBufferBytes;
+	fileLocationSpace.content = malloc(fileLocationBufferBytes);
+
+	win32_file_interface_location_get(fileLocationSpace);
+	char* outputLocation = (char*)fileLocationSpace.content;
+	printf(outputLocation);
 
 	printf("\n===== SUCCESS! =====\n");
 	return 0;
