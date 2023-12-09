@@ -23,12 +23,6 @@ struct Win32Sound
 	int _bufferSizeInMilliseconds;
 	int _bytesPerSample;
 	int _samplesPerMillisecond;
-	DWORD _bufferSizeInBytes;
-	DWORD _minByte;
-	DWORD _playCursor;
-	DWORD _writeCursor;
-	DWORD _expectedFrameEndByte;
-	DWORD _targetCursor;
 };
 
 static Win32Sound sound;
@@ -199,13 +193,9 @@ int win32_sound_interface_buffer_initialize(
 		return -1;
 	}
 
-	sound._playCursor = playCursor;
-	sound._writeCursor = writeCursor;
-
 
 	DWORD expectedFrameEndByte = playCursor + expectedBytesToFrameEnd;
 	DWORD targetCursor = 0;
-	sound._expectedFrameEndByte = expectedFrameEndByte;
 
 	// | current frame         | next frame          | 
 	// +-----------------------+---------------------+
@@ -230,7 +220,6 @@ int win32_sound_interface_buffer_initialize(
 	}
 	int bufferSizeInBytes = win32_sound_buffer_size_get();
 	targetCursor = targetCursor % bufferSizeInBytes;
-	sound._targetCursor = targetCursor;
 
 	int runningSampleIndex = writeCursor / sound._bytesPerSample;
 	sound._byteToLock = (runningSampleIndex * sound._bytesPerSample) % bufferSizeInBytes;
