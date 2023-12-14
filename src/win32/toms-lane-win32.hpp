@@ -5,7 +5,7 @@
 #include <windows.h>
 #include "../platform/toms-lane-application.hpp"
 
-/* offerred */
+/* offered */
 #include "./win32-file.hpp"
 
 namespace tl

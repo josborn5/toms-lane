@@ -7,18 +7,14 @@ namespace tl
 {
 
 int win32_sound_interface_initialize(
-	HWND window
+	HWND window,
+	UpdateSoundCallback updateSoundCallback
 );
 
-int win32_sound_interface_buffer_initialize(
+int win32_sound_interface_frame_update(
 	int gameUpdateHz,
 	LARGE_INTEGER frameStartCounter,
-	int targetMicroSecondsPerFrame,
-	SoundBuffer& soundBuffer
-);
-
-int win32_sound_interface_buffer_process(
-	const SoundBuffer& soundBuffer
+	int targetMicroSecondsPerFrame
 );
 
 }

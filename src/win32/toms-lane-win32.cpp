@@ -289,7 +289,10 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			bool playSound = settings.updateSoundCallback != nullptr;
 			if (playSound)
 			{
-				soundInitResult = win32_sound_interface_initialize(window);
+				soundInitResult = win32_sound_interface_initialize(
+					window,
+					settings.updateSoundCallback
+				);
 			}
 
 			// Initialize general use memory
@@ -348,19 +351,10 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 				// Audio
 				if (playSound)
 				{
-					SoundBuffer soundBuffer = {0};
-					win32_sound_interface_buffer_initialize(
+					win32_sound_interface_frame_update(
 						gameUpdateHz,
 						frameStartCounter,
-						targetMicroSecondsPerFrame,
-						soundBuffer
-					);
-
-					// Call into the application to fill the sound buffer
-					settings.updateSoundCallback(soundBuffer);
-
-					win32_sound_interface_buffer_process(
-						soundBuffer
+						targetMicroSecondsPerFrame
 					);
 				}
 

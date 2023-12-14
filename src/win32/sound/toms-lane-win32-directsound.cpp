@@ -1,7 +1,7 @@
 #include <dsound.h>
 #include <stdint.h>
 #include "../win32-time.hpp"
-#include "../../platform/toms-lane-platform.hpp"
+#include "../../platform/toms-lane-application.hpp"
 
 namespace tl
 {
@@ -18,11 +18,12 @@ struct Win32Sound
 {
 	LPDIRECTSOUNDBUFFER _secondarySoundBuffer;
 	int16_t* _samples = nullptr;
-	DWORD _byteToLock;
-	DWORD _bytesToWrite;
-	int _bufferSizeInMilliseconds;
-	int _bytesPerSample;
-	int _samplesPerMillisecond;
+	DWORD _byteToLock = 0;
+	DWORD _bytesToWrite = 0;
+	int _bufferSizeInMilliseconds = 0;
+	int _bytesPerSample = 0;
+	int _samplesPerMillisecond = 0;
+	UpdateSoundCallback _updateSoundCallback = nullptr;
 };
 
 static Win32Sound sound;
@@ -78,11 +79,15 @@ static int win32_sound_buffer_clear()
 	return 0;
 }
 
-int win32_sound_interface_initialize(HWND window)
+int win32_sound_interface_initialize(
+	HWND window,
+	UpdateSoundCallback updateSoundCallback
+)
 {
 	sound._bufferSizeInMilliseconds = 1000;
 	sound._samplesPerMillisecond = 48;
-	sound._bytesPerSample = 2 * sizeof (sound._samplesPerMillisecond);
+	sound._bytesPerSample = 2 * sizeof (sound._samplesPerMillisecond); // 2 for left & right channels
+	sound._updateSoundCallback = updateSoundCallback;
 
 	int bufferSizeInBytes = win32_sound_buffer_size_get();
 
@@ -172,7 +177,7 @@ int win32_sound_interface_initialize(HWND window)
 	return 0;
 }
 
-int win32_sound_interface_buffer_initialize(
+static int win32_sound_interface_buffer_initialize(
 	int gameUpdateHz,
 	LARGE_INTEGER frameStartCounter,
 	int targetMicroSecondsPerFrame,
@@ -204,9 +209,7 @@ int win32_sound_interface_buffer_initialize(
 	// cursor   write cursor
 	if (expectedFrameEndByte > writeCursor)
 	{
-
 		targetCursor = expectedFrameEndByte + expectedBytesPerFrame;
-
 	}
 
 	// | current frame         | next frame          | next frame
@@ -240,7 +243,7 @@ int win32_sound_interface_buffer_initialize(
 }
 
 
-int win32_sound_interface_buffer_process(
+static int win32_sound_interface_buffer_process(
 	const SoundBuffer& soundBuffer
 )
 {
@@ -311,6 +314,29 @@ int win32_sound_interface_buffer_process(
 	return 0;
 }
 
+int win32_sound_interface_frame_update(
+	int gameUpdateHz,
+	LARGE_INTEGER frameStartCounter,
+	int targetMicroSecondsPerFrame
+)
+{
+	SoundBuffer soundBuffer = {0};
+	win32_sound_interface_buffer_initialize(
+		gameUpdateHz,
+		frameStartCounter,
+		targetMicroSecondsPerFrame,
+		soundBuffer
+	);
+
+	// Call into the application to fill the sound buffer
+	sound._updateSoundCallback(soundBuffer);
+
+	win32_sound_interface_buffer_process(
+		soundBuffer
+	);
+
+	return 0;
+}
 
 //https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee416967(v=vs.85) 
 }
