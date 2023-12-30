@@ -7,6 +7,7 @@
 #include "./levels.cpp"
 
 tl::SpriteC backgroundSprite;
+tl::SpriteC playersprites;
 
 #include "./render-gamestate.cpp"
 #include "./update-gamestate.cpp"
@@ -22,7 +23,7 @@ tl::SpriteC backgroundSprite;
 bool initialized = false;
 bool isPaused = false;
 
-int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
+int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
 {
 	tl::MemorySpace permanent = gameMemory.permanent;
 	tl::MemorySpace transient = gameMemory.transient;
@@ -35,10 +36,17 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 		transient
 	);
 
+		LoadSpriteFromFile(
+		"obby2-player.sprc",
+		playersprites,
+		permanent,
+		transient
+	);
+
 	return 0;
 }
 
-int tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, const RenderBuffer &renderBuffer, float dt)
+int tl::UpdateAndRender(const GameMemory& gameMemory, const tl::Input& input, const RenderBuffer& renderBuffer, float dt)
 {
 	tl::Vec2<int> pixelRect;
 	pixelRect.x = renderBuffer.width;

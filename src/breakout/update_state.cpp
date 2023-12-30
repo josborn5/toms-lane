@@ -422,7 +422,7 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 
 	if (allBlocksGoneResult)
 	{
-		StartNextLevel();
+		gamestate.mode = ReadyToStart;
 	}
 
 	return &gamestate;

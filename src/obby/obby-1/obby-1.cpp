@@ -28,7 +28,7 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 
 	// Read spritec files
 	LoadSpriteFromFile(
-		"brick.sprc",
+		".\\brick.sprc",
 		regularBlockSprite,
 		permanent,
 		transient

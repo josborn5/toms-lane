@@ -284,19 +284,7 @@ void RenderBlocks(
 	}
 }
 
-void RenderBlocksAndPlayer(
-	const tl::RenderBuffer& renderBuffer,
-	const tl::Sprite& sprite,
-	const GameState& state,
-	uint32_t playerColor
-) {
-	RenderBlocks(renderBuffer, state);
-	
-	// player
-	tl::DrawSprite(renderBuffer, sprite, state.player, playerColor);
-}
-
-static int LoadSpriteFromFile(
+int LoadSpriteFromFile(
 	char* fileName,
 	tl::SpriteC& spriteTarget,
 	tl::MemorySpace& permanent,
