@@ -20,7 +20,13 @@ CCCCCCCCCCCC",
 000000000000\n\
   00C00C00\n\
     0000\n\
-     MM"
+     MM",
+
+"\
+MMMMMMMMMMMMM\n\
+  CCCCCCCCC\n\
+    MMMMMMMMMMMMMMM\n\
+     CCCCCCCCCCC"
 };
 
 static void PopulateBlocksForLevel(
@@ -45,8 +51,8 @@ static void PopulateBlocksForLevel(
 		firstBlock++;
 	}
 
-	// Temporary hack - force level to be between 1 and 3
-	if (level > 3)
+	// Temporary hack - force level to be between 1 and 4
+	if (level > 4)
 	{
 		level = 1;
 	}
