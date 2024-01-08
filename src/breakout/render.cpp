@@ -6,8 +6,72 @@ const uint32_t TEXT_COLOR = 0xFFFF00;
 const float SMALL_FONT_SIZE = 20.0f;
 const float TITLE_FONT_SIZE = 120.0f;
 
-int rainbowColor = 0;
+static void color_to_rgb(uint32_t colorRGBA, uint8_t& r, uint8_t& g, uint8_t& b)
+{
+	r = (uint8_t)(colorRGBA >> 16);
+	g = (uint8_t)(colorRGBA >> 8);
+	b = (uint8_t)(colorRGBA >> 0);
+}
 
+static uint32_t rgb_to_color(uint8_t& r, uint8_t& g, uint8_t& b)
+{
+	return (r << 16) | (g << 8) | (b << 0);
+}
+
+static uint32_t rainbowColor = 0xFF0000; // start as red
+static uint8_t rainbowPhase = 0;
+static void updateRainbowColor()
+{
+	uint8_t newR;
+	uint8_t newG;
+	uint8_t newB;
+
+	uint8_t oldR;
+	uint8_t oldG;
+	uint8_t oldB;
+	color_to_rgb(rainbowColor, oldR, oldG, oldB);
+	const uint8_t colorIncrement = 1;
+	switch (rainbowPhase)
+	{
+		case 0:
+			newR = oldR - colorIncrement;
+			newG = oldG + colorIncrement;
+			newB = 0;
+
+			if (newR < 0)
+			{
+				newG = 255;
+				newR = 0;
+				rainbowPhase += 1;
+			}
+			break;
+		case 1:
+			newR = 0;
+			newG = oldG - colorIncrement;
+			newB = oldB + colorIncrement;
+
+			if (newG < 0)
+			{
+				newG = 0;
+				newB = 255;
+				rainbowPhase += 1;
+			}
+			break;
+		case 2:
+			newR = oldR + colorIncrement;
+			newG = 0;
+			newB = oldB - colorIncrement;
+
+			if (newB < 0)
+			{
+				newR = 255;
+				newB = 0;
+				rainbowPhase = 0;
+			}
+			break;
+	}
+	rainbowColor = rgb_to_color(newR, newG, newB);
+}
 
 static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& state)
 {
@@ -15,41 +79,7 @@ static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameStat
 	{
 		tl::ClearScreen(renderBuffer, 0x050505);
 
-		if (rainbowColor == (255 * 4))
-		{
-			rainbowColor = 0;
-		}
-		// Red inc, Green min, Blue dec
-		// Red max, Green inc, Blue min
-		// Red dec, Green max, Blue inc
-		// Red min, Green dec, Blue max
-		rainbowColor += 5;
-		int rValue, gValue, bValue;
-		if (rainbowColor < 255)
-		{
-			rValue = ClampInt(0, rainbowColor, 255);
-			gValue = 0;
-			bValue = ClampInt(0, -(rainbowColor - 255), 255);
-		}
-		else if (rainbowColor < (255 * 2))
-		{
-			rValue = 255;
-			gValue = ClampInt(0, (255 * 2) - rainbowColor, 255);
-			bValue = 0;
-		}
-		else if (rainbowColor < (255 * 3))
-		{
-			rValue = ClampInt(0, -(rainbowColor - (255 * 3)), 255);
-			gValue = 255;
-			bValue = ClampInt(0, (255 * 3) - rainbowColor, 255);
-		}
-		else
-		{
-			rValue = 0;
-			gValue = ClampInt(0, -(rainbowColor - (255 * 4)), 255);
-			bValue = 255;
-		}
-		uint32_t rainbowValue = (rValue << 16) | (gValue << 8) | (bValue << 0);
+		updateRainbowColor();
 		tl::Rect<float> titleCharRect;
 		titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
 		titleCharRect.halfSize = tl::Vec2<float> { 0.5f * TITLE_FONT_SIZE, TITLE_FONT_SIZE };
@@ -57,7 +87,7 @@ static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameStat
 			renderBuffer,
 			"BREAKOUT",
 			titleCharRect,
-			rainbowValue
+			rainbowColor
 		);
 
 		tl::Rect<float> smallCharRect;

@@ -1,3 +1,8 @@
+#include <math.h>
+#include "math.c"
+#include "levels.c"
+
+
 #define BLOCK_AREA tl::Vec2<float> { 800.0f, 200.0f }
 #define BLOCK_AREA_POS tl::Vec2<float> { 300.0f, 600.0f }
 
@@ -77,6 +82,13 @@ static void InitializeGameState()
 	gamestate.score = 0;
 	gamestate.lives = 3;
 	gamestate.level = 0;
+}
+
+static float ClampFloat(float min, float val, float max)
+{
+	if (val < min) return min;
+	if (val > max) return max;
+	return val;
 }
 
 static WallCollision CheckWallCollision(const Ball &ball, float minimumTime)

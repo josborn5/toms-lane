@@ -20,16 +20,11 @@ TODO (in no particular order):
 
 #include <windows.h>
 #include "../win32/toms-lane-win32.hpp"
-#include "game.h"
 #include "../platform/toms-lane-platform.hpp"
-#include <math.h>
-#include "math.c"
-#include "platform_common.c"
-#include "levels.c"
+#include "game.h"
 #include "update_state.cpp"
 #include "render.cpp"
 
-char debugStringBuffer[256];
 
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
 {
