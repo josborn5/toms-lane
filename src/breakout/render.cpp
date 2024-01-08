@@ -30,7 +30,7 @@ static void updateRainbowColor()
 	uint8_t oldG;
 	uint8_t oldB;
 	color_to_rgb(rainbowColor, oldR, oldG, oldB);
-	const uint8_t colorIncrement = 1;
+	const uint8_t colorIncrement = 3;
 	switch (rainbowPhase)
 	{
 		case 0:
@@ -38,10 +38,8 @@ static void updateRainbowColor()
 			newG = oldG + colorIncrement;
 			newB = 0;
 
-			if (newR < 0)
+			if (newR == 0)
 			{
-				newG = 255;
-				newR = 0;
 				rainbowPhase += 1;
 			}
 			break;
@@ -50,10 +48,8 @@ static void updateRainbowColor()
 			newG = oldG - colorIncrement;
 			newB = oldB + colorIncrement;
 
-			if (newG < 0)
+			if (newG == 0)
 			{
-				newG = 0;
-				newB = 255;
 				rainbowPhase += 1;
 			}
 			break;
@@ -62,10 +58,8 @@ static void updateRainbowColor()
 			newG = 0;
 			newB = oldB - colorIncrement;
 
-			if (newB < 0)
+			if (newB == 0)
 			{
-				newR = 255;
-				newB = 0;
 				rainbowPhase = 0;
 			}
 			break;
