@@ -17,6 +17,9 @@ static RenderBuffer globalRenderBuffer = {0};
 static BITMAPINFO bitmapInfo = {0};	// platform dependent
 static int maxAppFrameTimeInMicroSeconds = 0;
 
+static HWND globalWindow;
+static GameMemory gameMemory;
+
 static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 {
 	RECT clientRect = {0};
@@ -241,10 +244,8 @@ void DisplayLastWin32Error()
 }
 
 int RunLoop(
-	HWND window,
 	int targetFPS,
 	bool openConsole,
-	GameMemory& gameMemory,
 	bool playSound
 )
 {
@@ -273,7 +274,7 @@ int RunLoop(
 		// Get mouse position
 		POINT mousePointer;
 		GetCursorPos(&mousePointer);	// mousePointer in screen coord
-		ScreenToClient(window, &mousePointer);	// convert screen coord to window coord
+		ScreenToClient(globalWindow, &mousePointer);	// convert screen coord to window coord
 		gameInput.mouse.x = mousePointer.x;
 		gameInput.mouse.y = globalRenderBuffer.height - mousePointer.y;
 
@@ -300,9 +301,9 @@ int RunLoop(
 		}
 
 		// render visual
-		HDC deviceContext = GetDC(window);
+		HDC deviceContext = GetDC(globalWindow);
 		Win32_DisplayglobalRenderBufferInWindow(deviceContext);
-		ReleaseDC(window, deviceContext);
+		ReleaseDC(globalWindow, deviceContext);
 
 		// wait before starting next frame
 		int microSecondsElapsedForFrame = win32_time_interface_elapsed_microseconds_get(frameStartCounter);
@@ -368,7 +369,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 		return -1;
 	}
 
-	HWND window = CreateWindowExA(
+	globalWindow = CreateWindowExA(
 		0,
 		windowClass.lpszClassName,
 		settings.title,
@@ -380,7 +381,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 		0, 0, 0, 0
 	);
 
-	if(!window)
+	if(!globalWindow)
 	{
 		// Handle unable to create window
 		return -2;
@@ -395,7 +396,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 	}
 
 	// Initialize Visual
-	Win32_SizeglobalRenderBufferToCurrentWindow(window);
+	Win32_SizeglobalRenderBufferToCurrentWindow(globalWindow);
 
 	// Initialize sound
 	// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
@@ -404,13 +405,12 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 	if (playSound)
 	{
 		soundInitResult = win32_sound_interface_initialize(
-			window,
+			globalWindow,
 			settings.updateSoundCallback
 		);
 	}
 
 	// Initialize general use memory
-	GameMemory gameMemory;
 	gameMemory.permanent.sizeInBytes = Megabytes(settings.permanentSpaceInMegabytes);
 	gameMemory.transient.sizeInBytes = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
 
@@ -431,10 +431,8 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 	}
 
 	return RunLoop(
-		window,
 		settings.targetFPS,
 		settings.openConsole,
-		gameMemory,
 		playSound
 	);
 }
