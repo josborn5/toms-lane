@@ -14,7 +14,6 @@ namespace tl
 	int OpenWindow(HINSTANCE instance, const WindowSettings &settings);
 	int RunWindowUpdateLoop(
 		int targetFPS,
-		bool openConsole,
 		bool playSound
 	);
 	int Win32Main(HINSTANCE instance, const WindowSettings &settings);

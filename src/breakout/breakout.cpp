@@ -20,6 +20,7 @@ TODO (in no particular order):
 
 #include <windows.h>
 #include "../win32/toms-lane-win32.hpp"
+#include "../win32/win32-console.hpp"
 #include "../platform/toms-lane-platform.hpp"
 #include "game.h"
 #include "update_state.cpp"
@@ -70,12 +71,13 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	settings.playSound = true;
 	settings.updateSoundCallback = UpdateSound;
 
-	int windowOpenResult = tl::OpenWindow(instance, settings);
+	tl::console_interface_open();
 
+	int windowOpenResult = tl::OpenWindow(instance, settings);
 	if (windowOpenResult != 0)
 	{
 		return windowOpenResult;
 	}
 
-	return tl::RunWindowUpdateLoop(settings.targetFPS, true, true);
+	return tl::RunWindowUpdateLoop(settings.targetFPS, true);
 }

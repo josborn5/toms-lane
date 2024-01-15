@@ -277,12 +277,6 @@ int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 
 	IsRunning = true;
 
-	// Open console if settings indicate it
-	if (settings.openConsole)
-	{
-		console_interface_open();
-	}
-
 	// Initialize Visual
 	Win32_SizeglobalRenderBufferToCurrentWindow(globalWindow);
 
@@ -318,7 +312,6 @@ int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 
 int RunWindowUpdateLoop(
 	int targetFPS,
-	bool openConsole,
 	bool playSound
 )
 {
@@ -354,8 +347,6 @@ int RunWindowUpdateLoop(
 
 		LARGE_INTEGER appFrameStartCounter = win32_time_interface_wallclock_get();
 		int updateResult = UpdateAndRender(gameMemory, gameInput, globalRenderBuffer, lastDtInSeconds);
-		int appFrameTimeInMicroSeconds = win32_time_interface_elapsed_microseconds_get(appFrameStartCounter);
-		int waitTimeInMicroSeconds = targetMicroSecondsPerFrame - appFrameTimeInMicroSeconds;
 		if (updateResult != 0)
 		{
 			return updateResult;
@@ -400,25 +391,6 @@ int RunWindowUpdateLoop(
 			// TODO MISSED FRAME RATE
 		}
 
-		// Output frame time information
-		if (openConsole)
-		{
-			if (appFrameTimeInMicroSeconds > maxAppFrameTimeInMicroSeconds)
-			{
-				maxAppFrameTimeInMicroSeconds = appFrameTimeInMicroSeconds;
-			}
-			TCHAR writeBuffer[256];
-			wsprintf(
-				writeBuffer,
-				"max: %d\nactual: %d, target: %d, wait: %d\n",
-				maxAppFrameTimeInMicroSeconds,
-				appFrameTimeInMicroSeconds,
-				targetMicroSecondsPerFrame,
-				waitTimeInMicroSeconds
-			);
-			// console_interface_write(writeBuffer);
-		}
-
 		// Work out elapsed time for current frame
 		lastDtInSeconds = (float)win32_time_interface_elapsed_seconds_get(frameStartCounter);
 		// Reset measurementsfor next frame
@@ -438,7 +410,6 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 	return RunWindowUpdateLoop(
 		settings.targetFPS,
-		settings.openConsole,
 		settings.playSound
 	);
 }
