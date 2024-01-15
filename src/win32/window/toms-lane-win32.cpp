@@ -14,10 +14,10 @@ namespace tl
 static bool IsRunning = false;
 static RenderBuffer globalRenderBuffer = {0};
 static BITMAPINFO bitmapInfo = {0};	// platform dependent
-static int maxAppFrameTimeInMicroSeconds = 0;
 
 static HWND globalWindow;
 static GameMemory gameMemory;
+static bool playSound;
 
 static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 {
@@ -282,7 +282,7 @@ int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 	// Initialize sound
 	// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
 	int soundInitResult;
-	bool playSound = settings.updateSoundCallback != nullptr;
+	playSound = settings.updateSoundCallback != nullptr;
 	if (playSound)
 	{
 		soundInitResult = win32_sound_interface_initialize(
@@ -310,8 +310,7 @@ int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 }
 
 int RunWindowUpdateLoop(
-	int targetFPS,
-	bool playSound
+	int targetFPS
 )
 {
 	// Set the Windows schedular granularity to 1ms to help our Sleep() function call be granular
@@ -408,8 +407,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 	}
 
 	return RunWindowUpdateLoop(
-		settings.targetFPS,
-		settings.playSound
+		settings.targetFPS
 	);
 }
 

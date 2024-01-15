@@ -78,5 +78,5 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 		return windowOpenResult;
 	}
 
-	return tl::RunWindowUpdateLoop(settings.targetFPS, true);
+	return tl::RunWindowUpdateLoop(settings.targetFPS);
 }
