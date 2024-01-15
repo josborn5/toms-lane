@@ -244,7 +244,7 @@ int RunLoop(
 	HWND window,
 	int targetFPS,
 	bool openConsole,
-	GameMemory gameMemory,
+	GameMemory& gameMemory,
 	bool playSound
 )
 {
@@ -362,86 +362,81 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 	windowClass.hInstance = instance;
 	windowClass.lpszClassName = "Window Class";
 
-	if(RegisterClassA(&windowClass))
-	{
-		HWND window = CreateWindowExA(
-			0,
-			windowClass.lpszClassName,
-			settings.title,
-			WS_VISIBLE|WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			settings.width,
-			settings.height,
-			0, 0, 0, 0
-		);
-
-		if(window)
-		{
-			IsRunning = true;
-
-			// Open console if settings indicate it
-			if (settings.openConsole)
-			{
-				win32_console_interface_open();
-			}
-
-			// Initialize Visual
-			Win32_SizeglobalRenderBufferToCurrentWindow(window);
-
-			// Initialize sound
-			// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
-			int soundInitResult;
-			bool playSound = settings.updateSoundCallback != nullptr;
-			if (playSound)
-			{
-				soundInitResult = win32_sound_interface_initialize(
-					window,
-					settings.updateSoundCallback
-				);
-			}
-
-			// Initialize general use memory
-			GameMemory gameMemory;
-			gameMemory.permanent.sizeInBytes = Megabytes(settings.permanentSpaceInMegabytes);
-			gameMemory.transient.sizeInBytes = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
-
-			uint64_t totalStorageSpace = gameMemory.permanent.sizeInBytes + gameMemory.transient.sizeInBytes;
-			gameMemory.permanent.content = VirtualAlloc(0, (size_t)totalStorageSpace, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
-			if(gameMemory.permanent.content == NULL)
-			{
-				DisplayLastWin32Error();
-				return -1;
-			}
-
-			gameMemory.transient.content = (uint8_t*)gameMemory.permanent.content + gameMemory.permanent.sizeInBytes;
-
-			int initResult = Initialize(gameMemory, globalRenderBuffer);
-			if (initResult != 0)
-			{
-				return initResult;
-			}
-
-
-			return RunLoop(
-				window,
-				settings.targetFPS,
-				settings.openConsole,
-				gameMemory,
-				playSound
-			);
-		}
-		else
-		{
-			// Handle unable to create window
-		}
-	}
-	else
+	if(!RegisterClassA(&windowClass))
 	{
 		// Handle windows window registration failure
+		return -1;
 	}
 
-	return (0);
+	HWND window = CreateWindowExA(
+		0,
+		windowClass.lpszClassName,
+		settings.title,
+		WS_VISIBLE|WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		settings.width,
+		settings.height,
+		0, 0, 0, 0
+	);
+
+	if(!window)
+	{
+		// Handle unable to create window
+		return -2;
+	}
+
+	IsRunning = true;
+
+	// Open console if settings indicate it
+	if (settings.openConsole)
+	{
+		win32_console_interface_open();
+	}
+
+	// Initialize Visual
+	Win32_SizeglobalRenderBufferToCurrentWindow(window);
+
+	// Initialize sound
+	// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
+	int soundInitResult;
+	bool playSound = settings.updateSoundCallback != nullptr;
+	if (playSound)
+	{
+		soundInitResult = win32_sound_interface_initialize(
+			window,
+			settings.updateSoundCallback
+		);
+	}
+
+	// Initialize general use memory
+	GameMemory gameMemory;
+	gameMemory.permanent.sizeInBytes = Megabytes(settings.permanentSpaceInMegabytes);
+	gameMemory.transient.sizeInBytes = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
+
+	uint64_t totalStorageSpace = gameMemory.permanent.sizeInBytes + gameMemory.transient.sizeInBytes;
+	gameMemory.permanent.content = VirtualAlloc(0, (size_t)totalStorageSpace, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+	if(gameMemory.permanent.content == NULL)
+	{
+		DisplayLastWin32Error();
+		return -1;
+	}
+
+	gameMemory.transient.content = (uint8_t*)gameMemory.permanent.content + gameMemory.permanent.sizeInBytes;
+
+	int initResult = Initialize(gameMemory, globalRenderBuffer);
+	if (initResult != 0)
+	{
+		return initResult;
+	}
+
+	return RunLoop(
+		window,
+		settings.targetFPS,
+		settings.openConsole,
+		gameMemory,
+		playSound
+	);
 }
 
 int Win32Main(HINSTANCE instance)
