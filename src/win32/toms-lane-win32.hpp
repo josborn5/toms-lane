@@ -11,6 +11,12 @@
 namespace tl
 {
 	int Win32Main(HINSTANCE instance);
+	int OpenWindow(HINSTANCE instance, const WindowSettings &settings);
+	int RunWindowUpdateLoop(
+		int targetFPS,
+		bool openConsole,
+		bool playSound
+	);
 	int Win32Main(HINSTANCE instance, const WindowSettings &settings);
 }
 

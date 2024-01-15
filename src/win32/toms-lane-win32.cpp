@@ -243,7 +243,80 @@ void DisplayLastWin32Error()
 	wsprintf(ErrorCodeBuffer, "VirtualAlloc error code: %d\n", ErrorCode);
 }
 
-int RunLoop(
+int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
+{
+	WNDCLASSA windowClass = {0};
+	windowClass.style = CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
+	windowClass.lpfnWndProc = Win32_MainWindowCallback;
+	windowClass.hInstance = instance;
+	windowClass.lpszClassName = "Window Class";
+
+	if(!RegisterClassA(&windowClass))
+	{
+		// Handle windows window registration failure
+		return -1;
+	}
+
+	globalWindow = CreateWindowExA(
+		0,
+		windowClass.lpszClassName,
+		settings.title,
+		WS_VISIBLE|WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		settings.width,
+		settings.height,
+		0, 0, 0, 0
+	);
+
+	if(!globalWindow)
+	{
+		// Handle unable to create window
+		return -2;
+	}
+
+	IsRunning = true;
+
+	// Open console if settings indicate it
+	if (settings.openConsole)
+	{
+		win32_console_interface_open();
+	}
+
+	// Initialize Visual
+	Win32_SizeglobalRenderBufferToCurrentWindow(globalWindow);
+
+	// Initialize sound
+	// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
+	int soundInitResult;
+	bool playSound = settings.updateSoundCallback != nullptr;
+	if (playSound)
+	{
+		soundInitResult = win32_sound_interface_initialize(
+			globalWindow,
+			settings.updateSoundCallback
+		);
+	}
+
+	// Initialize general use memory
+	gameMemory.permanent.sizeInBytes = Megabytes(settings.permanentSpaceInMegabytes);
+	gameMemory.transient.sizeInBytes = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
+
+	uint64_t totalStorageSpace = gameMemory.permanent.sizeInBytes + gameMemory.transient.sizeInBytes;
+	gameMemory.permanent.content = VirtualAlloc(0, (size_t)totalStorageSpace, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+	if(gameMemory.permanent.content == NULL)
+	{
+		DisplayLastWin32Error();
+		return -1;
+	}
+
+	gameMemory.transient.content = (uint8_t*)gameMemory.permanent.content + gameMemory.permanent.sizeInBytes;
+
+	int initResult = Initialize(gameMemory, globalRenderBuffer);
+	return initResult;
+}
+
+int RunWindowUpdateLoop(
 	int targetFPS,
 	bool openConsole,
 	bool playSound
@@ -357,83 +430,16 @@ int RunLoop(
 
 int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSettings())
 {
-	WNDCLASSA windowClass = {0};
-	windowClass.style = CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
-	windowClass.lpfnWndProc = Win32_MainWindowCallback;
-	windowClass.hInstance = instance;
-	windowClass.lpszClassName = "Window Class";
-
-	if(!RegisterClassA(&windowClass))
+	int openResult = OpenWindow(instance, settings);
+	if (openResult != 0)
 	{
-		// Handle windows window registration failure
-		return -1;
+		return openResult;
 	}
 
-	globalWindow = CreateWindowExA(
-		0,
-		windowClass.lpszClassName,
-		settings.title,
-		WS_VISIBLE|WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		settings.width,
-		settings.height,
-		0, 0, 0, 0
-	);
-
-	if(!globalWindow)
-	{
-		// Handle unable to create window
-		return -2;
-	}
-
-	IsRunning = true;
-
-	// Open console if settings indicate it
-	if (settings.openConsole)
-	{
-		win32_console_interface_open();
-	}
-
-	// Initialize Visual
-	Win32_SizeglobalRenderBufferToCurrentWindow(globalWindow);
-
-	// Initialize sound
-	// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
-	int soundInitResult;
-	bool playSound = settings.updateSoundCallback != nullptr;
-	if (playSound)
-	{
-		soundInitResult = win32_sound_interface_initialize(
-			globalWindow,
-			settings.updateSoundCallback
-		);
-	}
-
-	// Initialize general use memory
-	gameMemory.permanent.sizeInBytes = Megabytes(settings.permanentSpaceInMegabytes);
-	gameMemory.transient.sizeInBytes = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
-
-	uint64_t totalStorageSpace = gameMemory.permanent.sizeInBytes + gameMemory.transient.sizeInBytes;
-	gameMemory.permanent.content = VirtualAlloc(0, (size_t)totalStorageSpace, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
-	if(gameMemory.permanent.content == NULL)
-	{
-		DisplayLastWin32Error();
-		return -1;
-	}
-
-	gameMemory.transient.content = (uint8_t*)gameMemory.permanent.content + gameMemory.permanent.sizeInBytes;
-
-	int initResult = Initialize(gameMemory, globalRenderBuffer);
-	if (initResult != 0)
-	{
-		return initResult;
-	}
-
-	return RunLoop(
+	return RunWindowUpdateLoop(
 		settings.targetFPS,
 		settings.openConsole,
-		playSound
+		settings.playSound
 	);
 }
 
