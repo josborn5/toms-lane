@@ -4,7 +4,7 @@ static HANDLE consoleWriteHandle;
 
 namespace tl
 {
-	int win32_console_interface_open()
+	int console_interface_open()
 	{
 		if (AllocConsole())
 		{
@@ -15,7 +15,7 @@ namespace tl
 		return -1;
 	}
 
-	int win32_console_interface_write(char* message)
+	int console_interface_write(char* message)
 	{
 		if (consoleWriteHandle == INVALID_HANDLE_VALUE)
 		{

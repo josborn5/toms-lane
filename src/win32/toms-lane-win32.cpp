@@ -280,7 +280,7 @@ int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 	// Open console if settings indicate it
 	if (settings.openConsole)
 	{
-		win32_console_interface_open();
+		console_interface_open();
 	}
 
 	// Initialize Visual
@@ -416,7 +416,7 @@ int RunWindowUpdateLoop(
 				targetMicroSecondsPerFrame,
 				waitTimeInMicroSeconds
 			);
-			// win32_console_interface_write(writeBuffer);
+			// console_interface_write(writeBuffer);
 		}
 
 		// Work out elapsed time for current frame

@@ -4,9 +4,9 @@
 namespace tl
 {
 
-int win32_console_interface_open();
+int console_interface_open();
 
-int win32_console_interface_write(char* message);
+int console_interface_write(char* message);
 
 }
 
