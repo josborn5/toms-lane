@@ -70,5 +70,12 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	settings.playSound = true;
 	settings.updateSoundCallback = UpdateSound;
 
-	tl::Win32Main(instance, settings);
+	int windowOpenResult = tl::OpenWindow(instance, settings);
+
+	if (windowOpenResult != 0)
+	{
+		return windowOpenResult;
+	}
+
+	return tl::RunWindowUpdateLoop(settings.targetFPS, true, true);
 }
