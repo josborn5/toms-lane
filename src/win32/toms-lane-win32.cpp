@@ -242,8 +242,7 @@ void DisplayLastWin32Error()
 
 int RunLoop(
 	HWND window,
-	int targetMicroSecondsPerFrame,
-	int gameUpdateHz,
+	int targetFPS,
 	bool openConsole,
 	GameMemory gameMemory,
 	bool playSound
@@ -253,6 +252,9 @@ int RunLoop(
 	UINT DesiredSchedulerMS = 1;
 	MMRESULT setSchedularGranularityResult = timeBeginPeriod(DesiredSchedulerMS);
 	bool SleepIsGranular = (setSchedularGranularityResult == TIMERR_NOERROR);
+
+	int gameUpdateHz = (targetFPS >= 10) ? targetFPS : 30;
+	int targetMicroSecondsPerFrame = 1000000 / gameUpdateHz;
 
 	// Initialize input state
 	Input gameInput = {0};
@@ -360,9 +362,6 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 	windowClass.hInstance = instance;
 	windowClass.lpszClassName = "Window Class";
 
-	int gameUpdateHz = (settings.targetFPS >= 10) ? settings.targetFPS : 30;
-	int targetMicroSecondsPerFrame = 1000000 / gameUpdateHz;
-
 	if(RegisterClassA(&windowClass))
 	{
 		HWND window = CreateWindowExA(
@@ -426,8 +425,7 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 
 			return RunLoop(
 				window,
-				targetMicroSecondsPerFrame,
-				gameUpdateHz,
+				settings.targetFPS,
 				settings.openConsole,
 				gameMemory,
 				playSound
