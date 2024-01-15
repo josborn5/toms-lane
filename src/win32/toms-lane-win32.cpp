@@ -240,13 +240,120 @@ void DisplayLastWin32Error()
 	wsprintf(ErrorCodeBuffer, "VirtualAlloc error code: %d\n", ErrorCode);
 }
 
-int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSettings())
+int RunLoop(
+	HWND window,
+	int targetMicroSecondsPerFrame,
+	int gameUpdateHz,
+	bool openConsole,
+	GameMemory gameMemory,
+	bool playSound
+)
 {
 	// Set the Windows schedular granularity to 1ms to help our Sleep() function call be granular
 	UINT DesiredSchedulerMS = 1;
 	MMRESULT setSchedularGranularityResult = timeBeginPeriod(DesiredSchedulerMS);
 	bool SleepIsGranular = (setSchedularGranularityResult == TIMERR_NOERROR);
 
+	// Initialize input state
+	Input gameInput = {0};
+
+	// Initialize frame timers
+	float lastDtInSeconds = 1.0f / (float)gameUpdateHz;
+	LARGE_INTEGER frameStartCounter = win32_time_interface_wallclock_get();
+	win32_time_interface_initialize();
+
+
+	// Main loop
+	while (IsRunning)
+	{
+		Win32_ProcessPendingMessages(&gameInput);
+
+		// Get mouse position
+		POINT mousePointer;
+		GetCursorPos(&mousePointer);	// mousePointer in screen coord
+		ScreenToClient(window, &mousePointer);	// convert screen coord to window coord
+		gameInput.mouse.x = mousePointer.x;
+		gameInput.mouse.y = globalRenderBuffer.height - mousePointer.y;
+
+
+		LARGE_INTEGER appFrameStartCounter = win32_time_interface_wallclock_get();
+		int updateResult = UpdateAndRender(gameMemory, gameInput, globalRenderBuffer, lastDtInSeconds);
+		int appFrameTimeInMicroSeconds = win32_time_interface_elapsed_microseconds_get(appFrameStartCounter);
+		int waitTimeInMicroSeconds = targetMicroSecondsPerFrame - appFrameTimeInMicroSeconds;
+		if (updateResult != 0)
+		{
+			return updateResult;
+		}
+
+		ResetButtons(&gameInput);
+
+		// Audio
+		if (playSound)
+		{
+			win32_sound_interface_frame_update(
+				gameUpdateHz,
+				frameStartCounter,
+				targetMicroSecondsPerFrame
+			);
+		}
+
+		// render visual
+		HDC deviceContext = GetDC(window);
+		Win32_DisplayglobalRenderBufferInWindow(deviceContext);
+		ReleaseDC(window, deviceContext);
+
+		// wait before starting next frame
+		int microSecondsElapsedForFrame = win32_time_interface_elapsed_microseconds_get(frameStartCounter);
+		if (microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
+		{
+			if (SleepIsGranular)
+			{
+				DWORD sleepMS = (DWORD)(targetMicroSecondsPerFrame - microSecondsElapsedForFrame) / 1000;
+				if (sleepMS > 0)
+				{
+					Sleep(sleepMS);
+				}
+			}
+			while(microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
+			{
+				microSecondsElapsedForFrame = win32_time_interface_elapsed_microseconds_get(frameStartCounter);
+			}
+		}
+		else
+		{
+			// TODO MISSED FRAME RATE
+		}
+
+		// Output frame time information
+		if (openConsole)
+		{
+			if (appFrameTimeInMicroSeconds > maxAppFrameTimeInMicroSeconds)
+			{
+				maxAppFrameTimeInMicroSeconds = appFrameTimeInMicroSeconds;
+			}
+			TCHAR writeBuffer[256];
+			wsprintf(
+				writeBuffer,
+				"max: %d\nactual: %d, target: %d, wait: %d\n",
+				maxAppFrameTimeInMicroSeconds,
+				appFrameTimeInMicroSeconds,
+				targetMicroSecondsPerFrame,
+				waitTimeInMicroSeconds
+			);
+			// win32_console_interface_write(writeBuffer);
+		}
+
+		// Work out elapsed time for current frame
+		lastDtInSeconds = (float)win32_time_interface_elapsed_seconds_get(frameStartCounter);
+		// Reset measurementsfor next frame
+		frameStartCounter = win32_time_interface_wallclock_get();
+	}
+
+	return 0;
+}
+
+int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSettings())
+{
 	WNDCLASSA windowClass = {0};
 	windowClass.style = CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
 	windowClass.lpfnWndProc = Win32_MainWindowCallback;
@@ -296,119 +403,35 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 			}
 
 			// Initialize general use memory
-			GameMemory GameMemory;
-			GameMemory.permanent.sizeInBytes = Megabytes(settings.permanentSpaceInMegabytes);
-			GameMemory.transient.sizeInBytes = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
+			GameMemory gameMemory;
+			gameMemory.permanent.sizeInBytes = Megabytes(settings.permanentSpaceInMegabytes);
+			gameMemory.transient.sizeInBytes = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
 
-			uint64_t totalStorageSpace = GameMemory.permanent.sizeInBytes + GameMemory.transient.sizeInBytes;
-			GameMemory.permanent.content = VirtualAlloc(0, (size_t)totalStorageSpace, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
-			if(GameMemory.permanent.content == NULL)
+			uint64_t totalStorageSpace = gameMemory.permanent.sizeInBytes + gameMemory.transient.sizeInBytes;
+			gameMemory.permanent.content = VirtualAlloc(0, (size_t)totalStorageSpace, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+			if(gameMemory.permanent.content == NULL)
 			{
 				DisplayLastWin32Error();
 				return -1;
 			}
 
-			GameMemory.transient.content = (uint8_t*)GameMemory.permanent.content + GameMemory.permanent.sizeInBytes;
+			gameMemory.transient.content = (uint8_t*)gameMemory.permanent.content + gameMemory.permanent.sizeInBytes;
 
-			// Initialize input state
-			Input gameInput = {0};
-
-			int initResult = Initialize(GameMemory, globalRenderBuffer);
+			int initResult = Initialize(gameMemory, globalRenderBuffer);
 			if (initResult != 0)
 			{
 				return initResult;
 			}
 
-			// Initialize frame timers
-			float lastDtInSeconds = 1.0f / (float)gameUpdateHz;
-			LARGE_INTEGER frameStartCounter = win32_time_interface_wallclock_get();
-			win32_time_interface_initialize();
 
-			// Main loop
-			while (IsRunning)
-			{
-				Win32_ProcessPendingMessages(&gameInput);
-
-				// Get mouse position
-				POINT mousePointer;
-				GetCursorPos(&mousePointer);	// mousePointer in screen coord
-				ScreenToClient(window, &mousePointer);	// convert screen coord to window coord
-				gameInput.mouse.x = mousePointer.x;
-				gameInput.mouse.y = globalRenderBuffer.height - mousePointer.y;
-
-
-				LARGE_INTEGER appFrameStartCounter = win32_time_interface_wallclock_get();
-				int updateResult = UpdateAndRender(GameMemory, gameInput, globalRenderBuffer, lastDtInSeconds);
-				int appFrameTimeInMicroSeconds = win32_time_interface_elapsed_microseconds_get(appFrameStartCounter);
-				int waitTimeInMicroSeconds = targetMicroSecondsPerFrame - appFrameTimeInMicroSeconds;
-				if (updateResult != 0)
-				{
-					return updateResult;
-				}
-
-				ResetButtons(&gameInput);
-
-				// Audio
-				if (playSound)
-				{
-					win32_sound_interface_frame_update(
-						gameUpdateHz,
-						frameStartCounter,
-						targetMicroSecondsPerFrame
-					);
-				}
-
-				// render visual
-				HDC deviceContext = GetDC(window);
-				Win32_DisplayglobalRenderBufferInWindow(deviceContext);
-				ReleaseDC(window, deviceContext);
-
-				// wait before starting next frame
-				int microSecondsElapsedForFrame = win32_time_interface_elapsed_microseconds_get(frameStartCounter);
-				if (microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
-				{
-					if (SleepIsGranular)
-					{
-						DWORD sleepMS = (DWORD)(targetMicroSecondsPerFrame - microSecondsElapsedForFrame) / 1000;
-						if (sleepMS > 0)
-						{
-							Sleep(sleepMS);
-						}
-					}
-					while(microSecondsElapsedForFrame < targetMicroSecondsPerFrame)
-					{
-						microSecondsElapsedForFrame = win32_time_interface_elapsed_microseconds_get(frameStartCounter);
-					}
-				}
-				else
-				{
-					// TODO MISSED FRAME RATE
-				}
-
-				// Output frame time information
-				if (settings.openConsole)
-				{
-					if (appFrameTimeInMicroSeconds > maxAppFrameTimeInMicroSeconds)
-					{
-						maxAppFrameTimeInMicroSeconds = appFrameTimeInMicroSeconds;
-					}
-					TCHAR writeBuffer[256];
-					wsprintf(
-						writeBuffer,
-						"max: %d\nactual: %d, target: %d, wait: %d\n",
-						maxAppFrameTimeInMicroSeconds,
-						appFrameTimeInMicroSeconds,
-						targetMicroSecondsPerFrame,
-						waitTimeInMicroSeconds
-					);
-					win32_console_interface_write(writeBuffer);
-				}
-
-				// Work out elapsed time for current frame
-				lastDtInSeconds = (float)win32_time_interface_elapsed_seconds_get(frameStartCounter);
-				// Reset measurementsfor next frame
-				frameStartCounter = win32_time_interface_wallclock_get();
-			}
+			return RunLoop(
+				window,
+				targetMicroSecondsPerFrame,
+				gameUpdateHz,
+				settings.openConsole,
+				gameMemory,
+				playSound
+			);
 		}
 		else
 		{
