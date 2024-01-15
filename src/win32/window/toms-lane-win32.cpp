@@ -1,10 +1,9 @@
 #include <windows.h>
 #include <stdint.h>
 
-#include "../platform/toms-lane-application.hpp"
-#include "win32-console.hpp"
-#include "win32-time.hpp"
-#include "win32-sound.hpp"
+#include "../../platform/toms-lane-application.hpp"
+#include "../win32-time.hpp"
+#include "../win32-sound.hpp"
 
 namespace tl
 {
