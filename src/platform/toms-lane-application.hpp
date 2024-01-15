@@ -63,7 +63,6 @@ namespace tl
 		int targetFPS;
 		unsigned long permanentSpaceInMegabytes = 1;
 		unsigned long transientSpaceInMegabytes = 1;
-		bool openConsole = false;
 		bool playSound = false;
 		UpdateSoundCallback updateSoundCallback = nullptr;
 	};

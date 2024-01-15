@@ -67,7 +67,6 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	settings.width = 1280;
 	settings.height = 720;
 	settings.targetFPS = 60;
-	settings.openConsole = true;
 	settings.playSound = true;
 	settings.updateSoundCallback = UpdateSound;
 
