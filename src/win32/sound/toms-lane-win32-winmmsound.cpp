@@ -10,8 +10,11 @@ namespace tl
 struct Win32MMSound
 {
 	int deviceID;
-	HWAVEOUT audioOutputDeviceHandle;
 	UpdateSoundCallback updateSoundCallback;
+	HWAVEOUT audioOutputDeviceHandle;
+	WAVEHDR waveHeader;
+	int16_t* buffer;
+	uint32_t sampleCount = 512;
 };
 
 static Win32MMSound win32Sound;
@@ -55,7 +58,7 @@ static int win32_sound_device_initialize(const WAVEOUTCAPS& device)
 	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
 	waveFormat.nChannels = 2;
 	waveFormat.nSamplesPerSec = 48000;
-	waveFormat.wBitsPerSample = sizeof(int16_t) * 8;
+	waveFormat.wBitsPerSample = sizeof(int16_t) * 8; // sizeof returns size in bytes and there are 8 bits per byte
 	waveFormat.nBlockAlign = (WORD)(waveFormat.nChannels * waveFormat.wBitsPerSample / 8);
 	waveFormat.nAvgBytesPerSec = waveFormat.nBlockAlign * waveFormat.nSamplesPerSec;
 	waveFormat.cbSize = 0;
@@ -76,6 +79,15 @@ static int win32_sound_device_initialize(const WAVEOUTCAPS& device)
 		console_interface_write(errorCodeBuffer);
 		return -2;
 	}
+
+	// Allocate memory for the sound buffer
+	int bufferSizeInBytes = waveFormat.nBlockAlign * win32Sound.sampleCount;
+	win32Sound.buffer = (int16_t*)VirtualAlloc(
+		0,
+		bufferSizeInBytes,
+		MEM_RESERVE|MEM_COMMIT,
+		PAGE_READWRITE
+	);
 
 	return 0;
 }
