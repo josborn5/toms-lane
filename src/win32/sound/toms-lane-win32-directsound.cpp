@@ -81,12 +81,15 @@ static int win32_sound_buffer_clear()
 
 int win32_sound_interface_initialize(
 	HWND window,
-	UpdateSoundCallback updateSoundCallback
+	UpdateSoundCallback updateSoundCallback,
+	int samplesToProcessPerCallback,
+	int samplesPerSecond,
+	int numberOfChannels
 )
 {
 	sound._bufferSizeInMilliseconds = 1000;
-	sound._samplesPerMillisecond = 48;
-	sound._bytesPerSample = 2 * sizeof (sound._samplesPerMillisecond); // 2 for left & right channels
+	sound._samplesPerMillisecond = samplesPerSecond / 1000;
+	sound._bytesPerSample = numberOfChannels * sizeof (sound._samplesPerMillisecond);
 	sound._updateSoundCallback = updateSoundCallback;
 
 	int bufferSizeInBytes = win32_sound_buffer_size_get();
@@ -111,13 +114,12 @@ int win32_sound_interface_initialize(
 		return -3;
 	}
 
-	WORD numberOfChannels = 2;
 	WORD bitsPerSample = 16;
 	WORD blockAlign = (WORD)(numberOfChannels * bitsPerSample / 8);
 
 	WAVEFORMATEX waveFormat = {};
 	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
-	waveFormat.nChannels = numberOfChannels;
+	waveFormat.nChannels = (WORD)numberOfChannels;
 	waveFormat.nSamplesPerSec = sound._samplesPerMillisecond * 1000;
 	waveFormat.wBitsPerSample = bitsPerSample;
 	waveFormat.nBlockAlign = blockAlign;

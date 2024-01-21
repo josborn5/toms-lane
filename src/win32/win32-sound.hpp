@@ -8,7 +8,10 @@ namespace tl
 
 int win32_sound_interface_initialize(
 	HWND window,
-	UpdateSoundCallback updateSoundCallback
+	UpdateSoundCallback updateSoundCallback,
+	int samplesToProcessPerCallback,
+	int samplesPerSecond,
+	int numberOfChannels
 );
 
 int win32_sound_interface_frame_update(

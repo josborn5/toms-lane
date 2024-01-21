@@ -287,7 +287,10 @@ int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 	{
 		soundInitResult = win32_sound_interface_initialize(
 			globalWindow,
-			settings.updateSoundCallback
+			settings.updateSoundCallback,
+			0,
+			48000,
+			2
 		);
 	}
 

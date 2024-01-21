@@ -32,7 +32,13 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 {
 	tl::console_interface_open();
 
-	tl::win32_sound_interface_initialize(0, &UpdateSound);
+	tl::win32_sound_interface_initialize(
+		0,
+		&UpdateSound,
+		48000,
+		48000,
+		1
+	);
 
 	while (true)
 	{

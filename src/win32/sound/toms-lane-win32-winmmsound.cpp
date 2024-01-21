@@ -16,7 +16,7 @@ struct Win32MMSound
 	HWAVEOUT audioOutputDeviceHandle;
 	WAVEHDR waveHeader[WAVE_HEADER_COUNT];
 	int bytesPerSampleAcrossAllChannels;
-	uint32_t sampleCountPerChannel = 32768;
+	uint32_t samplesToProcessPerCallback;
 };
 static Win32MMSound win32Sound;
 
@@ -58,7 +58,7 @@ static int processSoundBuffer()
 	}
 
 	SoundBuffer soundBuffer;
-	soundBuffer.sampleCount = win32Sound.sampleCountPerChannel;
+	soundBuffer.sampleCount = win32Sound.samplesToProcessPerCallback;
 	soundBuffer.samples = (int16_t*)currentWaveHeader->lpData;
 
 	if (win32Sound.updateSoundCallback != nullptr)
@@ -106,10 +106,12 @@ static void CALLBACK waveOutProcProxy(
 	}
 }
 
-static int initializeSoundDevice(const WAVEOUTCAPS& device)
+static int initializeSoundDevice(
+	const WAVEOUTCAPS& device,
+	int samplesPerSecond,
+	int numberOfChannels
+)
 {
-	int numberOfChannels = 1;
-	int samplesPerSecond = 48000;
 	int bytesPerSamplePerChannel = sizeof(int16_t);
 	win32Sound.bytesPerSampleAcrossAllChannels = numberOfChannels * bytesPerSamplePerChannel;
 
@@ -145,7 +147,7 @@ static int initializeSoundDevice(const WAVEOUTCAPS& device)
 static int initializeSoundBuffer()
 {
 	// Allocate memory for the sound buffer
-	int bufferSizeInBytesPerHeader = win32Sound.bytesPerSampleAcrossAllChannels * win32Sound.sampleCountPerChannel;
+	int bufferSizeInBytesPerHeader = win32Sound.bytesPerSampleAcrossAllChannels * win32Sound.samplesToProcessPerCallback;
 	for (int i = 0; i < WAVE_HEADER_COUNT; i += 1)
 	{
 		win32Sound.waveHeader[i].lpData = (LPSTR)VirtualAlloc(
@@ -171,16 +173,26 @@ static int initializeSoundBuffer()
 
 int win32_sound_interface_initialize(
 	HWND window,
-	UpdateSoundCallback updateSoundCallback
+	UpdateSoundCallback updateSoundCallback,
+	int samplesToProcessPerCallback,
+	int samplesPerSecond,
+	int numberOfChannels
 )
 {
+	win32Sound.samplesToProcessPerCallback = samplesToProcessPerCallback;
+	win32Sound.updateSoundCallback = updateSoundCallback;
+
 	WAVEOUTCAPS currentSoundDevice;
 	int soundDeviceGetResult = getSoundDevice(currentSoundDevice);
 	if (soundDeviceGetResult != 0)
 	{
 		return soundDeviceGetResult;
 	}
-	int soundDeviceInitializeResult = initializeSoundDevice(currentSoundDevice);
+	int soundDeviceInitializeResult = initializeSoundDevice(
+		currentSoundDevice,
+		samplesPerSecond,
+		numberOfChannels
+	);
 	if (soundDeviceInitializeResult != 0)
 	{
 		return soundDeviceInitializeResult;
@@ -191,7 +203,6 @@ int win32_sound_interface_initialize(
 	{
 		return soundBufferInitializeResult;
 	}
-	win32Sound.updateSoundCallback = updateSoundCallback;
 
 	// start playback
 	processSoundBuffer();
