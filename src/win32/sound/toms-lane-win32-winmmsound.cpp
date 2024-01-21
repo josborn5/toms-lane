@@ -4,6 +4,8 @@
 #include "../../platform/toms-lane-application.hpp"
 #include "../win32-console.hpp"
 
+#define WAVE_HEADER_COUNT 1
+
 namespace tl
 {
 
@@ -12,11 +14,13 @@ struct Win32MMSound
 	int deviceID;
 	UpdateSoundCallback updateSoundCallback;
 	HWAVEOUT audioOutputDeviceHandle;
-	WAVEHDR waveHeader;
+	WAVEHDR waveHeader[WAVE_HEADER_COUNT];
 	int bytesPerSampleAcrossAllChannels;
 	uint32_t sampleCountPerChannel = 512;
 };
 static Win32MMSound win32Sound;
+
+static int currentHeaderIndex = 0;
 
 static int getSoundDevice(WAVEOUTCAPS& device)
 {
@@ -42,7 +46,7 @@ static int getSoundDevice(WAVEOUTCAPS& device)
 
 static int processSoundBuffer()
 {
-	WAVEHDR* currentWaveHeader = &win32Sound.waveHeader;
+	WAVEHDR* currentWaveHeader = &win32Sound.waveHeader[currentHeaderIndex];
 
 	waveOutPrepareHeader(
 		win32Sound.audioOutputDeviceHandle,
@@ -64,6 +68,9 @@ static int processSoundBuffer()
 		currentWaveHeader,
 		sizeof(*currentWaveHeader)
 	);
+
+	currentHeaderIndex += 1;
+	currentHeaderIndex = currentHeaderIndex % WAVE_HEADER_COUNT;
 
 	return 0;
 }
@@ -129,23 +136,23 @@ static int initializeSoundDevice(const WAVEOUTCAPS& device)
 static int initializeSoundBuffer()
 {
 	// Allocate memory for the sound buffer
-	int bufferSizeInBytes = win32Sound.bytesPerSampleAcrossAllChannels * win32Sound.sampleCountPerChannel;
-
-	win32Sound.waveHeader.dwBufferLength = bufferSizeInBytes;
-	win32Sound.waveHeader.dwBytesRecorded = 0;
-	win32Sound.waveHeader.dwUser = 0;
-	win32Sound.waveHeader.dwFlags = 0;
-	win32Sound.waveHeader.dwLoops = 0;
-
+	int headerBufferSizeInBytes = win32Sound.bytesPerSampleAcrossAllChannels * win32Sound.sampleCountPerChannel;
 	int16_t* buffer = (int16_t*)VirtualAlloc(
 		0,
-		bufferSizeInBytes,
+		headerBufferSizeInBytes * WAVE_HEADER_COUNT,
 		MEM_RESERVE|MEM_COMMIT,
 		PAGE_READWRITE
 	);
 
-	win32Sound.waveHeader.lpData = (LPSTR)buffer;
-
+	for (int i = 0; i < WAVE_HEADER_COUNT; i += 1)
+	{
+		win32Sound.waveHeader[i].lpData = (LPSTR)(buffer + (i * headerBufferSizeInBytes));
+		win32Sound.waveHeader[i].dwBufferLength = headerBufferSizeInBytes;
+		win32Sound.waveHeader[i].dwBytesRecorded = 0;
+		win32Sound.waveHeader[i].dwUser = 0;
+		win32Sound.waveHeader[i].dwFlags = 0;
+		win32Sound.waveHeader[i].dwLoops = 0;
+	}
 	return 0;
 }
 
