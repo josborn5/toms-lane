@@ -49,14 +49,14 @@ static void CALLBACK waveOutProcProxy(
 	DWORD_PTR dwParam2
 )
 {
-	console_interface_write("HELLO from waveProcCallback!");
+	console_interface_write("HELLO from waveProcCallback!\n");
 
 	switch (uMsg) {
 		case WOM_OPEN:
-			console_interface_write("Received WOM open!!!");
+			console_interface_write("Received WOM open!!!\n");
 			break;
 		case WOM_DONE:
-			console_interface_write("Received WOM done!!!");
+			console_interface_write("Received WOM done!!!\n");
 			break;
 	}
 }
@@ -143,6 +143,18 @@ int win32_sound_interface_initialize(
 		return soundBufferInitializeResult;
 	}
 	win32Sound.updateSoundCallback = updateSoundCallback;
+
+	// start playback
+	waveOutPrepareHeader(
+		win32Sound.audioOutputDeviceHandle,
+		&win32Sound.waveHeader,
+		sizeof(win32Sound.waveHeader)
+	);
+	waveOutWrite(
+		win32Sound.audioOutputDeviceHandle,
+		&win32Sound.waveHeader,
+		sizeof(win32Sound.waveHeader)
+	);
 
 	return 0;
 }
