@@ -13,13 +13,13 @@ struct Win32MMSound
 	UpdateSoundCallback updateSoundCallback;
 	HWAVEOUT audioOutputDeviceHandle;
 	WAVEHDR waveHeader;
-	int16_t* buffer;
+	int totalBytesPerSample; // total number of bytes needed to store a single sample
 	uint32_t sampleCount = 512;
 };
 
 static Win32MMSound win32Sound;
 
-static int win32_sound_device_get(WAVEOUTCAPS& device)
+static int getSoundDevice(WAVEOUTCAPS& device)
 {
 	int numberOfSoundDevices = waveOutGetNumDevs();
 	bool foundDevice = false;
@@ -50,16 +50,30 @@ static void CALLBACK waveOutProcProxy(
 )
 {
 	console_interface_write("HELLO from waveProcCallback!");
+
+	switch (uMsg) {
+		case WOM_OPEN:
+			console_interface_write("Received WOM open!!!");
+			break;
+		case WOM_DONE:
+			console_interface_write("Received WOM done!!!");
+			break;
+	}
 }
 
-static int win32_sound_device_initialize(const WAVEOUTCAPS& device)
+static int initializeSoundDevice(const WAVEOUTCAPS& device)
 {
+	int numberOfChannels = 2;
+	int samplesPerSecond = 48000;
+	int bytesPerSamplePerChannel = sizeof(int16_t);
+	win32Sound.totalBytesPerSample = numberOfChannels * bytesPerSamplePerChannel;
+
 	WAVEFORMATEX waveFormat;
 	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
-	waveFormat.nChannels = 2;
-	waveFormat.nSamplesPerSec = 48000;
-	waveFormat.wBitsPerSample = sizeof(int16_t) * 8; // sizeof returns size in bytes and there are 8 bits per byte
-	waveFormat.nBlockAlign = (WORD)(waveFormat.nChannels * waveFormat.wBitsPerSample / 8);
+	waveFormat.nChannels = (WORD)numberOfChannels;
+	waveFormat.nSamplesPerSec = samplesPerSecond;
+	waveFormat.wBitsPerSample = (WORD)(bytesPerSamplePerChannel * 8); // there are 8 bits in a byte
+	waveFormat.nBlockAlign = (WORD)(win32Sound.totalBytesPerSample);
 	waveFormat.nAvgBytesPerSec = waveFormat.nBlockAlign * waveFormat.nSamplesPerSec;
 	waveFormat.cbSize = 0;
 
@@ -80,14 +94,28 @@ static int win32_sound_device_initialize(const WAVEOUTCAPS& device)
 		return -2;
 	}
 
+	return 0;
+}
+
+static int initializeSoundBuffer()
+{
 	// Allocate memory for the sound buffer
-	int bufferSizeInBytes = waveFormat.nBlockAlign * win32Sound.sampleCount;
-	win32Sound.buffer = (int16_t*)VirtualAlloc(
+	int bufferSizeInBytes = win32Sound.totalBytesPerSample * win32Sound.sampleCount;
+
+	win32Sound.waveHeader.dwBufferLength = bufferSizeInBytes;
+	win32Sound.waveHeader.dwBytesRecorded = 0;
+	win32Sound.waveHeader.dwUser = 0;
+	win32Sound.waveHeader.dwFlags = 0;
+	win32Sound.waveHeader.dwLoops = 0;
+
+	int16_t* buffer = (int16_t*)VirtualAlloc(
 		0,
 		bufferSizeInBytes,
 		MEM_RESERVE|MEM_COMMIT,
 		PAGE_READWRITE
 	);
+
+	win32Sound.waveHeader.lpData = (LPSTR)buffer;
 
 	return 0;
 }
@@ -98,15 +126,21 @@ int win32_sound_interface_initialize(
 )
 {
 	WAVEOUTCAPS currentSoundDevice;
-	int soundDeviceGetResult = win32_sound_device_get(currentSoundDevice);
+	int soundDeviceGetResult = getSoundDevice(currentSoundDevice);
 	if (soundDeviceGetResult != 0)
 	{
 		return soundDeviceGetResult;
 	}
-	int soundDeviceInitializeResult = win32_sound_device_initialize(currentSoundDevice);
+	int soundDeviceInitializeResult = initializeSoundDevice(currentSoundDevice);
 	if (soundDeviceInitializeResult != 0)
 	{
 		return soundDeviceInitializeResult;
+	}
+
+	int soundBufferInitializeResult = initializeSoundBuffer();
+	if (soundBufferInitializeResult != 0)
+	{
+		return soundBufferInitializeResult;
 	}
 	win32Sound.updateSoundCallback = updateSoundCallback;
 
