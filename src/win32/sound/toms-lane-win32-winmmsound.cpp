@@ -13,10 +13,9 @@ struct Win32MMSound
 	UpdateSoundCallback updateSoundCallback;
 	HWAVEOUT audioOutputDeviceHandle;
 	WAVEHDR waveHeader;
-	int totalBytesPerSample; // total number of bytes needed to store a single sample
-	uint32_t sampleCount = 512;
+	int bytesPerSampleAcrossAllChannels;
+	uint32_t sampleCountPerChannel = 512;
 };
-
 static Win32MMSound win32Sound;
 
 static int getSoundDevice(WAVEOUTCAPS& device)
@@ -41,6 +40,32 @@ static int getSoundDevice(WAVEOUTCAPS& device)
 	return 0;
 }
 
+static int processSoundBuffer()
+{
+	waveOutPrepareHeader(
+		win32Sound.audioOutputDeviceHandle,
+		&win32Sound.waveHeader,
+		sizeof(win32Sound.waveHeader)
+	);
+
+	SoundBuffer soundBuffer;
+	soundBuffer.sampleCount = win32Sound.sampleCountPerChannel;
+	soundBuffer.samples = (int16_t*)win32Sound.waveHeader.lpData;
+
+	if (win32Sound.updateSoundCallback != nullptr)
+	{
+		win32Sound.updateSoundCallback(soundBuffer);
+	}
+
+	waveOutWrite(
+		win32Sound.audioOutputDeviceHandle,
+		&win32Sound.waveHeader,
+		sizeof(win32Sound.waveHeader)
+	);
+
+	return 0;
+}
+
 static void CALLBACK waveOutProcProxy(
 	HWAVEOUT hwo,
 	UINT uMsg,
@@ -49,8 +74,6 @@ static void CALLBACK waveOutProcProxy(
 	DWORD_PTR dwParam2
 )
 {
-	console_interface_write("HELLO from waveProcCallback!\n");
-
 	switch (uMsg) {
 		case WOM_OPEN:
 			console_interface_write("Received WOM open!!!\n");
@@ -59,16 +82,7 @@ static void CALLBACK waveOutProcProxy(
 			console_interface_write("Received WOM done!!!\n");
 
 			// continue playback
-			waveOutPrepareHeader(
-				win32Sound.audioOutputDeviceHandle,
-				&win32Sound.waveHeader,
-				sizeof(win32Sound.waveHeader)
-			);
-			waveOutWrite(
-				win32Sound.audioOutputDeviceHandle,
-				&win32Sound.waveHeader,
-				sizeof(win32Sound.waveHeader)
-			);
+			processSoundBuffer();
 
 			break;
 	}
@@ -79,14 +93,14 @@ static int initializeSoundDevice(const WAVEOUTCAPS& device)
 	int numberOfChannels = 1;
 	int samplesPerSecond = 48000;
 	int bytesPerSamplePerChannel = sizeof(int16_t);
-	win32Sound.totalBytesPerSample = numberOfChannels * bytesPerSamplePerChannel;
+	win32Sound.bytesPerSampleAcrossAllChannels = numberOfChannels * bytesPerSamplePerChannel;
 
 	WAVEFORMATEX waveFormat;
 	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
 	waveFormat.nChannels = (WORD)numberOfChannels;
 	waveFormat.nSamplesPerSec = samplesPerSecond;
 	waveFormat.wBitsPerSample = (WORD)(bytesPerSamplePerChannel * 8); // there are 8 bits in a byte
-	waveFormat.nBlockAlign = (WORD)(win32Sound.totalBytesPerSample);
+	waveFormat.nBlockAlign = (WORD)(win32Sound.bytesPerSampleAcrossAllChannels);
 	waveFormat.nAvgBytesPerSec = waveFormat.nBlockAlign * waveFormat.nSamplesPerSec;
 	waveFormat.cbSize = 0;
 
@@ -113,7 +127,7 @@ static int initializeSoundDevice(const WAVEOUTCAPS& device)
 static int initializeSoundBuffer()
 {
 	// Allocate memory for the sound buffer
-	int bufferSizeInBytes = win32Sound.totalBytesPerSample * win32Sound.sampleCount;
+	int bufferSizeInBytes = win32Sound.bytesPerSampleAcrossAllChannels * win32Sound.sampleCountPerChannel;
 
 	win32Sound.waveHeader.dwBufferLength = bufferSizeInBytes;
 	win32Sound.waveHeader.dwBytesRecorded = 0;
@@ -158,16 +172,7 @@ int win32_sound_interface_initialize(
 	win32Sound.updateSoundCallback = updateSoundCallback;
 
 	// start playback
-	waveOutPrepareHeader(
-		win32Sound.audioOutputDeviceHandle,
-		&win32Sound.waveHeader,
-		sizeof(win32Sound.waveHeader)
-	);
-	waveOutWrite(
-		win32Sound.audioOutputDeviceHandle,
-		&win32Sound.waveHeader,
-		sizeof(win32Sound.waveHeader)
-	);
+	processSoundBuffer();
 
 	return 0;
 }
