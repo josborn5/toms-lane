@@ -42,15 +42,17 @@ static int getSoundDevice(WAVEOUTCAPS& device)
 
 static int processSoundBuffer()
 {
+	WAVEHDR* currentWaveHeader = &win32Sound.waveHeader;
+
 	waveOutPrepareHeader(
 		win32Sound.audioOutputDeviceHandle,
-		&win32Sound.waveHeader,
-		sizeof(win32Sound.waveHeader)
+		currentWaveHeader,
+		sizeof(*currentWaveHeader)
 	);
 
 	SoundBuffer soundBuffer;
 	soundBuffer.sampleCount = win32Sound.sampleCountPerChannel;
-	soundBuffer.samples = (int16_t*)win32Sound.waveHeader.lpData;
+	soundBuffer.samples = (int16_t*)currentWaveHeader->lpData;
 
 	if (win32Sound.updateSoundCallback != nullptr)
 	{
@@ -59,8 +61,8 @@ static int processSoundBuffer()
 
 	waveOutWrite(
 		win32Sound.audioOutputDeviceHandle,
-		&win32Sound.waveHeader,
-		sizeof(win32Sound.waveHeader)
+		currentWaveHeader,
+		sizeof(*currentWaveHeader)
 	);
 
 	return 0;
