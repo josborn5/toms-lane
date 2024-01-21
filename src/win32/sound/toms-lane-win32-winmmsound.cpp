@@ -76,7 +76,7 @@ static void CALLBACK waveOutProcProxy(
 
 static int initializeSoundDevice(const WAVEOUTCAPS& device)
 {
-	int numberOfChannels = 2;
+	int numberOfChannels = 1;
 	int samplesPerSecond = 48000;
 	int bytesPerSamplePerChannel = sizeof(int16_t);
 	win32Sound.totalBytesPerSample = numberOfChannels * bytesPerSamplePerChannel;
