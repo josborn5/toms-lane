@@ -57,6 +57,19 @@ static void CALLBACK waveOutProcProxy(
 			break;
 		case WOM_DONE:
 			console_interface_write("Received WOM done!!!\n");
+
+			// continue playback
+			waveOutPrepareHeader(
+				win32Sound.audioOutputDeviceHandle,
+				&win32Sound.waveHeader,
+				sizeof(win32Sound.waveHeader)
+			);
+			waveOutWrite(
+				win32Sound.audioOutputDeviceHandle,
+				&win32Sound.waveHeader,
+				sizeof(win32Sound.waveHeader)
+			);
+
 			break;
 	}
 }
