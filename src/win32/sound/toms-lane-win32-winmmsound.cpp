@@ -150,6 +150,11 @@ static int initializeSoundBuffer()
 		PAGE_READWRITE
 	);
 
+	if (buffer == nullptr)
+	{
+		return -1;
+	}
+
 	for (int i = 0; i < WAVE_HEADER_COUNT; i += 1)
 	{
 		win32Sound.waveHeader[i].lpData = (LPSTR)(buffer + (i * headerBufferSizeInBytes));
