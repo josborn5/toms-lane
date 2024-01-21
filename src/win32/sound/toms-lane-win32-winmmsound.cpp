@@ -4,7 +4,7 @@
 #include "../../platform/toms-lane-application.hpp"
 #include "../win32-console.hpp"
 
-#define WAVE_HEADER_COUNT 1
+#define WAVE_HEADER_COUNT 2
 
 namespace tl
 {
@@ -64,6 +64,12 @@ static int processSoundBuffer()
 	}
 
 	waveOutWrite(
+		win32Sound.audioOutputDeviceHandle,
+		currentWaveHeader,
+		sizeof(*currentWaveHeader)
+	);
+
+	waveOutUnprepareHeader(
 		win32Sound.audioOutputDeviceHandle,
 		currentWaveHeader,
 		sizeof(*currentWaveHeader)
