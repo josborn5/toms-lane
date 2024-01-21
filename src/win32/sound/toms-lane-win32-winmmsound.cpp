@@ -16,7 +16,7 @@ struct Win32MMSound
 	HWAVEOUT audioOutputDeviceHandle;
 	WAVEHDR waveHeader[WAVE_HEADER_COUNT];
 	int bytesPerSampleAcrossAllChannels;
-	uint32_t sampleCountPerChannel = 512;
+	uint32_t sampleCountPerChannel = 32768;
 };
 static Win32MMSound win32Sound;
 
@@ -48,11 +48,14 @@ static int processSoundBuffer()
 {
 	WAVEHDR* currentWaveHeader = &win32Sound.waveHeader[currentHeaderIndex];
 
-	waveOutPrepareHeader(
-		win32Sound.audioOutputDeviceHandle,
-		currentWaveHeader,
-		sizeof(*currentWaveHeader)
-	);
+	if (currentWaveHeader->dwFlags & WHDR_PREPARED)
+	{
+		waveOutUnprepareHeader(
+			win32Sound.audioOutputDeviceHandle,
+			currentWaveHeader,
+			sizeof(*currentWaveHeader)
+		);
+	}
 
 	SoundBuffer soundBuffer;
 	soundBuffer.sampleCount = win32Sound.sampleCountPerChannel;
@@ -63,13 +66,13 @@ static int processSoundBuffer()
 		win32Sound.updateSoundCallback(soundBuffer);
 	}
 
-	waveOutWrite(
+	waveOutPrepareHeader(
 		win32Sound.audioOutputDeviceHandle,
 		currentWaveHeader,
 		sizeof(*currentWaveHeader)
 	);
 
-	waveOutUnprepareHeader(
+	waveOutWrite(
 		win32Sound.audioOutputDeviceHandle,
 		currentWaveHeader,
 		sizeof(*currentWaveHeader)
@@ -142,23 +145,22 @@ static int initializeSoundDevice(const WAVEOUTCAPS& device)
 static int initializeSoundBuffer()
 {
 	// Allocate memory for the sound buffer
-	int headerBufferSizeInBytes = win32Sound.bytesPerSampleAcrossAllChannels * win32Sound.sampleCountPerChannel;
-	int16_t* buffer = (int16_t*)VirtualAlloc(
-		0,
-		headerBufferSizeInBytes * WAVE_HEADER_COUNT,
-		MEM_RESERVE|MEM_COMMIT,
-		PAGE_READWRITE
-	);
-
-	if (buffer == nullptr)
-	{
-		return -1;
-	}
-
+	int bufferSizeInBytesPerHeader = win32Sound.bytesPerSampleAcrossAllChannels * win32Sound.sampleCountPerChannel;
 	for (int i = 0; i < WAVE_HEADER_COUNT; i += 1)
 	{
-		win32Sound.waveHeader[i].lpData = (LPSTR)(buffer + (i * headerBufferSizeInBytes));
-		win32Sound.waveHeader[i].dwBufferLength = headerBufferSizeInBytes;
+		win32Sound.waveHeader[i].lpData = (LPSTR)VirtualAlloc(
+			0,
+			bufferSizeInBytesPerHeader,
+			MEM_RESERVE|MEM_COMMIT,
+			PAGE_READWRITE
+		);
+
+		if (win32Sound.waveHeader[i].lpData == nullptr)
+		{
+			return -1;
+		}
+
+		win32Sound.waveHeader[i].dwBufferLength = bufferSizeInBytesPerHeader;
 		win32Sound.waveHeader[i].dwBytesRecorded = 0;
 		win32Sound.waveHeader[i].dwUser = 0;
 		win32Sound.waveHeader[i].dwFlags = 0;
