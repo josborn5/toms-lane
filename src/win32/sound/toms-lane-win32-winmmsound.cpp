@@ -101,7 +101,7 @@ static void CALLBACK waveOutProcProxy(
 
 			// continue playback
 			processSoundBuffer();
-
+			processSoundBuffer();
 			break;
 	}
 }
@@ -206,7 +206,7 @@ int win32_sound_interface_initialize(
 
 	// start playback
 	processSoundBuffer();
-
+	processSoundBuffer();
 	return 0;
 }
 

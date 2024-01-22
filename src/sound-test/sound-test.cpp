@@ -4,6 +4,8 @@
 #include "../win32/win32-sound.hpp"
 
 static uint64_t sampleCounter = 0;
+static const int sampleRate = 48000;
+static const int samplesPerCallback = 48000;
 
 int UpdateSound(const tl::SoundBuffer& soundBuffer)
 {
@@ -11,14 +13,13 @@ int UpdateSound(const tl::SoundBuffer& soundBuffer)
 
 	double toneHz = 440.0;
 	double pi = 3.14159;
-	double sampleRate = 48000.0;
 	double max16BitValue = 32767;
 
 	int16_t* sampleOutput = soundBuffer.samples;
 
 	for (int i = 0; i < soundBuffer.sampleCount; i += 1)
 	{
-		double soundValue = 0.1 * sin(sampleCounter * toneHz * 2.0 * pi / sampleRate);
+		double soundValue = 0.1 * sin(sampleCounter * toneHz * 2.0 * pi / (double)sampleRate);
 		double soundValueAs16Bit = max16BitValue * soundValue;
 
 		*sampleOutput = (int16_t)soundValueAs16Bit;
@@ -35,8 +36,8 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	tl::win32_sound_interface_initialize(
 		0,
 		&UpdateSound,
-		48000,
-		48000,
+		samplesPerCallback,
+		sampleRate,
 		1
 	);
 
