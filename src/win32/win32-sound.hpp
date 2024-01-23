@@ -14,12 +14,6 @@ int win32_sound_interface_initialize(
 	int numberOfChannels
 );
 
-int win32_sound_interface_frame_update(
-	int gameUpdateHz,
-	LARGE_INTEGER frameStartCounter,
-	int targetMicroSecondsPerFrame
-);
-
 }
 
 #endif

@@ -216,13 +216,4 @@ int win32_sound_interface_initialize(
 	return 0;
 }
 
-int win32_sound_interface_frame_update(
-	int gameUpdateHz,
-	LARGE_INTEGER frameStartCounter,
-	int targetMicroSecondsPerFrame
-)
-{
-	return 0;
-}
-
 }

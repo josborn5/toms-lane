@@ -3,7 +3,6 @@
 
 #include "../../platform/toms-lane-application.hpp"
 #include "../win32-time.hpp"
-#include "../win32-sound.hpp"
 
 namespace tl
 {
@@ -279,21 +278,6 @@ int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 	// Initialize Visual
 	Win32_SizeglobalRenderBufferToCurrentWindow(globalWindow);
 
-	// Initialize sound
-	// https://learn.microsoft.com/en-us/windows/win32/coreaudio/rendering-a-stream 
-	int soundInitResult;
-	playSound = settings.updateSoundCallback != nullptr;
-	if (playSound)
-	{
-		soundInitResult = win32_sound_interface_initialize(
-			globalWindow,
-			settings.updateSoundCallback,
-			0,
-			48000,
-			2
-		);
-	}
-
 	// Initialize general use memory
 	gameMemory.permanent.sizeInBytes = Megabytes(settings.permanentSpaceInMegabytes);
 	gameMemory.transient.sizeInBytes = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
@@ -354,16 +338,6 @@ int RunWindowUpdateLoop(
 		}
 
 		ResetButtons(&gameInput);
-
-		// Audio
-		if (playSound)
-		{
-			win32_sound_interface_frame_update(
-				gameUpdateHz,
-				frameStartCounter,
-				targetMicroSecondsPerFrame
-			);
-		}
 
 		// render visual
 		HDC deviceContext = GetDC(globalWindow);
