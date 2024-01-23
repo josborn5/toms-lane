@@ -4,7 +4,7 @@
 #include "../../platform/toms-lane-application.hpp"
 #include "../win32-console.hpp"
 
-#define WAVE_HEADER_COUNT 2
+#define WAVE_HEADER_COUNT 20
 
 namespace tl
 {
@@ -44,22 +44,20 @@ static int getSoundDevice(WAVEOUTCAPS& device)
 	return 0;
 }
 
-static int processSoundBuffer()
+static int processWaveHeader(WAVEHDR* waveHeader)
 {
-	WAVEHDR* currentWaveHeader = &win32Sound.waveHeader[currentHeaderIndex];
-
-	if (currentWaveHeader->dwFlags & WHDR_PREPARED)
+	if (waveHeader->dwFlags & WHDR_PREPARED)
 	{
 		waveOutUnprepareHeader(
 			win32Sound.audioOutputDeviceHandle,
-			currentWaveHeader,
-			sizeof(*currentWaveHeader)
+			waveHeader,
+			sizeof(*waveHeader)
 		);
 	}
 
 	SoundBuffer soundBuffer;
 	soundBuffer.sampleCount = win32Sound.samplesToProcessPerCallback;
-	soundBuffer.samples = (int16_t*)currentWaveHeader->lpData;
+	soundBuffer.samples = (int16_t*)waveHeader->lpData;
 
 	if (win32Sound.updateSoundCallback != nullptr)
 	{
@@ -68,15 +66,24 @@ static int processSoundBuffer()
 
 	waveOutPrepareHeader(
 		win32Sound.audioOutputDeviceHandle,
-		currentWaveHeader,
-		sizeof(*currentWaveHeader)
+		waveHeader,
+		sizeof(*waveHeader)
 	);
 
 	waveOutWrite(
 		win32Sound.audioOutputDeviceHandle,
-		currentWaveHeader,
-		sizeof(*currentWaveHeader)
+		waveHeader,
+		sizeof(*waveHeader)
 	);
+
+	return 0;
+}
+
+static int processNextWaveHeader()
+{
+	WAVEHDR* currentWaveHeader = &win32Sound.waveHeader[currentHeaderIndex];
+
+	processWaveHeader(currentWaveHeader);
 
 	currentHeaderIndex += 1;
 	currentHeaderIndex = currentHeaderIndex % WAVE_HEADER_COUNT;
@@ -100,8 +107,7 @@ static void CALLBACK waveOutProcProxy(
 			console_interface_write("Received WOM done!!!\n");
 
 			// continue playback
-			processSoundBuffer();
-			processSoundBuffer();
+			processNextWaveHeader();
 			break;
 	}
 }
@@ -204,9 +210,13 @@ int win32_sound_interface_initialize(
 		return soundBufferInitializeResult;
 	}
 
-	// start playback
-	processSoundBuffer();
-	processSoundBuffer();
+	// Fill all wave headers before starting to respond to WM_DONE messages
+	for (int i = 0; i < WAVE_HEADER_COUNT; i += 1)
+	{
+		WAVEHDR* headerToPrime = &win32Sound.waveHeader[i];
+		processWaveHeader(headerToPrime);
+	}
+
 	return 0;
 }
 
@@ -216,7 +226,6 @@ int win32_sound_interface_frame_update(
 	int targetMicroSecondsPerFrame
 )
 {
-	// console_interface_write("HELLO from frame update!");
 	return 0;
 }
 

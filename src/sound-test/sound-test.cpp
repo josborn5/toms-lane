@@ -5,7 +5,7 @@
 
 static uint64_t sampleCounter = 0;
 static const int sampleRate = 48000;
-static const int samplesPerCallback = 48000;
+static const int samplesPerCallback = 4096;
 
 int UpdateSound(const tl::SoundBuffer& soundBuffer)
 {
