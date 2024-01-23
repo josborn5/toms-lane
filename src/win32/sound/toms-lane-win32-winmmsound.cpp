@@ -4,7 +4,7 @@
 #include "../../platform/toms-lane-application.hpp"
 #include "../win32-console.hpp"
 
-#define WAVE_HEADER_COUNT 20
+#define WAVE_HEADER_COUNT 6
 
 namespace tl
 {
@@ -100,13 +100,7 @@ static void CALLBACK waveOutProcProxy(
 )
 {
 	switch (uMsg) {
-		case WOM_OPEN:
-			console_interface_write("Received WOM open!!!\n");
-			break;
 		case WOM_DONE:
-			console_interface_write("Received WOM done!!!\n");
-
-			// continue playback
 			processNextWaveHeader();
 			break;
 	}
@@ -210,7 +204,9 @@ int win32_sound_interface_initialize(
 		return soundBufferInitializeResult;
 	}
 
-	// Fill all wave headers before starting to respond to WM_DONE messages
+	// Fill all wave headers before starting to respond to WM_DONE messages.
+	// This prevents glitchy audio by ensuring the stream of headers sent
+	// to the audio device is the full capacity of the available headers.
 	for (int i = 0; i < WAVE_HEADER_COUNT; i += 1)
 	{
 		WAVEHDR* headerToPrime = &win32Sound.waveHeader[i];
