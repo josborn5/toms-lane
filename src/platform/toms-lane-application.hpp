@@ -45,11 +45,8 @@ namespace tl
 
 	struct SoundBuffer
 	{
-		int samplesPerSecond;
 		int sampleCount;
 		int16_t* samples;
-		float firstSampleTime; // 'buffer time' for first sample
-		int runningSampleIndex;
 	};
 
 	// Define function signature of updating the sound buffer
@@ -64,7 +61,6 @@ namespace tl
 		unsigned long permanentSpaceInMegabytes = 1;
 		unsigned long transientSpaceInMegabytes = 1;
 		bool playSound = false;
-		UpdateSoundCallback updateSoundCallback = nullptr;
 	};
 
 	struct Button

@@ -21,6 +21,7 @@ TODO (in no particular order):
 #include <windows.h>
 #include "../win32/toms-lane-win32.hpp"
 #include "../win32/win32-console.hpp"
+#include "../win32/win32-sound.hpp"
 #include "../platform/toms-lane-platform.hpp"
 #include "game.h"
 #include "update_state.cpp"
@@ -42,20 +43,23 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	return 0;
 }
 
+static float tSineWave = 0.0f;
+
 int UpdateSound(const tl::SoundBuffer& soundBuffer)
 {
-	float tSineWave = soundBuffer.firstSampleTime;
-	int toneVolume = 1500;
-	int wavePeriod = soundBuffer.samplesPerSecond / 256;
+	float toneHz = 256.0f;
+	float max16BitValue = 32767;
+	float sampleRate = 44100.0f;
+	float wavePeriod = sampleRate / toneHz;
 	int16_t* sampleOutput = soundBuffer.samples;
 
 	for (int i = 0; i < soundBuffer.sampleCount; i += 1)
 	{
-		float sineValue = sinf(tSineWave);
-		int16_t sampleValue = (int16_t)(sineValue * toneVolume);
+		float sineValue = 0.1f * sinf(tSineWave * toneHz * 2.0f * 3.14159f / sampleRate);
+		int16_t sampleValue = (int16_t)(sineValue * max16BitValue);
 		*sampleOutput = sampleValue;
 		sampleOutput++;
-		tSineWave += 2.0f * 3.14159f * 1.0f / (float)wavePeriod;
+		tSineWave += wavePeriod;
 	}
 	return 0;
 }
@@ -68,7 +72,6 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	settings.height = 720;
 	settings.targetFPS = 60;
 	settings.playSound = true;
-	settings.updateSoundCallback = UpdateSound;
 
 	tl::console_interface_open();
 
@@ -77,6 +80,14 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	{
 		return windowOpenResult;
 	}
+
+	tl::win32_sound_interface_initialize(
+		0,
+		&UpdateSound,
+		4096,
+		44100,
+		1
+	);
 
 	return tl::RunWindowUpdateLoop(settings.targetFPS);
 }
