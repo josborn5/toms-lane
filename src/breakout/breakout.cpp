@@ -43,24 +43,40 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	return 0;
 }
 
-static float tSineWave = 0.0f;
+static uint32_t sampleCounter = 0;
+static const int samplesPerSecond = 44100;
+static const int samplesPerCallback = 4096;
+static bool soundOn = true;
 
 int UpdateSound(const tl::SoundBuffer& soundBuffer)
 {
-	float toneHz = 256.0f;
-	float max16BitValue = 32767;
-	float sampleRate = 44100.0f;
-	float wavePeriod = sampleRate / toneHz;
+	double toneHz = 256.0;
+	double pi = 3.14159;
+	double max16BitValue = 32767;
+
 	int16_t* sampleOutput = soundBuffer.samples;
 
 	for (int i = 0; i < soundBuffer.sampleCount; i += 1)
 	{
-		float sineValue = 0.1f * sinf(tSineWave * toneHz * 2.0f * 3.14159f / sampleRate);
-		int16_t sampleValue = (int16_t)(sineValue * max16BitValue);
-		*sampleOutput = sampleValue;
+		double soundValueAs16Bit = 0;
+		if (soundOn)
+		{
+			double soundValue = 0.1 * sin(sampleCounter * toneHz * 2.0 * pi / (double)samplesPerSecond);
+			soundValueAs16Bit = max16BitValue * soundValue;
+		}
+
+		*sampleOutput = (int16_t)soundValueAs16Bit;
 		sampleOutput++;
-		tSineWave += wavePeriod;
+		sampleCounter += 1;
+
+		if (sampleCounter == samplesPerSecond)
+		{
+			soundOn = !soundOn;
+			sampleCounter = 0;
+		}
 	}
+
+
 	return 0;
 }
 
@@ -84,8 +100,8 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	tl::win32_sound_interface_initialize(
 		0,
 		&UpdateSound,
-		4096,
-		44100,
+		samplesPerCallback,
+		samplesPerSecond,
 		1
 	);
 
