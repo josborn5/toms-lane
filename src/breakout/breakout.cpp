@@ -26,6 +26,7 @@ TODO (in no particular order):
 #include "game.h"
 #include "update_state.cpp"
 #include "render.cpp"
+#include "sound.cpp"
 
 
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
@@ -39,43 +40,6 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	GameState* state = UpdateGameState(input, dt);
 
 	RenderGameState(renderBuffer, *state);
-
-	return 0;
-}
-
-static uint32_t sampleCounter = 0;
-static const int samplesPerSecond = 44100;
-static const int samplesPerCallback = 4096;
-static bool soundOn = true;
-
-int UpdateSound(const tl::SoundBuffer& soundBuffer)
-{
-	double toneHz = 256.0;
-	double pi = 3.14159;
-	double max16BitValue = 32767;
-
-	int16_t* sampleOutput = soundBuffer.samples;
-
-	for (int i = 0; i < soundBuffer.sampleCount; i += 1)
-	{
-		double soundValueAs16Bit = 0;
-		if (soundOn)
-		{
-			double soundValue = 0.1 * sin(sampleCounter * toneHz * 2.0 * pi / (double)samplesPerSecond);
-			soundValueAs16Bit = max16BitValue * soundValue;
-		}
-
-		*sampleOutput = (int16_t)soundValueAs16Bit;
-		sampleOutput++;
-		sampleCounter += 1;
-
-		if (sampleCounter == samplesPerSecond)
-		{
-			soundOn = !soundOn;
-			sampleCounter = 0;
-		}
-	}
-
 
 	return 0;
 }
