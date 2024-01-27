@@ -10,7 +10,7 @@ struct Tone
 	double volume;
 };
 
-static Tone activeTone = { 44100, 0, 256, 0.1 };
+static Tone activeTone;
 
 static const int samplesPerSecond = 44100;
 static const int samplesPerCallback = 512; // TODO: work out sound card latency and optimize
@@ -22,8 +22,9 @@ static int samplesPerMillisecond = samplesPerSecond / 1000;
 void playTone(int toneHz, int durationInMilliseconds)
 {
 	activeTone.durationCount = samplesPerMillisecond * durationInMilliseconds;
-	activeTone.toneHz = toneHz;
 	activeTone.sampleCounter = 0;
+	activeTone.toneHz = toneHz;
+	activeTone.volume = 0.15;
 }
 
 int UpdateSound(const tl::SoundBuffer& soundBuffer)

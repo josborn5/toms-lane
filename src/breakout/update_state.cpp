@@ -265,6 +265,7 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 			newBallState.exists = gamestate.balls[i].exists;
 			if (ballBatCollisionResult.collisions[1].side != tl::None)
 			{
+				playTone(262, 200);
 				newBallState.position = ballBatCollisionResult.collisions[1].position;
 				checkCollision = true;
 				if (ballBatCollisionResult.collisions[1].side == tl::Top)
@@ -286,10 +287,10 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 					newBallState.velocity.x = MaxFloat(ballVelocityX, player.velocity.x);
 				}
 
-				playTone(440, 200);
 			}
 			else if (hitBlockResult.collisions[1].side != tl::None)
 			{
+				playTone(440, 300);
 				newBallState.position = hitBlockResult.collisions[1].position;
 				checkCollision = true;
 
