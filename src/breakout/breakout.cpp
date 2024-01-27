@@ -21,12 +21,11 @@ TODO (in no particular order):
 #include <windows.h>
 #include "../win32/toms-lane-win32.hpp"
 #include "../win32/win32-console.hpp"
-#include "../win32/win32-sound.hpp"
 #include "../platform/toms-lane-platform.hpp"
 #include "game.h"
+#include "sound.cpp"
 #include "update_state.cpp"
 #include "render.cpp"
-#include "sound.cpp"
 
 
 int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
@@ -61,13 +60,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 		return windowOpenResult;
 	}
 
-	tl::win32_sound_interface_initialize(
-		0,
-		&UpdateSound,
-		samplesPerCallback,
-		samplesPerSecond,
-		1
-	);
+	startSound();
 
 	return tl::RunWindowUpdateLoop(settings.targetFPS);
 }

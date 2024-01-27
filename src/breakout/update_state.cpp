@@ -285,6 +285,8 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 					float ballVelocityX = (gamestate.balls[i].velocity.x < 0) ? -gamestate.balls[i].velocity.x : gamestate.balls[i].velocity.x;
 					newBallState.velocity.x = MaxFloat(ballVelocityX, player.velocity.x);
 				}
+
+				playTone(440, 200);
 			}
 			else if (hitBlockResult.collisions[1].side != tl::None)
 			{
