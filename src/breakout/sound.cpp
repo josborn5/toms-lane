@@ -20,8 +20,8 @@ struct Tone
 	ADSREnvelope envelope;
 };
 
-
-static Tone activeTones[2];
+static const int activeToneCount = 4;
+static Tone activeTones[activeToneCount];
 
 static const int samplesPerSecond = 44100;
 static const int samplesPerCallback = 512; // TODO: work out sound card latency and optimize
@@ -68,44 +68,56 @@ double getEnvelopeAmplitude(const Tone& tone)
 
 void playTone(int toneHz, int durationInMilliseconds)
 {
-	Tone& activeTone = activeTones[0];
 
-	if (activeTone.sampleCounter > 0 && activeTone.sampleCounter < activeTone.envelope.totalDuration)
+	for (int i = 0; i < activeToneCount; i += 1)
 	{
+		Tone& activeTone = activeTones[i];
+
+		if (activeTone.sampleCounter > 0 && activeTone.sampleCounter < activeTone.envelope.totalDuration)
+		{
+			continue;
+		}
+
+		ADSREnvelope& activeEnvelope = activeTone.envelope;
+		activeEnvelope.attackDuration = 50 * samplesPerMillisecond;
+		activeEnvelope.attackAmplitude = 1.0;
+		activeEnvelope.sustainAmplitude = 0.8;
+		activeEnvelope.releaseDuration = 200 * samplesPerMillisecond;
+		activeEnvelope.decayDuration = 50 * samplesPerMillisecond;
+
+		activeTone.envelope.totalDuration = (samplesPerMillisecond * durationInMilliseconds) + activeEnvelope.attackDuration + + activeEnvelope.decayDuration + activeEnvelope.releaseDuration;
+		activeTone.sampleCounter = 0;
+		activeTone.toneHz = toneHz;
+		activeTone.volume = 0.15;
+
 		return;
 	}
 
-	ADSREnvelope& activeEnvelope = activeTone.envelope;
-	activeEnvelope.attackDuration = 50 * samplesPerMillisecond;
-	activeEnvelope.attackAmplitude = 1.0;
-	activeEnvelope.sustainAmplitude = 0.8;
-	activeEnvelope.releaseDuration = 200 * samplesPerMillisecond;
-	activeEnvelope.decayDuration = 50 * samplesPerMillisecond;
-
-	activeTone.envelope.totalDuration = (samplesPerMillisecond * durationInMilliseconds) + activeEnvelope.attackDuration + + activeEnvelope.decayDuration + activeEnvelope.releaseDuration;
-	activeTone.sampleCounter = 0;
-	activeTone.toneHz = toneHz;
-	activeTone.volume = 0.15;
 }
 
 int UpdateSound(const tl::SoundBuffer& soundBuffer)
 {
 	int16_t* sampleOutput = soundBuffer.samples;
-	Tone& activeTone = activeTones[0];
 
 	for (int i = 0; i < soundBuffer.sampleCount; i += 1)
 	{
 		double soundValueAs16Bit = 0;
-		if (activeTone.sampleCounter < activeTone.envelope.totalDuration)
+
+		for (int j = 0; j < activeToneCount; j += 1)
 		{
-			double soundValue = activeTone.volume * sin(activeTone.sampleCounter * activeTone.toneHz * 2.0 * pi / (double)samplesPerSecond);
-			double envelopeFactor = getEnvelopeAmplitude(activeTone);
-			soundValueAs16Bit = max16BitValue * soundValue * envelopeFactor;
+			Tone& activeTone = activeTones[j];
+			if (activeTone.sampleCounter < activeTone.envelope.totalDuration)
+			{
+				double soundValue = activeTone.volume * sin(activeTone.sampleCounter * activeTone.toneHz * 2.0 * pi / (double)samplesPerSecond);
+				double envelopeFactor = getEnvelopeAmplitude(activeTone);
+				soundValueAs16Bit += max16BitValue * soundValue * envelopeFactor;
+			}
+
+			activeTone.sampleCounter += 1;
 		}
 
 		*sampleOutput = (int16_t)soundValueAs16Bit;
 		sampleOutput++;
-		activeTone.sampleCounter += 1;
 	}
 
 	return 0;
