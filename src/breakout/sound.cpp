@@ -20,7 +20,8 @@ struct Tone
 	ADSREnvelope envelope;
 };
 
-static Tone activeTone;
+
+static Tone activeTones[2];
 
 static const int samplesPerSecond = 44100;
 static const int samplesPerCallback = 512; // TODO: work out sound card latency and optimize
@@ -67,6 +68,8 @@ double getEnvelopeAmplitude(const Tone& tone)
 
 void playTone(int toneHz, int durationInMilliseconds)
 {
+	Tone& activeTone = activeTones[0];
+
 	if (activeTone.sampleCounter > 0 && activeTone.sampleCounter < activeTone.envelope.totalDuration)
 	{
 		return;
@@ -88,6 +91,7 @@ void playTone(int toneHz, int durationInMilliseconds)
 int UpdateSound(const tl::SoundBuffer& soundBuffer)
 {
 	int16_t* sampleOutput = soundBuffer.samples;
+	Tone& activeTone = activeTones[0];
 
 	for (int i = 0; i < soundBuffer.sampleCount; i += 1)
 	{
