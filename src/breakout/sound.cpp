@@ -2,7 +2,7 @@
 #include "../win32/win32-sound.hpp"
 #include <math.h>
 
-struct ASDREnvelope
+struct ADSREnvelope
 {
 	int attackDuration;
 	double attackAmplitude;
@@ -17,10 +17,10 @@ struct Tone
 	int sampleCounter = 0;
 	int toneHz;
 	double volume;
+	ADSREnvelope envelope;
 };
 
 static Tone activeTone;
-static ASDREnvelope activeEnvelope;
 
 static const int samplesPerSecond = 44100;
 static const int samplesPerCallback = 512; // TODO: work out sound card latency and optimize
@@ -29,8 +29,9 @@ static double max16BitValue = 32767;
 
 static int samplesPerMillisecond = samplesPerSecond / 1000;
 
-double getEnvelopeAmplitude(const Tone& tone, const ASDREnvelope& envelope)
+double getEnvelopeAmplitude(const Tone& tone)
 {
+	ADSREnvelope envelope = tone.envelope;
 	int lastAttackSample = envelope.attackDuration;
 	int lastDecaySample = lastAttackSample + envelope.decayDuration;
 	int lastSustainSample = tone.durationCount - envelope.releaseDuration;
@@ -71,6 +72,7 @@ void playTone(int toneHz, int durationInMilliseconds)
 		return;
 	}
 
+	ADSREnvelope& activeEnvelope = activeTone.envelope;
 	activeEnvelope.attackDuration = 50 * samplesPerMillisecond;
 	activeEnvelope.attackAmplitude = 1.0;
 	activeEnvelope.sustainAmplitude = 0.8;
@@ -93,7 +95,7 @@ int UpdateSound(const tl::SoundBuffer& soundBuffer)
 		if (activeTone.sampleCounter < activeTone.durationCount)
 		{
 			double soundValue = activeTone.volume * sin(activeTone.sampleCounter * activeTone.toneHz * 2.0 * pi / (double)samplesPerSecond);
-			double envelopeFactor = getEnvelopeAmplitude(activeTone, activeEnvelope);
+			double envelopeFactor = getEnvelopeAmplitude(activeTone);
 			soundValueAs16Bit = max16BitValue * soundValue * envelopeFactor;
 		}
 
