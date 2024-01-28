@@ -240,6 +240,28 @@ void DisplayLastWin32Error()
 	wsprintf(ErrorCodeBuffer, "VirtualAlloc error code: %d\n", ErrorCode);
 }
 
+int InitializeMemory(
+	unsigned long permanentSpaceInMegabytes,
+	unsigned long transientSpaceInMegabytes,
+	GameMemory& memory)
+{
+	// Initialize general use memory
+	memory.permanent.sizeInBytes = Megabytes(permanentSpaceInMegabytes);
+	memory.transient.sizeInBytes = Megabytes(transientSpaceInMegabytes);
+
+	uint64_t totalStorageSpace = memory.permanent.sizeInBytes + memory.transient.sizeInBytes;
+	memory.permanent.content = VirtualAlloc(0, (size_t)totalStorageSpace, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+	if(memory.permanent.content == NULL)
+	{
+		DisplayLastWin32Error();
+		return -1;
+	}
+
+	memory.transient.content = (uint8_t*)memory.permanent.content + memory.permanent.sizeInBytes;
+
+	return 0;
+}
+
 int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 {
 	WNDCLASSA windowClass = {0};
@@ -272,27 +294,11 @@ int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 		return -2;
 	}
 
-	IsRunning = true;
 
 	// Initialize Visual
 	Win32_SizeglobalRenderBufferToCurrentWindow(globalWindow);
 
-	// Initialize general use memory
-	gameMemory.permanent.sizeInBytes = Megabytes(settings.permanentSpaceInMegabytes);
-	gameMemory.transient.sizeInBytes = Megabytes((uint64_t)settings.transientSpaceInMegabytes);
-
-	uint64_t totalStorageSpace = gameMemory.permanent.sizeInBytes + gameMemory.transient.sizeInBytes;
-	gameMemory.permanent.content = VirtualAlloc(0, (size_t)totalStorageSpace, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
-	if(gameMemory.permanent.content == NULL)
-	{
-		DisplayLastWin32Error();
-		return -1;
-	}
-
-	gameMemory.transient.content = (uint8_t*)gameMemory.permanent.content + gameMemory.permanent.sizeInBytes;
-
-	int initResult = Initialize(gameMemory, globalRenderBuffer);
-	return initResult;
+	return 0;
 }
 
 int RunWindowUpdateLoop(
@@ -315,6 +321,7 @@ int RunWindowUpdateLoop(
 	LARGE_INTEGER frameStartCounter = win32_time_interface_wallclock_get();
 	win32_time_interface_initialize();
 
+	IsRunning = true;
 
 	// Main loop
 	while (IsRunning)
@@ -380,6 +387,22 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 	if (openResult != 0)
 	{
 		return openResult;
+	}
+
+	int memoryResult = InitializeMemory(
+		settings.permanentSpaceInMegabytes,
+		settings.transientSpaceInMegabytes,
+		gameMemory
+	);
+	if (memoryResult != 0)
+	{
+		return memoryResult;
+	}
+
+	int initResult = Initialize(gameMemory, globalRenderBuffer);
+	if (initResult != 0)
+	{
+		return -1;
 	}
 
 	return RunWindowUpdateLoop(

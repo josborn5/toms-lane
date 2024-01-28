@@ -61,5 +61,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 		return windowOpenResult;
 	}
 
+	InitializeGameState();
+
 	return tl::RunWindowUpdateLoop(settings.targetFPS);
 }
