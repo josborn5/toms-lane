@@ -66,11 +66,16 @@ double getEnvelopeAmplitude(const Tone& tone, const ASDREnvelope& envelope)
 
 void playTone(int toneHz, int durationInMilliseconds)
 {
-	activeEnvelope.attackDuration = 200 * samplesPerMillisecond;
-	activeEnvelope.attackAmplitude = 1.0;
+	if (activeTone.sampleCounter > 0 && activeTone.sampleCounter < activeTone.durationCount)
+	{
+		return;
+	}
+
+	activeEnvelope.attackDuration = 50 * samplesPerMillisecond;
+	activeEnvelope.attackAmplitude = 0.8;
 	activeEnvelope.sustainAmplitude = 0.8;
 	activeEnvelope.releaseDuration = 200 * samplesPerMillisecond;
-	activeEnvelope.decayDuration = 200 * samplesPerMillisecond;
+	activeEnvelope.decayDuration = 0 * samplesPerMillisecond;
 
 	activeTone.durationCount = (samplesPerMillisecond * durationInMilliseconds) + activeEnvelope.attackDuration + + activeEnvelope.decayDuration + activeEnvelope.releaseDuration;
 	activeTone.sampleCounter = 0;
