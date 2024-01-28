@@ -319,10 +319,12 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 
 				if (ballWallCollision.wall.side == Left || ballWallCollision.wall.side == Right)
 				{
+					playTone(330, 200);
 					newBallState.velocity.x = -newBallState.velocity.x;
 				}
 				else if (ballWallCollision.wall.side == Top)
 				{
+					playTone(330, 200);
 					newBallState.velocity.y = -newBallState.velocity.y;
 				}
 				else if (ballWallCollision.wall.side == Bottom)

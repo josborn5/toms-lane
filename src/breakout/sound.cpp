@@ -20,13 +20,12 @@ struct Tone
 	ADSREnvelope envelope;
 };
 
-static const int activeToneCount = 4;
+static const int activeToneCount = 8;
 static Tone activeTones[activeToneCount];
 
 static const int samplesPerSecond = 44100;
 static const int samplesPerCallback = 512; // TODO: work out sound card latency and optimize
-static double pi = 3.14159;
-static double max16BitValue = 32767;
+
 
 static int samplesPerMillisecond = samplesPerSecond / 1000;
 
@@ -98,24 +97,36 @@ void playTone(int toneHz, int durationInMilliseconds)
 int UpdateSound(const tl::SoundBuffer& soundBuffer)
 {
 	int16_t* sampleOutput = soundBuffer.samples;
-
+	const double pi = 3.14159;
+	const double max16BitValue = 32767;
 	for (int i = 0; i < soundBuffer.sampleCount; i += 1)
 	{
-		double soundValueAs16Bit = 0;
+		double soundValue = 0; // max value 1.0
 
 		for (int j = 0; j < activeToneCount; j += 1)
 		{
 			Tone& activeTone = activeTones[j];
 			if (activeTone.sampleCounter < activeTone.envelope.totalDuration)
 			{
-				double soundValue = activeTone.volume * sin(activeTone.sampleCounter * activeTone.toneHz * 2.0 * pi / (double)samplesPerSecond);
+				double toneValue = activeTone.volume * sin(activeTone.sampleCounter * activeTone.toneHz * 2.0 * pi / (double)samplesPerSecond);
 				double envelopeFactor = getEnvelopeAmplitude(activeTone);
-				soundValueAs16Bit += max16BitValue * soundValue * envelopeFactor;
+				soundValue += toneValue * envelopeFactor;
+
+				if (soundValue >= 1.0)
+				{
+					soundValue = 1.0;
+					continue;
+				}
+				if (soundValue <= -1.0)
+				{
+					soundValue = -1.0;
+					continue;
+				}
 			}
 
 			activeTone.sampleCounter += 1;
 		}
-
+		double soundValueAs16Bit = soundValue * max16BitValue;
 		*sampleOutput = (int16_t)soundValueAs16Bit;
 		sampleOutput++;
 	}
