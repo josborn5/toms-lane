@@ -16,7 +16,6 @@ static BITMAPINFO bitmapInfo = {0};	// platform dependent
 
 static HWND globalWindow;
 static GameMemory gameMemory;
-static bool playSound;
 
 static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 {

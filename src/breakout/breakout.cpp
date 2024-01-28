@@ -45,12 +45,13 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 
 int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
 {
+	startSound();
+
 	tl::WindowSettings settings;
 	settings.title = "Breakout";
 	settings.width = 1280;
 	settings.height = 720;
 	settings.targetFPS = 60;
-	settings.playSound = true;
 
 	tl::console_interface_open();
 
@@ -59,8 +60,6 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	{
 		return windowOpenResult;
 	}
-
-	startSound();
 
 	return tl::RunWindowUpdateLoop(settings.targetFPS);
 }

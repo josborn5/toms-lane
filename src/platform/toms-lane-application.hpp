@@ -60,7 +60,6 @@ namespace tl
 		int targetFPS;
 		unsigned long permanentSpaceInMegabytes = 1;
 		unsigned long transientSpaceInMegabytes = 1;
-		bool playSound = false;
 	};
 
 	struct Button
