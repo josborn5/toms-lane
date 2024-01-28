@@ -9,11 +9,11 @@ struct ADSREnvelope
 	int decayDuration;
 	double sustainAmplitude;
 	int releaseDuration;
+	int totalDuration;
 };
 
 struct Tone
 {
-	int durationCount;
 	int sampleCounter = 0;
 	int toneHz;
 	double volume;
@@ -34,8 +34,8 @@ double getEnvelopeAmplitude(const Tone& tone)
 	ADSREnvelope envelope = tone.envelope;
 	int lastAttackSample = envelope.attackDuration;
 	int lastDecaySample = lastAttackSample + envelope.decayDuration;
-	int lastSustainSample = tone.durationCount - envelope.releaseDuration;
-	int lastSample = tone.durationCount;
+	int lastSustainSample = tone.envelope.totalDuration - envelope.releaseDuration;
+	int lastSample = tone.envelope.totalDuration;
 
 	if (tone.sampleCounter > lastSample)
 	{
@@ -67,7 +67,7 @@ double getEnvelopeAmplitude(const Tone& tone)
 
 void playTone(int toneHz, int durationInMilliseconds)
 {
-	if (activeTone.sampleCounter > 0 && activeTone.sampleCounter < activeTone.durationCount)
+	if (activeTone.sampleCounter > 0 && activeTone.sampleCounter < activeTone.envelope.totalDuration)
 	{
 		return;
 	}
@@ -79,7 +79,7 @@ void playTone(int toneHz, int durationInMilliseconds)
 	activeEnvelope.releaseDuration = 200 * samplesPerMillisecond;
 	activeEnvelope.decayDuration = 50 * samplesPerMillisecond;
 
-	activeTone.durationCount = (samplesPerMillisecond * durationInMilliseconds) + activeEnvelope.attackDuration + + activeEnvelope.decayDuration + activeEnvelope.releaseDuration;
+	activeTone.envelope.totalDuration = (samplesPerMillisecond * durationInMilliseconds) + activeEnvelope.attackDuration + + activeEnvelope.decayDuration + activeEnvelope.releaseDuration;
 	activeTone.sampleCounter = 0;
 	activeTone.toneHz = toneHz;
 	activeTone.volume = 0.15;
@@ -92,7 +92,7 @@ int UpdateSound(const tl::SoundBuffer& soundBuffer)
 	for (int i = 0; i < soundBuffer.sampleCount; i += 1)
 	{
 		double soundValueAs16Bit = 0;
-		if (activeTone.sampleCounter < activeTone.durationCount)
+		if (activeTone.sampleCounter < activeTone.envelope.totalDuration)
 		{
 			double soundValue = activeTone.volume * sin(activeTone.sampleCounter * activeTone.toneHz * 2.0 * pi / (double)samplesPerSecond);
 			double envelopeFactor = getEnvelopeAmplitude(activeTone);
