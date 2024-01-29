@@ -294,7 +294,6 @@ int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 		return -2;
 	}
 
-
 	// Initialize Visual
 	Win32_SizeglobalRenderBufferToCurrentWindow(globalWindow);
 

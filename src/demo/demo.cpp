@@ -1,8 +1,8 @@
 #include <math.h>
-
+#include <windows.h>
+#include "../win32/toms-lane-win32.hpp"
 #include "../platform/toms-lane-platform.hpp"
 #include "./file.cpp"
-#include "./demo-win32.cpp"
 
 tl::Camera<float> camera;
 tl::MeshArray<float> meshArray = tl::MeshArray<float>();
@@ -20,6 +20,8 @@ tl::Vec3<float> meshCenter = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 
 tl::Rect<float> map;
 tl::Matrix2x3<float> mapProjectionMatrix;
+
+tl::GameMemory appMemory;
 
 bool isStarted = false;
 
@@ -367,4 +369,37 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	);
 
 	return 0;
+}
+
+int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
+{
+	float dt = (float)dtInMilliseconds / 1000.0f;
+	return tl::UpdateAndRender(appMemory, input, renderBuffer, dt);
+}
+
+int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
+{
+	const int targetFPS = 60;
+
+	tl::WindowSettings settings;
+	settings.title = "Demo";
+	settings.width = 1280;
+	settings.height = 720;
+
+	int windowOpenResult = tl::OpenWindow(instance, settings);
+	if (windowOpenResult != 0)
+	{
+		return windowOpenResult;
+	}
+
+	tl::InitializeMemory(
+		1,
+		1,
+		appMemory
+	);
+
+	tl::RenderBuffer garbage;
+	tl::Initialize(appMemory, garbage);
+
+	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
