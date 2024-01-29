@@ -1,7 +1,8 @@
-#include "./game.hpp"
+#include <windows.h>
+#include "../../win32/toms-lane-win32.hpp"
 #include "../../platform/toms-lane-platform.hpp"
+#include "./game.hpp"
 
-#include "../obby-win32.cpp"
 #include "../platform_common.cpp"
 
 #include "./levels.cpp"
@@ -15,6 +16,8 @@
 * levels
 
 */
+
+tl::GameMemory appMemory;
 
 bool initialized = false;
 bool isPaused = false;
@@ -101,3 +104,37 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const tl::Input &input, co
 
 	return 0;
 }
+
+int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
+{
+	float dt = (float)dtInMilliseconds / 1000.0f;
+	return tl::UpdateAndRender(appMemory, input, renderBuffer, dt);
+}
+
+int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
+{
+	const int targetFPS = 60;
+
+	tl::WindowSettings settings;
+	settings.title = "Obby-1";
+	settings.width = 1280;
+	settings.height = 720;
+
+	int windowOpenResult = tl::OpenWindow(instance, settings);
+	if (windowOpenResult != 0)
+	{
+		return windowOpenResult;
+	}
+
+	tl::InitializeMemory(
+		2,
+		1,
+		appMemory
+	);
+
+	tl::RenderBuffer garbage;
+	tl::Initialize(appMemory, garbage);
+
+	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
+}
+
