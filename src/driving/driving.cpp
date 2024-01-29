@@ -6,7 +6,7 @@
 
 State gameState = State();
 
-int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
+int UpdateAndRender(const tl::RenderBuffer& renderBuffer)
 {
 	for (int i = 0; i < gameState.tileCount; i += 1)
 	{
@@ -17,7 +17,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	return 0;
 }
 
-int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
+int Initialize()
 {
 	float halfWidth = 10.0f;
 	float tileSpacing = halfWidth * 2.0f;
@@ -46,12 +46,9 @@ int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffe
 	return 0;
 }
 
-tl::GameMemory garbage;
-
 int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
-	float dt = (float)dtInMilliseconds / 1000.0f;
-	return tl::UpdateAndRender(garbage, input, renderBuffer, dt);
+	return UpdateAndRender(renderBuffer);
 }
 
 int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
@@ -69,8 +66,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 		return windowOpenResult;
 	}
 
-	tl::RenderBuffer garbagerender;
-	tl::Initialize(garbage, garbagerender);
+	Initialize();
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
