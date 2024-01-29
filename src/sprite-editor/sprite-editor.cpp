@@ -111,7 +111,7 @@ static void ClearDisplayBuffer()
 	}
 }
 
-int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
+int Initialize(const tl::GameMemory& gameMemory)
 {
 	state.commandBuffer = commandBuffer;
 	state.displayBuffer = displayBuffer;
@@ -160,7 +160,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	return 0;
 }
 
-int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
+int updateAndRender(const tl::GameMemory& gameMemory, const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
 	ProcessActiveControl(input, state);
 	ProcessCursorMovementInput(input, state);
@@ -168,7 +168,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	state.mouse.x = input.mouse.x;
 	state.mouse.y = input.mouse.y;
 
-	if (!input.buttons[KEY_CTRL].isDown)
+	if (!input.buttons[tl::KEY_CTRL].isDown)
 	{
 		// Update command buffer from input
 		if (commands.length() < commands.capacity())
@@ -237,7 +237,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 				}
 				case 'E': // edit color of selected pixel
 				{
-					char* pointer = GetNextNumberChar(&commandBuffer[1]);
+					char* pointer = tl::GetNextNumberChar(&commandBuffer[1]);
 					tl::MemorySpace transient = gameMemory.transient;
 					ParseColorFromCharArray(pointer, transient, state.sprite.content[state.selectedPixelIndex]);
 					ClearCommandBuffer();
@@ -252,21 +252,21 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 
 						int color = (int)(selectedColor.r * 255.0f);
 						char* cursor = display.content;
-						IntToCharString(color, cursor);
+						tl::IntToCharString(color, cursor);
 
 						while (*cursor) cursor++;
 						*cursor = ' ';
 						cursor++;
 
 						color = (int)(selectedColor.g * 255.0f);
-						IntToCharString(color, cursor);
+						tl::IntToCharString(color, cursor);
 
 						while (*cursor) cursor++;
 						*cursor = ' ';
 						cursor++;
 
 						color = (int)(selectedColor.b * 255.0f);
-						IntToCharString(color, cursor);
+						tl::IntToCharString(color, cursor);
 					}
 					break;
 				}
@@ -357,7 +357,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
 	float dt = (float)dtInMilliseconds / 1000.0f;
-	return tl::UpdateAndRender(appMemory, input, renderBuffer, dt);
+	return updateAndRender(appMemory, input, renderBuffer, dt);
 }
 
 int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
@@ -386,8 +386,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 		appMemory
 	);
 
-	tl::RenderBuffer garbage;
-	tl::Initialize(appMemory, garbage);
+	Initialize(appMemory);
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
