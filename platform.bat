@@ -8,6 +8,8 @@ call .\build-scripts\compile.bat "%~dp0\src\win32\console\toms-lane-win32-consol
 
 call .\build-scripts\compile.bat "%~dp0\src\win32\sound\toms-lane-win32-winmmsound.cpp" "%~dp0\bin-tl-win32-sound" %1
 
+call .\build-scripts\compile.bat "%~dp0\src\win32\memory\toms-lane-win32-memory.cpp" "%~dp0\bin-tl-win32-memory" %1
+
 lib.exe /OUT:"%~dp0\bin-tl-win32\tl-win32.lib"^
  "%~dp0\bin-tl-win32\toms-lane-win32.obj"^
  "%~dp0\bin-tl-win32\toms-lane-win32-file.obj"^
