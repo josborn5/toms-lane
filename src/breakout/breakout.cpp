@@ -43,6 +43,13 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	return 0;
 }
 
+int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
+{
+	tl::GameMemory garbage;
+	float dt = (float)dtInMilliseconds / 1000.0f;
+	return tl::UpdateAndRender(garbage, input, renderBuffer, dt);
+}
+
 int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
 {
 	startSound();
@@ -63,5 +70,5 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 
 	InitializeGameState();
 
-	return tl::RunWindowUpdateLoop(settings.targetFPS, nullptr);
+	return tl::RunWindowUpdateLoop(settings.targetFPS, &updateWindowCallback);
 }
