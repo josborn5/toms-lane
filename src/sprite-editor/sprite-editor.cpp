@@ -1,6 +1,11 @@
-#include "../platform/toms-lane-platform.hpp"
+#include <windows.h>
 #include "../win32/toms-lane-win32.hpp"
-#include "./sprite-editor-win32.cpp"
+
+char* filePath;
+const int windowWidth = 800;
+const int windowHeight = 600;
+
+#include "../platform/toms-lane-platform.hpp"
 #include "./sprite-operations.cpp"
 #include "./sprite-commands.cpp"
 #include "./editor.hpp"
@@ -10,6 +15,8 @@
 
 #define COMMAND_BUFFER_SIZE 15
 #define DISPLAY_BUFFER_SIZE 15
+
+tl::GameMemory appMemory;
 
 static char commandBuffer[COMMAND_BUFFER_SIZE];
 static char displayBuffer[DISPLAY_BUFFER_SIZE];
@@ -344,4 +351,42 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	Render(renderBuffer, state);
 
 	return 0;
+}
+
+int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
+{
+	float dt = (float)dtInMilliseconds / 1000.0f;
+	return tl::UpdateAndRender(appMemory, input, renderBuffer, dt);
+}
+
+int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
+{
+	const int targetFPS = 60;
+
+	tl::WindowSettings settings;
+	settings.title = "Sprite Editor";
+	settings.width = 800;
+	settings.height = 600;
+
+	if (*commandLine)
+	{
+		filePath = commandLine;
+	}
+
+	int windowOpenResult = tl::OpenWindow(instance, settings);
+	if (windowOpenResult != 0)
+	{
+		return windowOpenResult;
+	}
+
+	tl::InitializeMemory(
+		2,
+		2,
+		appMemory
+	);
+
+	tl::RenderBuffer garbage;
+	tl::Initialize(appMemory, garbage);
+
+	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
