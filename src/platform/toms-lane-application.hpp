@@ -82,6 +82,9 @@ namespace tl
 		Button buttons[KEY_COUNT];
 	};
 
+	// Define function signature of updating the video buffer
+	typedef int (*UpdateWindowCallback)(const Input& input, int dtInMilliseconds, RenderBuffer& renderBuffer);
+
 	struct MemorySpace
 	{
 		void* content;

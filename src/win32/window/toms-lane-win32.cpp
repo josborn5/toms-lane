@@ -302,7 +302,8 @@ int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 }
 
 int RunWindowUpdateLoop(
-	int targetFPS
+	int targetFPS,
+	UpdateWindowCallback updateWindowCallback
 )
 {
 	// Set the Windows schedular granularity to 1ms to help our Sleep() function call be granular
@@ -337,7 +338,17 @@ int RunWindowUpdateLoop(
 
 
 		LARGE_INTEGER appFrameStartCounter = win32_time_interface_wallclock_get();
-		int updateResult = UpdateAndRender(gameMemory, gameInput, globalRenderBuffer, lastDtInSeconds);
+		int updateResult;
+
+		if (updateWindowCallback == nullptr)
+		{
+			updateResult = UpdateAndRender(gameMemory, gameInput, globalRenderBuffer, lastDtInSeconds);
+		}
+		else
+		{
+			updateResult = updateWindowCallback(gameInput, (int)(lastDtInSeconds * 1000.0f), globalRenderBuffer);
+		}
+
 		if (updateResult != 0)
 		{
 			return updateResult;
@@ -406,7 +417,8 @@ int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSetting
 	}
 
 	return RunWindowUpdateLoop(
-		settings.targetFPS
+		settings.targetFPS,
+		nullptr
 	);
 }
 

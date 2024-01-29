@@ -13,7 +13,8 @@ namespace tl
 	int Win32Main(HINSTANCE instance);
 	int OpenWindow(HINSTANCE instance, const WindowSettings &settings);
 	int RunWindowUpdateLoop(
-		int targetFPS
+		int targetFPS,
+		UpdateWindowCallback updateWindowCallback
 	);
 	int InitializeMemory(
 		unsigned long permanentSpaceInMegabytes,
