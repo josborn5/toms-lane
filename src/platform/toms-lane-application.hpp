@@ -93,9 +93,6 @@ namespace tl
 		MemorySpace permanent;
 		MemorySpace transient;
 	};
-
-	int Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer);
-	int UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt);
 }
 
 #endif

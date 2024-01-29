@@ -27,7 +27,7 @@ tl::GameMemory appMemory;
 bool initialized = false;
 bool isPaused = false;
 
-int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
+int Initialize(const tl::GameMemory& gameMemory)
 {
 	tl::MemorySpace permanent = gameMemory.permanent;
 	tl::MemorySpace transient = gameMemory.transient;
@@ -50,7 +50,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	return 0;
 }
 
-int tl::UpdateAndRender(const GameMemory& gameMemory, const tl::Input& input, const RenderBuffer& renderBuffer, float dt)
+int UpdateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
 	tl::Vec2<int> pixelRect;
 	pixelRect.x = renderBuffer.width;
@@ -99,7 +99,7 @@ int tl::UpdateAndRender(const GameMemory& gameMemory, const tl::Input& input, co
 int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
 	float dt = (float)dtInMilliseconds / 1000.0f;
-	return tl::UpdateAndRender(appMemory, input, renderBuffer, dt);
+	return UpdateAndRender(input, renderBuffer, dt);
 }
 
 int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
@@ -123,8 +123,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 		appMemory
 	);
 
-	tl::RenderBuffer garbage;
-	tl::Initialize(appMemory, garbage);
+	Initialize(appMemory);
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
