@@ -64,7 +64,7 @@ static T Clamp(T min, T value, T max)
 }
 template float Clamp(float min, float value, float max);
 
-int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffer)
+static int Initialize(const tl::GameMemory& gameMemory)
 {
 	tl::MemorySpace transientMemory = gameMemory.transient;
 	tl::MemorySpace permanentMemory = gameMemory.permanent;
@@ -105,7 +105,7 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 
 	for (int i = 0; i < meshArray.triangles.length(); i += 1)
 	{
-		Triangle4d<float> tri = meshArray.triangles.content[i];
+		tl::Triangle4d<float> tri = meshArray.triangles.content[i];
 		if (tri.p[0].x > max.x) max.x = tri.p[0].x;
 		if (tri.p[0].x < min.x) min.x = tri.p[0].x;
 		if (tri.p[0].y > max.y) max.y = tri.p[0].y;
@@ -165,8 +165,8 @@ int tl::Initialize(const GameMemory& gameMemory, const RenderBuffer& renderBuffe
 	// Using a top down projection for the map view.
 	// So depth (z) in the world --> horizontal (x) on the screen map.
 	// Left/right in the world (x) --> vertical (y) on the screen map.
-	topDownWorld.position = Vec2<float> { meshCenter.z, meshCenter.y };
-	topDownWorld.halfSize = Vec2<float> { (0.5f * (max.z - min.z)), (0.5f * (max.y - min.y)) };
+	topDownWorld.position = tl::Vec2<float> { meshCenter.z, meshCenter.y };
+	topDownWorld.halfSize = tl::Vec2<float> { (0.5f * (max.z - min.z)), (0.5f * (max.y - min.y)) };
 	mapProjectionMatrix = GenerateProjectionMatrix(topDownWorld, map);
 
 	return 0;
@@ -180,7 +180,7 @@ static void ResetCamera()
 	cameraYaw = 0.0f;
 }
 
-int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
+static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
 	const uint32_t BACKGROUND_COLOR = 0x000000;
 	tl::ClearScreen(renderBuffer, BACKGROUND_COLOR);
@@ -214,7 +214,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 			0x999999
 		);
 
-		if (input.buttons[KEY_S].isDown)
+		if (input.buttons[tl::KEY_S].isDown)
 		{
 			isStarted = true;
 			ResetCamera();
@@ -222,7 +222,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 		return 0;
 	}
 
-	if (input.buttons[KEY_R].isDown)
+	if (input.buttons[tl::KEY_R].isDown)
 	{
 		isStarted = false;
 	}
@@ -230,11 +230,11 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	float yawIncrement = 0.05f;
 
 	// First process any change in yaw and update the camera direction
-	if (input.buttons[KEY_D].isDown)
+	if (input.buttons[tl::KEY_D].isDown)
 	{
 		cameraYaw -= yawIncrement;
 	}
-	else if (input.buttons[KEY_A].isDown)
+	else if (input.buttons[tl::KEY_A].isDown)
 	{
 		cameraYaw += yawIncrement;
 	}
@@ -246,11 +246,11 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 
 	// Next process any forwards or backwards movement
 	tl::Vec4<float> cameraPositionForwardBack = MultiplyVectorByScalar(camera.direction, positionIncrement);
-	if (input.buttons[KEY_S].isDown)
+	if (input.buttons[tl::KEY_S].isDown)
 	{
 		camera.position = SubtractVectors(camera.position, cameraPositionForwardBack);
 	}
-	else if (input.buttons[KEY_W].isDown)
+	else if (input.buttons[tl::KEY_W].isDown)
 	{
 		camera.position = AddVectors(camera.position, cameraPositionForwardBack);
 	}
@@ -258,26 +258,26 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced
 	tl::Vec4<float> rawCameraPositionStrafe = CrossProduct(camera.up, camera.direction);
 	tl::Vec4<float> cameraPositionStrafe = MultiplyVectorByScalar(rawCameraPositionStrafe, positionIncrement);
-	if (input.buttons[KEY_LEFT].isDown)
+	if (input.buttons[tl::KEY_LEFT].isDown)
 	{
 		camera.position = SubtractVectors(camera.position, cameraPositionStrafe);
 	}
-	else if (input.buttons[KEY_RIGHT].isDown)
+	else if (input.buttons[tl::KEY_RIGHT].isDown)
 	{
 		camera.position = AddVectors(camera.position, cameraPositionStrafe);
 	}
 
 	// Simply move the camera position vertically with up/down keypress
-	if (input.buttons[KEY_DOWN].isDown)
+	if (input.buttons[tl::KEY_DOWN].isDown)
 	{
 		camera.position.y -= positionIncrement;
 	}
-	else if (input.buttons[KEY_UP].isDown)
+	else if (input.buttons[tl::KEY_UP].isDown)
 	{
 		camera.position.y += positionIncrement;
 	}
 
-	if (input.buttons[KEY_C].isDown)
+	if (input.buttons[tl::KEY_C].isDown)
 	{
 		ResetCamera();
 	}
@@ -375,7 +375,7 @@ int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const 
 int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
 	float dt = (float)dtInMilliseconds / 1000.0f;
-	return tl::UpdateAndRender(appMemory, input, renderBuffer, dt);
+	return UpdateAndRender1(appMemory, input, renderBuffer, dt);
 }
 
 int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
@@ -399,8 +399,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 		appMemory
 	);
 
-	tl::RenderBuffer garbage;
-	tl::Initialize(appMemory, garbage);
+	Initialize(appMemory);
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }

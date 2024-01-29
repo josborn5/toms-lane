@@ -10,9 +10,7 @@ namespace tl
 static bool IsRunning = false;
 static RenderBuffer globalRenderBuffer = {0};
 static BITMAPINFO bitmapInfo = {0};	// platform dependent
-
 static HWND globalWindow;
-static GameMemory gameMemory;
 
 static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 {

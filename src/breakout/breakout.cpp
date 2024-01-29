@@ -28,26 +28,15 @@ TODO (in no particular order):
 #include "render.cpp"
 
 
-int tl::Initialize(const GameMemory &gameMemory, const RenderBuffer &renderBuffer)
+int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
-	InitializeGameState();
-	return 0;
-}
+	float dt = (float)dtInMilliseconds / 1000.0f;
 
-int tl::UpdateAndRender(const GameMemory &gameMemory, const Input &input, const RenderBuffer &renderBuffer, float dt)
-{
 	GameState* state = UpdateGameState(input, dt);
 
 	RenderGameState(renderBuffer, *state);
 
 	return 0;
-}
-
-int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
-{
-	tl::GameMemory garbage;
-	float dt = (float)dtInMilliseconds / 1000.0f;
-	return tl::UpdateAndRender(garbage, input, renderBuffer, dt);
 }
 
 int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
