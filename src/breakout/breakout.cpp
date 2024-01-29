@@ -54,11 +54,12 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 {
 	startSound();
 
+	const int targetFPS = 60;
+
 	tl::WindowSettings settings;
 	settings.title = "Breakout";
 	settings.width = 1280;
 	settings.height = 720;
-	settings.targetFPS = 60;
 
 	tl::console_interface_open();
 
@@ -70,5 +71,5 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 
 	InitializeGameState();
 
-	return tl::RunWindowUpdateLoop(settings.targetFPS, &updateWindowCallback);
+	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
