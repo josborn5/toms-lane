@@ -22,6 +22,9 @@ struct EditorState
 	tl::Color currentColor;
 	tl::Color copiedColor;
 	tl::Vec2<int> mouse = { 0, 0 };
+	char* filePath;
+	int windowWidth;
+	int windowHeight;
 };
 
 #endif

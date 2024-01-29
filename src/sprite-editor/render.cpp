@@ -101,11 +101,11 @@ void SizePalette(const tl::SpriteC& palette)
 	paletteBoundingRect = SizeBoundingRectForSpriteInContainingRect(palette, paletteContainerRect);
 }
 
-void InitializeLayout()
+void InitializeLayout(const EditorState& state)
 {
 	const float textAreaHeight = 30.0f;
 	commandTextRect.halfSize = {
-		(float)windowWidth * 0.25f,
+		(float)state.windowWidth * 0.25f,
 		textAreaHeight
 	};
 	commandTextRect.position = tl::CopyVec2(commandTextRect.halfSize);
@@ -124,8 +124,8 @@ void InitializeLayout()
 	};
 
 	float paletteHalfWidthPercent = 0.2f;
-	float windowHalfWidth = (float)windowWidth * 0.5f;
-	float visualYHalfSize = ((float)windowHeight * 0.5f) - commandTextRect.halfSize.y;
+	float windowHalfWidth = (float)state.windowWidth * 0.5f;
+	float visualYHalfSize = ((float)state.windowHeight * 0.5f) - commandTextRect.halfSize.y;
 	spriteContainerRect.halfSize = {
 		windowHalfWidth * (1.0f - paletteHalfWidthPercent),
 		visualYHalfSize

@@ -1,15 +1,11 @@
 #include <windows.h>
 #include "../win32/toms-lane-win32.hpp"
 #include "../win32/win32-memory.hpp"
-
-char* filePath;
-const int windowWidth = 800;
-const int windowHeight = 600;
-
 #include "../platform/toms-lane-platform.hpp"
+#include "./editor.hpp"
+
 #include "./sprite-operations.cpp"
 #include "./sprite-commands.cpp"
-#include "./editor.hpp"
 #include "./render.cpp"
 #include "./sprite-editor-palettes.cpp"
 #include "./input-processing.cpp"
@@ -127,15 +123,15 @@ int Initialize(const tl::GameMemory& gameMemory)
 	tl::MemorySpace tempMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
 
 	// Load file
-	if (filePath)
+	if (state.filePath)
 	{
 		uint64_t fileSize = 0;
-		if (tl::win32_file_interface_size_get(filePath, fileSize) != tl::Success)
+		if (tl::win32_file_interface_size_get(state.filePath, fileSize) != tl::Success)
 		{
 			return 1;
 		}
 
-		if (tl::win32_file_interface_read(filePath, fileReadMemory) != tl::Success)
+		if (tl::win32_file_interface_read(state.filePath, fileReadMemory) != tl::Success)
 		{
 			return 1;
 		}
@@ -149,7 +145,7 @@ int Initialize(const tl::GameMemory& gameMemory)
 	ClearCommandBuffer();
 	ClearDisplayBuffer();
 
-	InitializeLayout();
+	InitializeLayout(state);
 	InitializePalettes(paletteMemory, tempMemory, state);
 
 	char* spriteCharArray = (char*)fileReadMemory.content;
@@ -208,12 +204,12 @@ int updateAndRender(const tl::GameMemory& gameMemory, const tl::Input& input, co
 				{
 					if (commandBuffer[1] == '\0') // save to current filePath
 					{
-						Save(gameMemory, state.sprite, displayBuffer);
+						Save(gameMemory, state.sprite, displayBuffer, state);
 					}
 					else if (commandBuffer[1] == ' ' && commandBuffer[2]) // save to new filePath
 					{
-						filePath = &commandBuffer[2];
-						Save(gameMemory, state.sprite, displayBuffer);
+						state.filePath = &commandBuffer[2];
+						Save(gameMemory, state.sprite, displayBuffer, state);
 					}
 					break;
 				}
@@ -369,9 +365,12 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 	settings.width = 800;
 	settings.height = 600;
 
+	state.windowWidth = 800;
+	state.windowHeight = 600;
+
 	if (*commandLine)
 	{
-		filePath = commandLine;
+		state.filePath = commandLine;
 	}
 
 	int windowOpenResult = tl::OpenWindow(instance, settings);
