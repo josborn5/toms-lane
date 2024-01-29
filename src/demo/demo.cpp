@@ -1,6 +1,7 @@
 #include <math.h>
 #include <windows.h>
 #include "../win32/toms-lane-win32.hpp"
+#include "../win32/win32-memory.hpp"
 #include "../platform/toms-lane-platform.hpp"
 #include "./file.cpp"
 

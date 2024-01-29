@@ -15,11 +15,6 @@ namespace tl
 		int targetFPS,
 		UpdateWindowCallback updateWindowCallback
 	);
-	int InitializeMemory(
-		unsigned long permanentSpaceInMegabytes,
-		unsigned long transientSpaceInMegabytes,
-		GameMemory& memory
-	);
 }
 
 #endif

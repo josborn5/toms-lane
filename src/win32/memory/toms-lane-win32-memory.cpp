@@ -7,7 +7,6 @@
 namespace tl
 {
 
-
 static void DisplayLastWin32Error()
 {
 	DWORD ErrorCode = GetLastError();

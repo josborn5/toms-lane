@@ -1,5 +1,6 @@
 #include <windows.h>
 #include "../win32/toms-lane-win32.hpp"
+#include "../win32/win32-memory.hpp"
 
 char* filePath;
 const int windowWidth = 800;
