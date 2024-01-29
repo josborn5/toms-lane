@@ -57,9 +57,6 @@ namespace tl
 		int width;
 		int height;
 		char* title;
-		int targetFPS;
-		unsigned long permanentSpaceInMegabytes = 1;
-		unsigned long transientSpaceInMegabytes = 1;
 	};
 
 	struct Button

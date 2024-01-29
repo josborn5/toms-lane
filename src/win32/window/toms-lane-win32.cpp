@@ -337,17 +337,8 @@ int RunWindowUpdateLoop(
 
 
 		LARGE_INTEGER appFrameStartCounter = win32_time_interface_wallclock_get();
-		int updateResult;
 
-		if (updateWindowCallback == nullptr)
-		{
-			updateResult = UpdateAndRender(gameMemory, gameInput, globalRenderBuffer, lastDtInSeconds);
-		}
-		else
-		{
-			updateResult = updateWindowCallback(gameInput, (int)(lastDtInSeconds * 1000.0f), globalRenderBuffer);
-		}
-
+		int updateResult = updateWindowCallback(gameInput, (int)(lastDtInSeconds * 1000.0f), globalRenderBuffer);
 		if (updateResult != 0)
 		{
 			return updateResult;
@@ -389,44 +380,6 @@ int RunWindowUpdateLoop(
 	}
 
 	return 0;
-}
-
-int Win32Main(HINSTANCE instance, const WindowSettings &settings = WindowSettings())
-{
-	int openResult = OpenWindow(instance, settings);
-	if (openResult != 0)
-	{
-		return openResult;
-	}
-
-	int memoryResult = InitializeMemory(
-		settings.permanentSpaceInMegabytes,
-		settings.transientSpaceInMegabytes,
-		gameMemory
-	);
-	if (memoryResult != 0)
-	{
-		return memoryResult;
-	}
-
-	int initResult = Initialize(gameMemory, globalRenderBuffer);
-	if (initResult != 0)
-	{
-		return -1;
-	}
-
-	return RunWindowUpdateLoop(
-		settings.targetFPS,
-		nullptr
-	);
-}
-
-int Win32Main(HINSTANCE instance)
-{
-	WindowSettings settings = {0};
-	settings.width = 1280;
-	settings.height = 720;
-	return Win32Main(instance, settings);
 }
 
 }

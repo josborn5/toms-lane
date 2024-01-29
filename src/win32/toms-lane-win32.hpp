@@ -10,7 +10,6 @@
 
 namespace tl
 {
-	int Win32Main(HINSTANCE instance);
 	int OpenWindow(HINSTANCE instance, const WindowSettings &settings);
 	int RunWindowUpdateLoop(
 		int targetFPS,
@@ -21,7 +20,6 @@ namespace tl
 		unsigned long transientSpaceInMegabytes,
 		GameMemory& memory
 	);
-	int Win32Main(HINSTANCE instance, const WindowSettings &settings);
 }
 
 #endif
