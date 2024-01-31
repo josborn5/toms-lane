@@ -12,10 +12,9 @@ namespace tl
 			int _length = 0;
 			int _capacity = 0;
 			size_t _itemSizeInBytes = sizeof(T);
+			T* _content;
 
 		public :
-			T* content;
-
 			HeapArray(){}
 			HeapArray(const MemorySpace& memory)
 			{
@@ -23,19 +22,24 @@ namespace tl
 			}
 			HeapArray(T* pointer, int capacity)
 			{
-				content = pointer;
+				_content = pointer;
 				_capacity = capacity;
 			}
 
 			void initialize(const MemorySpace& memory)
 			{
-				content = (T*)memory.content;
+				_content = (T*)memory.content;
 				_capacity = (int)(memory.sizeInBytes / _itemSizeInBytes);
 			}
 
-			T get(int index)
+			T& access(int index)
 			{
-				return content[index];
+				return _content[index];
+			}
+
+			T& get(int index) const
+			{
+				return _content[index];
 			}
 
 			int capacity() const
@@ -52,7 +56,7 @@ namespace tl
 			{
 				if (_length < _capacity)
 				{
-					content[_length] = item;
+					_content[_length] = item;
 					_length += 1;
 					return 1;
 				}
@@ -66,7 +70,7 @@ namespace tl
 			 */
 			MemorySpace sizeToCurrentLength()
 			{
-				T* addressOfNextItem = &content[_length];
+				T* addressOfNextItem = &_content[_length];
 				int remaining = _capacity - _length;
 				_capacity = _length;
 				MemorySpace remainingSpaceDetails;
@@ -82,7 +86,7 @@ namespace tl
 
 			T* getTailPointer()
 			{
-				return &content[_length - 1];
+				return &_content[_length - 1];
 			}
 	};
 

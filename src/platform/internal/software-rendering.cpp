@@ -728,7 +728,7 @@ namespace tl
 
 		for (int h = 0; h < mesh.triangles.length(); h += 1)
 		{
-			Triangle4d<T> tri = mesh.triangles.content[h];
+			Triangle4d<T> tri = mesh.triangles.get(h);
 			Triangle4d<T> transformed;
 			Triangle4d<T> viewed;
 			Triangle4d<T> projected;
@@ -798,7 +798,7 @@ namespace tl
 
 		for (int n = 0; n < trianglesToDrawArray.length(); n += 1)
 		{
-			Triangle4d<T> triToRender = trianglesToDrawArray.content[n];
+			Triangle4d<T> triToRender = trianglesToDrawArray.get(n);
 			Triangle4d<T> clipped[2];
 			
 			tl::HeapQueue<Triangle4d<T>> triangleHeapQueue = tl::HeapQueue<Triangle4d<T>>(remainingTransient);

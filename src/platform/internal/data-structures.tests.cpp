@@ -52,24 +52,24 @@ void RunHeapArrayTests()
 	assert(array2.capacity() == 4);
 
 	array.append(5);
-	assert(array.content[0] == 5);
+	assert(array.get(0) == 5);
 	assert(array.length() == 1);
 	assert(array.capacity() == 4);
-	assert(array2.content[0] == 5); // screwed up assertion and test, but it found a defect
+	assert(array2.get(0) == 5); // screwed up assertion and test, but it found a defect
 	assert(sixInts[0] == originalMemValue);
 	assert(sixInts[5] == originalMemValue);
 
 	array.append(4);
-	assert(array.content[0] == 5);
-	assert(array.content[1] == 4);
+	assert(array.get(0) == 5);
+	assert(array.get(1) == 4);
 	assert(array.length() == 2);
 	assert(array.capacity() == 4);
 	assert(sixInts[0] == originalMemValue);
 	assert(sixInts[5] == originalMemValue);
 
 	MemorySpace remaining = array.sizeToCurrentLength();
-	assert(array.content[0] == 5);
-	assert(array.content[1] == 4);
+	assert(array.get(0) == 5);
+	assert(array.get(1) == 4);
 	assert(array.length() == 2);
 	assert(array.capacity() == 2);
 	assert(sixInts[0] == originalMemValue);
@@ -81,8 +81,8 @@ void RunHeapArrayTests()
 	// Write to first item of remaining and assert array content remains unchanged
 	int* firstItemInRemainingSpace = (int *)remaining.content;
 	*firstItemInRemainingSpace = 3;
-	assert(array.content[0] == 5);
-	assert(array.content[1] == 4);
+	assert(array.get(0) == 5);
+	assert(array.get(1) == 4);
 
 	assert(array.length() == 2);
 	array.clear();

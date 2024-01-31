@@ -93,7 +93,7 @@ static void ClearCommandBuffer()
 {
 	for (int i = 0; i < commands.capacity(); i += 1)
 	{
-		commands.content[i] = '\0';
+		commands.access(i) = '\0';
 		commands.clear();
 	}
 }
@@ -102,7 +102,7 @@ static void ClearDisplayBuffer()
 {
 	for (int i = 0; i < display.capacity(); i += 1)
 	{
-		display.content[i] = '\0';
+		display.access(i) = '\0';
 		display.clear();
 	}
 }
@@ -247,7 +247,7 @@ int updateAndRender(const tl::GameMemory& gameMemory, const tl::Input& input, co
 						tl::Color selectedColor = state.sprite.content[state.selectedPixelIndex];
 
 						int color = (int)(selectedColor.r * 255.0f);
-						char* cursor = display.content;
+						char* cursor = displayBuffer;
 						tl::IntToCharString(color, cursor);
 
 						while (*cursor) cursor++;

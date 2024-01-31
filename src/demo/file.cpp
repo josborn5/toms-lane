@@ -42,9 +42,9 @@ namespace tl
 				stringStream >> junk >> points[0] >> points[1] >> points[2];
 				// expect line to have syntax 'f 1 2 3' where 1, 2 & 3 are the 1-indexed positions of the points in the file
 				tl::Triangle4d<T> newTriangle = {
-					heapVertices.content[points[0] - 1],
-					heapVertices.content[points[1] - 1],
-					heapVertices.content[points[2] - 1]
+					heapVertices.get(points[0] - 1),
+					heapVertices.get(points[1] - 1),
+					heapVertices.get(points[2] - 1)
 				};
 
 				triangles.append(newTriangle);

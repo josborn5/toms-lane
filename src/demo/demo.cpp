@@ -105,7 +105,7 @@ static int Initialize(const tl::GameMemory& gameMemory)
 
 	for (int i = 0; i < meshArray.triangles.length(); i += 1)
 	{
-		tl::Triangle4d<float> tri = meshArray.triangles.content[i];
+		tl::Triangle4d<float> tri = meshArray.triangles.get(i);
 		if (tri.p[0].x > max.x) max.x = tri.p[0].x;
 		if (tri.p[0].x < min.x) min.x = tri.p[0].x;
 		if (tri.p[0].y > max.y) max.y = tri.p[0].y;
