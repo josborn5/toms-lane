@@ -137,35 +137,8 @@ static WallCollision CheckWallCollision(const Ball &ball, float minimumTime)
 
 static bool isPaused = false;
 
-static GameState* UpdateGameState(const tl::Input& input, float dt)
+static void UpdatePlayerStateFromInput(const tl::Input& input, float dt)
 {
-	if (tl::IsReleased(input, tl::KEY_SPACE))
-	{
-		isPaused = !isPaused;
-	}
-
-	if (isPaused)
-	{
-		return &gamestate;
-	}
-
-	if (tl::IsReleased(input, tl::KEY_R) || gamestate.mode == GameOver)
-	{
-		InitializeGameState();
-		return &gamestate;
-	}
-
-	if (gamestate.mode != Started)
-	{
-		if (tl::IsReleased(input, tl::KEY_S))
-		{
-			StartNextLevel();
-			gamestate.mode = Started;
-		}
-		return &gamestate;
-	}
-
-	// Update player gamestate
 	tl::Rect<float> newPlayerState;
 	newPlayerState.halfSize = gamestate.player.halfSize;
 	newPlayerState.position.x = ClampFloat((float)leftBoundary.position, (float)input.mouse.x, (float)rightBoundary.position);
@@ -173,8 +146,10 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 	newPlayerState.velocity.x = (newPlayerState.position.x - gamestate.player.position.x) / dt;
 	newPlayerState.velocity.y = 0.0f;
 	gamestate.player = newPlayerState;
+}
 
-	// Update ball & block gamestate
+static void UpdateBallAndBlockState(float dt)
+{
 	for (int i = 0; i < BALL_ARRAY_SIZE; i += 1)
 	{
 		if (!gamestate.balls[i].exists) continue;
@@ -346,14 +321,13 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 
 						if (gamestate.lives <= 0)
 						{
-							gamestate.mode = GameOver; // TODO: GAMEOVER. For now, restart.
-							return &gamestate;
+							gamestate.mode = GameOver;
 						}
 						else
 						{
 							ResetBalls();
-							return &gamestate;
 						}
+						return;
 					}
 				}
 			}
@@ -380,6 +354,43 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 			gamestate.balls[i].position.y,
 			topBoundary.position - gamestate.balls[i].halfSize.y
 		);
+	}
+}
+
+static GameState& UpdateGameState(const tl::Input& input, float dt)
+{
+	if (tl::IsReleased(input, tl::KEY_SPACE))
+	{
+		isPaused = !isPaused;
+	}
+
+	if (isPaused)
+	{
+		return gamestate;
+	}
+
+	if (tl::IsReleased(input, tl::KEY_R) || gamestate.mode == GameOver)
+	{
+		InitializeGameState();
+		return gamestate;
+	}
+
+	if (gamestate.mode != Started)
+	{
+		if (tl::IsReleased(input, tl::KEY_S))
+		{
+			StartNextLevel();
+			gamestate.mode = Started;
+		}
+		return gamestate;
+	}
+
+	UpdatePlayerStateFromInput(input, dt);
+
+	UpdateBallAndBlockState(dt);
+	if (gamestate.mode == GameOver)
+	{
+		return gamestate;
 	}
 
 	// Update power up gamestate
@@ -442,5 +453,5 @@ static GameState* UpdateGameState(const tl::Input& input, float dt)
 		gamestate.mode = ReadyToStart;
 	}
 
-	return &gamestate;
+	return gamestate;
 }

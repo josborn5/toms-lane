@@ -32,9 +32,9 @@ int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::Rende
 {
 	float dt = (float)dtInMilliseconds / 1000.0f;
 
-	GameState* state = UpdateGameState(input, dt);
+	GameState state = UpdateGameState(input, dt);
 
-	RenderGameState(renderBuffer, *state);
+	RenderGameState(renderBuffer, state);
 
 	return 0;
 }
