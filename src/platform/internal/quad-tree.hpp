@@ -5,6 +5,19 @@
 
 namespace tl
 {
+	static void get_rect_min_max(
+		const Rect<float>& rect,
+		float& minX,
+		float& maxX,
+		float& minY,
+		float& maxY
+	) {
+		minX = rect.position.x - rect.halfSize.x;
+		maxX = rect.position.x + rect.halfSize.x;
+		minY = rect.position.y - rect.halfSize.y;
+		maxY = rect.position.y + rect.halfSize.y;
+	}
+
 	template<typename T>
 	struct QuadTreeNode
 	{
@@ -55,16 +68,11 @@ namespace tl
 
 			int query(const Rect<float>& footprint, HeapArray<T>& foundValues)
 			{
-				// TODO: if input footprint doesn't overlap node footprint, return
-				float minFootprintX = footprint.position.x - footprint.halfSize.x;
-				float maxFootprintX = footprint.position.x + footprint.halfSize.x;
-				float minFootprintY = footprint.position.y - footprint.halfSize.y;
-				float maxFootprintY = footprint.position.y + footprint.halfSize.y;
+				float minFootprintX, maxFootprintX, minFootprintY, maxFootprintY;
+				get_rect_min_max(footprint, minFootprintX, maxFootprintX, minFootprintY, maxFootprintY);
 
-				float _minFootprintX = _footprint.position.x - _footprint.halfSize.x;
-				float _maxFootprintX = _footprint.position.x + _footprint.halfSize.x;
-				float _minFootprintY = _footprint.position.y - _footprint.halfSize.y;
-				float _maxFootprintY = _footprint.position.y + _footprint.halfSize.y;
+				float _minFootprintX, _maxFootprintX, _minFootprintY, _maxFootprintY;
+				get_rect_min_max(_footprint, _minFootprintX, _maxFootprintX, _minFootprintY, _maxFootprintY);
 
 				if ((minFootprintX > _maxFootprintX) ||
 					(maxFootprintX < _minFootprintX) ||
@@ -163,10 +171,8 @@ namespace tl
 				const Vec2<float>& position
 			)
 			{
-				float minFootprintX = footprint.position.x - footprint.halfSize.x;
-				float maxFootprintX = footprint.position.x + footprint.halfSize.x;
-				float minFootprintY = footprint.position.y - footprint.halfSize.y;
-				float maxFootprintY = footprint.position.y + footprint.halfSize.y;
+				float minFootprintX, maxFootprintX, minFootprintY, maxFootprintY;
+				get_rect_min_max(footprint, minFootprintX, maxFootprintX, minFootprintY, maxFootprintY);
 
 				return position.x > minFootprintX &&
 						position.x <= maxFootprintX &&
@@ -175,5 +181,6 @@ namespace tl
 			}
 	};
 }
+
 #endif
 
