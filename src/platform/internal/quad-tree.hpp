@@ -142,32 +142,33 @@ namespace tl
 				Rect<float> footprint;
 				footprint.halfSize = childHalfSize;
 				footprint.position = childPos;
-				QuadTreeNode<T> nw = QuadTreeNode(footprint, _space);
-				_space->append(nw);
-				nwChild = _space->getTailPointer();
+				appendChild(footprint, &nwChild);
 
 				// north east
 				footprint.position.x += _footprint.halfSize.x;
-				QuadTreeNode<T> ne = QuadTreeNode(footprint, _space);
-				_space->append(ne);
-				neChild = _space->getTailPointer();
+				appendChild(footprint, &neChild);
 
 				// south east
 				footprint.position.y -= _footprint.halfSize.y;
-				QuadTreeNode<T> se = QuadTreeNode(footprint, _space);
-				_space->append(se);
-				seChild = _space->getTailPointer();
+				appendChild(footprint, &seChild);
 
 				// south west
 				footprint.position.x -= _footprint.halfSize.x;
-				QuadTreeNode<T> sw = QuadTreeNode(footprint, _space);
-				_space->append(sw);
-				swChild = _space->getTailPointer();
+				appendChild(footprint, &swChild);
+			}
+
+			void appendChild(
+				const Rect<float>& footprint,
+				QuadTreeNode<T>** target
+			) {
+				QuadTreeNode<T> newChild = QuadTreeNode(footprint, _space);
+				_space->append(newChild);
+				*target = _space->getTailPointer();
 			}
 
 			bool footprintContainsPosition
 			(
-				const Rect<float> footprint,
+				const Rect<float>& footprint,
 				const Vec2<float>& position
 			)
 			{
