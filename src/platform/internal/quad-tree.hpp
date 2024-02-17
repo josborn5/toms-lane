@@ -20,6 +20,22 @@ namespace tl
 		maxY = rect.position.y + rect.halfSize.y;
 	}
 
+	static bool get_rects_overlap(
+		const Rect<float>& rectA,
+		const Rect<float>& rectB
+	) {
+		float minRectAX, maxRectAX, minRectAY, maxRectAY;
+		get_rect_min_max(rectA, minRectAX, maxRectAX, minRectAY, maxRectAY);
+
+		float minRectBX, maxRectBX, minRectBY, maxRectBY;
+		get_rect_min_max(rectB, minRectBX, maxRectBX, minRectBY, maxRectBY);
+
+		return maxRectAX >= minRectBX &&
+			minRectAX <= maxRectBX &&
+			maxRectAY >= minRectBY &&
+			minRectAY <= maxRectBY;
+	}
+
 	template<typename T>
 	struct QuadTreeNode
 	{
@@ -70,17 +86,7 @@ namespace tl
 
 			int query(const Rect<float>& footprint, HeapArray<T>& foundValues)
 			{
-				float minFootprintX, maxFootprintX, minFootprintY, maxFootprintY;
-				get_rect_min_max(footprint, minFootprintX, maxFootprintX, minFootprintY, maxFootprintY);
-
-				float _minFootprintX, _maxFootprintX, _minFootprintY, _maxFootprintY;
-				get_rect_min_max(_footprint, _minFootprintX, _maxFootprintX, _minFootprintY, _maxFootprintY);
-
-				if ((minFootprintX > _maxFootprintX) ||
-					(maxFootprintX < _minFootprintX) ||
-					(minFootprintY > _maxFootprintY) ||
-					(maxFootprintY < _minFootprintY)
-				)
+				if (!get_rects_overlap(footprint, _footprint))
 				{
 					return 0;
 				}
