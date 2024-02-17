@@ -5,6 +5,8 @@
 
 namespace tl
 {
+	static const int _quadTreeNodeCapacity = 4;
+
 	static void get_rect_min_max(
 		const Rect<float>& rect,
 		float& minX,
@@ -45,7 +47,7 @@ namespace tl
 					return 0;
 				}
 
-				if (_valueCount < _capacity)
+				if (_valueCount < _quadTreeNodeCapacity)
 				{
 					_values[_valueCount] = value;
 					_positions[_valueCount] = { position.x, position.y };
@@ -116,11 +118,10 @@ namespace tl
 			}
 
 		private:
-			int _capacity = 4;
+			Vec2<float> _positions[_quadTreeNodeCapacity] = { 0 };
+			T _values[_quadTreeNodeCapacity] = { 0 };
 			Rect<float> _footprint;
 			HeapArray<QuadTreeNode<T>>* _space = nullptr;
-			T _values[4] = { 0 };
-			Vec2<float> _positions[4] = { 0 };
 			int _valueCount = 0;
 			QuadTreeNode<T>* nwChild = nullptr;
 			QuadTreeNode<T>* neChild = nullptr;
