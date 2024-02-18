@@ -145,7 +145,7 @@ static void PopulateBlocksForLevel(
 
 				blockCount += 1;
 
-				blockTree->root.insert(block, block->position);
+				blockTree->root.insert(block, *block);
 			}
 
 			blockPosition.x += blockWidth;

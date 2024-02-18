@@ -188,6 +188,139 @@ namespace tl
 						position.y <= maxFootprintY;
 			}
 	};
+
+	template<typename T>
+	struct QuadTreeRectNode
+	{
+		public:
+			QuadTreeRectNode() {}
+
+			QuadTreeRectNode(
+				const Rect<float>& footprint,
+				HeapArray<QuadTreeRectNode<T>>* space
+			)
+			{
+				_footprint = footprint;
+				_space = space;
+			}
+
+			int insert(const T& value, const Rect<float>& rect)
+			{
+				if (!get_rects_overlap(_footprint, rect))
+				{
+					return 0;
+				}
+
+				if (_valueCount < _quadTreeNodeCapacity)
+				{
+					_values[_valueCount] = value;
+					_rects[_valueCount] = rect;
+					_valueCount += 1;
+
+					return 0;
+				}
+				if (nwChild == nullptr)
+				{
+					split();
+				}
+
+				int returnValue = 0;
+				returnValue = nwChild->insert(value, rect);
+				returnValue = neChild->insert(value, rect);
+				returnValue = seChild->insert(value, rect);
+				returnValue = swChild->insert(value, rect);
+				return returnValue;
+			}
+
+			int query(const Rect<float>& footprint, HeapArray<T>& foundValues)
+			{
+				if (!get_rects_overlap(footprint, _footprint))
+				{
+					return 0;
+				}
+
+				for (int i = 0; i < _valueCount; i += 1)
+				{
+					T checkValue = _values[i];
+					if (get_rects_overlap(footprint, _rects[i]))
+					{
+						foundValues.append(checkValue);
+					}
+				}
+
+				if (nwChild != nullptr)
+				{
+					nwChild->query(footprint, foundValues);
+					neChild->query(footprint, foundValues);
+					seChild->query(footprint, foundValues);
+					swChild->query(footprint, foundValues);
+				}
+
+				return 0;
+			}
+
+			void clear()
+			{
+				_valueCount = 0;
+				if (nwChild != nullptr)
+				{
+					nwChild->clear();
+					neChild->clear();
+					seChild->clear();
+					swChild->clear();
+				}
+			}
+
+		private:
+			Rect<float> _rects[_quadTreeNodeCapacity] = { 0 };
+			T _values[_quadTreeNodeCapacity] = { 0 };
+			Rect<float> _footprint;
+			HeapArray<QuadTreeRectNode<T>>* _space = nullptr;
+			int _valueCount = 0;
+			QuadTreeRectNode<T>* nwChild = nullptr;
+			QuadTreeRectNode<T>* neChild = nullptr;
+			QuadTreeRectNode<T>* seChild = nullptr;
+			QuadTreeRectNode<T>* swChild = nullptr;
+
+			void split()
+			{
+				Vec2<float> childHalfSize = {
+					0.5f * _footprint.halfSize.x,
+					0.5f * _footprint.halfSize.y
+				};
+
+				// north west
+				Vec2<float> childPos = {
+					_footprint.position.x - childHalfSize.x,
+					_footprint.position.y + childHalfSize.y
+				};
+				Rect<float> footprint;
+				footprint.halfSize = childHalfSize;
+				footprint.position = childPos;
+				appendChild(footprint, &nwChild);
+
+				// north east
+				footprint.position.x += _footprint.halfSize.x;
+				appendChild(footprint, &neChild);
+
+				// south east
+				footprint.position.y -= _footprint.halfSize.y;
+				appendChild(footprint, &seChild);
+
+				// south west
+				footprint.position.x -= _footprint.halfSize.x;
+				appendChild(footprint, &swChild);
+			}
+
+			void appendChild(
+				const Rect<float>& footprint,
+				QuadTreeRectNode<T>** target
+			) {
+				QuadTreeRectNode<T> newChild = QuadTreeRectNode(footprint, _space);
+				_space->append(newChild);
+				*target = _space->getTailPointer();
+			}
+	};
 }
 
 #endif

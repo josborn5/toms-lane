@@ -58,9 +58,9 @@ struct Block : tl::Rect<float> {
 
 struct BlockQuadTree
 {
-	tl::QuadTreeNode<Block*> root;
-	tl::QuadTreeNode<Block*> storage[BLOCK_ARRAY_SIZE];
-	tl::HeapArray<tl::QuadTreeNode<Block*>> descendents;
+	tl::QuadTreeRectNode<Block*> root;
+	tl::QuadTreeRectNode<Block*> storage[BLOCK_ARRAY_SIZE];
+	tl::HeapArray<tl::QuadTreeRectNode<Block*>> descendents;
 };
 
 struct GameState {
