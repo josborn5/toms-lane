@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <stdint.h>
 
+#include "../../tl-window.hpp"
 #include "../../platform/toms-lane-application.hpp"
 #include "../win32-time.hpp"
 

@@ -7,6 +7,7 @@
 #define ZERO_VECTOR tl::Vec2<float> { 0.0f, 0.0f }
 
 #include "../platform/toms-lane-platform.hpp"
+#include "../platform/internal/quad-tree.hpp"
 
 enum PowerUpType
 {

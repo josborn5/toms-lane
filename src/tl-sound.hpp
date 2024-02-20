@@ -1,6 +1,8 @@
 #ifndef TOMS_LANE_SOUND_HPP
 #define TOMS_LANE_SOUND_HPP
 
+#include <stdint.h>
+
 namespace tl
 {
 	struct SoundBuffer

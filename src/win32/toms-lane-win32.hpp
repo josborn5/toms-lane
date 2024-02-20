@@ -3,7 +3,7 @@
 
 /* referenced */
 #include <windows.h>
-#include "../platform/toms-lane-application.hpp"
+#include "../tl-window.hpp"
 
 /* offered */
 #include "./win32-file.hpp"
@@ -11,10 +11,6 @@
 namespace tl
 {
 	int OpenWindow(HINSTANCE instance, const WindowSettings &settings);
-	int RunWindowUpdateLoop(
-		int targetFPS,
-		UpdateWindowCallback updateWindowCallback
-	);
 }
 
 #endif

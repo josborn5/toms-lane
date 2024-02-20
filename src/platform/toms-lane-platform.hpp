@@ -9,6 +9,5 @@
 #include "./internal/collision.hpp"
 #include "./internal/data-structures.hpp"
 #include "./internal/utilities.hpp"
-#include "./internal/quad-tree.hpp"
 
 #endif
