@@ -1,7 +1,7 @@
 #ifndef TOMS_LANE_WIN32_FILE
 #define TOMS_LANE_WIN32_FILE
 
-#include "../platform/toms-lane-application.hpp"
+#include "../tl-memory.hpp"
 
 namespace tl
 {
