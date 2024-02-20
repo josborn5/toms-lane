@@ -22,6 +22,7 @@ TODO (in no particular order):
 #include "../win32/toms-lane-win32.hpp"
 #include "../win32/win32-console.hpp"
 #include "../platform/toms-lane-platform.hpp"
+#include "../win32/win32-sound.hpp"
 #include "game.h"
 #include "sound.cpp"
 #include "update_state.cpp"

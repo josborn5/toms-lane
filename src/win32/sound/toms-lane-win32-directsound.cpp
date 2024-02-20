@@ -1,7 +1,7 @@
 #include <dsound.h>
 #include <stdint.h>
 #include "../win32-time.hpp"
-#include "../../platform/toms-lane-application.hpp"
+#include "../../tl-sound.hpp"
 
 namespace tl
 {

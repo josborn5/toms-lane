@@ -43,15 +43,6 @@ namespace tl
 		float* depth;
 	};
 
-	struct SoundBuffer
-	{
-		int sampleCount;
-		int16_t* samples;
-	};
-
-	// Define function signature of updating the sound buffer
-	typedef int (*UpdateSoundCallback)(const SoundBuffer& soundBuffer);
-
 	struct WindowSettings
 	{
 		int width;

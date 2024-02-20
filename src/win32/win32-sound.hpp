@@ -1,7 +1,7 @@
 #ifndef TOMS_LANE_WIN32_SOUND
 #define TOMS_LANE_WIN32_SOUND
 
-#include "../platform/toms-lane-application.hpp"
+#include "../tl-sound.hpp"
 
 namespace tl
 {

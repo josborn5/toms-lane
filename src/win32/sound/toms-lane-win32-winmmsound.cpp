@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <stdint.h>
 #include "mmeapi.h"
-#include "../../platform/toms-lane-application.hpp"
+#include "../../tl-sound.hpp"
 #include "../win32-console.hpp"
 
 #define WAVE_HEADER_COUNT 6
