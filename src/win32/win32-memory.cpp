@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "../../tl-memory.hpp"
+#include "../tl-memory.hpp"
 
 #define Kilobytes(value) ((value) * 1024LL)
 #define Megabytes(value) (Kilobytes(value) * 1024LL)

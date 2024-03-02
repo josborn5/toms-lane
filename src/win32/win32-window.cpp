@@ -1,9 +1,9 @@
 #include <windows.h>
 #include <stdint.h>
 
-#include "../../tl-window.hpp"
-#include "../win32-time.hpp"
-#include "../win32-application.hpp"
+#include "../tl-window.hpp"
+#include "./win32-time.hpp"
+#include "./win32-application.hpp"
 
 namespace tl
 {
