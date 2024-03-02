@@ -1,5 +1,5 @@
 #include "../platform/toms-lane-platform.hpp"
-#include "../win32/win32-sound.hpp"
+#include "../tl-sound.hpp"
 #include <math.h>
 
 struct ADSREnvelope
@@ -136,8 +136,7 @@ int UpdateSound(const tl::SoundBuffer& soundBuffer)
 
 int startSound()
 {
-	return tl::win32_sound_interface_initialize(
-		0,
+	return tl::sound_interface_initialize(
 		&UpdateSound,
 		samplesPerCallback,
 		samplesPerSecond,

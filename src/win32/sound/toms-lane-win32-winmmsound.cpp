@@ -3,6 +3,7 @@
 #include "mmeapi.h"
 #include "../../tl-sound.hpp"
 #include "../win32-console.hpp"
+#include "../win32-application.hpp"
 
 #define WAVE_HEADER_COUNT 6
 
@@ -214,6 +215,24 @@ int win32_sound_interface_initialize(
 	}
 
 	return 0;
+}
+
+int sound_interface_initialize(
+	UpdateSoundCallback updateSoundCallback,
+	int samplesToProcessPerCallback,
+	int samplesPerSecond,
+	int numberOfChannels
+)
+{
+	HWND windowHandle = window_handle_get();
+
+	return win32_sound_interface_initialize(
+		windowHandle,
+		updateSoundCallback,
+		samplesToProcessPerCallback,
+		samplesPerSecond,
+		numberOfChannels
+	);
 }
 
 }

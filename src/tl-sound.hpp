@@ -13,6 +13,13 @@ namespace tl
 
 	// Define function signature of updating the sound buffer
 	typedef int (*UpdateSoundCallback)(const SoundBuffer& soundBuffer);
+
+	int sound_interface_initialize(
+		UpdateSoundCallback updateSoundCallback,
+		int samplesToProcessPerCallback,
+		int samplesPerSecond,
+		int numberOfChannels
+	);
 }
 
 #endif

@@ -1,7 +1,8 @@
 #include <windows.h>
 #include <math.h>
 #include "../win32/win32-console.hpp"
-#include "../win32/win32-sound.hpp"
+#include "../tl-sound.hpp"
+#include "../tl-application.hpp"
 
 static uint64_t sampleCounter = 0;
 static const int sampleRate = 48000;
@@ -29,12 +30,11 @@ int UpdateSound(const tl::SoundBuffer& soundBuffer)
 	return 0;
 }
 
-int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
+int tl::main(char* commandLine)
 {
 	tl::console_interface_open();
 
-	tl::win32_sound_interface_initialize(
-		0,
+	tl::sound_interface_initialize(
 		&UpdateSound,
 		samplesPerCallback,
 		sampleRate,

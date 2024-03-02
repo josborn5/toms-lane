@@ -1,11 +1,16 @@
 #include <windows.h>
-#include "./win32-application.hpp"
+#include "../tl-application.hpp"
 
 static HINSTANCE _instance;
 static HWND _window = 0;
 
 namespace tl
 {
+
+HWND window_handle_get()
+{
+	return _window;
+}
 
 void window_handle_set(HWND windowHandle)
 {
