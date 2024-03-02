@@ -1,6 +1,6 @@
-#include <windows.h>
 #include "../win32/toms-lane-win32.hpp"
 #include "../tl-memory.hpp"
+#include "../tl-application.hpp"
 #include "../platform/toms-lane-platform.hpp"
 #include "./editor.hpp"
 
@@ -356,7 +356,7 @@ int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::Rende
 	return updateAndRender(appMemory, input, renderBuffer, dt);
 }
 
-int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
+int tl::main(char* commandLine)
 {
 	const int targetFPS = 60;
 
@@ -373,7 +373,7 @@ int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLi
 		state.filePath = commandLine;
 	}
 
-	int windowOpenResult = tl::OpenWindow(instance, settings);
+	int windowOpenResult = tl::OpenWindow(settings);
 	if (windowOpenResult != 0)
 	{
 		return windowOpenResult;

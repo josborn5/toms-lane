@@ -1,3 +1,8 @@
 src\win32\window\toms-lane-win32.cpp
 src\win32\file\toms-lane-win32-file.cpp
 src\win32\time\toms-lane-win32-time.cpp
+src\win32\console\toms-lane-win32-console.cpp
+src\win32\sound\toms-lane-win32-winmmsound.cpp
+src\win32\memory\toms-lane-win32-memory.cpp
+src\win32\win32-application.cpp
+

@@ -6,6 +6,7 @@
 namespace tl
 {
 	void window_handle_set(HWND windowHandle);
+	HINSTANCE instance_handle_get();
 }
 
 #endif

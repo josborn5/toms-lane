@@ -69,6 +69,8 @@ namespace tl
 		char* title;
 	};
 
+	int OpenWindow(const WindowSettings& settings);
+
 	// Define function signature of updating the video buffer
 	typedef int (*UpdateWindowCallback)(const Input& input, int dtInMilliseconds, RenderBuffer& renderBuffer);
 

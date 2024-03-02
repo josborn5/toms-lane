@@ -3,6 +3,7 @@
 
 #include "../../tl-window.hpp"
 #include "../win32-time.hpp"
+#include "../win32-application.hpp"
 
 namespace tl
 {
@@ -228,7 +229,7 @@ static void Win32_ProcessPendingMessages(Input* input)
 	}
 }
 
-int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
+int OpenWindow(HINSTANCE instance, const WindowSettings& settings)
 {
 	WNDCLASSA windowClass = {0};
 	windowClass.style = CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
@@ -264,6 +265,12 @@ int OpenWindow(HINSTANCE instance, const WindowSettings &settings)
 	Win32_SizeglobalRenderBufferToCurrentWindow(globalWindow);
 
 	return 0;
+}
+
+int OpenWindow(const WindowSettings& settings)
+{
+	HINSTANCE instanceHandle = instance_handle_get();
+	return OpenWindow(instanceHandle, settings);
 }
 
 int RunWindowUpdateLoop(
