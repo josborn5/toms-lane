@@ -1,5 +1,5 @@
-#ifndef TOMS_LANE_WIN32_CONSOLE
-#define TOMS_LANE_WIN32_CONSOLE
+#ifndef TOMS_LANE_CONSOLE
+#define TOMS_LANE_CONSOLE
 
 namespace tl
 {

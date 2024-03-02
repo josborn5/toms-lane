@@ -1,8 +1,7 @@
-#include <windows.h>
 #include <math.h>
-#include "../win32/win32-console.hpp"
 #include "../tl-sound.hpp"
 #include "../tl-application.hpp"
+#include "../tl-console.hpp"
 
 static uint64_t sampleCounter = 0;
 static const int sampleRate = 48000;
