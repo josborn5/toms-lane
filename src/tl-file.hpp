@@ -1,7 +1,7 @@
-#ifndef TOMS_LANE_WIN32_FILE
-#define TOMS_LANE_WIN32_FILE
+#ifndef TOMS_LANE_FILE
+#define TOMS_LANE_FILE
 
-#include "../tl-memory.hpp"
+#include "./tl-memory.hpp"
 
 namespace tl
 {
@@ -19,22 +19,22 @@ enum FileStatusCode
 	FileWriteError = 463
 };
 
-int win32_file_interface_write(
+int file_interface_write(
 	char* fileName,
 	const MemorySpace& writeBuffer
 );
 
-int win32_file_interface_read(
+int file_interface_read(
 	char* fileName,
 	const MemorySpace& readBuffer
 );
 
-int win32_file_interface_size_get(
+int file_interface_size_get(
 	char* fileName,
 	uint64_t& size
 );
 
-int win32_file_interface_location_get(
+int file_interface_location_get(
 	MemorySpace& space
 );
 

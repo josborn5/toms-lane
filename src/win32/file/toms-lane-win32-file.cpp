@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "../win32-file.hpp"
+#include "../../tl-file.hpp"
 
 namespace tl
 {
@@ -18,7 +18,7 @@ namespace tl
 		return CreateFileA(fileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
 	}
 
-	int win32_file_interface_write(char* fileName, const MemorySpace& writeBuffer)
+	int file_interface_write(char* fileName, const MemorySpace& writeBuffer)
 	{
 		if(!writeBuffer.content)
 		{
@@ -39,7 +39,7 @@ namespace tl
 		return writeSuccess ? Success : FileWriteError;
 	}
 
-	int win32_file_interface_size_get(char* fileName, uint64_t& size)
+	int file_interface_size_get(char* fileName, uint64_t& size)
 	{
 		HANDLE fileHandle = Win32GetFileHandle(fileName, Read);
 
@@ -66,7 +66,7 @@ namespace tl
 		return Success;
 	}
 	
-	int win32_file_interface_read(char* fileName, const MemorySpace& readBuffer)
+	int file_interface_read(char* fileName, const MemorySpace& readBuffer)
 	{
 		if(!readBuffer.content)
 		{
@@ -74,7 +74,7 @@ namespace tl
 		}
 
 		uint64_t fileSize;
-		int fileReadResult = win32_file_interface_size_get(fileName, fileSize);
+		int fileReadResult = file_interface_size_get(fileName, fileSize);
 		if (fileReadResult != Success)
 		{
 			return fileReadResult;
@@ -96,7 +96,7 @@ namespace tl
 		return readSuccess ? Success : FileReadError;
 	}
 
-	int win32_file_interface_location_get(MemorySpace& space)
+	int file_interface_location_get(MemorySpace& space)
 	{
 		DWORD bufferSize = (DWORD)space.sizeInBytes;
 		LPSTR fileName = (LPSTR)space.content;

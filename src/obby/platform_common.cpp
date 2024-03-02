@@ -1,5 +1,6 @@
 #include "../platform/toms-lane-platform.hpp"
 #include "./platform_common.hpp"
+#include "../tl-file.hpp"
 
 static bool IsDown(const tl::Input &input, int button)
 {
@@ -291,8 +292,8 @@ int LoadSpriteFromFile(
 	tl::MemorySpace transient // Purposefully don't pass as a reference so as not to modify the transient space - it can be overwritten after the function call
 ) {
 	uint64_t fileSize = 0;
-	tl::win32_file_interface_size_get(fileName, fileSize);
-	if (tl::win32_file_interface_read(fileName, transient) != tl::Success)
+	tl::file_interface_size_get(fileName, fileSize);
+	if (tl::file_interface_read(fileName, transient) != tl::Success)
 	{
 		return 1;
 	}

@@ -1,6 +1,6 @@
-#include "../win32/toms-lane-win32.hpp"
 #include "../tl-memory.hpp"
 #include "../tl-application.hpp"
+#include "../tl-file.hpp"
 #include "../platform/toms-lane-platform.hpp"
 #include "./editor.hpp"
 
@@ -126,12 +126,12 @@ int Initialize(const tl::GameMemory& gameMemory)
 	if (state.filePath)
 	{
 		uint64_t fileSize = 0;
-		if (tl::win32_file_interface_size_get(state.filePath, fileSize) != tl::Success)
+		if (tl::file_interface_size_get(state.filePath, fileSize) != tl::Success)
 		{
 			return 1;
 		}
 
-		if (tl::win32_file_interface_read(state.filePath, fileReadMemory) != tl::Success)
+		if (tl::file_interface_read(state.filePath, fileReadMemory) != tl::Success)
 		{
 			return 1;
 		}
