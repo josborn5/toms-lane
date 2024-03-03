@@ -11,6 +11,120 @@ float maxPlayerX;
 float minPlayerY;
 float maxPlayerY;
 
+int LoadSprites(const tl::GameMemory& gameMemory)
+{
+	tl::MemorySpace permanent = gameMemory.permanent;
+	tl::MemorySpace transient = gameMemory.transient;
+
+	// Read spritec files
+	LoadSpriteFromFile(
+		".\\brick.sprc",
+		gamestate.regularBlockSprite,
+		permanent,
+		transient
+	);
+
+	LoadSpriteFromFile(
+		"checkpoint.sprc",
+		gamestate.checkpointBlockSprite,
+		permanent,
+		transient
+	);
+
+	LoadSpriteFromFile(
+		"player.sprc",
+		gamestate.player.spriteTest,
+		permanent,
+		transient
+	);
+
+	return 0;
+}
+
+int PopulateBlocksForLevelString_(
+	char* blockLayout,
+	GameState &gameState,
+	const tl::Vec2<int> &pixelRect
+) {
+	tl::Vec2<int> dimensions = tl::GetContentDimensions(blockLayout);
+
+	// Check the block array size is big enough for the content
+	int contentCount = dimensions.x * dimensions.y;
+	if (contentCount > gameState.blockCount)
+	{
+		return 1;
+	}
+
+	float blockHeight = (float)pixelRect.y / dimensions.y;
+	float blockWidth = (float)pixelRect.x / dimensions.x;
+	tl::Vec2<float> blockHalfSize = {
+		0.5f * blockWidth,
+		0.5f * blockHeight
+	};
+
+	bool endOfContent = false;
+	float originalX = blockHalfSize.x;
+	tl::Vec2<float> blockPosition = {
+		originalX,
+		(float)pixelRect.y - blockHalfSize.y
+	};
+	for (int i = 0; i < gameState.blockCount; i += 1)
+	{
+		ClearBlock(&(gameState.blocks[i]));
+	}
+
+	for (int i = 0; i < gameState.blockCount && !endOfContent; i += 1)
+	{
+		if (*blockLayout == '\n')
+		{
+			blockPosition.x = originalX;
+			blockPosition.y -= blockHeight;
+		}
+		else
+		{
+			Block* block = &(gameState.blocks[i]);
+			if (*blockLayout != ' ')
+			{
+				block->exists = true;
+				bool isCheckpoint = (*blockLayout == 'c');
+				block->isCheckpoint = isCheckpoint;
+				switch (*blockLayout)
+				{
+					case 'c':
+						block->type = Checkpoint;
+						block->color = 0x000000;
+						block->sprite = &gamestate.checkpointBlockSprite;
+						break;
+					case 's':
+						block->type = Spawn;
+						block->color = 0x0000AA;
+						block->sprite = nullptr;
+						break;
+					case 'K':
+						block->type = Killbrick;
+						block->color = 0xF79226;
+						block->sprite = nullptr;
+						break;
+					default:
+						block->type = Regular;
+						block->color = 0x000000;
+						block->sprite = &gamestate.regularBlockSprite;
+				}
+			}
+
+			block->halfSize = blockHalfSize;
+			block->position = blockPosition;
+
+			blockPosition.x += blockWidth;
+		}
+
+		blockLayout++;
+		endOfContent = (*blockLayout == NULL);
+	}
+
+	return 0;
+}
+
 int PopulateBlocksForLevel(
 	int level,
 	GameState &gameState,
@@ -25,7 +139,7 @@ int PopulateBlocksForLevel(
 	// level is a 1-based index. levels array is 0-based.
 	char* blockLayout = levels[level - 1]; // levels is a global var set by levels.cpp .. TODO: make not global
 
-	return PopulateBlocksForLevelString(blockLayout, gameState, pixelRect);
+	return PopulateBlocksForLevelString_(blockLayout, gameState, pixelRect);
 }
 
 static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)

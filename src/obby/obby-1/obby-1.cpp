@@ -20,36 +20,11 @@ tl::GameMemory appMemory;
 
 bool initialized = false;
 bool isPaused = false;
-tl::SpriteC regularBlockSprite;
-tl::SpriteC checkpointBlockSprite;
 
 int Initialize(const tl::GameMemory& gameMemory)
 {
-	tl::MemorySpace permanent = gameMemory.permanent;
-	tl::MemorySpace transient = gameMemory.transient;
-
-	// Read spritec files
-	LoadSpriteFromFile(
-		".\\brick.sprc",
-		regularBlockSprite,
-		permanent,
-		transient
-	);
+	LoadSprites(gameMemory);
 	gamestate.blockPixelHalfSize = 2.0f;
-
-	LoadSpriteFromFile(
-		"checkpoint.sprc",
-		checkpointBlockSprite,
-		permanent,
-		transient
-	);
-
-	LoadSpriteFromFile(
-		"player.sprc",
-		gamestate.player.spriteTest,
-		permanent,
-		transient
-	);
 	gamestate.player.pixelHalfSize = 2.0f;
 
 	return 0;
@@ -85,7 +60,7 @@ int UpdateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer
 		UpdateGameState(&gamestate, pixelRect, input, dt, renderBuffer);
 	}
 
-	RenderGameState(renderBuffer, gamestate, regularBlockSprite, checkpointBlockSprite);
+	RenderGameState(renderBuffer, gamestate);
 
 	float fontSize = 16.0f;
 	float infoHeight = 4.0f * fontSize;

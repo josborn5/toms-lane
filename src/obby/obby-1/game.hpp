@@ -42,6 +42,7 @@ struct Block : tl::Rect<float> {
 	bool exists;
 	bool isCheckpoint;
 	BlockType type;
+	tl::SpriteC* sprite;
 };
 
 struct PlayerMovement
@@ -74,6 +75,8 @@ struct GameState
 	const int blockCount = BLOCK_ARRAY_SIZE;
 	int collision;
 	tl::Rect<float> restartLevelButton = {0};
+	tl::SpriteC regularBlockSprite;
+	tl::SpriteC checkpointBlockSprite;
 };
 
 #endif
