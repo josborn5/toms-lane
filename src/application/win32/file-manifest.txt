@@ -1,0 +1,8 @@
+src\application\win32\win32-window.cpp
+src\application\win32\win32-file.cpp
+src\application\win32\win32-time.cpp
+src\application\win32\win32-console.cpp
+src\application\win32\win32-winmmsound.cpp
+src\application\win32\win32-memory.cpp
+src\application\win32\win32-application.cpp
+

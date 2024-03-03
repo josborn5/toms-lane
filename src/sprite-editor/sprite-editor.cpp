@@ -1,6 +1,4 @@
-#include "../tl-memory.hpp"
 #include "../tl-application.hpp"
-#include "../tl-file.hpp"
 #include "../platform/toms-lane-platform.hpp"
 #include "./editor.hpp"
 

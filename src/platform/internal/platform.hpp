@@ -1,7 +1,7 @@
 #ifndef TOMS_LANE_PLATFORM_H
 #define TOMS_LANE_PLATFORM_H
 
-#include "../../tl-window.hpp"
+#include "../../tl-application.hpp"
 
 namespace tl
 {

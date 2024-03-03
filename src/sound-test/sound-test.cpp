@@ -1,7 +1,5 @@
 #include <math.h>
-#include "../tl-sound.hpp"
 #include "../tl-application.hpp"
-#include "../tl-console.hpp"
 
 static uint64_t sampleCounter = 0;
 static const int sampleRate = 48000;

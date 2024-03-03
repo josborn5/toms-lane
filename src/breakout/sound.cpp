@@ -1,5 +1,4 @@
 #include "../platform/toms-lane-platform.hpp"
-#include "../tl-sound.hpp"
 #include <math.h>
 
 struct ADSREnvelope

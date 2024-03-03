@@ -1,6 +1,6 @@
 @echo off
 
-call .\build-scripts\compile.bat "@%~dp0\src\win32\file-manifest.txt" "%~dp0\bin-tl-win32" %1
+call .\build-scripts\compile.bat "@%~dp0\src\application\win32\file-manifest.txt" "%~dp0\bin-tl-win32" %1
 
 lib.exe /OUT:"%~dp0\bin-tl-win32\tl-win32.lib"^
  "%~dp0\bin-tl-win32\win32-window.obj"^
