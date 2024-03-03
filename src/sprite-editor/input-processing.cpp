@@ -1,4 +1,4 @@
-#include "../platform/toms-lane-platform.hpp"
+#include "../tl-library.hpp"
 #include "./editor.hpp"
 
 static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprite, int& selectedPixelIndex)

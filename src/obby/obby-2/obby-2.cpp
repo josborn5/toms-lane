@@ -1,10 +1,8 @@
 #include "../../tl-application.hpp"
-#include "../../platform/toms-lane-platform.hpp"
+#include "../../tl-library.hpp"
 
 #include "../game.hpp"
-
 #include "../platform_common.cpp"
-
 #include "./levels.cpp"
 
 tl::SpriteC backgroundSprite;

@@ -2,7 +2,7 @@
 #include <strstream>
 #include <string>
 #include <iostream>
-#include "../platform/toms-lane-platform.hpp"
+#include "../tl-library.hpp"
 
 namespace tl
 {

@@ -1,4 +1,4 @@
-#include "../platform/toms-lane-platform.hpp"
+#include "../tl-library.hpp"
 #include "./editor.hpp"
 
 static tl::Rect<float> spriteContainerRect;

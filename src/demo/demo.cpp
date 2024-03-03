@@ -1,6 +1,6 @@
 #include <math.h>
 #include "../tl-application.hpp"
-#include "../platform/toms-lane-platform.hpp"
+#include "../tl-library.hpp"
 #include "./file.cpp"
 
 tl::Camera<float> camera;

@@ -18,7 +18,7 @@ TODO (in no particular order):
 
 */
 
-#include "../platform/toms-lane-platform.hpp"
+#include "../tl-library.hpp"
 #include "../tl-application.hpp"
 #include "game.h"
 #include "sound.cpp"
