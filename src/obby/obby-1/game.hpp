@@ -60,6 +60,7 @@ struct Player : tl::Rect<float>
 	tl::Sprite sprite;
 	tl::SpriteC spriteTest;
 	float pixelHalfSize;
+	tl::Vec2<float> prevPosition;
 };
 
 struct GameState

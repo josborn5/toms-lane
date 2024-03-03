@@ -6,6 +6,9 @@ GameState gamestate = {};
 tl::Vec2<float> worldPosition = ZERO_VECTOR;
 tl::Vec2<float> worldHalfSize = ZERO_VECTOR;
 
+bool initialized = false;
+bool isPaused = false;
+
 float minPlayerX;
 float maxPlayerX;
 float minPlayerY;
@@ -152,6 +155,7 @@ static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
 
 	tl::Vec2<float> playerStartPosition = GetPlayerStartPosition(gamestate.blocks, gamestate.blockCount);
 	gamestate.player.position = playerStartPosition;
+	gamestate.player.prevPosition = playerStartPosition;
 
 	return returnVal;
 }
@@ -196,8 +200,7 @@ static void UpdateGameState(
 	GameState *state,
 	tl::Vec2<int> pixelRect,
 	const tl::Input &input,
-	float dt,
-	const tl::RenderBuffer &renderBuffer
+	float dt
 )
 {
 	if (state->mode == ReadyToStart)
@@ -217,6 +220,9 @@ static void UpdateGameState(
 	{
 		return;
 	}
+
+	state->player.prevPosition.x = state->player.position.x;
+	state->player.prevPosition.y = state->player.position.y;
 
 	// Translate input to player movement
 	UpdatePlayerMovement(input, state->player.movement);
@@ -300,4 +306,30 @@ static void UpdateGameState(
 	state->player.position.y = newPlayerState.position.y;
 	state->player.velocity.x = newPlayerState.velocity.x;
 	state->player.velocity.y = newPlayerState.velocity.y;
+}
+
+GameState& GetNewState(const tl::Input& input, float dt, const tl::Vec2<int>& worldDimensions)
+{
+	if (tl::IsReleased(input, tl::KEY_R))
+	{
+		initialized = false;
+	}
+
+	if (!initialized)
+	{
+		initialized = true;
+		InitializeGameState(&gamestate, worldDimensions, input);
+		return gamestate;
+	}
+
+	if (tl::IsReleased(input, tl::KEY_H))
+	{
+		isPaused = !isPaused;
+	}
+
+	if (!isPaused)
+	{
+		UpdateGameState(&gamestate, worldDimensions, input, dt);
+	}
+	return gamestate;
 }
