@@ -1,8 +1,3 @@
-const uint32_t BACKGROUND_COLOR = 0x551100;
-
-const uint32_t playerColor = 0x00FF00;
-const uint32_t TEXT_COLOR = 0xFFFF00;
-
 int rainbowColor = 0;
 const tl::Vec2<float> smallFontHalfSize = { 5.0f, 10.0f };
 const tl::Vec2<float> titleFontHalfSize = { 15.0f, 30.0f };
@@ -78,7 +73,7 @@ static void RenderGameState(
 			renderBuffer,
 			"PRESS S TO START",
 			smallCharRect,
-			TEXT_COLOR
+			0xFFFF00
 		);
 
 		return;
