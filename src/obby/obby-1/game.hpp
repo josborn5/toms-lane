@@ -72,9 +72,7 @@ struct GameState
 	int score;
 	int lives;
 	Mode mode;
-	float levelTransitionTimer;
 	const int blockCount = BLOCK_ARRAY_SIZE;
-	int collision;
 	tl::Rect<float> restartLevelButton = {0};
 	tl::SpriteC regularBlockSprite;
 	tl::SpriteC checkpointBlockSprite;

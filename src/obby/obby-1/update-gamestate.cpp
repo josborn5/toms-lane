@@ -157,6 +157,12 @@ static int StartLevel(int newLevel)
 static int InitializeGameState(GameState *state, const tl::Input &input)
 {
 	state->worldSize = { 1280, 720 };
+	state->camera.halfSize = {
+		state->worldSize.x / 2,
+		state->worldSize.y / 2
+	 };
+	state->camera.position = state->camera.halfSize;
+
 	state->mode = ReadyToStart;
 
 	state->player.halfSize.x = state->player.spriteTest.width * state->player.pixelHalfSize;
