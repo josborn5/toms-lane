@@ -3,9 +3,6 @@
 
 GameState gamestate = {};
 
-tl::Vec2<float> worldPosition = ZERO_VECTOR;
-tl::Vec2<float> worldHalfSize = ZERO_VECTOR;
-
 bool initialized = false;
 bool isPaused = false;
 
@@ -46,8 +43,7 @@ int LoadSprites(const tl::GameMemory& gameMemory)
 
 int PopulateBlocksForLevelString_(
 	char* blockLayout,
-	GameState &gameState,
-	const tl::Vec2<int> &pixelRect
+	GameState& gameState
 ) {
 	tl::Vec2<int> dimensions = tl::GetContentDimensions(blockLayout);
 
@@ -58,8 +54,8 @@ int PopulateBlocksForLevelString_(
 		return 1;
 	}
 
-	float blockHeight = (float)pixelRect.y / dimensions.y;
-	float blockWidth = (float)pixelRect.x / dimensions.x;
+	float blockHeight = (float)gamestate.worldSize.y / dimensions.y;
+	float blockWidth = (float)gamestate.worldSize.x / dimensions.x;
 	tl::Vec2<float> blockHalfSize = {
 		0.5f * blockWidth,
 		0.5f * blockHeight
@@ -69,7 +65,7 @@ int PopulateBlocksForLevelString_(
 	float originalX = blockHalfSize.x;
 	tl::Vec2<float> blockPosition = {
 		originalX,
-		(float)pixelRect.y - blockHalfSize.y
+		(float)gamestate.worldSize.y - blockHalfSize.y
 	};
 	for (int i = 0; i < gameState.blockCount; i += 1)
 	{
@@ -130,8 +126,7 @@ int PopulateBlocksForLevelString_(
 
 int PopulateBlocksForLevel(
 	int level,
-	GameState &gameState,
-	const tl::Vec2<int> &pixelRect
+	GameState &gameState
 ) {
 	// Temporary hack - force level to be between 1 and 3
 	if (level > 6)
@@ -142,15 +137,14 @@ int PopulateBlocksForLevel(
 	// level is a 1-based index. levels array is 0-based.
 	char* blockLayout = levels[level - 1]; // levels is a global var set by levels.cpp .. TODO: make not global
 
-	return PopulateBlocksForLevelString_(blockLayout, gameState, pixelRect);
+	return PopulateBlocksForLevelString_(blockLayout, gameState);
 }
 
-static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
+static int StartLevel(int newLevel)
 {
 	int returnVal = PopulateBlocksForLevel(
 		newLevel,
-		gamestate,
-		pixelRect
+		gamestate
 	);
 
 	tl::Vec2<float> playerStartPosition = GetPlayerStartPosition(gamestate.blocks, gamestate.blockCount);
@@ -160,23 +154,18 @@ static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
 	return returnVal;
 }
 
-static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect, const tl::Input &input)
+static int InitializeGameState(GameState *state, const tl::Input &input)
 {
+	state->worldSize = { 1280, 720 };
 	state->mode = ReadyToStart;
-	float worldHalfX = 0.5f * (float)pixelRect.x;
-	float worldHalfY = 0.5f * (float)pixelRect.y;
-	worldHalfSize.x = worldHalfX;
-	worldHalfSize.y = worldHalfY;
-	worldPosition.x = worldHalfX;
-	worldPosition.y = worldHalfY;
 
 	state->player.halfSize.x = state->player.spriteTest.width * state->player.pixelHalfSize;
 	state->player.halfSize.y = state->player.spriteTest.height * state->player.pixelHalfSize;
 
 	minPlayerX = 0.0f + state->player.halfSize.x;
-	maxPlayerX = (float)pixelRect.x - state->player.halfSize.x;
+	maxPlayerX = (float)state->worldSize.x - state->player.halfSize.x;
 	minPlayerY = 0.0f + state->player.halfSize.y;
-	maxPlayerY = (float)pixelRect.y - state->player.halfSize.y;
+	maxPlayerY = (float)state->worldSize.y - state->player.halfSize.y;
 
 	state->player.position.x = state->player.halfSize.x;
 	state->player.position.y = 500;
@@ -193,12 +182,11 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 	state->score = 0;
 	state->lives = 3;
 	state->level = 1;
-	return StartLevel(state->level, pixelRect);
+	return StartLevel(state->level);
 }
 
 static void UpdateGameState(
 	GameState *state,
-	tl::Vec2<int> pixelRect,
 	const tl::Input &input,
 	float dt
 )
@@ -265,7 +253,7 @@ static void UpdateGameState(
 			if (blockCollisionResult.south.isCheckpoint)
 			{
 				int nextlevel = state->level += 1;
-				StartLevel(nextlevel, pixelRect);
+				StartLevel(nextlevel);
 				state->mode = StartingNextLevel;
 				return;
 			}
@@ -308,7 +296,7 @@ static void UpdateGameState(
 	state->player.velocity.y = newPlayerState.velocity.y;
 }
 
-GameState& GetNewState(const tl::Input& input, float dt, const tl::Vec2<int>& worldDimensions)
+GameState& GetNewState(const tl::Input& input, float dt)
 {
 	if (tl::IsReleased(input, tl::KEY_R))
 	{
@@ -318,7 +306,7 @@ GameState& GetNewState(const tl::Input& input, float dt, const tl::Vec2<int>& wo
 	if (!initialized)
 	{
 		initialized = true;
-		InitializeGameState(&gamestate, worldDimensions, input);
+		InitializeGameState(&gamestate, input);
 		return gamestate;
 	}
 
@@ -329,7 +317,7 @@ GameState& GetNewState(const tl::Input& input, float dt, const tl::Vec2<int>& wo
 
 	if (!isPaused)
 	{
-		UpdateGameState(&gamestate, worldDimensions, input, dt);
+		UpdateGameState(&gamestate, input, dt);
 	}
 	return gamestate;
 }

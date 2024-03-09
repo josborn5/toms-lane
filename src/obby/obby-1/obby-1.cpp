@@ -21,14 +21,8 @@ int Initialize(const tl::GameMemory& gameMemory)
 
 int UpdateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
-
-	tl::Vec2<int> pixelRect;
-	pixelRect.x = renderBuffer.width;
-	pixelRect.y = renderBuffer.height;
-	GameState state = GetNewState(input, dt, pixelRect);
-
+	GameState state = GetNewState(input, dt);
 	RenderGameState(renderBuffer, state);
-
 	return 0;
 }
 
