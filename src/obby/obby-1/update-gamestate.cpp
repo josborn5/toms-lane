@@ -54,8 +54,8 @@ int PopulateBlocksForLevelString_(
 		return 1;
 	}
 
-	float blockHeight = (float)gamestate.worldSize.y / dimensions.y;
-	float blockWidth = (float)gamestate.worldSize.x / dimensions.x;
+	float blockHeight = (gamestate.world.position.y + gamestate.world.halfSize.y) / dimensions.y;
+	float blockWidth = (gamestate.world.position.x + gamestate.world.halfSize.x) / dimensions.x;
 	tl::Vec2<float> blockHalfSize = {
 		0.5f * blockWidth,
 		0.5f * blockHeight
@@ -65,7 +65,7 @@ int PopulateBlocksForLevelString_(
 	float originalX = blockHalfSize.x;
 	tl::Vec2<float> blockPosition = {
 		originalX,
-		(float)gamestate.worldSize.y - blockHalfSize.y
+		(float)gamestate.world.position.y + gamestate.world.halfSize.y - blockHalfSize.y
 	};
 	for (int i = 0; i < gameState.blockCount; i += 1)
 	{
@@ -156,11 +156,9 @@ static int StartLevel(int newLevel)
 
 static int InitializeGameState(GameState *state, const tl::Input &input)
 {
-	state->worldSize = { 1280, 720 };
-	state->camera.halfSize = {
-		state->worldSize.x / 2,
-		state->worldSize.y / 2
-	 };
+	state->world.halfSize = { 640.0f, 360.0f };
+	state->world.position = state->world.halfSize;
+	state->camera.halfSize = state->world.halfSize;
 	state->camera.position = state->camera.halfSize;
 
 	state->mode = ReadyToStart;
@@ -169,9 +167,9 @@ static int InitializeGameState(GameState *state, const tl::Input &input)
 	state->player.halfSize.y = state->player.spriteTest.height * state->player.pixelHalfSize;
 
 	minPlayerX = 0.0f + state->player.halfSize.x;
-	maxPlayerX = (float)state->worldSize.x - state->player.halfSize.x;
+	maxPlayerX = state->world.position.x + state->world.halfSize.x - state->player.halfSize.x;
 	minPlayerY = 0.0f + state->player.halfSize.y;
-	maxPlayerY = (float)state->worldSize.y - state->player.halfSize.y;
+	maxPlayerY = state->world.position.y + state->world.halfSize.y - state->player.halfSize.y;
 
 	state->player.position.x = state->player.halfSize.x;
 	state->player.position.y = 500;

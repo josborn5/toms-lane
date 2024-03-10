@@ -13,6 +13,11 @@ char* jumpScare = "\
 ";
 tl::Sprite jumpScareSprite = tl::LoadSprite(jumpScare);
 
+struct Matrix2x2
+{
+	float m[2][2] = {0};
+};
+
 static void RenderGameState(
 	const tl::RenderBuffer &renderBuffer,
 	const GameState &state
@@ -114,10 +119,7 @@ static void RenderGameState(
 	}
 
 	// background
-	tl::Rect<float> prevPlayerFootprint;
-	prevPlayerFootprint.position = state.player.prevPosition;
-	prevPlayerFootprint.halfSize = state.player.halfSize;
-	tl::DrawRect(renderBuffer, 0x154DDA, prevPlayerFootprint);
+	tl::ClearScreen(renderBuffer, 0x222222);
 
 	for (int i = 0; i < state.blockCount; i += 1)
 	{

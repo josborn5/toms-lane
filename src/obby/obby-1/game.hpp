@@ -76,8 +76,8 @@ struct GameState
 	tl::Rect<float> restartLevelButton = {0};
 	tl::SpriteC regularBlockSprite;
 	tl::SpriteC checkpointBlockSprite;
-	tl::Vec2<int> worldSize;
-	tl::Rect<int> camera;
+	tl::Rect<float> world;
+	tl::Rect<float> camera;
 };
 
 #endif
