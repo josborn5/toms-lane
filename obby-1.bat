@@ -11,5 +11,5 @@ xcopy "%~dp0\src\obby\checkpoint.sprc" "%APP_DIR%\"
 xcopy "%~dp0\src\obby\player.sprc" "%APP_DIR%\"
 
 pushd "%APP_DIR%\"
-call .\obby-1.exe %1
+call ..\build-scripts\run.bat "obby-1.exe" %1
 popd

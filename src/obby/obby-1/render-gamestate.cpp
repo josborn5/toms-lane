@@ -13,10 +13,35 @@ char* jumpScare = "\
 ";
 tl::Sprite jumpScareSprite = tl::LoadSprite(jumpScare);
 
-struct Matrix2x2
+
+void CreateWorldToCameraProjectionMatrix(
+	const tl::Rect<float>& world,
+	const tl::Rect<float>& camera,
+	tl::Matrix2x3<float>& matrix
+)
 {
-	float m[2][2] = {0};
-};
+	float dX = camera.position.x - world.position.x;
+	float dY = camera.position.y - world.position.y;
+	float scaleFactor = 1.0f;
+
+	matrix.m[0][0] = scaleFactor;
+	matrix.m[1][0] = 0.0f;
+	matrix.m[2][0] = dX;
+
+	matrix.m[0][1] = 0.0f;
+	matrix.m[1][1] = scaleFactor;
+	matrix.m[2][1] = dY;
+}
+
+void TransformFromWorldToCamera(
+	const tl::Matrix2x3<float>& projection,
+	const tl::Rect<float>& worldSpace,
+	tl::Rect<float>& cameraSpace
+)
+{
+	cameraSpace.position = tl::Transform2DVector(worldSpace.position, projection);
+	cameraSpace.halfSize = tl::Transform2DVector(worldSpace.halfSize, projection);
+}
 
 static void RenderGameState(
 	const tl::RenderBuffer &renderBuffer,
@@ -121,14 +146,28 @@ static void RenderGameState(
 	// background
 	tl::ClearScreen(renderBuffer, 0x222222);
 
+	tl::Matrix2x3<float> worldToCameraProjection;
+	CreateWorldToCameraProjectionMatrix(
+		state.world,
+		state.camera,
+		worldToCameraProjection
+	);
+
 	for (int i = 0; i < state.blockCount; i += 1)
 	{
 		Block block = state.blocks[i];
 		if (!block.exists) continue;
 
+		tl::Rect<float> blockInCameraSpace;
+		TransformFromWorldToCamera(
+			worldToCameraProjection,
+			block,
+			blockInCameraSpace
+		);
+
 		if (block.sprite == nullptr)
 		{
-			tl::DrawRect(renderBuffer, block.color, block);
+			tl::DrawRect(renderBuffer, block.color, blockInCameraSpace);
 		}
 		else
 		{
@@ -136,7 +175,7 @@ static void RenderGameState(
 			tl::DrawSpriteC(
 				renderBuffer,
 				sprite,
-				block
+				blockInCameraSpace
 			);
 		}
 	}
