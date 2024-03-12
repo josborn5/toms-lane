@@ -15,22 +15,22 @@ tl::Sprite jumpScareSprite = tl::LoadSprite(jumpScare);
 
 
 void CreateWorldToCameraProjectionMatrix(
-	const tl::Rect<float>& world,
-	const tl::Rect<float>& camera,
+	const tl::Rect<float>& from,
+	const tl::RenderBuffer& to,
 	tl::Matrix2x3<float>& matrix
 )
 {
-	float dX = camera.position.x - world.position.x;
-	float dY = camera.position.y - world.position.y;
-	float scaleFactor = 1.0f;
+	float scaleFactor = (float)to.width / (2.0f * from.halfSize.x);
+	float dX = -from.position.x + from.halfSize.x;
+	float dY = -from.position.y + from.halfSize.y;
 
 	matrix.m[0][0] = scaleFactor;
-	matrix.m[1][0] = 0.0f;
-	matrix.m[2][0] = dX;
-
 	matrix.m[0][1] = 0.0f;
+	matrix.m[0][2] = scaleFactor * dX;
+
+	matrix.m[1][0] = 0.0f;
 	matrix.m[1][1] = scaleFactor;
-	matrix.m[2][1] = dY;
+	matrix.m[1][2] = scaleFactor * dY;
 }
 
 void TransformFromWorldToCamera(
@@ -39,8 +39,10 @@ void TransformFromWorldToCamera(
 	tl::Rect<float>& cameraSpace
 )
 {
+	float scaleFactor = 2.0f;
 	cameraSpace.position = tl::Transform2DVector(worldSpace.position, projection);
-	cameraSpace.halfSize = tl::Transform2DVector(worldSpace.halfSize, projection);
+	cameraSpace.halfSize.x = worldSpace.halfSize.x * scaleFactor;
+	cameraSpace.halfSize.y = worldSpace.halfSize.y * scaleFactor;
 }
 
 static void RenderGameState(
@@ -148,8 +150,8 @@ static void RenderGameState(
 
 	tl::Matrix2x3<float> worldToCameraProjection;
 	CreateWorldToCameraProjectionMatrix(
-		state.world,
 		state.camera,
+		renderBuffer,
 		worldToCameraProjection
 	);
 
@@ -180,9 +182,15 @@ static void RenderGameState(
 		}
 	}
 
+	tl::Rect<float> playerInCameraSpace;
+	TransformFromWorldToCamera(
+		worldToCameraProjection,
+		state.player,
+		playerInCameraSpace
+	);
 	tl::DrawSpriteC(
 		renderBuffer,
 		state.player.spriteTest,
-		state.player
+		playerInCameraSpace
 	);
 }

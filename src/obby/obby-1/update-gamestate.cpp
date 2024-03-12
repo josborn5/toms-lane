@@ -158,8 +158,8 @@ static int InitializeGameState(GameState *state, const tl::Input &input)
 {
 	state->world.halfSize = { 640.0f, 360.0f };
 	state->world.position = state->world.halfSize;
-	state->camera.halfSize = state->world.halfSize;
-	state->camera.position = state->camera.halfSize;
+	state->camera.halfSize = { state->world.halfSize.x * 0.5f, state->world.halfSize.y * 0.5f };
+	state->camera.position = state->world.position;
 
 	state->mode = ReadyToStart;
 
@@ -218,6 +218,7 @@ static void UpdateGameState(
 
 	// Translate input to player movement
 	UpdatePlayerMovement(input, state->player.movement);
+
 
 	// Calculate velocity to apply to current player state
 	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(
@@ -298,6 +299,8 @@ static void UpdateGameState(
 	state->player.position.y = newPlayerState.position.y;
 	state->player.velocity.x = newPlayerState.velocity.x;
 	state->player.velocity.y = newPlayerState.velocity.y;
+
+	state->camera.position = state->player.position;
 }
 
 GameState& GetNewState(const tl::Input& input, float dt)
