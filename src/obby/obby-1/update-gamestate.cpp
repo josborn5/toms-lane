@@ -9,7 +9,6 @@ bool isPaused = false;
 float minPlayerX;
 float maxPlayerX;
 float minPlayerY;
-float maxPlayerY;
 
 int LoadSprites(const tl::GameMemory& gameMemory)
 {
@@ -54,12 +53,20 @@ int PopulateBlocksForLevelString_(
 		return 1;
 	}
 
-	float blockHeight = (gamestate.world.position.y + gamestate.world.halfSize.y) / dimensions.y;
-	float blockWidth = (gamestate.world.position.x + gamestate.world.halfSize.x) / dimensions.x;
+	float blockHeight = 50.0f;
+	float blockWidth = 50.0f;
 	tl::Vec2<float> blockHalfSize = {
 		0.5f * blockWidth,
 		0.5f * blockHeight
 	};
+
+	gamestate.world.halfSize.x = 0.5f * dimensions.x * blockWidth;
+	gamestate.world.halfSize.y = 0.5f * dimensions.y * blockHeight;
+	gamestate.world.position = gamestate.world.halfSize;
+
+	minPlayerX = 0.0f + gamestate.player.halfSize.x;
+	maxPlayerX = gamestate.world.position.x + gamestate.world.halfSize.x - gamestate.player.halfSize.x;
+	minPlayerY = 0.0f + gamestate.player.halfSize.y;
 
 	bool endOfContent = false;
 	float originalX = blockHalfSize.x;
@@ -156,22 +163,13 @@ static int StartLevel(int newLevel)
 
 static int InitializeGameState(GameState *state, const tl::Input &input)
 {
-	state->world.halfSize = { 640.0f, 360.0f };
-	state->world.position = state->world.halfSize;
-	state->camera.halfSize = { state->world.halfSize.x * 0.75f, state->world.halfSize.y * 0.75f };
+	state->camera.halfSize = { 1280.0f * 0.75f, 720.0f * 0.75f };
 
 	state->mode = ReadyToStart;
 
 	state->player.halfSize.x = state->player.spriteTest.width * state->player.pixelHalfSize;
 	state->player.halfSize.y = state->player.spriteTest.height * state->player.pixelHalfSize;
 
-	minPlayerX = 0.0f + state->player.halfSize.x;
-	maxPlayerX = state->world.position.x + state->world.halfSize.x - state->player.halfSize.x;
-	minPlayerY = 0.0f + state->player.halfSize.y;
-	maxPlayerY = state->world.position.y + state->world.halfSize.y - state->player.halfSize.y;
-
-	state->player.position.x = state->player.halfSize.x;
-	state->player.position.y = 500;
 	state->player.velocity.x = 0.0f;
 	state->player.velocity.y = 0.0f;
 
@@ -286,7 +284,7 @@ static void UpdateGameState(
 	newPlayerState.position.y = currentPlayerState.position.y + (currentPlayerState.velocity.y * dt);
 
 	newPlayerState.position.x = ClampFloat(minPlayerX, newPlayerState.position.x, maxPlayerX);
-	newPlayerState.position.y = ClampFloat(minPlayerY, newPlayerState.position.y, maxPlayerY);
+	newPlayerState.position.y = ClampFloat(minPlayerY, newPlayerState.position.y, newPlayerState.position.y);
 
 	if (newPlayerState.position.y <= minPlayerY)
 	{
