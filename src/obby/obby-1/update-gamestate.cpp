@@ -158,8 +158,7 @@ static int InitializeGameState(GameState *state, const tl::Input &input)
 {
 	state->world.halfSize = { 640.0f, 360.0f };
 	state->world.position = state->world.halfSize;
-	state->camera.halfSize = { state->world.halfSize.x * 0.5f, state->world.halfSize.y * 0.5f };
-	state->camera.position = state->world.position;
+	state->camera.halfSize = { state->world.halfSize.x * 0.75f, state->world.halfSize.y * 0.75f };
 
 	state->mode = ReadyToStart;
 

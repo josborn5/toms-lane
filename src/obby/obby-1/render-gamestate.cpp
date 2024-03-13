@@ -14,7 +14,7 @@ char* jumpScare = "\
 tl::Sprite jumpScareSprite = tl::LoadSprite(jumpScare);
 
 
-void CreateWorldToCameraProjectionMatrix(
+float CreateWorldToCameraProjectionMatrix(
 	const tl::Rect<float>& from,
 	const tl::RenderBuffer& to,
 	tl::Matrix2x3<float>& matrix
@@ -31,15 +31,17 @@ void CreateWorldToCameraProjectionMatrix(
 	matrix.m[1][0] = 0.0f;
 	matrix.m[1][1] = scaleFactor;
 	matrix.m[1][2] = scaleFactor * dY;
+
+	return scaleFactor;
 }
 
 void TransformFromWorldToCamera(
+	float scaleFactor,
 	const tl::Matrix2x3<float>& projection,
 	const tl::Rect<float>& worldSpace,
 	tl::Rect<float>& cameraSpace
 )
 {
-	float scaleFactor = 2.0f;
 	cameraSpace.position = tl::Transform2DVector(worldSpace.position, projection);
 	cameraSpace.halfSize.x = worldSpace.halfSize.x * scaleFactor;
 	cameraSpace.halfSize.y = worldSpace.halfSize.y * scaleFactor;
@@ -149,7 +151,7 @@ static void RenderGameState(
 	tl::ClearScreen(renderBuffer, 0x222222);
 
 	tl::Matrix2x3<float> worldToCameraProjection;
-	CreateWorldToCameraProjectionMatrix(
+	float scaleFactor = CreateWorldToCameraProjectionMatrix(
 		state.camera,
 		renderBuffer,
 		worldToCameraProjection
@@ -162,6 +164,7 @@ static void RenderGameState(
 
 		tl::Rect<float> blockInCameraSpace;
 		TransformFromWorldToCamera(
+			scaleFactor,
 			worldToCameraProjection,
 			block,
 			blockInCameraSpace
@@ -184,6 +187,7 @@ static void RenderGameState(
 
 	tl::Rect<float> playerInCameraSpace;
 	TransformFromWorldToCamera(
+		scaleFactor,
 		worldToCameraProjection,
 		state.player,
 		playerInCameraSpace
