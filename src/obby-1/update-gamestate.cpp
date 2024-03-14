@@ -385,6 +385,8 @@ static int StartLevel(int newLevel)
 	gamestate.player.position = playerStartPosition;
 	gamestate.player.prevPosition = playerStartPosition;
 
+	gamestate.camera.position = playerStartPosition;
+
 	return returnVal;
 }
 
@@ -524,7 +526,7 @@ static void UpdateGameState(
 	state->player.velocity.x = newPlayerState.velocity.x;
 	state->player.velocity.y = newPlayerState.velocity.y;
 
-	state->camera.position = state->player.position;
+	state->camera.position.x = state->player.position.x;
 }
 
 GameState& GetNewState(const tl::Input& input, float dt)
