@@ -160,7 +160,6 @@ static void RenderGameState(
 	for (int i = 0; i < state.blockCount; i += 1)
 	{
 		Block block = state.blocks[i];
-		if (!block.exists) continue;
 
 		tl::Rect<float> blockInCameraSpace;
 		TransformFromWorldToCamera(

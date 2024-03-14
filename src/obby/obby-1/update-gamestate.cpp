@@ -10,6 +10,227 @@ float minPlayerX;
 float maxPlayerX;
 float minPlayerY;
 
+struct BlockCollision
+{
+	bool any = false;
+	bool isCheckpoint = false;
+	bool isKillbrick = false;
+	float time = 999999.9f;
+	tl::Vec2<float> position;
+};
+
+struct BlockCollisionResult
+{
+	BlockCollision north;
+	BlockCollision south;
+	BlockCollision east;
+	BlockCollision west;
+};
+
+static void UpdateBlockCollision(
+	BlockCollision& toUpdate,
+	const Block& block,
+	const tl::Vec2<float>& position,
+	float time
+) {
+	if (toUpdate.time > time)
+	{
+		toUpdate.any = true;
+		toUpdate.time = time;
+		toUpdate.isCheckpoint = (block.type == Checkpoint);
+		toUpdate.isKillbrick = (block.type == Killbrick);
+		toUpdate.position = position;
+	}
+	else if (toUpdate.time == time)
+	{
+		toUpdate.isCheckpoint = (toUpdate.isCheckpoint) ? true : (block.type == Checkpoint);
+		toUpdate.isKillbrick = (toUpdate.isKillbrick) ? true : (block.type == Killbrick);
+	}
+}
+
+
+static bool IsDown(const tl::Input &input, int button)
+{
+	bool isDown = input.buttons[button].isDown;
+	return isDown;
+}
+
+static int ClampInt(int min, int val, int max)
+{
+	if (val < min) return min;
+	if (val > max) return max;
+	return val;
+}
+
+static float ClampFloat(float min, float val, float max)
+{
+	if (val < min) return min;
+	if (val > max) return max;
+	return val;
+}
+
+void UpdatePlayerMovement(
+	const tl::Input& input,
+	PlayerMovement& player
+) {
+	player.left = IsDown(input, tl::KEY_LEFT);
+	player.right = IsDown(input, tl::KEY_RIGHT);
+
+	bool spaceIsDown = IsDown(input, tl::KEY_SPACE);
+	if (spaceIsDown &&
+		!player.inJump &&
+		!player.wasInJump &&
+		player.availableJumps > 0
+	) {
+		player.inJump = true;
+		player.availableJumps -= 1;
+	}
+	else if (player.inJump && !player.wasInJump)
+	{
+		player.wasInJump = true;
+	}
+	else if (!spaceIsDown && player.inJump)
+	{
+		player.inJump = false;
+		player.wasInJump = false;
+	}
+}
+
+tl::Vec2<float> GetPlayerVelocity(
+	float horizontalSpeed,
+	float jumpSpeed,
+	float gravity,
+	const Player& player,
+	float dt
+) {
+	tl::Vec2<float> newVelocity;
+	newVelocity.x = (player.movement.left)
+		? -horizontalSpeed
+		: (player.movement.right)
+			? horizontalSpeed
+			: 0.0f;
+	newVelocity.y = (player.movement.inJump && !player.movement.wasInJump)
+		? jumpSpeed
+		: player.velocity.y + (gravity / dt);
+
+	return newVelocity;
+}
+
+BlockCollisionResult GetBlockCollisionResult(
+	Block* blocks,
+	tl::Rect<float>& currentPlayerState,
+	int blockCount,
+	float dt
+) {
+	BlockCollisionResult blockCollisionResult;
+
+	BlockCollision north;
+	BlockCollision south;
+	BlockCollision east;
+	BlockCollision west;
+
+	float minCollisionTime = dt;
+
+	for (int j = 0; j < blockCount; j += 1)
+	{
+		Block block = blocks[j];
+		tl::CollisionResult collisionResult = tl::CheckCollisionBetweenRects(block, currentPlayerState, minCollisionTime);
+		
+		switch (collisionResult.collisions[1].side)
+		{
+			case tl::Top:
+				minCollisionTime = collisionResult.time;
+
+				UpdateBlockCollision(
+					south,
+					block,
+					collisionResult.collisions[1].position,
+					minCollisionTime
+				);
+				break;
+			case tl::Right:
+				minCollisionTime = collisionResult.time;
+
+				UpdateBlockCollision(
+					west,
+					block,
+					collisionResult.collisions[1].position,
+					minCollisionTime
+				);
+				break;
+			case tl::Left:
+				minCollisionTime = collisionResult.time;
+
+				UpdateBlockCollision(
+					east,
+					block,
+					collisionResult.collisions[1].position,
+					minCollisionTime
+				);
+				break;
+		}
+	}
+
+	if (south.time <= minCollisionTime)
+	{
+		blockCollisionResult.south = south;
+		currentPlayerState.position = south.position;
+	}
+
+	if (east.time <= minCollisionTime)
+	{
+		blockCollisionResult.east = east;
+		currentPlayerState.position = east.position;
+	}
+
+	if (west.time <= minCollisionTime)
+	{
+		blockCollisionResult.west = west;
+		currentPlayerState.position = west.position;
+	}
+
+	return blockCollisionResult;
+}
+
+tl::Vec2<float> GetPlayerStartPosition(Block* block, int arraySize)
+{
+	for (int i = 0; i < arraySize; i += 1)
+	{
+		Block checkBlock = block[i];
+		if (checkBlock.type == Spawn)
+		{
+			tl::Vec2<float> playerStartPosition = checkBlock.position;
+			playerStartPosition.y += (checkBlock.halfSize.y + 50.0f);
+			return playerStartPosition;
+		}
+	}
+
+	return tl::Vec2<float> { 0.0f, 0.0f };
+}
+
+int LoadSpriteFromFile(
+	char* fileName,
+	tl::SpriteC& spriteTarget,
+	tl::MemorySpace& permanent,
+	tl::MemorySpace transient // Purposefully don't pass as a reference so as not to modify the transient space - it can be overwritten after the function call
+) {
+	uint64_t fileSize = 0;
+	tl::file_interface_size_get(fileName, fileSize);
+	if (tl::file_interface_read(fileName, transient) != tl::Success)
+	{
+		return 1;
+	}
+	tl::MemorySpace tempFileContentMemory = tl::CarveMemorySpace(fileSize, transient);
+
+	// Generate SpriteCs in perm space
+	char* spriteCharArray = (char*)tempFileContentMemory.content;
+	spriteTarget.content = (tl::Color*)permanent.content;
+	tl::LoadSpriteC(spriteCharArray, transient, spriteTarget);
+	tl::CarveMemorySpace(GetSpriteSpaceInBytes(spriteTarget), permanent);
+
+	return 0;
+}
+
 int LoadSprites(const tl::GameMemory& gameMemory)
 {
 	tl::MemorySpace permanent = gameMemory.permanent;
@@ -38,6 +259,13 @@ int LoadSprites(const tl::GameMemory& gameMemory)
 	);
 
 	return 0;
+}
+
+static void ClearBlock_(Block& block)
+{
+	block.color = 0;
+	block.isCheckpoint = false;
+	block.type = Regular;
 }
 
 int PopulateBlocksForLevelString_(
@@ -69,17 +297,18 @@ int PopulateBlocksForLevelString_(
 	minPlayerY = 0.0f + gamestate.player.halfSize.y;
 
 	bool endOfContent = false;
-	float originalX = blockHalfSize.x;
+	float originalX = -blockHalfSize.x;
 	tl::Vec2<float> blockPosition = {
 		originalX,
 		(float)gamestate.world.position.y + gamestate.world.halfSize.y - blockHalfSize.y
 	};
-	for (int i = 0; i < gameState.blockCount; i += 1)
+	for (int i = 0; i < gameState.blockCapacity; i += 1)
 	{
-		ClearBlock(&(gameState.blocks[i]));
+		ClearBlock_(gameState.blocks[i]);
 	}
 
-	for (int i = 0; i < gameState.blockCount && !endOfContent; i += 1)
+	gamestate.blockCount = 0;
+	for (int i = 0; i < gameState.blockCapacity && !endOfContent; i += 1)
 	{
 		if (*blockLayout == '\n')
 		{
@@ -88,10 +317,11 @@ int PopulateBlocksForLevelString_(
 		}
 		else
 		{
-			Block* block = &(gameState.blocks[i]);
+			Block* block = &(gameState.blocks[gamestate.blockCount]);
+			blockPosition.x += blockWidth;
 			if (*blockLayout != ' ')
 			{
-				block->exists = true;
+				gamestate.blockCount += 1;
 				bool isCheckpoint = (*blockLayout == 'c');
 				block->isCheckpoint = isCheckpoint;
 				switch (*blockLayout)
@@ -116,12 +346,9 @@ int PopulateBlocksForLevelString_(
 						block->color = 0x000000;
 						block->sprite = &gamestate.regularBlockSprite;
 				}
+				block->halfSize = blockHalfSize;
+				block->position = blockPosition;
 			}
-
-			block->halfSize = blockHalfSize;
-			block->position = blockPosition;
-
-			blockPosition.x += blockWidth;
 		}
 
 		blockLayout++;

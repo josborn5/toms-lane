@@ -2,8 +2,6 @@
 #include "../../tl-library.hpp"
 #include "./game.hpp"
 
-#include "../platform_common.cpp"
-
 #include "./levels.cpp"
 #include "./update-gamestate.cpp"
 #include "./render-gamestate.cpp"
