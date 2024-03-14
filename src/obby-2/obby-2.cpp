@@ -1,5 +1,5 @@
-#include "../../tl-application.hpp"
-#include "../../tl-library.hpp"
+#include "../tl-application.hpp"
+#include "../tl-library.hpp"
 
 #include "./game.hpp"
 #include "./platform_common.cpp"
