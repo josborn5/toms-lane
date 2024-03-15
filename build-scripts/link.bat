@@ -1,1 +1,1 @@
-link.exe -opt:ref user32.lib Gdi32.lib winmm.lib /DEBUG /OUT:"%APP_DIR%\%NAME%.exe" /MAP:"%APP_DIR%\%NAME%.map" %*
+link.exe /OPT:REF /DEBUG /OUT:"%APP_DIR%\%NAME%.exe" /MAP:"%APP_DIR%\%NAME%.map" %*

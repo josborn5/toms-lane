@@ -9,4 +9,7 @@ lib.exe /OUT:"%~dp0\bin-tl-win32\tl-win32.lib"^
  "%~dp0\bin-tl-win32\win32-console.obj"^
  "%~dp0\bin-tl-win32\win32-winmmsound.obj"^
  "%~dp0\bin-tl-win32\win32-memory.obj"^
- "%~dp0\bin-tl-win32\win32-application.obj"
+ "%~dp0\bin-tl-win32\win32-application.obj"^
+ user32.lib^
+ Gdi32.lib^
+ winmm.lib
