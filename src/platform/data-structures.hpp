@@ -91,7 +91,7 @@ namespace tl
 	};
 
 	template<typename T>
-	struct HeapQueue
+	struct queue
 	{
 		private:
 			int _capacity = 0;
@@ -109,7 +109,7 @@ namespace tl
 			}
 			T* content;
 
-			HeapQueue(const MemorySpace& memory)
+			queue(const MemorySpace& memory)
 			{
 				content = (T *)memory.content;
 				_ogHead = content;

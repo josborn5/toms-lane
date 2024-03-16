@@ -801,8 +801,8 @@ namespace tl
 			Triangle4d<T> triToRender = trianglesToDrawArray.get(n);
 			Triangle4d<T> clipped[2];
 			
-			tl::HeapQueue<Triangle4d<T>> triangleHeapQueue = tl::HeapQueue<Triangle4d<T>>(remainingTransient);
-			if (triangleHeapQueue.enqueue(triToRender) != 0) throw; // TODO: don't throw, handle gracefully
+			tl::queue<Triangle4d<T>> triangleQueue = tl::queue<Triangle4d<T>>(remainingTransient);
+			if (triangleQueue.enqueue(triToRender) != 0) throw; // TODO: don't throw, handle gracefully
 
 			int newTriangles = 1;
 
@@ -812,7 +812,7 @@ namespace tl
 				int trianglesToAdd = 0;
 				while (newTriangles > 0)
 				{
-					Triangle4d<T> test = triangleHeapQueue.dequeue();
+					Triangle4d<T> test = triangleQueue.dequeue();
 					newTriangles -= 1;
 
 					switch (edge)
@@ -841,16 +841,16 @@ namespace tl
 
 					for (int i = 0; i < trianglesToAdd; i += 1)
 					{
-						triangleHeapQueue.enqueue(clipped[i]);
+						triangleQueue.enqueue(clipped[i]);
 					}
 				}
 
-				newTriangles = triangleHeapQueue.length();
+				newTriangles = triangleQueue.length();
 			}
 
-			for (int i = 0; i < triangleHeapQueue.length(); i += 1)
+			for (int i = 0; i < triangleQueue.length(); i += 1)
 			{
-				Triangle4d<T> draw = triangleHeapQueue.content[i];
+				Triangle4d<T> draw = triangleQueue.content[i];
 				// Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
 				// Vec2<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
 				// Vec2<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };

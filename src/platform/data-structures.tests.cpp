@@ -89,7 +89,7 @@ void RunArrayTests()
 	assert(array1.length() == 0);
 }
 
-void RunHeapQueueTests()
+void RunQueueTests()
 {
 	int sizeInBytes = 4 * sizeof(int);
 	void* memory = malloc(sizeInBytes);
@@ -97,58 +97,58 @@ void RunHeapQueueTests()
 	fourInts.content = memory;
 	fourInts.sizeInBytes = sizeInBytes;
 
-	HeapQueue<int> queue = HeapQueue<int>(fourInts);
+	queue<int> queue1 = queue<int>(fourInts);
 
-	assert(queue.length() == 0);
-	assert(queue.capacity() == 4);
+	assert(queue1.length() == 0);
+	assert(queue1.capacity() == 4);
 
-	assert(queue.enqueue(1) == 0);
-	assert(queue.length() == 1);
-	assert(queue.capacity() == 4);
+	assert(queue1.enqueue(1) == 0);
+	assert(queue1.length() == 1);
+	assert(queue1.capacity() == 4);
 
-	assert(queue.enqueue(2) == 0);
-	assert(queue.length() == 2);
-	assert(queue.capacity() == 4);
+	assert(queue1.enqueue(2) == 0);
+	assert(queue1.length() == 2);
+	assert(queue1.capacity() == 4);
 
-	assert(queue.enqueue(3) == 0);
-	assert(queue.length() == 3);
-	assert(queue.capacity() == 4);
+	assert(queue1.enqueue(3) == 0);
+	assert(queue1.length() == 3);
+	assert(queue1.capacity() == 4);
 
-	assert(queue.enqueue(4) == 0);
-	assert(queue.length() == 4);
-	assert(queue.capacity() == 4);
+	assert(queue1.enqueue(4) == 0);
+	assert(queue1.length() == 4);
+	assert(queue1.capacity() == 4);
 
-	assert(queue.enqueue(5) == 1);
-	assert(queue.length() == 4);
-	assert(queue.capacity() == 4);
+	assert(queue1.enqueue(5) == 1);
+	assert(queue1.length() == 4);
+	assert(queue1.capacity() == 4);
 
-	int first = queue.dequeue();
+	int first = queue1.dequeue();
 	assert(first == 1);
-	assert(queue.length() == 3);
-	assert(queue.capacity() == 3);
+	assert(queue1.length() == 3);
+	assert(queue1.capacity() == 3);
 
-	int second = queue.dequeue();
+	int second = queue1.dequeue();
 	assert(second == 2);
-	assert(queue.length() == 2);
-	assert(queue.capacity() == 2);
+	assert(queue1.length() == 2);
+	assert(queue1.capacity() == 2);
 
-	int third = queue.dequeue();
+	int third = queue1.dequeue();
 	assert(third == 3);
-	assert(queue.length() == 1);
-	assert(queue.capacity() == 1);
+	assert(queue1.length() == 1);
+	assert(queue1.capacity() == 1);
 
-	int fourth = queue.dequeue();
+	int fourth = queue1.dequeue();
 	assert(fourth == 4);
-	assert(queue.length() == 0);
-	assert(queue.capacity() == 0);
+	assert(queue1.length() == 0);
+	assert(queue1.capacity() == 0);
 
-	assert(queue.enqueue(1) == 1);
-	assert(queue.length() == 0);
-	assert(queue.capacity() == 0);
+	assert(queue1.enqueue(1) == 1);
+	assert(queue1.length() == 0);
+	assert(queue1.capacity() == 0);
 
-	assert(queue.enqueue(2) == 1);
-	assert(queue.length() == 0);
-	assert(queue.capacity() == 0);
+	assert(queue1.enqueue(2) == 1);
+	assert(queue1.length() == 0);
+	assert(queue1.capacity() == 0);
 }
 
 void RunDataStructureTests()
@@ -157,5 +157,5 @@ void RunDataStructureTests()
 	RunArrayTests();
 
 	printf("\n===== Heap Queue =====\n");
-	RunHeapQueueTests();
+	RunQueueTests();
 }
