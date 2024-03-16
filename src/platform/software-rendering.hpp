@@ -72,7 +72,7 @@ namespace tl
 	template<typename T>
 	void TransformAndRenderMesh(
 		const RenderBuffer &renderBuffer,
-		const MeshArray<T> &mesh,
+		const array<Triangle4d<T>> &mesh,
 		const Camera<T> &camera,
 		const Matrix4x4<T>& transformMatrix,
 		const Matrix4x4<T>& projectionMatrix,

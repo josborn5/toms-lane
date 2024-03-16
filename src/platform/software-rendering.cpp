@@ -702,7 +702,7 @@ namespace tl
 	template<typename T>
 	void TransformAndRenderMesh(
 		const RenderBuffer &renderBuffer,
-		const MeshArray<T> &mesh,
+		const array<Triangle4d<T>> &mesh,
 		const Camera<T> &camera,
 		const Matrix4x4<T>& transformMatrix,
 		const Matrix4x4<T>& projectionMatrix,
@@ -719,16 +719,16 @@ namespace tl
 		// View matrix
 		Matrix4x4<T> viewMatrix = LookAt(cameraMatrix);
 
-		HeapArray<Triangle4d<T>> trianglesToDrawArray = HeapArray<Triangle4d<T>>(transient);
+		array<Triangle4d<T>> trianglesToDrawArray = array<Triangle4d<T>>(transient);
 
 		Plane<T> bottomOfScreen = { (T)0, (T)0, (T)0,						(T)0, (T)1, (T)0 };
 		Plane<T> topOfScreen = { (T)0, (T)(renderBuffer.height - 1), (T)0,	(T)0, (T)-1, (T)0 };
 		Plane<T> leftOfScreen = { (T)0, (T)0, (T)0,							(T)1, (T)0, (T)0 };
 		Plane<T> rightOfScreen = { (T)(renderBuffer.width - 1), (T)0, (T)0,	(T)-1, (T)0, (T)0 };
 
-		for (int h = 0; h < mesh.triangles.length(); h += 1)
+		for (int h = 0; h < mesh.length(); h += 1)
 		{
-			Triangle4d<T> tri = mesh.triangles.get(h);
+			Triangle4d<T> tri = mesh.get(h);
 			Triangle4d<T> transformed;
 			Triangle4d<T> viewed;
 			Triangle4d<T> projected;
@@ -870,7 +870,7 @@ namespace tl
 	}
 	template void TransformAndRenderMesh(
 		const RenderBuffer &renderBuffer,
-		const MeshArray<float> &mesh,
+		const array<Triangle4d<float>> &mesh,
 		const Camera<float> &camera,
 		const Matrix4x4<float>& transformMatrix,
 		const Matrix4x4<float>& projectionMatrix,

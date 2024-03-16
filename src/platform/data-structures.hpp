@@ -6,7 +6,7 @@
 namespace tl
 {
 	template<typename T>
-	struct HeapArray
+	struct array
 	{
 		private:
 			int _length = 0;
@@ -15,12 +15,12 @@ namespace tl
 			T* _content;
 
 		public :
-			HeapArray(){}
-			HeapArray(const MemorySpace& memory)
+			array(){}
+			array(const MemorySpace& memory)
 			{
 				initialize(memory);
 			}
-			HeapArray(T* pointer, int capacity)
+			array(T* pointer, int capacity)
 			{
 				_content = pointer;
 				_capacity = capacity;

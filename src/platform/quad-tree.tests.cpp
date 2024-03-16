@@ -20,7 +20,7 @@ void InsertSingleIntValue()
 	rootNode.insert(insertValue, { 1.0f, 1.0f });
 
 	int queryResultStore[5] = { 0, 0, 0, 0, 0};
-	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 5);
+	array<int> queryResults = array<int>(queryResultStore, 5);
 
 	rootNode.query(rootFootprint, queryResults);
 
@@ -45,7 +45,7 @@ void InsertSingleReferenceValue()
 		nullptr,
 		nullptr
 	};
-	HeapArray<Rect<float>*> queryResults = HeapArray<Rect<float>*>(queryResultStore, 5);
+	array<Rect<float>*> queryResults = array<Rect<float>*>(queryResultStore, 5);
 
 	rootNode.query(rootFootprint, queryResults);
 
@@ -68,7 +68,7 @@ void RejectsSingleValueOutsideOfFootprint()
 
 	int notFound = -1;
 	int queryResultStore[5] = { notFound };
-	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 5);
+	array<int> queryResults = array<int>(queryResultStore, 5);
 
 	rootNode.query(rootFootprint, queryResults);
 
@@ -88,7 +88,7 @@ void InsertFourValues()
 	rootNode.insert(4, { 1.5f, 1.5f });
 
 	int queryResultStore[5] = { 0, 0, 0, 0, 0};
-	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 5);
+	array<int> queryResults = array<int>(queryResultStore, 5);
 
 	rootNode.query(rootFootprint, queryResults);
 
@@ -104,7 +104,7 @@ void InsertEightValues()
 	Rect<float> rootFootprint = Get1x1Footprint();
 
 	QuadTreeNode<int> nodeArray[7];
-	HeapArray<QuadTreeNode<int>> nodes = HeapArray<QuadTreeNode<int>>(nodeArray, 7);
+	array<QuadTreeNode<int>> nodes = array<QuadTreeNode<int>>(nodeArray, 7);
 
 	QuadTreeNode<int> rootNode = QuadTreeNode<int>(rootFootprint, &nodes);
 
@@ -123,7 +123,7 @@ void InsertEightValues()
 	rootNode.insert(8, swPos);
 
 	int queryResultStore[10] = { 0 };
-	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 10);
+	array<int> queryResults = array<int>(queryResultStore, 10);
 
 	rootNode.query(rootFootprint, queryResults);
 
@@ -142,7 +142,7 @@ void InsertEightValuesAndClear()
 	Rect<float> rootFootprint = Get1x1Footprint();
 
 	QuadTreeNode<int> nodeArray[7];
-	HeapArray<QuadTreeNode<int>> nodes = HeapArray<QuadTreeNode<int>>(nodeArray, 7);
+	array<QuadTreeNode<int>> nodes = array<QuadTreeNode<int>>(nodeArray, 7);
 
 	QuadTreeNode<int> rootNode = QuadTreeNode<int>(rootFootprint, &nodes);
 
@@ -161,7 +161,7 @@ void InsertEightValuesAndClear()
 	rootNode.insert(8, swPos);
 
 	int queryResultStore[10] = { 0 };
-	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 10);
+	array<int> queryResults = array<int>(queryResultStore, 10);
 
 	rootNode.query(rootFootprint, queryResults);
 
@@ -192,7 +192,7 @@ void QueryForSubSectionOfFootprint()
 	Rect<float> rootFootprint = Get1x1Footprint();
 
 	QuadTreeNode<int> nodeArray[7];
-	HeapArray<QuadTreeNode<int>> nodes = HeapArray<QuadTreeNode<int>>(nodeArray, 7);
+	array<QuadTreeNode<int>> nodes = array<QuadTreeNode<int>>(nodeArray, 7);
 
 	QuadTreeNode<int> rootNode = QuadTreeNode<int>(rootFootprint, &nodes);
 
@@ -211,7 +211,7 @@ void QueryForSubSectionOfFootprint()
 	rootNode.insert(8, swPos);
 
 	int queryResultStore[10] = { 0 };
-	HeapArray<int> queryResults = HeapArray<int>(queryResultStore, 10);
+	array<int> queryResults = array<int>(queryResultStore, 10);
 
 	Rect<float> queryFootprint;
 	queryFootprint.position = sePos;

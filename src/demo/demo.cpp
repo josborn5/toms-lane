@@ -4,7 +4,7 @@
 #include "./file.cpp"
 
 tl::Camera<float> camera;
-tl::MeshArray<float> meshArray = tl::MeshArray<float>();
+tl::array<tl::Triangle4d<float>> meshArray = tl::array<tl::Triangle4d<float>>();
 tl::Matrix4x4<float> projectionMatrix;
 
 float theta = 0.0f;
@@ -66,10 +66,10 @@ static int Initialize(const tl::GameMemory& gameMemory)
 {
 	tl::MemorySpace transientMemory = gameMemory.transient;
 	tl::MemorySpace permanentMemory = gameMemory.permanent;
-	meshArray.triangles.initialize(permanentMemory);
+	meshArray.initialize(permanentMemory);
 	
 	// EXE must be run as admin in order to have read permission for the file. need to figure out how to fix this.
-	if (!tl::ReadObjFileToArray4("./teapot.obj", meshArray.triangles, transientMemory))
+	if (!tl::ReadObjFileToArray4("./teapot.obj", meshArray, transientMemory))
 	{
 		// Fall back to cube if file cannot be read
 		// Using a clockwise winding convention
@@ -101,9 +101,9 @@ static int Initialize(const tl::GameMemory& gameMemory)
 		positionIncrement = 0.1f;
 	}
 
-	for (int i = 0; i < meshArray.triangles.length(); i += 1)
+	for (int i = 0; i < meshArray.length(); i += 1)
 	{
-		tl::Triangle4d<float> tri = meshArray.triangles.get(i);
+		tl::Triangle4d<float> tri = meshArray.get(i);
 		if (tri.p[0].x > max.x) max.x = tri.p[0].x;
 		if (tri.p[0].x < min.x) min.x = tri.p[0].x;
 		if (tri.p[0].y > max.y) max.y = tri.p[0].y;
@@ -331,7 +331,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	charFoot.position = { 400.0f, infoHeight };
 	tl::DrawAlphabetCharacters(renderBuffer, "MESH", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, meshArray.triangles.length(), charFoot, 0xAAAAAA);
+	tl::DrawNumber(renderBuffer, meshArray.length(), charFoot, 0xAAAAAA);
 
 	// Draw the map
 	tl::DrawRect(renderBuffer, 0x333399, map);

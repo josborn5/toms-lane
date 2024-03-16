@@ -7,7 +7,7 @@
 #define ZERO_VECTOR tl::Vec2<float> { 0.0f, 0.0f }
 
 #include "../tl-library.hpp"
-#include "../platform/internal/quad-tree.hpp"
+#include "../platform/quad-tree.hpp"
 
 enum PowerUpType
 {
@@ -61,7 +61,7 @@ struct BlockQuadTree
 {
 	tl::QuadTreeRectNode<Block*> root;
 	tl::QuadTreeRectNode<Block*> storage[BLOCK_ARRAY_SIZE];
-	tl::HeapArray<tl::QuadTreeRectNode<Block*>> descendents;
+	tl::array<tl::QuadTreeRectNode<Block*>> descendents;
 };
 
 struct GameState {

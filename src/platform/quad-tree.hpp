@@ -49,7 +49,7 @@ namespace tl
 
 			QuadTreeNode(
 				const Rect<float>& footprint,
-				HeapArray<QuadTreeNode<T>>* space
+				array<QuadTreeNode<T>>* space
 			)
 			{
 				_footprint = footprint;
@@ -84,7 +84,7 @@ namespace tl
 				return returnValue;
 			}
 
-			int query(const Rect<float>& footprint, HeapArray<T>& foundValues)
+			int query(const Rect<float>& footprint, array<T>& foundValues)
 			{
 				if (!get_rects_overlap(footprint, _footprint))
 				{
@@ -127,7 +127,7 @@ namespace tl
 			Vec2<float> _positions[_quadTreeNodeCapacity] = { 0 };
 			T _values[_quadTreeNodeCapacity] = { 0 };
 			Rect<float> _footprint;
-			HeapArray<QuadTreeNode<T>>* _space = nullptr;
+			array<QuadTreeNode<T>>* _space = nullptr;
 			int _valueCount = 0;
 			QuadTreeNode<T>* nwChild = nullptr;
 			QuadTreeNode<T>* neChild = nullptr;
@@ -197,7 +197,7 @@ namespace tl
 
 			QuadTreeRectNode(
 				const Rect<float>& footprint,
-				HeapArray<QuadTreeRectNode<T>>* space
+				array<QuadTreeRectNode<T>>* space
 			)
 			{
 				_footprint = footprint;
@@ -232,7 +232,7 @@ namespace tl
 				return returnValue;
 			}
 
-			int query(const Rect<float>& footprint, HeapArray<T>& foundValues)
+			int query(const Rect<float>& footprint, array<T>& foundValues)
 			{
 				if (!get_rects_overlap(footprint, _footprint))
 				{
@@ -275,7 +275,7 @@ namespace tl
 			Rect<float> _rects[_quadTreeNodeCapacity] = { 0 };
 			T _values[_quadTreeNodeCapacity] = { 0 };
 			Rect<float> _footprint;
-			HeapArray<QuadTreeRectNode<T>>* _space = nullptr;
+			array<QuadTreeRectNode<T>>* _space = nullptr;
 			int _valueCount = 0;
 			QuadTreeRectNode<T>* nwChild = nullptr;
 			QuadTreeRectNode<T>* neChild = nullptr;

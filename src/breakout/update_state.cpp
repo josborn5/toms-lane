@@ -69,7 +69,7 @@ static void InitializeGameState()
 		gamestate.balls[i].halfSize = { 10.0f, 10.0f };
 	}
 
-	gamestate.blockTree.descendents = tl::HeapArray<tl::QuadTreeRectNode<Block*>>(&gamestate.blockTree.storage[0], BLOCK_ARRAY_SIZE);
+	gamestate.blockTree.descendents = tl::array<tl::QuadTreeRectNode<Block*>>(&gamestate.blockTree.storage[0], BLOCK_ARRAY_SIZE);
 	gamestate.blockTree.root = tl::QuadTreeRectNode<Block*>(gamestate.world, &gamestate.blockTree.descendents);
 
 	gamestate.player.halfSize.x = 100.0f;
@@ -196,7 +196,7 @@ static void UpdateBallAndBlockState(float dt)
 			 };
 
 			Block* candidateStorage[BLOCK_ARRAY_SIZE];
-			tl::HeapArray<Block*> candidates = tl::HeapArray<Block*>(
+			tl::array<Block*> candidates = tl::array<Block*>(
 				&candidateStorage[0],
 				BLOCK_ARRAY_SIZE
 			);

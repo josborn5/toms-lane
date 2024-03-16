@@ -4,14 +4,14 @@
 
 using namespace tl;
 
-void RunHeapArrayTailTest()
+void RunArrayTailTest()
 {
 	int fourIntsStack[4] = { 0 };
 	MemorySpace fourInts;
 	fourInts.content = &fourIntsStack[0];
 	fourInts.sizeInBytes = 4 * sizeof(int);
 
-	HeapArray<int> heapArray = HeapArray<int>(fourInts);
+	array<int> heapArray = array<int>(fourInts);
 
 	heapArray.append(1);
 
@@ -25,9 +25,9 @@ void RunHeapArrayTailTest()
 	assert(tail == &fourIntsStack[1]);
 }
 
-void RunHeapArrayTests()
+void RunArrayTests()
 {
-	RunHeapArrayTailTest();
+	RunArrayTailTest();
 
 	const int originalMemValue = 8;
 	int sixInts[6] = {
@@ -44,34 +44,34 @@ void RunHeapArrayTests()
 	fourInts.content = &sixInts[1];
 	fourInts.sizeInBytes = 4 * sizeof(int);
 
-	HeapArray<int> array2 = HeapArray<int>(&sixInts[1], 4);
-	HeapArray<int> array = HeapArray<int>(fourInts);
-	assert(array.length() == 0);
-	assert(array.capacity() == 4);
+	array<int> array2 = array<int>(&sixInts[1], 4);
+	array<int> array1 = array<int>(fourInts);
+	assert(array1.length() == 0);
+	assert(array1.capacity() == 4);
 	assert(array2.length() == 0);
 	assert(array2.capacity() == 4);
 
-	array.append(5);
-	assert(array.get(0) == 5);
-	assert(array.length() == 1);
-	assert(array.capacity() == 4);
+	array1.append(5);
+	assert(array1.get(0) == 5);
+	assert(array1.length() == 1);
+	assert(array1.capacity() == 4);
 	assert(array2.get(0) == 5); // screwed up assertion and test, but it found a defect
 	assert(sixInts[0] == originalMemValue);
 	assert(sixInts[5] == originalMemValue);
 
-	array.append(4);
-	assert(array.get(0) == 5);
-	assert(array.get(1) == 4);
-	assert(array.length() == 2);
-	assert(array.capacity() == 4);
+	array1.append(4);
+	assert(array1.get(0) == 5);
+	assert(array1.get(1) == 4);
+	assert(array1.length() == 2);
+	assert(array1.capacity() == 4);
 	assert(sixInts[0] == originalMemValue);
 	assert(sixInts[5] == originalMemValue);
 
-	MemorySpace remaining = array.sizeToCurrentLength();
-	assert(array.get(0) == 5);
-	assert(array.get(1) == 4);
-	assert(array.length() == 2);
-	assert(array.capacity() == 2);
+	MemorySpace remaining = array1.sizeToCurrentLength();
+	assert(array1.get(0) == 5);
+	assert(array1.get(1) == 4);
+	assert(array1.length() == 2);
+	assert(array1.capacity() == 2);
 	assert(sixInts[0] == originalMemValue);
 	assert(sixInts[5] == originalMemValue);
 
@@ -81,12 +81,12 @@ void RunHeapArrayTests()
 	// Write to first item of remaining and assert array content remains unchanged
 	int* firstItemInRemainingSpace = (int *)remaining.content;
 	*firstItemInRemainingSpace = 3;
-	assert(array.get(0) == 5);
-	assert(array.get(1) == 4);
+	assert(array1.get(0) == 5);
+	assert(array1.get(1) == 4);
 
-	assert(array.length() == 2);
-	array.clear();
-	assert(array.length() == 0);
+	assert(array1.length() == 2);
+	array1.clear();
+	assert(array1.length() == 0);
 }
 
 void RunHeapQueueTests()
@@ -154,7 +154,7 @@ void RunHeapQueueTests()
 void RunDataStructureTests()
 {
 	printf("\n===== Heap Array =====\n");
-	RunHeapArrayTests();
+	RunArrayTests();
 
 	printf("\n===== Heap Queue =====\n");
 	RunHeapQueueTests();

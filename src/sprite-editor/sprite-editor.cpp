@@ -15,8 +15,8 @@ tl::GameMemory appMemory;
 
 static char commandBuffer[COMMAND_BUFFER_SIZE];
 static char displayBuffer[DISPLAY_BUFFER_SIZE];
-tl::HeapArray<char> commands = tl::HeapArray<char>(commandBuffer, COMMAND_BUFFER_SIZE);
-tl::HeapArray<char> display = tl::HeapArray<char>(displayBuffer, DISPLAY_BUFFER_SIZE);
+tl::array<char> commands = tl::array<char>(commandBuffer, COMMAND_BUFFER_SIZE);
+tl::array<char> display = tl::array<char>(displayBuffer, DISPLAY_BUFFER_SIZE);
 
 EditorState state;
 

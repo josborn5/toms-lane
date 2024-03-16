@@ -37,12 +37,6 @@ namespace tl
 	};
 
 	template<typename T>
-	struct MeshArray
-	{
-		HeapArray<Triangle4d<T>> triangles;
-	};
-
-	template<typename T>
 	struct Camera
 	{
 		Vec4<T> position;

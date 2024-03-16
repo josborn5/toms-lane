@@ -7,7 +7,7 @@
 namespace tl
 {
 	template<typename T>
-	bool ReadObjFileToArray4(std::string const &filename, HeapArray<Triangle4d<T>>& triangles, MemorySpace& transient)
+	bool ReadObjFileToArray4(std::string const &filename, array<Triangle4d<T>>& triangles, MemorySpace& transient)
 	{
 		std::ifstream objFile;
 		objFile.open(filename, std::ios::in);
@@ -16,7 +16,7 @@ namespace tl
 			return false;
 		}
 
-		HeapArray<Vec4<T>> heapVertices = HeapArray<Vec4<T>>(transient);
+		array<Vec4<T>> heapVertices = array<Vec4<T>>(transient);
 
 		while (!objFile.eof())
 		{
@@ -55,5 +55,5 @@ namespace tl
 
 		return true;
 	}
-	template bool ReadObjFileToArray4(std::string const &filename, HeapArray<Triangle4d<float>> &triangles, MemorySpace& transient);
+	template bool ReadObjFileToArray4(std::string const &filename, array<Triangle4d<float>> &triangles, MemorySpace& transient);
 }
