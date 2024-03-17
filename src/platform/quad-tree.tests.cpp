@@ -31,7 +31,7 @@ void InsertSingleIntValue()
 	tree.root.footprint = rootFootprint;
 
 	rect_node_value nodeValue = GetValue(&insertValue, { 1.0f, 1.0f });
-	rect_node_insert(tree.root, nodeValue);
+	rect_tree_insert(tree, nodeValue);
 
 	rect_node_value queryResultStore[5] = { 0 };
 	array<rect_node_value> queryResults = array<rect_node_value>(queryResultStore, 5);
@@ -52,7 +52,7 @@ void RejectsSingleValueOutsideOfFootprint()
 	tree.root.footprint = rootFootprint;
 
 	rect_node_value nodeValue = GetValue(&insertValue, { 4.0f, 4.0f });
-	rect_node_insert(tree.root, nodeValue);
+	rect_tree_insert(tree, nodeValue);
 
 	rect_node_value notFound = rect_node_value();
 	rect_node_value queryResultStore[5] = { notFound };
@@ -79,10 +79,10 @@ void InsertFourValues()
 	rect_tree tree;
 	tree.root.footprint = rootFootprint;
 
-	rect_node_insert(tree.root, GetValue(&fourValues[0], { 0.5f, 0.5f, }));
-	rect_node_insert(tree.root, GetValue(&fourValues[1], { 0.5f, 1.5f, }));
-	rect_node_insert(tree.root, GetValue(&fourValues[2], { 1.5f, 0.5f, }));
-	rect_node_insert(tree.root, GetValue(&fourValues[3], { 1.5f, 1.5f, }));
+	rect_tree_insert(tree, GetValue(&fourValues[0], { 0.5f, 0.5f, }));
+	rect_tree_insert(tree, GetValue(&fourValues[1], { 0.5f, 1.5f, }));
+	rect_tree_insert(tree, GetValue(&fourValues[2], { 1.5f, 0.5f, }));
+	rect_tree_insert(tree, GetValue(&fourValues[3], { 1.5f, 1.5f, }));
 
 	rect_node_value queryResultStore[5] = { 0 };
 	array<rect_node_value> queryResults = array<rect_node_value>(queryResultStore, 5);
@@ -113,14 +113,14 @@ void InsertEightValues()
 	Vec2<float> swPos = { 0.5f, 0.5f };
 	Vec2<float> sePos = { 1.5f, 0.5f };
 
-	rect_node_insert(tree.root, GetValue(&eightValues[0], nwPos));
-	rect_node_insert(tree.root, GetValue(&eightValues[1], nePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[2], sePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[3], swPos));
-	rect_node_insert(tree.root, GetValue(&eightValues[4], nwPos));
-	rect_node_insert(tree.root, GetValue(&eightValues[5], nePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[6], sePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[7], swPos));
+	rect_tree_insert(tree, GetValue(&eightValues[0], nwPos));
+	rect_tree_insert(tree, GetValue(&eightValues[1], nePos));
+	rect_tree_insert(tree, GetValue(&eightValues[2], sePos));
+	rect_tree_insert(tree, GetValue(&eightValues[3], swPos));
+	rect_tree_insert(tree, GetValue(&eightValues[4], nwPos));
+	rect_tree_insert(tree, GetValue(&eightValues[5], nePos));
+	rect_tree_insert(tree, GetValue(&eightValues[6], sePos));
+	rect_tree_insert(tree, GetValue(&eightValues[7], swPos));
 
 	rect_node_value queryResultStore[10] = { 0 };
 	array<rect_node_value> queryResults = array<rect_node_value>(queryResultStore, 10);
@@ -154,14 +154,14 @@ void InsertEightValuesAndClear()
 	Vec2<float> swPos = { 0.5f, 0.5f };
 	Vec2<float> sePos = { 1.5f, 0.5f };
 
-	rect_node_insert(tree.root, GetValue(&eightValues[0], nwPos));
-	rect_node_insert(tree.root, GetValue(&eightValues[1], nePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[2], sePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[3], swPos));
-	rect_node_insert(tree.root, GetValue(&eightValues[4], nwPos));
-	rect_node_insert(tree.root, GetValue(&eightValues[5], nePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[6], sePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[7], swPos));
+	rect_tree_insert(tree, GetValue(&eightValues[0], nwPos));
+	rect_tree_insert(tree, GetValue(&eightValues[1], nePos));
+	rect_tree_insert(tree, GetValue(&eightValues[2], sePos));
+	rect_tree_insert(tree, GetValue(&eightValues[3], swPos));
+	rect_tree_insert(tree, GetValue(&eightValues[4], nwPos));
+	rect_tree_insert(tree, GetValue(&eightValues[5], nePos));
+	rect_tree_insert(tree, GetValue(&eightValues[6], sePos));
+	rect_tree_insert(tree, GetValue(&eightValues[7], swPos));
 
 	rect_node_value queryResultStore[10] = { 0 };
 	array<rect_node_value> queryResults = array<rect_node_value>(queryResultStore, 10);
@@ -181,11 +181,11 @@ void InsertEightValuesAndClear()
 	assert(queryResults.length() == 0);
 
 	// inserting should be possible after clearing
-	rect_node_insert(tree.root, GetValue(&eightValues[0], nwPos));
-	rect_node_insert(tree.root, GetValue(&eightValues[1], nePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[2], sePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[3], swPos));
-	rect_node_insert(tree.root, GetValue(&eightValues[4], nwPos));
+	rect_tree_insert(tree, GetValue(&eightValues[0], nwPos));
+	rect_tree_insert(tree, GetValue(&eightValues[1], nePos));
+	rect_tree_insert(tree, GetValue(&eightValues[2], sePos));
+	rect_tree_insert(tree, GetValue(&eightValues[3], swPos));
+	rect_tree_insert(tree, GetValue(&eightValues[4], nwPos));
 
 	rect_tree_query(tree, rootFootprint, queryResults);
 	assert(queryResults.length() == 5);
@@ -208,14 +208,14 @@ void QueryForSubSectionOfFootprint()
 	Vec2<float> swPos = { 0.5f, 0.5f };
 	Vec2<float> sePos = { 1.5f, 0.5f };
 
-	rect_node_insert(tree.root, GetValue(&eightValues[0], nwPos));
-	rect_node_insert(tree.root, GetValue(&eightValues[1], nePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[2], sePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[3], swPos));
-	rect_node_insert(tree.root, GetValue(&eightValues[4], nwPos));
-	rect_node_insert(tree.root, GetValue(&eightValues[5], nePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[6], sePos));
-	rect_node_insert(tree.root, GetValue(&eightValues[7], swPos));
+	rect_tree_insert(tree, GetValue(&eightValues[0], nwPos));
+	rect_tree_insert(tree, GetValue(&eightValues[1], nePos));
+	rect_tree_insert(tree, GetValue(&eightValues[2], sePos));
+	rect_tree_insert(tree, GetValue(&eightValues[3], swPos));
+	rect_tree_insert(tree, GetValue(&eightValues[4], nwPos));
+	rect_tree_insert(tree, GetValue(&eightValues[5], nePos));
+	rect_tree_insert(tree, GetValue(&eightValues[6], sePos));
+	rect_tree_insert(tree, GetValue(&eightValues[7], swPos));
 
 	rect_node_value queryResultStore[10] = { 0 };
 	array<rect_node_value> queryResults = array<rect_node_value>(queryResultStore, 10);
