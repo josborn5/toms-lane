@@ -17,6 +17,7 @@ static rect_node_value GetValue(void* value, Vec2<float> position)
 {
 	rect_node_value nodeValue;
 	nodeValue.value = value;
+	nodeValue.footprint.halfSize = { 0 };
 	nodeValue.footprint.position = position;
 	return nodeValue;
 }

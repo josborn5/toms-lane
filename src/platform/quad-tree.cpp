@@ -34,17 +34,18 @@ namespace tl
 	static void rect_node_child_append(
 		rect_node& node,
 		const Rect<float>& footprint,
-		rect_node** target
+		rect_node** target,
+		array<rect_node>& descendents
 	) {
 		rect_node child;
 		child.footprint = footprint;
 		child.space = node.space;
-		node.space->append(child);
-		*target = node.space->getTailPointer();
+		descendents.append(child);
+		*target = descendents.getTailPointer();
 	}
 
 
-	static void rect_node_split(rect_node& node)
+	static void rect_node_split(rect_node& node, array<rect_node>& descendents)
 	{
 		Vec2<float> childHalfSize = {
 			0.5f * node.footprint.halfSize.x,
@@ -59,19 +60,19 @@ namespace tl
 		Rect<float> child_footprint;
 		child_footprint.halfSize = childHalfSize;
 		child_footprint.position = childPos;
-		rect_node_child_append(node, child_footprint, &node.nw);
+		rect_node_child_append(node, child_footprint, &node.nw, descendents);
 
 		// north east
 		child_footprint.position.x += node.footprint.halfSize.x;
-		rect_node_child_append(node, child_footprint, &node.ne);
+		rect_node_child_append(node, child_footprint, &node.ne, descendents);
 
 		// south east
 		child_footprint.position.y -= node.footprint.halfSize.y;
-		rect_node_child_append(node, child_footprint, &node.se);
+		rect_node_child_append(node, child_footprint, &node.se, descendents);
 
 		// south west
 		child_footprint.position.x -= node.footprint.halfSize.x;
-		rect_node_child_append(node, child_footprint, &node.sw);
+		rect_node_child_append(node, child_footprint, &node.sw, descendents);
 	}
 
 
@@ -91,7 +92,7 @@ namespace tl
 		}
 		if (node.nw == nullptr)
 		{
-			rect_node_split(node);
+			rect_node_split(node, *node.space);
 		}
 
 		int returnValue = 0;

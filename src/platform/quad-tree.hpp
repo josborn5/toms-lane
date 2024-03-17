@@ -27,6 +27,16 @@ namespace tl
 	int rect_node_insert(rect_node& node, const rect_node_value& value);
 	int rect_node_query(rect_node& node, const Rect<float>& footprint, array<rect_node_value>& foundValues);
 	void rect_node_clear(rect_node& node);
+
+	struct rect_tree
+	{
+		rect_node root;
+		array<rect_node> descendents;
+	};
+
+	int rect_tree_insert(rect_tree& tree, const rect_node_value& value);
+	int rect_tree_query(rect_tree& tree, const Rect<float>& footprint, array<rect_node_value>& foundValues);
+	void rect_tree_clear(rect_tree& tree);
 }
 
 #endif
