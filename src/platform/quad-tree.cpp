@@ -39,7 +39,6 @@ namespace tl
 	) {
 		rect_node child;
 		child.footprint = footprint;
-		child.space = node.space;
 		descendents.append(child);
 		*target = descendents.getTailPointer();
 	}
@@ -91,26 +90,15 @@ namespace tl
 		}
 		if (node.nw == nullptr)
 		{
-			rect_node_split(node, *node.space);
+			rect_node_split(node, descendents);
 		}
 
 		int returnValue = 0;
-		returnValue = rect_node_insert(*node.nw, value);
-		returnValue = rect_node_insert(*node.ne, value);
-		returnValue = rect_node_insert(*node.se, value);
-		returnValue = rect_node_insert(*node.sw, value);
+		returnValue = rect_node_insert_inner(*node.nw, value, descendents);
+		returnValue = rect_node_insert_inner(*node.ne, value, descendents);
+		returnValue = rect_node_insert_inner(*node.se, value, descendents);
+		returnValue = rect_node_insert_inner(*node.sw, value, descendents);
 		return returnValue;
-	}
-
-	int rect_node_insert(rect_node& node, const rect_node_value& value)
-	{
-		if (node.space == nullptr)
-		{
-			array<rect_node> temp = array<rect_node>();
-			return rect_node_insert_inner(node, value, temp);
-		}
-
-		return rect_node_insert_inner(node, value, *node.space);
 	}
 
 

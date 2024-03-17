@@ -71,7 +71,6 @@ static void InitializeGameState()
 
 	gamestate.blockTree.descendents = tl::array<tl::rect_node>(&gamestate.storage[0], BLOCK_ARRAY_SIZE);
 	gamestate.blockTree.root.footprint = gamestate.world;
-	gamestate.blockTree.root.space = &gamestate.blockTree.descendents;
 
 	gamestate.player.halfSize.x = 100.0f;
 	gamestate.player.halfSize.y = 10.0f;

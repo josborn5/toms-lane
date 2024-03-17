@@ -106,7 +106,6 @@ void InsertEightValues()
 	rect_tree tree;
 	tree.root.footprint = rootFootprint;
 	tree.descendents = nodes;
-	tree.root.space = &nodes;
 
 	Vec2<float> nwPos = { 0.5f, 1.5f };
 	Vec2<float> nePos = { 1.5f, 1.5f };
@@ -147,7 +146,6 @@ void InsertEightValuesAndClear()
 	rect_tree tree;
 	tree.root.footprint = rootFootprint;
 	tree.descendents = nodes;
-	tree.root.space = &nodes;
 
 	Vec2<float> nwPos = { 0.5f, 1.5f };
 	Vec2<float> nePos = { 1.5f, 1.5f };
@@ -201,7 +199,6 @@ void QueryForSubSectionOfFootprint()
 	rect_tree tree;
 	tree.root.footprint = rootFootprint;
 	tree.descendents = nodes;
-	tree.root.space = &nodes;
 
 	Vec2<float> nwPos = { 0.5f, 1.5f };
 	Vec2<float> nePos = { 1.5f, 1.5f };
