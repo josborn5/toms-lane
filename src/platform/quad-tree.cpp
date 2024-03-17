@@ -75,8 +75,7 @@ namespace tl
 		rect_node_child_append(node, child_footprint, &node.sw, descendents);
 	}
 
-
-	int rect_node_insert(rect_node& node, const rect_node_value& value)
+	static int rect_node_insert_inner(rect_node& node, const rect_node_value& value, array<rect_node>& descendents)
 	{
 		if (!get_rects_overlap(node.footprint, value.footprint))
 		{
@@ -101,6 +100,17 @@ namespace tl
 		returnValue = rect_node_insert(*node.se, value);
 		returnValue = rect_node_insert(*node.sw, value);
 		return returnValue;
+	}
+
+	int rect_node_insert(rect_node& node, const rect_node_value& value)
+	{
+		if (node.space == nullptr)
+		{
+			array<rect_node> temp = array<rect_node>();
+			return rect_node_insert_inner(node, value, temp);
+		}
+
+		return rect_node_insert_inner(node, value, *node.space);
 	}
 
 
@@ -147,6 +157,10 @@ namespace tl
 	}
 
 
+	int rect_tree_insert(rect_tree& tree, const rect_node_value& value)
+	{
+		return rect_node_insert_inner(tree.root, value, tree.descendents);
+	}
 
 	int rect_tree_query(rect_tree& tree, const Rect<float>& footprint, array<rect_node_value>& foundValues)
 	{
