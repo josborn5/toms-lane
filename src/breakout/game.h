@@ -7,7 +7,6 @@
 #define ZERO_VECTOR tl::Vec2<float> { 0.0f, 0.0f }
 
 #include "../tl-library.hpp"
-#include "../platform/quad-tree.hpp"
 
 enum PowerUpType
 {
