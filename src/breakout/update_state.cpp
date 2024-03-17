@@ -50,7 +50,7 @@ static void StartNextLevel()
 		BLOCK_ARRAY_SIZE,
 		BLOCK_AREA,
 		BLOCK_AREA_POS,
-		&gamestate.blockTree
+		gamestate.blockTree
 	);
 }
 
@@ -69,7 +69,7 @@ static void InitializeGameState()
 		gamestate.balls[i].halfSize = { 10.0f, 10.0f };
 	}
 
-	gamestate.blockTree.descendents = tl::array<tl::rect_node>(&gamestate.blockTree.storage[0], BLOCK_ARRAY_SIZE);
+	gamestate.blockTree.descendents = tl::array<tl::rect_node>(&gamestate.storage[0], BLOCK_ARRAY_SIZE);
 	gamestate.blockTree.root.footprint = gamestate.world;
 	gamestate.blockTree.root.space = &gamestate.blockTree.descendents;
 
@@ -207,7 +207,7 @@ static void UpdateBallAndBlockState(float dt)
 				gamestate.blocks[x].color = gamestate.blocks[x].ogColor;
 			}
 
-			tl::rect_node_query(gamestate.blockTree.root, ballFootprint, candidates);
+			tl::rect_tree_query(gamestate.blockTree, ballFootprint, candidates);
 
 			gamestate.score = candidates.length();
 

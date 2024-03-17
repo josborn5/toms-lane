@@ -56,13 +56,6 @@ struct Block : tl::Rect<float> {
 	PowerUp powerUp;
 };
 
-struct BlockQuadTree
-{
-	tl::rect_node root;
-	tl::rect_node storage[BLOCK_ARRAY_SIZE];
-	tl::array<tl::rect_node> descendents;
-};
-
 struct GameState {
 	tl::Rect<float> player;
 	tl::Rect<float> world;
@@ -73,7 +66,8 @@ struct GameState {
 	int score;
 	int lives;
 	Mode mode;
-	BlockQuadTree blockTree;
+	tl::rect_tree blockTree;
+	tl::rect_node storage[BLOCK_ARRAY_SIZE];
 	tl::Rect<float> checkArea[BALL_ARRAY_SIZE];
 };
 
