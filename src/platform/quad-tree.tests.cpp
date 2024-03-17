@@ -76,18 +76,18 @@ void InsertFourValues()
 {
 	Rect<float> rootFootprint = Get1x1Footprint();
 
-	rect_node rootNode;
-	rootNode.footprint = rootFootprint;
+	rect_tree tree;
+	tree.root.footprint = rootFootprint;
 
-	rect_node_insert(rootNode, GetValue(&fourValues[0], { 0.5f, 0.5f, }));
-	rect_node_insert(rootNode, GetValue(&fourValues[1], { 0.5f, 1.5f, }));
-	rect_node_insert(rootNode, GetValue(&fourValues[2], { 1.5f, 0.5f, }));
-	rect_node_insert(rootNode, GetValue(&fourValues[3], { 1.5f, 1.5f, }));
+	rect_node_insert(tree.root, GetValue(&fourValues[0], { 0.5f, 0.5f, }));
+	rect_node_insert(tree.root, GetValue(&fourValues[1], { 0.5f, 1.5f, }));
+	rect_node_insert(tree.root, GetValue(&fourValues[2], { 1.5f, 0.5f, }));
+	rect_node_insert(tree.root, GetValue(&fourValues[3], { 1.5f, 1.5f, }));
 
 	rect_node_value queryResultStore[5] = { 0 };
 	array<rect_node_value> queryResults = array<rect_node_value>(queryResultStore, 5);
 
-	rect_node_query(rootNode, rootFootprint, queryResults);
+	rect_tree_query(tree, rootFootprint, queryResults);
 
 	assert(queryResults.length() == 4);
 	AssertIntValue(queryResults.get(0), 1);
