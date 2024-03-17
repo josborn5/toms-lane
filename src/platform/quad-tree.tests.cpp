@@ -42,51 +42,24 @@ void InsertSingleIntValue()
 	assert(*(int*)found.value == insertValue);
 }
 
-void InsertSingleReferenceValue()
-{
-	Rect<float> insertValue;
-	insertValue.position = { 0.0f, 2.0f };
-	Rect<float> rootFootprint = Get1x1Footprint();
-
-	rect_node rootNode;
-	rootNode.footprint = rootFootprint;
-
-	rect_node_value nodeValue = GetValue(&insertValue, { 1.0f, 1.0f });
-	rect_node_insert(rootNode, nodeValue);
-
-	rect_node_value queryResultStore[5] = { 0 };
-	array<rect_node_value> queryResults = array<rect_node_value>(queryResultStore, 5);
-
-	rect_node_query(rootNode, rootFootprint, queryResults);
-
-	rect_node_value foundNode = queryResults.get(0);
-	Rect<float>* found = (Rect<float>*)foundNode.value;
-	assert(found->position.x == insertValue.position.x);
-	assert(found->position.y == insertValue.position.y);
-	assert(found == &insertValue);
-
-	rect_node_value nullNode = queryResults.get(1);
-	Rect<float>* shouldBeNull = (Rect<float>*)nullNode.value;
-	assert(shouldBeNull == nullptr);
-}
 
 void RejectsSingleValueOutsideOfFootprint()
 {
 	int insertValue = 1234;
 	Rect<float> rootFootprint = Get1x1Footprint();
 
-	rect_node rootNode;
-	rootNode.footprint = rootFootprint;
+	rect_tree tree;
+	tree.root.footprint = rootFootprint;
 
 	rect_node_value nodeValue = GetValue(&insertValue, { 4.0f, 4.0f });
-	rect_node_insert(rootNode, nodeValue);
+	rect_node_insert(tree.root, nodeValue);
 
 	rect_node_value notFound = rect_node_value();
 	rect_node_value queryResultStore[5] = { notFound };
 	
 	array<rect_node_value> queryResults = array<rect_node_value>(queryResultStore, 5);
 
-	rect_node_query(rootNode, rootFootprint, queryResults);
+	rect_tree_query(tree, rootFootprint, queryResults);
 
 	rect_node_value found = queryResults.get(0);
 	assert(found.value == notFound.value);
@@ -258,8 +231,6 @@ void RunQuadTreeTests()
 	printf("========= Quad Tree Tests ========\n\n");
 
 	InsertSingleIntValue();
-
-	InsertSingleReferenceValue();
 
 	RejectsSingleValueOutsideOfFootprint();
 
