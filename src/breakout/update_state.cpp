@@ -69,8 +69,9 @@ static void InitializeGameState()
 		gamestate.balls[i].halfSize = { 10.0f, 10.0f };
 	}
 
-	gamestate.blockTree.descendents = tl::array<tl::QuadTreeRectNode<Block*>>(&gamestate.blockTree.storage[0], BLOCK_ARRAY_SIZE);
-	gamestate.blockTree.root = tl::QuadTreeRectNode<Block*>(gamestate.world, &gamestate.blockTree.descendents);
+	gamestate.blockTree.descendents = tl::array<tl::rect_node>(&gamestate.blockTree.storage[0], BLOCK_ARRAY_SIZE);
+	gamestate.blockTree.root.footprint = gamestate.world;
+	gamestate.blockTree.root.space = &gamestate.blockTree.descendents;
 
 	gamestate.player.halfSize.x = 100.0f;
 	gamestate.player.halfSize.y = 10.0f;
@@ -195,8 +196,8 @@ static void UpdateBallAndBlockState(float dt)
 				gamestate.balls[i].halfSize.y + ballDistanceCoveredY + gamestate.blocks[0].halfSize.y
 			 };
 
-			Block* candidateStorage[BLOCK_ARRAY_SIZE];
-			tl::array<Block*> candidates = tl::array<Block*>(
+			tl::rect_node_value candidateStorage[BLOCK_ARRAY_SIZE];
+			tl::array<tl::rect_node_value> candidates = tl::array<tl::rect_node_value>(
 				&candidateStorage[0],
 				BLOCK_ARRAY_SIZE
 			);
@@ -206,15 +207,14 @@ static void UpdateBallAndBlockState(float dt)
 				gamestate.blocks[x].color = gamestate.blocks[x].ogColor;
 			}
 
-//			gamestate.checkArea[i] = ballFootprint;
-			gamestate.blockTree.root.query(ballFootprint, candidates);
+			tl::rect_node_query(gamestate.blockTree.root, ballFootprint, candidates);
 
 			gamestate.score = candidates.length();
 
 			// check for collision between ball and blocks
 			for (int j = 0; j < candidates.length(); j += 1)
 			{
-				Block* checkBlock = candidates.get(j);
+				Block* checkBlock = (Block*)(candidates.get(j).value);
 				if (!checkBlock->exists) continue;
 				checkBlock->color = 0xFF0000;
 				blockBallCollisionResult = tl::CheckCollisionBetweenRects(*checkBlock, gamestate.balls[i], minCollisionTime);

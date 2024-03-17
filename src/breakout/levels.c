@@ -38,7 +38,7 @@ static void PopulateBlocksForLevel(
 )
 {
 	// clear out any remaining blocks in the block array
-	blockTree->root.clear();
+	rect_node_clear(blockTree->root);
 	Block* firstBlock = block;
 	tl::Vec2<float> originVector = tl::Vec2<float> { 0.0f, 0.0f };
 	for (int i = 0; i < blockArraySize; i += 1)
@@ -144,7 +144,10 @@ static void PopulateBlocksForLevel(
 
 				blockCount += 1;
 
-				blockTree->root.insert(block, *block);
+				tl::rect_node_value block_value;
+				block_value.footprint = *block;
+				block_value.value = block;
+				tl::rect_node_insert(blockTree->root, block_value);
 			}
 
 			blockPosition.x += blockWidth;

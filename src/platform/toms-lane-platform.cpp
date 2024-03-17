@@ -5,3 +5,4 @@
 #include "./collision.cpp"
 #include "./utilities.cpp"
 #include "./platform.cpp"
+#include "./quad-tree.cpp"
