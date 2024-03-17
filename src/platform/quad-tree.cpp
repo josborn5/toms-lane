@@ -2,7 +2,7 @@
 
 namespace tl
 {
-	static void get_rect_min_max1(
+	static void get_rect_min_max(
 		const Rect<float>& rect,
 		float& minX,
 		float& maxX,
@@ -15,15 +15,15 @@ namespace tl
 		maxY = rect.position.y + rect.halfSize.y;
 	}
 
-	static bool get_rects_overlap1(
+	static bool get_rects_overlap(
 		const Rect<float>& rectA,
 		const Rect<float>& rectB
 	) {
 		float minRectAX, maxRectAX, minRectAY, maxRectAY;
-		get_rect_min_max1(rectA, minRectAX, maxRectAX, minRectAY, maxRectAY);
+		get_rect_min_max(rectA, minRectAX, maxRectAX, minRectAY, maxRectAY);
 
 		float minRectBX, maxRectBX, minRectBY, maxRectBY;
-		get_rect_min_max1(rectB, minRectBX, maxRectBX, minRectBY, maxRectBY);
+		get_rect_min_max(rectB, minRectBX, maxRectBX, minRectBY, maxRectBY);
 
 		return maxRectAX >= minRectBX &&
 			minRectAX <= maxRectBX &&
@@ -77,7 +77,7 @@ namespace tl
 
 	int rect_node_insert(rect_node& node, const rect_node_value& value)
 	{
-		if (!get_rects_overlap1(node.footprint, value.footprint))
+		if (!get_rects_overlap(node.footprint, value.footprint))
 		{
 			return 0;
 		}
@@ -120,7 +120,7 @@ namespace tl
 
 	int rect_node_query(rect_node& node, const Rect<float>& footprint, array<rect_node_value>& foundValues)
 	{
-		if (!get_rects_overlap1(footprint, node.footprint))
+		if (!get_rects_overlap(footprint, node.footprint))
 		{
 			return 0;
 		}
@@ -128,7 +128,7 @@ namespace tl
 		for (int i = 0; i < node.count; i += 1)
 		{
 			rect_node_value check_value = node.values[i];
-			if (get_rects_overlap1(footprint, check_value.footprint))
+			if (get_rects_overlap(footprint, check_value.footprint))
 			{
 				foundValues.append(check_value);
 			}
