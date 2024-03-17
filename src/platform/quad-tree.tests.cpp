@@ -103,28 +103,29 @@ void InsertEightValues()
 	rect_node nodeArray[7];
 	array<rect_node> nodes = array<rect_node>(nodeArray, 7);
 
-	rect_node rootNode;
-	rootNode.footprint = rootFootprint;
-	rootNode.space = &nodes;
+	rect_tree tree;
+	tree.root.footprint = rootFootprint;
+	tree.descendents = nodes;
+	tree.root.space = &nodes;
 
 	Vec2<float> nwPos = { 0.5f, 1.5f };
 	Vec2<float> nePos = { 1.5f, 1.5f };
 	Vec2<float> swPos = { 0.5f, 0.5f };
 	Vec2<float> sePos = { 1.5f, 0.5f };
 
-	rect_node_insert(rootNode, GetValue(&eightValues[0], nwPos));
-	rect_node_insert(rootNode, GetValue(&eightValues[1], nePos));
-	rect_node_insert(rootNode, GetValue(&eightValues[2], sePos));
-	rect_node_insert(rootNode, GetValue(&eightValues[3], swPos));
-	rect_node_insert(rootNode, GetValue(&eightValues[4], nwPos));
-	rect_node_insert(rootNode, GetValue(&eightValues[5], nePos));
-	rect_node_insert(rootNode, GetValue(&eightValues[6], sePos));
-	rect_node_insert(rootNode, GetValue(&eightValues[7], swPos));
+	rect_node_insert(tree.root, GetValue(&eightValues[0], nwPos));
+	rect_node_insert(tree.root, GetValue(&eightValues[1], nePos));
+	rect_node_insert(tree.root, GetValue(&eightValues[2], sePos));
+	rect_node_insert(tree.root, GetValue(&eightValues[3], swPos));
+	rect_node_insert(tree.root, GetValue(&eightValues[4], nwPos));
+	rect_node_insert(tree.root, GetValue(&eightValues[5], nePos));
+	rect_node_insert(tree.root, GetValue(&eightValues[6], sePos));
+	rect_node_insert(tree.root, GetValue(&eightValues[7], swPos));
 
 	rect_node_value queryResultStore[10] = { 0 };
 	array<rect_node_value> queryResults = array<rect_node_value>(queryResultStore, 10);
 
-	rect_node_query(rootNode, rootFootprint, queryResults);
+	rect_tree_query(tree, rootFootprint, queryResults);
 
 	AssertIntValue(queryResults.get(0), 1);
 	AssertIntValue(queryResults.get(1), 2);
