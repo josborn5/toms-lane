@@ -27,16 +27,16 @@ void InsertSingleIntValue()
 	int insertValue = 1234;
 	Rect<float> rootFootprint = Get1x1Footprint();
 
-	rect_node rootNode;
-	rootNode.footprint = rootFootprint;
+	rect_tree tree;
+	tree.root.footprint = rootFootprint;
 
 	rect_node_value nodeValue = GetValue(&insertValue, { 1.0f, 1.0f });
-	rect_node_insert(rootNode, nodeValue);
+	rect_node_insert(tree.root, nodeValue);
 
 	rect_node_value queryResultStore[5] = { 0 };
 	array<rect_node_value> queryResults = array<rect_node_value>(queryResultStore, 5);
 
-	rect_node_query(rootNode, rootFootprint, queryResults);
+	rect_tree_query(tree, rootFootprint, queryResults);
 
 	rect_node_value found = queryResults.get(0);
 	assert(*(int*)found.value == insertValue);

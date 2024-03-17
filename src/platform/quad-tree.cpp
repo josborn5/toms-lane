@@ -145,5 +145,12 @@ namespace tl
 
 		return 0;
 	}
+
+
+
+	int rect_tree_query(rect_tree& tree, const Rect<float>& footprint, array<rect_node_value>& foundValues)
+	{
+		return rect_node_query(tree.root, footprint, foundValues);
+	}
 }
 
