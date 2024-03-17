@@ -152,5 +152,10 @@ namespace tl
 	{
 		return rect_node_query(tree.root, footprint, foundValues);
 	}
+
+	void rect_tree_clear(rect_tree& tree)
+	{
+		rect_node_clear(tree.root);
+	}
 }
 
