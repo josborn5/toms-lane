@@ -259,6 +259,48 @@ namespace tl
 		}
 	}
 
+	static void DrawCircleInPixels(const RenderBuffer& renderBuffer, uint32_t color, int centerX, int centerY, int radius)
+	{
+		int r2 = radius + radius;
+		int circleX = radius;
+		int circleY = 0;
+		int dY = -2;
+		int dX = r2 + r2 - 4;
+		int decision = r2 - 1;
+
+		while (circleY <= circleX)
+		{
+			PlotPixel(renderBuffer, color, centerX - circleX, centerY - circleY);
+			PlotPixel(renderBuffer, color, centerX - circleX, centerY + circleY);
+			PlotPixel(renderBuffer, color, centerX + circleX, centerY - circleY);
+			PlotPixel(renderBuffer, color, centerX + circleX, centerY + circleY);
+			PlotPixel(renderBuffer, color, centerX - circleY, centerY - circleX);
+			PlotPixel(renderBuffer, color, centerX - circleY, centerY + circleX);
+			PlotPixel(renderBuffer, color, centerX + circleY, centerY - circleX);
+			PlotPixel(renderBuffer, color, centerX + circleY, centerY + circleX);
+
+			decision += dY;
+			dY -= 4;
+
+			circleY += 1; // always increment up
+			if (decision < 0) // decide whether or not to decrement left toward the center of the circle
+			{
+				decision += dX;
+				dX -= 4;
+				circleX -= 1;
+			}
+		}
+	}
+
+	void DrawCircle(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<float>& center, float radius)
+	{
+		int centerX = ConvertFloatToInt(center.x);
+		int centerY = ConvertFloatToInt(center.y);
+		int radiusInt = ConvertFloatToInt(radius);
+
+		DrawCircleInPixels(renderBuffer, color, centerX, centerY, radiusInt);
+	}
+
 	void DrawRect(const RenderBuffer &renderBuffer, uint32_t color, const Rect<float> &rect)
 	{
 		int x0 = ConvertFloatToInt(rect.position.x - rect.halfSize.x);
