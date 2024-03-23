@@ -118,9 +118,9 @@ static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameStat
 	}
 
 	// ball
-	for (int i = 0; i < state.balls_.length(); i += 1)
+	for (int i = 0; i < state.balls.length(); i += 1)
 	{
-		Ball& ball = state.balls_.get(i);
+		Ball& ball = state.balls.get(i);
 		if (!ball.exists) continue;
 
 		tl::DrawRect(renderBuffer, BALL_COLOR, ball);

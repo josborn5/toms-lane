@@ -24,7 +24,7 @@ static void ResetBalls()
 {
 	const float minimumBallSpeed = 400.0f;
 
-	gamestate.balls_.clear();
+	gamestate.balls.clear();
 	for (int i = 0; i < ballCapacity; i += 1)
 	{
 		Ball newBall;
@@ -35,7 +35,7 @@ static void ResetBalls()
 		newBall.halfSize = { 10.0f, 10.0f };
 		newBall.position.y = 100 + balls[i].halfSize.y;
 		newBall.position.x = 100 + balls[i].halfSize.x;
-		gamestate.balls_.append(newBall);
+		gamestate.balls.append(newBall);
 	}
 }
 
@@ -80,7 +80,7 @@ static void InitializeGameState()
 	gamestate.player.position.y = 200;
 	gamestate.player.velocity = tl::Vec2<float> { 0.0f, 0.0f };
 
-	gamestate.balls_.initialize(&balls[0], ballCapacity);
+	gamestate.balls.initialize(&balls[0], ballCapacity);
 
 	gamestate.score = 0;
 	gamestate.lives = 3;

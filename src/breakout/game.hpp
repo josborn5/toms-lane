@@ -57,7 +57,7 @@ struct Block : tl::Rect<float> {
 struct GameState {
 	tl::Rect<float> player;
 	tl::Rect<float> world;
-	tl::array<Ball> balls_;
+	tl::array<Ball> balls;
 	Block blocks[BLOCK_ARRAY_SIZE];
 	bool isCometActive;
 	int level;
