@@ -44,7 +44,7 @@ static void StartNextLevel()
 
 	tl::Rect<float> totalBlockAreaFootprint;
 	totalBlockAreaFootprint.position = { 300.0f, 600.0f };
-	totalBlockAreaFootprint.halfSize = { 800.0f, 200.0f };
+	totalBlockAreaFootprint.halfSize = { 400.0f, 100.0f };
 	PopulateBlocksForLevel(
 		gamestate.level,
 		&gamestate.blocks[0],
@@ -208,8 +208,6 @@ static void UpdateBallAndBlockState(float dt)
 
 			tl::rect_tree_query(gamestate.blockTree, ballFootprint, candidates);
 
-			gamestate.score = candidates.length();
-
 			// check for collision between ball and blocks
 			for (int j = 0; j < candidates.length(); j += 1)
 			{
@@ -278,7 +276,7 @@ static void UpdateBallAndBlockState(float dt)
 				}
 
 				block->exists = false;
-				// gamestate.score += BLOCK_SCORE;
+				gamestate.score += BLOCK_SCORE;
 
 				// Check for powerup
 				if (block->powerUp.type != Nothing)
