@@ -7,6 +7,8 @@ const Boundary bottomBoundary = { Bottom, 0, 1.0f };
 const Boundary leftBoundary = { Left, 0, 1.0f };
 const Boundary rightBoundary = { Right, 1280, -1.0f };
 
+tl::rect_node blockTreeStorage[BLOCK_ARRAY_SIZE];
+
 static GameState gamestate = {0};
 
 struct WallCollision
@@ -65,7 +67,7 @@ static void InitializeGameState()
 		gamestate.balls[i].halfSize = { 10.0f, 10.0f };
 	}
 
-	gamestate.blockTree.descendents = tl::array<tl::rect_node>(&gamestate.storage[0], BLOCK_ARRAY_SIZE);
+	gamestate.blockTree.descendents = tl::array<tl::rect_node>(&blockTreeStorage[0], BLOCK_ARRAY_SIZE);
 	gamestate.blockTree.root.footprint = gamestate.world;
 
 	gamestate.player.halfSize.x = 100.0f;
