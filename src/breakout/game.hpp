@@ -2,7 +2,6 @@
 #define GAME_H
 
 #define BLOCK_ARRAY_SIZE 64
-#define BALL_ARRAY_SIZE 3
 
 #include "../tl-library.hpp"
 
@@ -58,7 +57,7 @@ struct Block : tl::Rect<float> {
 struct GameState {
 	tl::Rect<float> player;
 	tl::Rect<float> world;
-	Ball balls[BALL_ARRAY_SIZE];
+	tl::array<Ball> balls_;
 	Block blocks[BLOCK_ARRAY_SIZE];
 	bool isCometActive;
 	int level;
@@ -66,7 +65,6 @@ struct GameState {
 	int lives;
 	Mode mode;
 	tl::rect_tree blockTree;
-	tl::Rect<float> checkArea[BALL_ARRAY_SIZE];
 };
 
 #endif

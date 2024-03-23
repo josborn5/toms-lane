@@ -22,14 +22,19 @@ namespace tl
 			}
 			array(T* pointer, int capacity)
 			{
-				_content = pointer;
-				_capacity = capacity;
+				initialize(pointer, capacity);
 			}
 
 			void initialize(const MemorySpace& memory)
 			{
 				_content = (T*)memory.content;
 				_capacity = (int)(memory.sizeInBytes / _itemSizeInBytes);
+			}
+
+			void initialize(T* pointer, int capacity)
+			{
+				_content = pointer;
+				_capacity = capacity;
 			}
 
 			T& access(int index)
@@ -52,7 +57,7 @@ namespace tl
 				return _length;
 			}
 
-			int append(const T& item)
+			int append(const T item)
 			{
 				if (_length < _capacity)
 				{

@@ -9,6 +9,9 @@ const Boundary rightBoundary = { Right, 1280, -1.0f };
 
 tl::rect_node blockTreeStorage[BLOCK_ARRAY_SIZE];
 
+const int ballCapacity = 3;
+Ball balls[ballCapacity];
+
 static GameState gamestate = {0};
 
 struct WallCollision
@@ -20,14 +23,19 @@ struct WallCollision
 static void ResetBalls()
 {
 	const float minimumBallSpeed = 400.0f;
-	for (int i = 0; i < BALL_ARRAY_SIZE; i += 1)
-	{
-		gamestate.balls[i].exists = (i == 0);
-		gamestate.balls[i].velocity.y = minimumBallSpeed;
-		gamestate.balls[i].velocity.x = minimumBallSpeed;
 
-		gamestate.balls[i].position.y = 100 + gamestate.balls[i].halfSize.y;
-		gamestate.balls[i].position.x = 100 + gamestate.balls[i].halfSize.x;
+	gamestate.balls_.clear();
+	for (int i = 0; i < ballCapacity; i += 1)
+	{
+		Ball newBall;
+		newBall.exists = (i == 0);
+		newBall.exists = (i == 0);
+		newBall.velocity.y = minimumBallSpeed;
+		newBall.velocity.x = minimumBallSpeed;
+		newBall.halfSize = { 10.0f, 10.0f };
+		newBall.position.y = 100 + balls[i].halfSize.y;
+		newBall.position.x = 100 + balls[i].halfSize.x;
+		gamestate.balls_.append(newBall);
 	}
 }
 
@@ -62,11 +70,6 @@ static void InitializeGameState()
 	gamestate.world.position.x = worldHalfX;
 	gamestate.world.position.y = worldHalfY;
 
-	for (int i = 0; i < BALL_ARRAY_SIZE; i += 1)
-	{
-		gamestate.balls[i].halfSize = { 10.0f, 10.0f };
-	}
-
 	gamestate.blockTree.descendents = tl::array<tl::rect_node>(&blockTreeStorage[0], BLOCK_ARRAY_SIZE);
 	gamestate.blockTree.root.footprint = gamestate.world;
 
@@ -76,6 +79,8 @@ static void InitializeGameState()
 	gamestate.player.position.x = (float)leftBoundary.position;
 	gamestate.player.position.y = 200;
 	gamestate.player.velocity = tl::Vec2<float> { 0.0f, 0.0f };
+
+	gamestate.balls_.initialize(&balls[0], ballCapacity);
 
 	gamestate.score = 0;
 	gamestate.lives = 3;
@@ -148,9 +153,9 @@ static void UpdatePlayerStateFromInput(const tl::Input& input, float dt)
 
 static void UpdateBallAndBlockState(float dt)
 {
-	for (int i = 0; i < BALL_ARRAY_SIZE; i += 1)
+	for (int i = 0; i < ballCapacity; i += 1)
 	{
-		if (!gamestate.balls[i].exists) continue;
+		if (!balls[i].exists) continue;
 
 		float minCollisionTime = dt;
 		float t1 = dt;
@@ -162,7 +167,7 @@ static void UpdateBallAndBlockState(float dt)
 		while(checkCollision && collisionCheckCount < maxCollisionCheckCount)
 		{
 			// Check for collision between any boundary of the world
-			WallCollision ballWallCollision = CheckWallCollision(gamestate.balls[i], minCollisionTime);
+			WallCollision ballWallCollision = CheckWallCollision(balls[i], minCollisionTime);
 			if (ballWallCollision.result.collisions[0].side != tl::None)
 			{
 				minCollisionTime = ballWallCollision.result.time;
@@ -177,20 +182,20 @@ static void UpdateBallAndBlockState(float dt)
 
 			// query the block tree for collision candidates
 			tl::Rect<float> ballFootprint;
-			float ballDistanceCoveredX = gamestate.balls[i].velocity.x * dt * 10;
-			float ballDistanceCoveredY = gamestate.balls[i].velocity.y * dt * 10;
+			float ballDistanceCoveredX = balls[i].velocity.x * dt * 10;
+			float ballDistanceCoveredY = balls[i].velocity.y * dt * 10;
 
 			if (ballDistanceCoveredX < 0) ballDistanceCoveredX *= -1;
 			if (ballDistanceCoveredY < 0) ballDistanceCoveredY *= -1;
-			ballFootprint.position = gamestate.balls[i].position;
+			ballFootprint.position = balls[i].position;
 
 			// Blocks are stored in the quad tree by their center position.
 			// So the footpring to check needs to be at least the halfSize
 			// of the block.
 
 			ballFootprint.halfSize = { 
-				gamestate.balls[i].halfSize.x + ballDistanceCoveredX + gamestate.blocks[0].halfSize.x,
-				gamestate.balls[i].halfSize.y + ballDistanceCoveredY + gamestate.blocks[0].halfSize.y
+				balls[i].halfSize.x + ballDistanceCoveredX + gamestate.blocks[0].halfSize.x,
+				balls[i].halfSize.y + ballDistanceCoveredY + gamestate.blocks[0].halfSize.y
 			 };
 
 			tl::rect_node_value candidateStorage[BLOCK_ARRAY_SIZE];
@@ -212,7 +217,7 @@ static void UpdateBallAndBlockState(float dt)
 				Block* checkBlock = (Block*)(candidates.get(j).value);
 				if (!checkBlock->exists) continue;
 				checkBlock->color = 0xFF0000;
-				blockBallCollisionResult = tl::CheckCollisionBetweenRects(*checkBlock, gamestate.balls[i], minCollisionTime);
+				blockBallCollisionResult = tl::CheckCollisionBetweenRects(*checkBlock, balls[i], minCollisionTime);
 				if (blockBallCollisionResult.collisions[1].side != tl::None)
 				{
 					block = checkBlock;
@@ -225,14 +230,14 @@ static void UpdateBallAndBlockState(float dt)
 			// Check for collision between ball and bat
 			tl::Rect<float> player = gamestate.player;
 
-			tl::CollisionResult ballBatCollisionResult = tl::CheckCollisionBetweenRects(player, gamestate.balls[i], minCollisionTime);
+			tl::CollisionResult ballBatCollisionResult = tl::CheckCollisionBetweenRects(player, balls[i], minCollisionTime);
 
 			// Check collision results in the reverse order in which they are calculated
 			// (player, block, wall)
 			Ball newBallState;
-			newBallState.velocity = gamestate.balls[i].velocity;
-			newBallState.halfSize = gamestate.balls[i].halfSize;
-			newBallState.exists = gamestate.balls[i].exists;
+			newBallState.velocity = balls[i].velocity;
+			newBallState.halfSize = balls[i].halfSize;
+			newBallState.exists = balls[i].exists;
 			if (ballBatCollisionResult.collisions[1].side != tl::None)
 			{
 				playTone(262, 100);
@@ -241,19 +246,19 @@ static void UpdateBallAndBlockState(float dt)
 				if (ballBatCollisionResult.collisions[1].side == tl::Top)
 				{
 					// Add a horizontal velocity to allow player to change ball direction
-					float ballAngleFromNormal = GetThetaForBallPlayerCollision(player.position.x, gamestate.balls[i].position.x, player.halfSize.x);
-					float ballSpeed = tl::Length(gamestate.balls[i].velocity);
+					float ballAngleFromNormal = GetThetaForBallPlayerCollision(player.position.x, balls[i].position.x, player.halfSize.x);
+					float ballSpeed = tl::Length(balls[i].velocity);
 					newBallState.velocity.x = (float)sinf(ballAngleFromNormal) * ballSpeed;
 					newBallState.velocity.y = (float)cosf(ballAngleFromNormal) * ballSpeed;
 				}
 				else if (ballBatCollisionResult.collisions[1].side == tl::Left)
 				{
-					float ballVelocityX = (gamestate.balls[i].velocity.x > 0) ? -gamestate.balls[i].velocity.x : gamestate.balls[i].velocity.x;
+					float ballVelocityX = (balls[i].velocity.x > 0) ? -balls[i].velocity.x : balls[i].velocity.x;
 					newBallState.velocity.x = MinFloat(ballVelocityX, player.velocity.x);
 				}
 				else
 				{
-					float ballVelocityX = (gamestate.balls[i].velocity.x < 0) ? -gamestate.balls[i].velocity.x : gamestate.balls[i].velocity.x;
+					float ballVelocityX = (balls[i].velocity.x < 0) ? -balls[i].velocity.x : balls[i].velocity.x;
 					newBallState.velocity.x = MaxFloat(ballVelocityX, player.velocity.x);
 				}
 
@@ -302,9 +307,9 @@ static void UpdateBallAndBlockState(float dt)
 					newBallState.exists = false;
 
 					bool anyBallsLeft = false;
-					for (int k = 0; k < BALL_ARRAY_SIZE && !anyBallsLeft; k += 1)
+					for (int k = 0; k < ballCapacity && !anyBallsLeft; k += 1)
 					{
-						if (gamestate.balls[k].exists)
+						if (balls[k].exists)
 						{
 							anyBallsLeft = true;
 						}
@@ -328,26 +333,26 @@ static void UpdateBallAndBlockState(float dt)
 			}
 			else
 			{
-				newBallState.position = tl::AddVectors(gamestate.balls[i].position, tl::MultiplyVectorByScalar(gamestate.balls[i].velocity, t1 - t0));
+				newBallState.position = tl::AddVectors(balls[i].position, tl::MultiplyVectorByScalar(balls[i].velocity, t1 - t0));
 				checkCollision = false;
 			}
 
-			gamestate.balls[i] = newBallState;
+			balls[i] = newBallState;
 
 			t0 = minCollisionTime;		// Update t0 so next ball position calculation starts from the collision time
 			collisionCheckCount += 1;
 		}
 
 		// final bounds check to make sure ball doesn't leave the world
-		gamestate.balls[i].position.x = ClampFloat(
-			leftBoundary.position + gamestate.balls[i].halfSize.x,
-			gamestate.balls[i].position.x,
-			rightBoundary.position - gamestate.balls[i].halfSize.x
+		balls[i].position.x = ClampFloat(
+			leftBoundary.position + balls[i].halfSize.x,
+			balls[i].position.x,
+			rightBoundary.position - balls[i].halfSize.x
 		);
-		gamestate.balls[i].position.y = ClampFloat(
-			bottomBoundary.position + gamestate.balls[i].halfSize.y,
-			gamestate.balls[i].position.y,
-			topBoundary.position - gamestate.balls[i].halfSize.y
+		balls[i].position.y = ClampFloat(
+			bottomBoundary.position + balls[i].halfSize.y,
+			balls[i].position.y,
+			topBoundary.position - balls[i].halfSize.y
 		);
 	}
 }
@@ -421,15 +426,15 @@ static GameState& UpdateGameState(const tl::Input& input, float dt)
 						break;
 					case Multiball:
 						// get the first ball that exists
-						Ball* existingBall = gamestate.balls;
+						Ball* existingBall = balls;
 						while (!existingBall->exists)
 						{
 							existingBall++;
 						}
 
-						for (int j = 0; j < BALL_ARRAY_SIZE; j += 1)
+						for (int j = 0; j < ballCapacity; j += 1)
 						{
-							Ball* ball = &gamestate.balls[j];
+							Ball* ball = &balls[j];
 							if (ball->exists) continue;
 
 							ball->exists = true;

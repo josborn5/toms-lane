@@ -32,12 +32,12 @@ static void PopulateBlocksForLevel(
 	int level,
 	Block* block,
 	int blockArraySize,
-	tl::Rect<float> blockAreaFootprint,
+	tl::Rect<float>& blockAreaFootprint,
 	tl::rect_tree& blockTree
 )
 {
 	// clear out any remaining blocks in the block array
-	rect_tree_clear(blockTree);
+	tl::rect_tree_clear(blockTree);
 	Block* firstBlock = block;
 	tl::Vec2<float> originVector = tl::Vec2<float> { 0.0f, 0.0f };
 	for (int i = 0; i < blockArraySize; i += 1)

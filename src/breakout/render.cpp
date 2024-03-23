@@ -118,12 +118,12 @@ static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameStat
 	}
 
 	// ball
-	for (int i = 0; i < BALL_ARRAY_SIZE; i += 1)
+	for (int i = 0; i < state.balls_.length(); i += 1)
 	{
-		if (!state.balls[i].exists) continue;
+		Ball& ball = state.balls_.get(i);
+		if (!ball.exists) continue;
 
-		tl::DrawRect(renderBuffer, 0x000000, state.checkArea[i]);
-		tl::DrawRect(renderBuffer, BALL_COLOR, state.balls[i]);
+		tl::DrawRect(renderBuffer, BALL_COLOR, ball);
 	}
 
 	// Balls, Level & Score
