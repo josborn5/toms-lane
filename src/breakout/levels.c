@@ -32,8 +32,7 @@ static void PopulateBlocksForLevel(
 	int level,
 	Block* block,
 	int blockArraySize,
-	tl::Vec2<float> blockArea,
-	tl::Vec2<float> blockAreaPosition,
+	tl::Rect<float> blockAreaFootprint,
 	tl::rect_tree& blockTree
 )
 {
@@ -87,14 +86,14 @@ static void PopulateBlocksForLevel(
 	}
 
 	// Calculate the block size from the row & column counts
-	float blockHeight = blockArea.y / (float)rowCount;
-	float blockWidth = blockArea.x / (float)columnCount;
+	float blockHeight = (2.0f * blockAreaFootprint.halfSize.y) / (float)rowCount;
+	float blockWidth = (2.0f * blockAreaFootprint.halfSize.x) / (float)columnCount;
 	tl::Vec2<float> blockHalfSize;
 	blockHalfSize.x = 0.5f * blockWidth;
 	blockHalfSize.y = 0.5f * blockHeight;
 
 	int blockCount = 0;
-	tl::Vec2<float> blockPosition = blockAreaPosition;
+	tl::Vec2<float> blockPosition = blockAreaFootprint.position;
 	blockPosition.x += blockHalfSize.x;
 	blockPosition.y -= blockHalfSize.y;
 	float originalX = blockPosition.x;

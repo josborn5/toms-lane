@@ -2,11 +2,8 @@
 #include "math.c"
 #include "levels.c"
 
-
-#define BLOCK_AREA tl::Vec2<float> { 800.0f, 200.0f }
 #define BLOCK_AREA_POS tl::Vec2<float> { 300.0f, 600.0f }
 
-const float MIN_BALL_SPEED = 400.0f;
 const int BLOCK_SCORE = 10;
 
 const Boundary topBoundary = { Top, 720, -1.0f };
@@ -24,11 +21,12 @@ struct WallCollision
 
 static void ResetBalls()
 {
+	const float minimumBallSpeed = 400.0f;
 	for (int i = 0; i < BALL_ARRAY_SIZE; i += 1)
 	{
 		gamestate.balls[i].exists = (i == 0);
-		gamestate.balls[i].velocity.y = MIN_BALL_SPEED;
-		gamestate.balls[i].velocity.x = MIN_BALL_SPEED;
+		gamestate.balls[i].velocity.y = minimumBallSpeed;
+		gamestate.balls[i].velocity.x = minimumBallSpeed;
 
 		gamestate.balls[i].position.y = 100 + gamestate.balls[i].halfSize.y;
 		gamestate.balls[i].position.x = 100 + gamestate.balls[i].halfSize.x;
@@ -44,12 +42,14 @@ static void StartNextLevel()
 
 	ResetBalls();
 
+	tl::Rect<float> totalBlockAreaFootprint;
+	totalBlockAreaFootprint.position = { 300.0f, 600.0f };
+	totalBlockAreaFootprint.halfSize = { 800.0f, 200.0f };
 	PopulateBlocksForLevel(
 		gamestate.level,
 		&gamestate.blocks[0],
 		BLOCK_ARRAY_SIZE,
-		BLOCK_AREA,
-		BLOCK_AREA_POS,
+		totalBlockAreaFootprint,
 		gamestate.blockTree
 	);
 }
