@@ -2,10 +2,6 @@
 #include "math.c"
 #include "levels.c"
 
-#define BLOCK_AREA_POS tl::Vec2<float> { 300.0f, 600.0f }
-
-const int BLOCK_SCORE = 10;
-
 const Boundary topBoundary = { Top, 720, -1.0f };
 const Boundary bottomBoundary = { Bottom, 0, 1.0f };
 const Boundary leftBoundary = { Left, 0, 1.0f };
@@ -276,7 +272,7 @@ static void UpdateBallAndBlockState(float dt)
 				}
 
 				block->exists = false;
-				gamestate.score += BLOCK_SCORE;
+				gamestate.score += 10;
 
 				// Check for powerup
 				if (block->powerUp.type != Nothing)
