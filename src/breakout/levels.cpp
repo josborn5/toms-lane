@@ -1,4 +1,4 @@
-#include "game.h"
+#include "game.hpp"
 
 const tl::Vec2<float> POWER_UP_VELOCITY = tl::Vec2<float> { 0.0f, -50.0f };
 const tl::Vec2<float> POWER_UP_HALF_SIZE = tl::Vec2<float> { 5.0f, 5.0f };

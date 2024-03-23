@@ -12,15 +12,13 @@ TODO (in no particular order):
 
 -- Inter-level screen
 
--- Sound! Check out the JavidX9 youtube videos for some ideas on how to implement this.
-
 -- More levels!
 
 */
 
 #include "../tl-library.hpp"
 #include "../tl-application.hpp"
-#include "game.h"
+#include "game.hpp"
 #include "sound.cpp"
 #include "update_state.cpp"
 #include "render.cpp"

@@ -1,6 +1,6 @@
 #include <math.h>
-#include "math.c"
-#include "levels.c"
+#include "math.cpp"
+#include "levels.cpp"
 
 const Boundary topBoundary = { Top, 720, -1.0f };
 const Boundary bottomBoundary = { Bottom, 0, 1.0f };
