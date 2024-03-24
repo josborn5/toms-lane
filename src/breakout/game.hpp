@@ -56,7 +56,7 @@ struct GameState {
 	tl::Rect<float> player;
 	tl::Rect<float> world;
 	tl::array<Ball> balls;
-	tl::array<Block> blocks_;
+	tl::array<Block> blocks;
 	bool isCometActive;
 	int level;
 	int score;

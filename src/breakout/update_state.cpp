@@ -55,7 +55,7 @@ static void StartNextLevel()
 	totalBlockAreaFootprint.halfSize = { 400.0f, 100.0f };
 	PopulateBlocksForLevel(
 		gamestate.level,
-		gamestate.blocks_,
+		gamestate.blocks,
 		totalBlockAreaFootprint,
 		gamestate.blockTree
 	);
@@ -82,7 +82,7 @@ static void InitializeGameState()
 	gamestate.player.velocity = tl::Vec2<float> { 0.0f, 0.0f };
 
 	gamestate.balls.initialize(&balls[0], ballCapacity);
-	gamestate.blocks_.initialize(&blocks[0], blockCapacity);
+	gamestate.blocks.initialize(&blocks[0], blockCapacity);
 
 	gamestate.score = 0;
 	gamestate.lives = 3;
@@ -192,9 +192,9 @@ static void UpdateBallAndBlockState(float dt)
 			ballFootprint.position = balls[i].position;
 
 			// Blocks are stored in the quad tree by their center position.
-			// So the footpring to check needs to be at least the halfSize
+			// So the footprint to check needs to be at least the halfSize
 			// of the block.
-			Block firstBlock = gamestate.blocks_.get(0);
+			Block firstBlock = gamestate.blocks.get(0);
 			ballFootprint.halfSize = { 
 				balls[i].halfSize.x + ballDistanceCoveredX + firstBlock.halfSize.x,
 				balls[i].halfSize.y + ballDistanceCoveredY + firstBlock.halfSize.y
@@ -208,7 +208,7 @@ static void UpdateBallAndBlockState(float dt)
 
 			for (int x = 0; x < blockCapacity; x += 1)
 			{
-				gamestate.blocks_.access(x).color = gamestate.blocks_.get(x).ogColor;
+				gamestate.blocks.access(x).color = gamestate.blocks.get(x).ogColor;
 			}
 
 			tl::rect_tree_query(gamestate.blockTree, ballFootprint, candidates);
@@ -397,9 +397,9 @@ static GameState& UpdateGameState(const tl::Input& input, float dt)
 
 	// Update power up gamestate
 	bool allBlocksGoneResult = true;
-	for (int i = 0; i < gamestate.blocks_.length(); i += 1)
+	for (int i = 0; i < gamestate.blocks.length(); i += 1)
 	{
-		Block& block = gamestate.blocks_.access(i);
+		Block& block = gamestate.blocks.access(i);
 		if (allBlocksGoneResult && block.exists)
 		{
 			allBlocksGoneResult = false;
