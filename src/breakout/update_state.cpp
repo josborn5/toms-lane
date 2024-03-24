@@ -7,10 +7,11 @@ const Boundary bottomBoundary = { Bottom, 0, 1.0f };
 const Boundary leftBoundary = { Left, 0, 1.0f };
 const Boundary rightBoundary = { Right, 1280, -1.0f };
 
-tl::rect_node blockTreeStorage[BLOCK_ARRAY_SIZE];
+static tl::rect_node blockTreeStorage[BLOCK_ARRAY_SIZE];
+static Block blocks[BLOCK_ARRAY_SIZE];
 
-const int ballCapacity = 3;
-Ball balls[ballCapacity];
+static const int ballCapacity = 3;
+static Ball balls[ballCapacity];
 
 static GameState gamestate = {0};
 
@@ -55,6 +56,7 @@ static void StartNextLevel()
 		gamestate.level,
 		&gamestate.blocks[0],
 		BLOCK_ARRAY_SIZE,
+		gamestate.blocks_,
 		totalBlockAreaFootprint,
 		gamestate.blockTree
 	);
@@ -81,6 +83,7 @@ static void InitializeGameState()
 	gamestate.player.velocity = tl::Vec2<float> { 0.0f, 0.0f };
 
 	gamestate.balls.initialize(&balls[0], ballCapacity);
+	gamestate.blocks_.initialize(&blocks[0], BLOCK_ARRAY_SIZE);
 
 	gamestate.score = 0;
 	gamestate.lives = 3;
@@ -194,8 +197,8 @@ static void UpdateBallAndBlockState(float dt)
 			// of the block.
 
 			ballFootprint.halfSize = { 
-				balls[i].halfSize.x + ballDistanceCoveredX + gamestate.blocks[0].halfSize.x,
-				balls[i].halfSize.y + ballDistanceCoveredY + gamestate.blocks[0].halfSize.y
+				balls[i].halfSize.x + ballDistanceCoveredX + gamestate.blocks_.get(0).halfSize.x,
+				balls[i].halfSize.y + ballDistanceCoveredY + gamestate.blocks_.get(0).halfSize.y
 			 };
 
 			tl::rect_node_value candidateStorage[BLOCK_ARRAY_SIZE];
@@ -206,7 +209,7 @@ static void UpdateBallAndBlockState(float dt)
 
 			for (int x = 0; x < BLOCK_ARRAY_SIZE; x += 1)
 			{
-				gamestate.blocks[x].color = gamestate.blocks[x].ogColor;
+				gamestate.blocks_.access(x).color = gamestate.blocks_.get(x).ogColor;
 			}
 
 			tl::rect_tree_query(gamestate.blockTree, ballFootprint, candidates);
@@ -397,7 +400,8 @@ static GameState& UpdateGameState(const tl::Input& input, float dt)
 	bool allBlocksGoneResult = true;
 	for (int i = 0; i < BLOCK_ARRAY_SIZE; i += 1)
 	{
-		Block *block = &gamestate.blocks[i];
+		Block& blockRef = gamestate.blocks_.access(i);
+		Block* block = &blockRef;
 		if (allBlocksGoneResult && block->exists)
 		{
 			allBlocksGoneResult = false;

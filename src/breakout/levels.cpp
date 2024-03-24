@@ -32,12 +32,15 @@ static void PopulateBlocksForLevel(
 	int level,
 	Block* block,
 	int blockArraySize,
+	tl::array<Block>& blocks,
 	tl::Rect<float>& blockAreaFootprint,
 	tl::rect_tree& blockTree
 )
 {
 	// clear out any remaining blocks in the block array
 	tl::rect_tree_clear(blockTree);
+	blocks.clear();
+
 	Block* firstBlock = block;
 	tl::Vec2<float> originVector = tl::Vec2<float> { 0.0f, 0.0f };
 	for (int i = 0; i < blockArraySize; i += 1)
@@ -92,7 +95,6 @@ static void PopulateBlocksForLevel(
 	blockHalfSize.x = 0.5f * blockWidth;
 	blockHalfSize.y = 0.5f * blockHeight;
 
-	int blockCount = 0;
 	tl::Vec2<float> blockPosition = blockAreaFootprint.position;
 	blockPosition.x += blockHalfSize.x;
 	blockPosition.y -= blockHalfSize.y;
@@ -111,7 +113,7 @@ static void PopulateBlocksForLevel(
 				block->exists = 1;
 				block->halfSize = blockHalfSize;
 				block->position = blockPosition;
-				block->color = MakeColorFromGrey((uint8_t)(blockCount * 20));
+				block->color = MakeColorFromGrey((uint8_t)blocks.length() * 20);
 				block->ogColor = block->color;
 				switch (*blockLayoutForLevel)
 				{
@@ -141,11 +143,10 @@ static void PopulateBlocksForLevel(
 						break;
 				}
 
-				blockCount += 1;
-
+				blocks.append(*block);
 				tl::rect_node_value block_value;
 				block_value.footprint = *block;
-				block_value.value = block;
+				block_value.value = blocks.getTailPointer();
 				tl::rect_tree_insert(blockTree, block_value);
 			}
 

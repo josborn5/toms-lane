@@ -105,9 +105,9 @@ static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameStat
 	tl::DrawRect(renderBuffer, BAT_COLOR, state.player);
 
 	// blocks & powerups
-	for (int i = 0; i < BLOCK_ARRAY_SIZE; i += 1)
+	for (int i = 0; i < state.blocks_.length(); i += 1)
 	{
-		Block block = state.blocks[i];
+		Block block = state.blocks_.get(i);
 		if (block.exists) {
 			tl::DrawRect(renderBuffer, block.color, block);
 		}
