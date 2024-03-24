@@ -30,7 +30,7 @@ MMMMMMMMMMMMM\n\
 
 static void PopulateBlocksForLevel(
 	int level,
-	Block* block,
+	Block* block_,
 	int blockArraySize,
 	tl::array<Block>& blocks,
 	tl::Rect<float>& blockAreaFootprint,
@@ -40,17 +40,6 @@ static void PopulateBlocksForLevel(
 	// clear out any remaining blocks in the block array
 	tl::rect_tree_clear(blockTree);
 	blocks.clear();
-
-	Block* firstBlock = block;
-	tl::Vec2<float> originVector = tl::Vec2<float> { 0.0f, 0.0f };
-	for (int i = 0; i < blockArraySize; i += 1)
-	{
-		firstBlock->exists = 0;
-		firstBlock->halfSize = originVector;
-		firstBlock->position = originVector;
-		firstBlock->color = 0;
-		firstBlock++;
-	}
 
 	// Temporary hack - force level to be between 1 and 4
 	if (level > 4)
@@ -110,42 +99,43 @@ static void PopulateBlocksForLevel(
 		{
 			if (*blockLayoutForLevel != ' ')
 			{
-				block->exists = 1;
-				block->halfSize = blockHalfSize;
-				block->position = blockPosition;
-				block->color = MakeColorFromGrey((uint8_t)blocks.length() * 20);
-				block->ogColor = block->color;
+				Block block;
+				block.exists = true;
+				block.halfSize = blockHalfSize;
+				block.position = blockPosition;
+				block.color = MakeColorFromGrey((uint8_t)blocks.length() * 20);
+				block.ogColor = block.color;
 				switch (*blockLayoutForLevel)
 				{
 					case 'M':
-						block->powerUp.type = Multiball;
-						block->powerUp.position = tl::Vec2<float> { block->position.x, block->position.y };
-						block->powerUp.halfSize = POWER_UP_HALF_SIZE;
-						block->powerUp.velocity = POWER_UP_VELOCITY;
-						block->powerUp.exists = false;
-						block->powerUp.color = 0xFF0000;
+						block.powerUp.type = Multiball;
+						block.powerUp.position = { block.position.x, block.position.y };
+						block.powerUp.halfSize = POWER_UP_HALF_SIZE;
+						block.powerUp.velocity = POWER_UP_VELOCITY;
+						block.powerUp.exists = false;
+						block.powerUp.color = 0xFF0000;
 						break;
 					case 'C':
-						block->powerUp.type = Comet;
-						block->powerUp.position = tl::Vec2<float> { block->position.x, block->position.y };
-						block->powerUp.halfSize = POWER_UP_HALF_SIZE;
-						block->powerUp.velocity = POWER_UP_VELOCITY;
-						block->powerUp.exists = false;
-						block->powerUp.color = 0xFFFF00;
+						block.powerUp.type = Comet;
+						block.powerUp.position = { block.position.x, block.position.y };
+						block.powerUp.halfSize = POWER_UP_HALF_SIZE;
+						block.powerUp.velocity = POWER_UP_VELOCITY;
+						block.powerUp.exists = false;
+						block.powerUp.color = 0xFFFF00;
 						break;
 					default:
-						block->powerUp.type = Nothing;
-						block->powerUp.position = tl::Vec2<float> { 0.0f, 0.0f };
-						block->powerUp.halfSize = tl::Vec2<float> { 0.0f, 0.0f };
-						block->powerUp.velocity = tl::Vec2<float> { 0.0f, 0.0f };
-						block->powerUp.exists = false;
-						block->powerUp.color = 0x000000;
+						block.powerUp.type = Nothing;
+						block.powerUp.position = { 0.0f, 0.0f };
+						block.powerUp.halfSize = { 0.0f, 0.0f };
+						block.powerUp.velocity = { 0.0f, 0.0f };
+						block.powerUp.exists = false;
+						block.powerUp.color = 0x000000;
 						break;
 				}
 
-				blocks.append(*block);
+				blocks.append(block);
 				tl::rect_node_value block_value;
-				block_value.footprint = *block;
+				block_value.footprint = block;
 				block_value.value = blocks.getTailPointer();
 				tl::rect_tree_insert(blockTree, block_value);
 			}
@@ -153,7 +143,6 @@ static void PopulateBlocksForLevel(
 			blockPosition.x += blockWidth;
 		}
 
-		block++;
 		blockLayoutForLevel++;
 	}
 }
