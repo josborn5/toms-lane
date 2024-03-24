@@ -55,8 +55,6 @@ static void StartNextLevel()
 	totalBlockAreaFootprint.halfSize = { 400.0f, 100.0f };
 	PopulateBlocksForLevel(
 		gamestate.level,
-		&gamestate.blocks[0],
-		blockCapacity,
 		gamestate.blocks_,
 		totalBlockAreaFootprint,
 		gamestate.blockTree

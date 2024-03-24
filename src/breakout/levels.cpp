@@ -30,8 +30,6 @@ MMMMMMMMMMMMM\n\
 
 static void PopulateBlocksForLevel(
 	int level,
-	Block* block_,
-	int blockArraySize,
 	tl::array<Block>& blocks,
 	tl::Rect<float>& blockAreaFootprint,
 	tl::rect_tree& blockTree
