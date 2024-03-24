@@ -19,9 +19,8 @@ TODO (in no particular order):
 #include "../tl-library.hpp"
 #include "../tl-application.hpp"
 #include "game.hpp"
-#include "sound.cpp"
-#include "update_state.cpp"
-#include "render.cpp"
+#include "update.hpp"
+#include "render.hpp"
 
 
 int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)

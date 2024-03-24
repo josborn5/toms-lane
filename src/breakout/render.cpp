@@ -1,3 +1,7 @@
+#include "../tl-application.hpp"
+#include "./game.hpp"
+
+
 const uint32_t BACKGROUND_COLOR = 0x551100;
 const uint32_t BALL_COLOR = 0x0000FF;
 const uint32_t BAT_COLOR = 0x00FF00;
@@ -67,7 +71,7 @@ static void updateRainbowColor()
 	rainbowColor = rgb_to_color(newR, newG, newB);
 }
 
-static void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& state)
+void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& state)
 {
 	if (state.mode != Started)
 	{

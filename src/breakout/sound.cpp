@@ -28,7 +28,7 @@ static const int samplesPerCallback = 512; // TODO: work out sound card latency 
 
 static int samplesPerMillisecond = samplesPerSecond / 1000;
 
-double getEnvelopeAmplitude(const Tone& tone)
+static double getEnvelopeAmplitude(const Tone& tone)
 {
 	ADSREnvelope envelope = tone.envelope;
 	int lastAttackSample = envelope.attackDuration;
@@ -64,7 +64,7 @@ double getEnvelopeAmplitude(const Tone& tone)
 	return attackGradient * (double)tone.sampleCounter;
 }
 
-void playTone(int toneHz, int durationInMilliseconds)
+static void playTone(int toneHz, int durationInMilliseconds)
 {
 
 	for (int i = 0; i < activeToneCount; i += 1)
@@ -93,7 +93,7 @@ void playTone(int toneHz, int durationInMilliseconds)
 
 }
 
-int UpdateSound(const tl::SoundBuffer& soundBuffer)
+static int UpdateSound(const tl::SoundBuffer& soundBuffer)
 {
 	int16_t* sampleOutput = soundBuffer.samples;
 	const double pi = 3.14159;

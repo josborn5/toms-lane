@@ -1,11 +1,13 @@
 #include <math.h>
 #include "math.cpp"
 #include "levels.cpp"
+#include "sound.cpp"
 
-const Boundary topBoundary = { Top, 720, -1.0f };
-const Boundary bottomBoundary = { Bottom, 0, 1.0f };
-const Boundary leftBoundary = { Left, 0, 1.0f };
-const Boundary rightBoundary = { Right, 1280, -1.0f };
+
+static const Boundary topBoundary = { Top, 720, -1.0f };
+static const Boundary bottomBoundary = { Bottom, 0, 1.0f };
+static const Boundary leftBoundary = { Left, 0, 1.0f };
+static const Boundary rightBoundary = { Right, 1280, -1.0f };
 
 static const int blockCapacity = 64;
 static tl::rect_node blockTreeStorage[blockCapacity];
@@ -61,7 +63,7 @@ static void StartNextLevel()
 	);
 }
 
-static void InitializeGameState()
+void InitializeGameState()
 {
 	gamestate.mode = ReadyToStart;
 	float worldHalfX = 0.5f * (float)rightBoundary.position;
@@ -206,7 +208,7 @@ static void UpdateBallAndBlockState(float dt)
 				blockCapacity
 			);
 
-			for (int x = 0; x < blockCapacity; x += 1)
+			for (int x = 0; x < gamestate.blocks.length(); x += 1)
 			{
 				gamestate.blocks.access(x).color = gamestate.blocks.get(x).ogColor;
 			}
@@ -359,7 +361,7 @@ static void UpdateBallAndBlockState(float dt)
 	}
 }
 
-static GameState& UpdateGameState(const tl::Input& input, float dt)
+GameState& UpdateGameState(const tl::Input& input, float dt)
 {
 	if (tl::IsReleased(input, tl::KEY_SPACE))
 	{
