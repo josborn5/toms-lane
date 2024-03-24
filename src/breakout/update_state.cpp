@@ -7,8 +7,9 @@ const Boundary bottomBoundary = { Bottom, 0, 1.0f };
 const Boundary leftBoundary = { Left, 0, 1.0f };
 const Boundary rightBoundary = { Right, 1280, -1.0f };
 
-static tl::rect_node blockTreeStorage[BLOCK_ARRAY_SIZE];
-static Block blocks[BLOCK_ARRAY_SIZE];
+static const int blockCapacity = 64;
+static tl::rect_node blockTreeStorage[blockCapacity];
+static Block blocks[blockCapacity];
 
 static const int ballCapacity = 3;
 static Ball balls[ballCapacity];
@@ -55,7 +56,7 @@ static void StartNextLevel()
 	PopulateBlocksForLevel(
 		gamestate.level,
 		&gamestate.blocks[0],
-		BLOCK_ARRAY_SIZE,
+		blockCapacity,
 		gamestate.blocks_,
 		totalBlockAreaFootprint,
 		gamestate.blockTree
@@ -72,7 +73,7 @@ static void InitializeGameState()
 	gamestate.world.position.x = worldHalfX;
 	gamestate.world.position.y = worldHalfY;
 
-	gamestate.blockTree.descendents = tl::array<tl::rect_node>(&blockTreeStorage[0], BLOCK_ARRAY_SIZE);
+	gamestate.blockTree.descendents = tl::array<tl::rect_node>(&blockTreeStorage[0], blockCapacity);
 	gamestate.blockTree.root.footprint = gamestate.world;
 
 	gamestate.player.halfSize.x = 100.0f;
@@ -83,7 +84,7 @@ static void InitializeGameState()
 	gamestate.player.velocity = tl::Vec2<float> { 0.0f, 0.0f };
 
 	gamestate.balls.initialize(&balls[0], ballCapacity);
-	gamestate.blocks_.initialize(&blocks[0], BLOCK_ARRAY_SIZE);
+	gamestate.blocks_.initialize(&blocks[0], blockCapacity);
 
 	gamestate.score = 0;
 	gamestate.lives = 3;
@@ -201,13 +202,13 @@ static void UpdateBallAndBlockState(float dt)
 				balls[i].halfSize.y + ballDistanceCoveredY + gamestate.blocks_.get(0).halfSize.y
 			 };
 
-			tl::rect_node_value candidateStorage[BLOCK_ARRAY_SIZE];
+			tl::rect_node_value candidateStorage[blockCapacity];
 			tl::array<tl::rect_node_value> candidates = tl::array<tl::rect_node_value>(
 				&candidateStorage[0],
-				BLOCK_ARRAY_SIZE
+				blockCapacity
 			);
 
-			for (int x = 0; x < BLOCK_ARRAY_SIZE; x += 1)
+			for (int x = 0; x < blockCapacity; x += 1)
 			{
 				gamestate.blocks_.access(x).color = gamestate.blocks_.get(x).ogColor;
 			}
@@ -398,7 +399,7 @@ static GameState& UpdateGameState(const tl::Input& input, float dt)
 
 	// Update power up gamestate
 	bool allBlocksGoneResult = true;
-	for (int i = 0; i < BLOCK_ARRAY_SIZE; i += 1)
+	for (int i = 0; i < blockCapacity; i += 1)
 	{
 		Block& blockRef = gamestate.blocks_.access(i);
 		Block* block = &blockRef;

@@ -1,8 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#define BLOCK_ARRAY_SIZE 64
-
 #include "../tl-library.hpp"
 
 
@@ -59,7 +57,7 @@ struct GameState {
 	tl::Rect<float> world;
 	tl::array<Ball> balls;
 	tl::array<Block> blocks_;
-	Block blocks[BLOCK_ARRAY_SIZE];
+	Block blocks[64];
 	bool isCometActive;
 	int level;
 	int score;
