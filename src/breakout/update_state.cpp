@@ -397,32 +397,31 @@ static GameState& UpdateGameState(const tl::Input& input, float dt)
 
 	// Update power up gamestate
 	bool allBlocksGoneResult = true;
-	for (int i = 0; i < blockCapacity; i += 1)
+	for (int i = 0; i < gamestate.blocks_.length(); i += 1)
 	{
-		Block& blockRef = gamestate.blocks_.access(i);
-		Block* block = &blockRef;
-		if (allBlocksGoneResult && block->exists)
+		Block& block = gamestate.blocks_.access(i);
+		if (allBlocksGoneResult && block.exists)
 		{
 			allBlocksGoneResult = false;
 		}
-		if (!block->powerUp.exists) continue;
+		if (!block.powerUp.exists) continue;
 
-		block->powerUp.position = tl::AddVectors(block->powerUp.position, tl::MultiplyVectorByScalar(block->powerUp.velocity, dt));
+		block.powerUp.position = tl::AddVectors(block.powerUp.position, tl::MultiplyVectorByScalar(block.powerUp.velocity, dt));
 
 		// Can get away with a super simple position check for the power up falling off screen here
-		if (block->powerUp.position.y < bottomBoundary.position)
+		if (block.powerUp.position.y < bottomBoundary.position)
 		{
-			block->powerUp.exists = false;
+			block.powerUp.exists = false;
 		}
 		else
 		{
-			tl::CollisionResult powerUpCollision = tl::CheckCollisionBetweenRects(gamestate.player, block->powerUp, dt);
+			tl::CollisionResult powerUpCollision = tl::CheckCollisionBetweenRects(gamestate.player, block.powerUp, dt);
 
 			if (powerUpCollision.collisions[1].side != tl::None)
 			{
-				block->powerUp.exists = false;
+				block.powerUp.exists = false;
 
-				switch (block->powerUp.type)
+				switch (block.powerUp.type)
 				{
 					case Comet:
 						gamestate.isCometActive = true;
