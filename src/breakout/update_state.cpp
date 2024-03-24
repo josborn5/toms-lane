@@ -194,10 +194,10 @@ static void UpdateBallAndBlockState(float dt)
 			// Blocks are stored in the quad tree by their center position.
 			// So the footpring to check needs to be at least the halfSize
 			// of the block.
-
+			Block firstBlock = gamestate.blocks_.get(0);
 			ballFootprint.halfSize = { 
-				balls[i].halfSize.x + ballDistanceCoveredX + gamestate.blocks_.get(0).halfSize.x,
-				balls[i].halfSize.y + ballDistanceCoveredY + gamestate.blocks_.get(0).halfSize.y
+				balls[i].halfSize.x + ballDistanceCoveredX + firstBlock.halfSize.x,
+				balls[i].halfSize.y + ballDistanceCoveredY + firstBlock.halfSize.y
 			 };
 
 			tl::rect_node_value candidateStorage[blockCapacity];
