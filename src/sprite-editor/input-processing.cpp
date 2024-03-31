@@ -1,7 +1,19 @@
 #include "../tl-library.hpp"
 #include "./editor.hpp"
 
+#define COMMAND_BUFFER_SIZE 15
+#define DISPLAY_BUFFER_SIZE 15
+
 static bool hasCopied = false;
+static tl::MemorySpace spriteMemory;
+static tl::MemorySpace paletteMemory;
+tl::GameMemory appMemory;
+
+static char commandBuffer[COMMAND_BUFFER_SIZE];
+static char displayBuffer[DISPLAY_BUFFER_SIZE];
+tl::array<char> commands = tl::array<char>(commandBuffer, COMMAND_BUFFER_SIZE);
+tl::array<char> display = tl::array<char>(displayBuffer, DISPLAY_BUFFER_SIZE);
+
 
 static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprite, int& selectedPixelIndex)
 {
@@ -131,7 +143,6 @@ static char GetCharForDigitKey(int key)
 
 void ClearCommandBuffer(EditorState& state)
 {
-	tl::array<char> commands = *state.commandBuffer;
 	for (int i = 0; i < commands.capacity(); i += 1)
 	{
 		commands.access(i) = '\0';
@@ -141,7 +152,6 @@ void ClearCommandBuffer(EditorState& state)
 
 void ClearDisplayBuffer(EditorState& state)
 {
-	tl::array<char> display = *state.displayBuffer;
 	for (int i = 0; i < display.capacity(); i += 1)
 	{
 		display.access(i) = '\0';
@@ -149,12 +159,58 @@ void ClearDisplayBuffer(EditorState& state)
 	}
 }
 
-
-void ProcessKeyboardInput(const tl::Input& input, EditorState& state, const tl::GameMemory& gameMemory, const tl::MemorySpace& spriteMemory)
+int Initialize(const tl::GameMemory& gameMemory, EditorState& state)
 {
-	tl::array<char>& commands = *state.commandBuffer;
-	tl::array<char>& display = *state.displayBuffer;
+	state.commandBuffer = &commands;
+	state.displayBuffer = &display;
 
+	// Define memory slices
+	tl::MemorySpace perm = gameMemory.permanent;
+	const uint64_t oneKiloByteInBytes = 1024;
+	const uint64_t oneMegaByteInBytes = oneKiloByteInBytes * 1024;
+	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, perm);
+	spriteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, perm);
+	tl::MemorySpace temp = gameMemory.transient;
+	tl::MemorySpace fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
+	tl::MemorySpace tempMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
+
+	// Load file
+	if (state.filePath)
+	{
+		uint64_t fileSize = 0;
+		if (tl::file_interface_size_get(state.filePath, fileSize) != tl::Success)
+		{
+			return 1;
+		}
+
+		if (tl::file_interface_read(state.filePath, fileReadMemory) != tl::Success)
+		{
+			return 1;
+		}
+	}
+	else
+	{
+		// Initialize default sprite
+		fileReadMemory.content = "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0";
+	}
+
+	ClearCommandBuffer(state);
+	ClearDisplayBuffer(state);
+
+	InitializeLayout(state);
+	InitializePalettes(paletteMemory, tempMemory, state);
+
+	char* spriteCharArray = (char*)fileReadMemory.content;
+	state.sprite.content = (tl::Color*)spriteMemory.content;
+	tl::LoadSpriteC(spriteCharArray, tempMemory, state.sprite);
+
+	SizeGridForSprite(state.sprite);
+	return 0;
+}
+
+
+void ProcessKeyboardInput(const tl::Input& input, EditorState& state)
+{
 	if (!input.buttons[tl::KEY_CTRL].isDown)
 	{
 		// Update command buffer from input
@@ -196,12 +252,12 @@ void ProcessKeyboardInput(const tl::Input& input, EditorState& state, const tl::
 					char* displayString = &display.access(0);
 					if (commands.get(1) == '\0') // save to current filePath
 					{
-						Save(gameMemory, state.sprite, displayString, state);
+						Save(appMemory, state.sprite, displayString, state);
 					}
 					else if (commands.get(1) == ' ' && commands.get(2)) // save to new filePath
 					{
 						state.filePath = &commands.access(2);
-						Save(gameMemory, state.sprite, displayString, state);
+						Save(appMemory, state.sprite, displayString, state);
 					}
 					break;
 				}
@@ -226,7 +282,7 @@ void ProcessKeyboardInput(const tl::Input& input, EditorState& state, const tl::
 				case 'E': // edit color of selected pixel
 				{
 					char* pointer = tl::GetNextNumberChar(&commands.access(1));
-					tl::MemorySpace transient = gameMemory.transient;
+					tl::MemorySpace transient = appMemory.transient;
 					ParseColorFromCharArray(pointer, transient, state.sprite.content[state.selectedPixelIndex]);
 					ClearCommandBuffer(state);
 					break;
