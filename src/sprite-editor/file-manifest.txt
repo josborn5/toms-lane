@@ -1,0 +1,3 @@
+src\sprite-editor\state.cpp
+src\sprite-editor\sprite-editor.cpp
+

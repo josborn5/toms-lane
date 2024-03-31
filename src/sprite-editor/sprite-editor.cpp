@@ -2,12 +2,7 @@
 #include "../tl-library.hpp"
 #include "./editor.hpp"
 
-#include "./sprite-operations.cpp"
-#include "./sprite-commands.cpp"
-#include "./render.cpp"
-#include "./sprite-editor-palettes.cpp"
-#include "./input-processing.cpp"
-
+#include "./state.hpp"
 
 
 int updateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
@@ -32,9 +27,6 @@ int tl::main(char* commandLine)
 	settings.title = "Sprite Editor";
 	settings.width = 800;
 	settings.height = 600;
-
-	state.windowWidth = 800;
-	state.windowHeight = 600;
 
 	int windowOpenResult = tl::OpenWindow(settings);
 	if (windowOpenResult != 0)

@@ -1,3 +1,6 @@
+#include "../tl-application.hpp"
+#include "../tl-library.hpp"
+
 // Returns the number of chars
 int SpriteCToCharString(const tl::SpriteC& sprite, tl::MemorySpace memory)
 {

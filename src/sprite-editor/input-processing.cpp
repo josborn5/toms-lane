@@ -159,6 +159,8 @@ int Initialize(const tl::GameMemory& gameMemory)
 {
 	state.commandBuffer = &commands;
 	state.displayBuffer = &display;
+	state.windowWidth = 800;
+	state.windowHeight = 600;
 
 	// Define memory slices
 	tl::MemorySpace perm = gameMemory.permanent;

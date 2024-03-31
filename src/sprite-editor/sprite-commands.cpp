@@ -1,3 +1,5 @@
+#include "./editor.hpp"
+
 void Save(
 	const tl::GameMemory& gameMemory,
 	const tl::SpriteC& sprite,

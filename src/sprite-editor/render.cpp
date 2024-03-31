@@ -147,7 +147,7 @@ void InitializeLayout(const EditorState& state)
 	};
 }
 
-void Render(const tl::RenderBuffer &renderBuffer, const EditorState state)
+void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 {
 	// Render
 	const uint32_t commandBackgroundColor = 0x000000;

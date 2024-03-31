@@ -1,0 +1,6 @@
+#include "./sprite-operations.cpp"
+#include "./sprite-commands.cpp"
+#include "./render.cpp"
+#include "./sprite-editor-palettes.cpp"
+#include "./input-processing.cpp"
+#include "./state.hpp"
