@@ -9,6 +9,7 @@ static tl::MemorySpace spriteMemory;
 static tl::MemorySpace paletteMemory;
 tl::GameMemory appMemory;
 
+EditorState state;
 static char commandBuffer[COMMAND_BUFFER_SIZE];
 static char displayBuffer[DISPLAY_BUFFER_SIZE];
 tl::array<char> commands = tl::array<char>(commandBuffer, COMMAND_BUFFER_SIZE);
@@ -53,20 +54,15 @@ static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprit
 	}
 }
 
-void UpdateCurrentColor(EditorState& state)
-{
-	state.currentColor = state.palette->content[state.selectedPalettePixelIndex];
-}
-
-void ProcessCursorMovementInput(const tl::Input &input, EditorState& state)
+void ProcessCursorMovementInput(const tl::Input &input)
 {
 	tl::SpriteC& activeSprite = (state.activeControl == SpriteGrid) ? state.sprite : *state.palette;
 	int& activeIndex = (state.activeControl == SpriteGrid) ? state.selectedPixelIndex : state.selectedPalettePixelIndex;
 	MoveCursorForSprite(input, activeSprite, activeIndex);
-	UpdateCurrentColor(state);
+	state.currentColor = state.palette->content[state.selectedPalettePixelIndex];
 }
 
-void ProcessActiveControl(const tl::Input &input, EditorState& state)
+void ProcessActiveControl(const tl::Input &input)
 {
 	if (!input.buttons[tl::KEY_CTRL].isDown)
 	{
@@ -141,7 +137,7 @@ static char GetCharForDigitKey(int key)
 	return digitKeyMap[relativeIndex];
 }
 
-void ClearCommandBuffer(EditorState& state)
+void ClearCommandBuffer()
 {
 	for (int i = 0; i < commands.capacity(); i += 1)
 	{
@@ -150,7 +146,7 @@ void ClearCommandBuffer(EditorState& state)
 	}
 }
 
-void ClearDisplayBuffer(EditorState& state)
+void ClearDisplayBuffer()
 {
 	for (int i = 0; i < display.capacity(); i += 1)
 	{
@@ -159,7 +155,7 @@ void ClearDisplayBuffer(EditorState& state)
 	}
 }
 
-int Initialize(const tl::GameMemory& gameMemory, EditorState& state)
+int Initialize(const tl::GameMemory& gameMemory)
 {
 	state.commandBuffer = &commands;
 	state.displayBuffer = &display;
@@ -194,8 +190,8 @@ int Initialize(const tl::GameMemory& gameMemory, EditorState& state)
 		fileReadMemory.content = "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0";
 	}
 
-	ClearCommandBuffer(state);
-	ClearDisplayBuffer(state);
+	ClearCommandBuffer();
+	ClearDisplayBuffer();
 
 	InitializeLayout(state);
 	InitializePalettes(paletteMemory, tempMemory, state);
@@ -209,7 +205,7 @@ int Initialize(const tl::GameMemory& gameMemory, EditorState& state)
 }
 
 
-void ProcessKeyboardInput(const tl::Input& input, EditorState& state)
+void ProcessKeyboardInput(const tl::Input& input)
 {
 	if (!input.buttons[tl::KEY_CTRL].isDown)
 	{
@@ -241,7 +237,7 @@ void ProcessKeyboardInput(const tl::Input& input, EditorState& state)
 		}
 		if (tl::IsReleased(input, tl::KEY_ESCAPE))
 		{
-			ClearCommandBuffer(state);
+			ClearCommandBuffer();
 		}
 		else if (tl::IsReleased(input, tl::KEY_ENTER))
 		{
@@ -284,14 +280,14 @@ void ProcessKeyboardInput(const tl::Input& input, EditorState& state)
 					char* pointer = tl::GetNextNumberChar(&commands.access(1));
 					tl::MemorySpace transient = appMemory.transient;
 					ParseColorFromCharArray(pointer, transient, state.sprite.content[state.selectedPixelIndex]);
-					ClearCommandBuffer(state);
+					ClearCommandBuffer();
 					break;
 				}
 				case 'I': // inspect color of selected pixel
 				{
 					if (commands.get(1) == '\0')
 					{
-						ClearDisplayBuffer(state);
+						ClearDisplayBuffer();
 						tl::Color selectedColor = state.sprite.content[state.selectedPixelIndex];
 
 						int color = (int)(selectedColor.r * 255.0f);
@@ -366,7 +362,7 @@ void ProcessKeyboardInput(const tl::Input& input, EditorState& state)
 					break;
 				}
 			}
-			ClearCommandBuffer(state);
+			ClearCommandBuffer();
 		}
 	}
 	else
@@ -375,7 +371,7 @@ void ProcessKeyboardInput(const tl::Input& input, EditorState& state)
 		{
 			hasCopied = true;
 			state.copiedColor = state.sprite.content[state.selectedPixelIndex];
-			ClearDisplayBuffer(state);
+			ClearDisplayBuffer();
 			display.append('C');
 			display.append('O');
 			display.append('P');
@@ -384,7 +380,7 @@ void ProcessKeyboardInput(const tl::Input& input, EditorState& state)
 		else if (hasCopied && tl::IsReleased(input, tl::KEY_V))
 		{
 			state.sprite.content[state.selectedPixelIndex] = state.copiedColor;
-			ClearDisplayBuffer(state);
+			ClearDisplayBuffer();
 			display.append('P');
 			display.append('A');
 			display.append('S');
@@ -392,4 +388,33 @@ void ProcessKeyboardInput(const tl::Input& input, EditorState& state)
 			display.append('E');
 		}
 	}
+}
+
+int InitializeState(char* commandLine)
+{
+	if (*commandLine)
+	{
+		state.filePath = commandLine;
+	}
+
+	tl::InitializeMemory(
+		2,
+		2,
+		appMemory
+	);
+
+	return Initialize(appMemory);
+}
+
+const EditorState& GetLatestState(const tl::Input& input)
+{
+	ProcessActiveControl(input);
+	ProcessCursorMovementInput(input);
+
+	state.mouse.x = input.mouse.x;
+	state.mouse.y = input.mouse.y;
+
+	ProcessKeyboardInput(input);
+
+	return state;
 }

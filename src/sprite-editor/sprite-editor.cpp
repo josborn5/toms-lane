@@ -9,19 +9,11 @@
 #include "./input-processing.cpp"
 
 
-EditorState state;
 
-int updateAndRender(const tl::GameMemory& gameMemory, const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
+int updateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
-	ProcessActiveControl(input, state);
-	ProcessCursorMovementInput(input, state);
-
-	state.mouse.x = input.mouse.x;
-	state.mouse.y = input.mouse.y;
-
-	ProcessKeyboardInput(input, state);
-
-	Render(renderBuffer, state);
+	EditorState latestState = GetLatestState(input);
+	Render(renderBuffer, latestState);
 
 	return 0;
 }
@@ -29,7 +21,7 @@ int updateAndRender(const tl::GameMemory& gameMemory, const tl::Input& input, co
 int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
 	float dt = (float)dtInMilliseconds / 1000.0f;
-	return updateAndRender(appMemory, input, renderBuffer, dt);
+	return updateAndRender(input, renderBuffer, dt);
 }
 
 int tl::main(char* commandLine)
@@ -44,24 +36,13 @@ int tl::main(char* commandLine)
 	state.windowWidth = 800;
 	state.windowHeight = 600;
 
-	if (*commandLine)
-	{
-		state.filePath = commandLine;
-	}
-
 	int windowOpenResult = tl::OpenWindow(settings);
 	if (windowOpenResult != 0)
 	{
 		return windowOpenResult;
 	}
 
-	tl::InitializeMemory(
-		2,
-		2,
-		appMemory
-	);
-
-	Initialize(appMemory, state);
+	InitializeState(commandLine);
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
