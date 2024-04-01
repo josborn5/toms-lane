@@ -1,5 +1,6 @@
 #include "../tl-library.hpp"
 #include "./editor.hpp"
+#include "./render.hpp"
 
 #define PALETTE_COUNT 4
 

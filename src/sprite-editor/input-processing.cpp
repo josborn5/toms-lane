@@ -1,5 +1,6 @@
 #include "../tl-library.hpp"
 #include "./editor.hpp"
+#include "./render.hpp"
 
 #define COMMAND_BUFFER_SIZE 15
 #define DISPLAY_BUFFER_SIZE 15

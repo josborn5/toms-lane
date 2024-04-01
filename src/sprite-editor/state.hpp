@@ -3,7 +3,6 @@
 
 int InitializeState(char* commandLine);
 const EditorState& GetLatestState(const tl::Input& input);
-void Render(const tl::RenderBuffer& renderBuffer, const EditorState& latestState);
 
 #endif 
 
