@@ -18,7 +18,6 @@ struct EditorState
 	tl::array<char>* commandBuffer;
 	tl::array<char>* displayBuffer;
 	EditorControl activeControl = SpriteGrid;
-	tl::Color copiedColor;
 	tl::Vec2<int> mouse = { 0, 0 };
 	char* filePath;
 	int windowWidth;

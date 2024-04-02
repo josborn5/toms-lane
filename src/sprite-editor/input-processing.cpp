@@ -9,6 +9,7 @@ static bool hasCopied = false;
 static tl::MemorySpace spriteMemory;
 static tl::MemorySpace paletteMemory;
 static tl::Color currentColor;
+static tl::Color copiedColor;
 
 tl::GameMemory appMemory;
 
@@ -375,7 +376,7 @@ void ProcessKeyboardInput(const tl::Input& input)
 		if (tl::IsReleased(input, tl::KEY_C))
 		{
 			hasCopied = true;
-			state.copiedColor = state.sprite.content[state.selectedPixelIndex];
+			copiedColor = state.sprite.content[state.selectedPixelIndex];
 			ClearDisplayBuffer();
 			display.append('C');
 			display.append('O');
@@ -384,7 +385,7 @@ void ProcessKeyboardInput(const tl::Input& input)
 		}
 		else if (hasCopied && tl::IsReleased(input, tl::KEY_V))
 		{
-			state.sprite.content[state.selectedPixelIndex] = state.copiedColor;
+			state.sprite.content[state.selectedPixelIndex] = copiedColor;
 			ClearDisplayBuffer();
 			display.append('P');
 			display.append('A');
