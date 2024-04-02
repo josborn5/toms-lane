@@ -4,14 +4,14 @@ void Save(
 	const tl::GameMemory& gameMemory,
 	const tl::SpriteC& sprite,
 	char* displayBuffer,
-	const EditorState& state
+	char* filePath
 ) {
 	// Serialize to string
 	int charCount = SpriteCToCharString(sprite, gameMemory.transient);
 	tl::MemorySpace toSaveToFile;
 	toSaveToFile.content = gameMemory.transient.content;
 	toSaveToFile.sizeInBytes = charCount * sizeof(char);
-	if (tl::file_interface_write(state.filePath, toSaveToFile) == tl::Success)
+	if (tl::file_interface_write(filePath, toSaveToFile) == tl::Success)
 	{
 		displayBuffer[0] = 'S';
 		displayBuffer[1] = 'A';

@@ -11,6 +11,7 @@ static tl::MemorySpace spriteMemory;
 static tl::MemorySpace paletteMemory;
 static tl::Color currentColor;
 static tl::Color copiedColor;
+static char* filePath;
 
 tl::GameMemory appMemory;
 
@@ -178,15 +179,15 @@ int Initialize(const tl::GameMemory& gameMemory)
 	tl::MemorySpace tempMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
 
 	// Load file
-	if (state.filePath)
+	if (filePath)
 	{
 		uint64_t fileSize = 0;
-		if (tl::file_interface_size_get(state.filePath, fileSize) != tl::Success)
+		if (tl::file_interface_size_get(filePath, fileSize) != tl::Success)
 		{
 			return 1;
 		}
 
-		if (tl::file_interface_read(state.filePath, fileReadMemory) != tl::Success)
+		if (tl::file_interface_read(filePath, fileReadMemory) != tl::Success)
 		{
 			return 1;
 		}
@@ -255,12 +256,12 @@ void ProcessKeyboardInput(const tl::Input& input)
 					char* displayString = &display.access(0);
 					if (commands.get(1) == '\0') // save to current filePath
 					{
-						Save(appMemory, state.sprite, displayString, state);
+						Save(appMemory, state.sprite, displayString, filePath);
 					}
 					else if (commands.get(1) == ' ' && commands.get(2)) // save to new filePath
 					{
-						state.filePath = &commands.access(2);
-						Save(appMemory, state.sprite, displayString, state);
+						filePath = &commands.access(2);
+						Save(appMemory, state.sprite, displayString, filePath);
 					}
 					break;
 				}
@@ -401,7 +402,7 @@ int InitializeState(char* commandLine)
 {
 	if (*commandLine)
 	{
-		state.filePath = commandLine;
+		filePath = commandLine;
 	}
 
 	tl::InitializeMemory(

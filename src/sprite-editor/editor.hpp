@@ -19,7 +19,6 @@ struct EditorState
 	tl::array<char>* displayBuffer;
 	EditorControl activeControl = SpriteGrid;
 	tl::Vec2<int> mouse = { 0, 0 };
-	char* filePath;
 	int windowWidth;
 	int windowHeight;
 };
