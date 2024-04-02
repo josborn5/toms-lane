@@ -75,12 +75,13 @@ char* paletteContents[PALETTE_COUNT] = {
 	fantasyConsolePaletteContent
 };
 
-tl::SpriteC palettes[PALETTE_COUNT];
-tl::SpriteC rgrPalette;
+static tl::SpriteC palettes[PALETTE_COUNT];
+static tl::SpriteC rgrPalette;
+static int selectedPaletteIndex = 0;
 
 static void SelectPalette(EditorState& state)
 {
-	state.palette = &palettes[state.selectedPaletteIndex];
+	state.palette = &palettes[selectedPaletteIndex];
 	state.selectedPalettePixelIndex = 0;
 	SizePalette(*state.palette);
 }
@@ -99,7 +100,7 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 
 void SwitchPalette(EditorState& state)
 {
-	int nextPaletteIndex = state.selectedPaletteIndex += 1;
-	state.selectedPaletteIndex = (nextPaletteIndex >= PALETTE_COUNT) ? 0 : nextPaletteIndex;
+	int nextPaletteIndex = selectedPaletteIndex += 1;
+	selectedPaletteIndex = (nextPaletteIndex >= PALETTE_COUNT) ? 0 : nextPaletteIndex;
 	SelectPalette(state);
 }
