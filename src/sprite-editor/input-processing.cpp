@@ -8,6 +8,8 @@
 static bool hasCopied = false;
 static tl::MemorySpace spriteMemory;
 static tl::MemorySpace paletteMemory;
+static tl::Color currentColor;
+
 tl::GameMemory appMemory;
 
 EditorState state;
@@ -60,7 +62,7 @@ void ProcessCursorMovementInput(const tl::Input &input)
 	tl::SpriteC& activeSprite = (state.activeControl == SpriteGrid) ? state.sprite : *state.palette;
 	int& activeIndex = (state.activeControl == SpriteGrid) ? state.selectedPixelIndex : state.selectedPalettePixelIndex;
 	MoveCursorForSprite(input, activeSprite, activeIndex);
-	state.currentColor = state.palette->content[state.selectedPalettePixelIndex];
+	currentColor = state.palette->content[state.selectedPalettePixelIndex];
 }
 
 void ProcessActiveControl(const tl::Input &input)
@@ -325,7 +327,7 @@ void ProcessKeyboardInput(const tl::Input& input)
 				{
 					if (state.activeControl == SpriteGrid)
 					{
-						state.sprite.content[state.selectedPixelIndex] = state.currentColor;
+						state.sprite.content[state.selectedPixelIndex] = currentColor;
 					}
 					break;
 				}
