@@ -7,7 +7,7 @@
 void Save(
 	const tl::GameMemory& gameMemory,
 	const tl::SpriteC& sprite,
-	char* displayBuffer,
+	tl::array<char>& displayBuffer,
 	char* filePath
 );
 int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory);

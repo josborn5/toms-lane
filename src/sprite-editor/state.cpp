@@ -61,7 +61,7 @@ static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprit
 	}
 }
 
-void ProcessCursorMovementInput(const tl::Input &input)
+static void ProcessCursorMovementInput(const tl::Input &input)
 {
 	tl::SpriteC& activeSprite = (state.activeControl == SpriteGrid) ? state.sprite : *state.palette;
 	int& activeIndex = (state.activeControl == SpriteGrid) ? state.selectedPixelIndex : state.selectedPalettePixelIndex;
@@ -69,7 +69,7 @@ void ProcessCursorMovementInput(const tl::Input &input)
 	currentColor = state.palette->content[state.selectedPalettePixelIndex];
 }
 
-void ProcessActiveControl(const tl::Input &input)
+static void ProcessActiveControl(const tl::Input &input)
 {
 	if (!input.buttons[tl::KEY_CTRL].isDown)
 	{
@@ -144,7 +144,7 @@ static char GetCharForDigitKey(int key)
 	return digitKeyMap[relativeIndex];
 }
 
-void ClearCommandBuffer()
+static void ClearCommandBuffer()
 {
 	for (int i = 0; i < commands.capacity(); i += 1)
 	{
@@ -153,7 +153,7 @@ void ClearCommandBuffer()
 	}
 }
 
-void ClearDisplayBuffer()
+static void ClearDisplayBuffer()
 {
 	for (int i = 0; i < display.capacity(); i += 1)
 	{
@@ -214,7 +214,7 @@ int Initialize(const tl::GameMemory& gameMemory)
 }
 
 
-void ProcessKeyboardInput(const tl::Input& input)
+static void ProcessKeyboardInput(const tl::Input& input)
 {
 	if (!input.buttons[tl::KEY_CTRL].isDown)
 	{
@@ -254,15 +254,14 @@ void ProcessKeyboardInput(const tl::Input& input)
 			{
 				case 'S': // save
 				{
-					char* displayString = &display.access(0);
 					if (commands.get(1) == '\0') // save to current filePath
 					{
-						Save(appMemory, state.sprite, displayString, filePath);
+						Save(appMemory, state.sprite, display, filePath);
 					}
 					else if (commands.get(1) == ' ' && commands.get(2)) // save to new filePath
 					{
 						filePath = &commands.access(2);
-						Save(appMemory, state.sprite, displayString, filePath);
+						Save(appMemory, state.sprite, display, filePath);
 					}
 					break;
 				}
