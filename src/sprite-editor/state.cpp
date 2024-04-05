@@ -213,167 +213,146 @@ int Initialize(const tl::GameMemory& gameMemory)
 	return 0;
 }
 
-
-static void ProcessKeyboardInput(const tl::Input& input)
+static void ExecuteCurrentCommand()
 {
-	if (!input.buttons[tl::KEY_CTRL].isDown)
+	switch (commands.get(0))
 	{
-		// Update command buffer from input
-		if (commands.length() < commands.capacity())
+		case 'S': // save
 		{
-			for (int key = tl::KEY_A; key <= tl::KEY_Z; key += 1)
+			if (commands.get(1) == '\0') // save to current filePath
 			{
-				if (tl::IsReleased(input, key))
-				{
-					char commandChar = GetCharForAlphaKey(key);
-					commands.append(commandChar);
-				}
+				Save(appMemory, state.sprite, display, filePath);
 			}
-
-			for (int key = tl::KEY_0; key <= tl::KEY_9; key += 1)
+			else if (commands.get(1) == ' ' && commands.get(2)) // save to new filePath
 			{
-				if (tl::IsReleased(input, key))
-				{
-					char commandChar = GetCharForDigitKey(key);
-					commands.append(commandChar);
-				}
+				filePath = &commands.access(2);
+				Save(appMemory, state.sprite, display, filePath);
 			}
-
-			if (tl::IsReleased(input, tl::KEY_SPACE))
-			{
-				commands.append(' ');
-			}
+			break;
 		}
-		if (tl::IsReleased(input, tl::KEY_ESCAPE))
+		case 'R': // append row
 		{
-			ClearCommandBuffer();
-		}
-		else if (tl::IsReleased(input, tl::KEY_ENTER))
-		{
-			switch (commands.get(0))
+			if (commands.get(1) == '\0')
 			{
-				case 'S': // save
-				{
-					if (commands.get(1) == '\0') // save to current filePath
-					{
-						Save(appMemory, state.sprite, display, filePath);
-					}
-					else if (commands.get(1) == ' ' && commands.get(2)) // save to new filePath
-					{
-						filePath = &commands.access(2);
-						Save(appMemory, state.sprite, display, filePath);
-					}
-					break;
-				}
-				case 'R': // append row
-				{
-					if (commands.get(1) == '\0')
-					{
-						AppendRowToSpriteC(state.sprite, spriteMemory); // TODO: make the MemorySpace a field of the SpriteC struct. The pointer to the sprite content is shared between the two - make it a single pointer owner!
-						SizeGridForSprite(state.sprite);
-					}
-					break;
-				}
-				case 'C': // append column
-				{
-					if (commands.get(1) == '\0')
-					{
-						AppendColumnToSpriteC(state.sprite, spriteMemory);
-						SizeGridForSprite(state.sprite);
-					}
-					break;
-				}
-				case 'E': // edit color of selected pixel
-				{
-					char* pointer = tl::GetNextNumberChar(&commands.access(1));
-					tl::MemorySpace transient = appMemory.transient;
-					ParseColorFromCharArray(pointer, transient, state.sprite.content[state.selectedPixelIndex]);
-					ClearCommandBuffer();
-					break;
-				}
-				case 'I': // inspect color of selected pixel
-				{
-					if (commands.get(1) == '\0')
-					{
-						ClearDisplayBuffer();
-						tl::Color selectedColor = state.sprite.content[state.selectedPixelIndex];
-
-						int color = (int)(selectedColor.r * 255.0f);
-						char* cursor = &display.access(0);
-						tl::IntToCharString(color, cursor);
-
-						while (*cursor) cursor++;
-						*cursor = ' ';
-						cursor++;
-
-						color = (int)(selectedColor.g * 255.0f);
-						tl::IntToCharString(color, cursor);
-
-						while (*cursor) cursor++;
-						*cursor = ' ';
-						cursor++;
-
-						color = (int)(selectedColor.b * 255.0f);
-						tl::IntToCharString(color, cursor);
-					}
-					break;
-				}
-				case 'P': // switch palette
-				{
-					if (commands.get(1) == '\0')
-					{
-						SwitchPalette(state);
-					}
-					break;
-				}
-				case '\0': // Apply active color from palette
-				{
-					if (state.activeControl == SpriteGrid)
-					{
-						state.sprite.content[state.selectedPixelIndex] = currentColor;
-					}
-					break;
-				}
-				case 'D': // Delete
-				{
-					if (commands.get(1) == 'R' && commands.get(2) == '\0' && state.sprite.height > 1)
-					{
-						// Get start and end index of row
-						int rowIndex = (int)(state.selectedPixelIndex / state.sprite.width);
-						unsigned int startDeleteIndex = rowIndex * state.sprite.width;
-						unsigned int endDeleteIndex = rowIndex + state.sprite.width - 1;
-						unsigned int spriteLength = state.sprite.width * state.sprite.height;
-
-						// Call tl::DeleteFromArray with the sprite content
-						tl::DeleteFromArray(state.sprite.content, startDeleteIndex, endDeleteIndex, spriteLength);
-
-						// Subtract 1 from the sprite height
-						state.sprite.height -= 1;
-
-						SizeGridForSprite(state.sprite);
-					}
-					else if (commands.get(1) == 'C' && commands.get(2) == '\0' && state.sprite.width > 1)
-					{
-						// get the column index
-						unsigned int columnIndex = state.selectedPixelIndex % state.sprite.width;
-						unsigned int spriteLength = state.sprite.width * state.sprite.height;
-						for (int i = state.sprite.height - 1; i >= 0; i -= 1)
-						{
-							unsigned int deleteIndex = (i * state.sprite.width) + columnIndex;
-							tl::DeleteFromArray(state.sprite.content, deleteIndex, deleteIndex, spriteLength);
-							spriteLength -= 1;
-						}
-						state.sprite.width -= 1;
-
-						SizeGridForSprite(state.sprite);
-					}
-					break;
-				}
+				AppendRowToSpriteC(state.sprite, spriteMemory); // TODO: make the MemorySpace a field of the SpriteC struct. The pointer to the sprite content is shared between the two - make it a single pointer owner!
+				SizeGridForSprite(state.sprite);
 			}
+			break;
+		}
+		case 'C': // append column
+		{
+			if (commands.get(1) == '\0')
+			{
+				AppendColumnToSpriteC(state.sprite, spriteMemory);
+				SizeGridForSprite(state.sprite);
+			}
+			break;
+		}
+		case 'E': // edit color of selected pixel
+		{
+			char* pointer = tl::GetNextNumberChar(&commands.access(1));
+			tl::MemorySpace transient = appMemory.transient;
+			ParseColorFromCharArray(pointer, transient, state.sprite.content[state.selectedPixelIndex]);
 			ClearCommandBuffer();
+			break;
+		}
+		case 'I': // inspect color of selected pixel
+		{
+			if (commands.get(1) == '\0')
+			{
+				ClearDisplayBuffer();
+				tl::Color selectedColor = state.sprite.content[state.selectedPixelIndex];
+
+				int color = (int)(selectedColor.r * 255.0f);
+				char* cursor = &display.access(0);
+				tl::IntToCharString(color, cursor);
+
+				while (*cursor) cursor++;
+				*cursor = ' ';
+				cursor++;
+
+				color = (int)(selectedColor.g * 255.0f);
+				tl::IntToCharString(color, cursor);
+
+				while (*cursor) cursor++;
+				*cursor = ' ';
+				cursor++;
+
+				color = (int)(selectedColor.b * 255.0f);
+				tl::IntToCharString(color, cursor);
+			}
+			break;
+		}
+		case 'P': // switch palette
+		{
+			if (commands.get(1) == '\0')
+			{
+				SwitchPalette(state);
+			}
+			break;
+		}
+		case '\0': // Apply active color from palette
+		{
+			if (state.activeControl == SpriteGrid)
+			{
+				state.sprite.content[state.selectedPixelIndex] = currentColor;
+			}
+			break;
+		}
+		case 'D': // Delete
+		{
+			if (commands.get(1) == 'R' && commands.get(2) == '\0' && state.sprite.height > 1)
+			{
+				// Get start and end index of row
+				int rowIndex = (int)(state.selectedPixelIndex / state.sprite.width);
+				unsigned int startDeleteIndex = rowIndex * state.sprite.width;
+				unsigned int endDeleteIndex = rowIndex + state.sprite.width - 1;
+				unsigned int spriteLength = state.sprite.width * state.sprite.height;
+
+				// Call tl::DeleteFromArray with the sprite content
+				tl::DeleteFromArray(state.sprite.content, startDeleteIndex, endDeleteIndex, spriteLength);
+
+				// Subtract 1 from the sprite height
+				state.sprite.height -= 1;
+
+				SizeGridForSprite(state.sprite);
+			}
+			else if (commands.get(1) == 'C' && commands.get(2) == '\0' && state.sprite.width > 1)
+			{
+				// get the column index
+				unsigned int columnIndex = state.selectedPixelIndex % state.sprite.width;
+				unsigned int spriteLength = state.sprite.width * state.sprite.height;
+				for (int i = state.sprite.height - 1; i >= 0; i -= 1)
+				{
+					unsigned int deleteIndex = (i * state.sprite.width) + columnIndex;
+					tl::DeleteFromArray(state.sprite.content, deleteIndex, deleteIndex, spriteLength);
+					spriteLength -= 1;
+				}
+				state.sprite.width -= 1;
+
+				SizeGridForSprite(state.sprite);
+			}
+			break;
 		}
 	}
-	else
+	ClearCommandBuffer();
+}
+
+static bool ProcessImmediateActionKeys(const tl::Input& input)
+{
+	if (tl::IsReleased(input, tl::KEY_ESCAPE))
+	{
+		ClearCommandBuffer();
+		return true;
+	}
+
+	if (tl::IsReleased(input, tl::KEY_ENTER))
+	{
+		ExecuteCurrentCommand();
+		return true;
+	}
+
+	if (input.buttons[tl::KEY_CTRL].isDown)
 	{
 		if (tl::IsReleased(input, tl::KEY_C))
 		{
@@ -384,8 +363,9 @@ static void ProcessKeyboardInput(const tl::Input& input)
 			display.append('O');
 			display.append('P');
 			display.append('Y');
+			return true;
 		}
-		else if (hasCopied && tl::IsReleased(input, tl::KEY_V))
+		if (hasCopied && tl::IsReleased(input, tl::KEY_V))
 		{
 			state.sprite.content[state.selectedPixelIndex] = copiedColor;
 			ClearDisplayBuffer();
@@ -394,6 +374,38 @@ static void ProcessKeyboardInput(const tl::Input& input)
 			display.append('S');
 			display.append('T');
 			display.append('E');
+			return true;
+		}
+	}
+	return false;
+}
+
+static void ProcessKeyboardInput(const tl::Input& input)
+{
+	// Update command buffer from input
+	if (commands.length() < commands.capacity())
+	{
+		for (int key = tl::KEY_A; key <= tl::KEY_Z; key += 1)
+		{
+			if (tl::IsReleased(input, key))
+			{
+				char commandChar = GetCharForAlphaKey(key);
+				commands.append(commandChar);
+			}
+		}
+
+		for (int key = tl::KEY_0; key <= tl::KEY_9; key += 1)
+		{
+			if (tl::IsReleased(input, key))
+			{
+				char commandChar = GetCharForDigitKey(key);
+				commands.append(commandChar);
+			}
+		}
+
+		if (tl::IsReleased(input, tl::KEY_SPACE))
+		{
+			commands.append(' ');
 		}
 	}
 }
@@ -422,7 +434,10 @@ const EditorState& GetLatestState(const tl::Input& input)
 	state.mouse.x = input.mouse.x;
 	state.mouse.y = input.mouse.y;
 
-	ProcessKeyboardInput(input);
+	if (!ProcessImmediateActionKeys(input))
+	{
+		ProcessKeyboardInput(input);
+	}
 
 	return state;
 }
