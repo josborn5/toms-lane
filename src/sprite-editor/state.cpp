@@ -234,7 +234,7 @@ static void ExecuteCurrentCommand()
 		{
 			if (commands.get(1) == '\0')
 			{
-				AppendRowToSpriteC(state.sprite, spriteMemory); // TODO: make the MemorySpace a field of the SpriteC struct. The pointer to the sprite content is shared between the two - make it a single pointer owner!
+				AppendRowToSpriteC(state.sprite, spriteMemory, 0); // TODO: make the MemorySpace a field of the SpriteC struct. The pointer to the sprite content is shared between the two - make it a single pointer owner!
 				SizeGridForSprite(state.sprite);
 			}
 			break;

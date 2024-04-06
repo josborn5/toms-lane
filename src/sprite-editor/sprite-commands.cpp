@@ -120,7 +120,7 @@ void Save(
 	}
 }
 
-int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory)
+int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
 {
 	// Check there is space to add a final row
 	int currentPixelCount = sprite.width * sprite.height;
@@ -133,15 +133,26 @@ int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory)
 		return -1;
 	}
 
-	for (int i = 0; i < sprite.width; i += 1)
+	// Shift back rows after the insert index to make space for the new row
+	int lastPixelIndex = currentPixelCount - 1;
+	int firstMovePixelIndex = insertAtIndex * sprite.width;
+	for (int sourceIndex = lastPixelIndex; sourceIndex >= firstMovePixelIndex; sourceIndex -= 1)
 	{
-		int pixelIndex = currentPixelCount + i;
+		int targetIndex = sourceIndex + sprite.width;
+		sprite.content[targetIndex] = sprite.content[sourceIndex];
+	}
+
+	// Clear out pixels in the new row
+	int firstNewPixelIndex = firstMovePixelIndex;
+	int firstMovedPixelIndex = firstNewPixelIndex + sprite.width;
+	for (int i = firstNewPixelIndex; i < firstMovedPixelIndex; i += 1)
+	{
 		tl::Color pixel;
 		pixel.r = 0.0f;
 		pixel.g = 0.0f;
 		pixel.b = 0.0f;
 		pixel.a = 0.0f;
-		sprite.content[pixelIndex] = pixel;
+		sprite.content[i] = pixel;
 	}
 
 	sprite.height += 1;
@@ -151,7 +162,7 @@ int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory)
 
 int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory)
 {
-	// Check there is space to add a final row
+	// Check there is space to add a final column
 	int currentPixelCount = sprite.width * sprite.height;
 	uint64_t currentPixelSpace = currentPixelCount * sizeof(tl::Color);
 	uint64_t newPixelSpace = sprite.height * sizeof(tl::Color);

@@ -10,7 +10,7 @@ void Save(
 	tl::array<char>& displayBuffer,
 	char* filePath
 );
-int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory);
+int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex);
 int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory);
 
 #endif
