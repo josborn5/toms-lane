@@ -122,6 +122,31 @@ void Save(
 
 int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
 {
+	/*
+		Current: 3x2 grid of pixels
+		ooo
+		ooo
+
+		ooo|ooo
+		012 345
+
+		Insert new row at row index 1:
+		ooo
+		nnn
+		ooo
+
+		ooo|nnn|ooo
+		012 345 678
+
+		Pixel index transformations:
+		5-->8
+		4-->7
+		3-->6
+		2-->2
+		1-->1
+		0-->0
+	*/
+
 	// Check there is space to add a final row
 	int currentPixelCount = sprite.width * sprite.height;
 	uint64_t currentPixelSpace = currentPixelCount * sizeof(tl::Color);
@@ -133,7 +158,7 @@ int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int in
 		return -1;
 	}
 
-	// Shift back rows after the insert index to make space for the new row
+	// Shift down rows after the new row
 	int lastPixelIndex = currentPixelCount - 1;
 	int firstMovePixelIndex = insertAtIndex * sprite.width;
 	for (int sourceIndex = lastPixelIndex; sourceIndex >= firstMovePixelIndex; sourceIndex -= 1)
@@ -162,6 +187,41 @@ int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int in
 
 int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory)
 {
+	int insertAtIndex = 0;
+
+	/*
+		Current: 2x3 grid of pixels
+		oo
+		oo
+		oo
+
+		oo|oo|oo
+		01 23 45
+
+		Insert new column at row index 1:
+		ono
+		ono
+		ono
+
+		ono|ono|ono
+		012 345 678
+
+		Pixel index transformations:
+		5-->8
+		4-->6
+		3-->5
+		2-->3
+		1-->2
+		0-->0
+
+		transformation is:
+			offsetForRow = rowIndex;
+			offsetForColumn = (pixelAfterNewColumnInRow) ? 1 : 0;
+			finalPixelOffset = offsetForRow + offsetForColumn
+
+		where pixelAfterNewColumnInRow = (oldPixelIndex % oldWidth) >= insertColumnIndex
+	*/
+
 	// Check there is space to add a final column
 	int currentPixelCount = sprite.width * sprite.height;
 	uint64_t currentPixelSpace = currentPixelCount * sizeof(tl::Color);
@@ -173,18 +233,28 @@ int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory)
 		return -1;
 	}
 
-	for (int i = currentPixelCount - 1; i >= sprite.width; i -= 1)
+	// shift any columns to the right of the new column
+	int lastPixelIndex = currentPixelCount - 1;
+	for (int sourceIndex = lastPixelIndex; sourceIndex >= 0; sourceIndex -= 1)
 	{
-		int offset = i / sprite.width;
-		int newIndex = i + offset;
-		sprite.content[newIndex] = sprite.content[i];
+		int currentRowIndex = sourceIndex / sprite.width;
+		bool pixelIsAfterNewColumnInRow = (sourceIndex % sprite.width) >= insertAtIndex;
+		int offsetForColumn = (pixelIsAfterNewColumnInRow) ? 1 : 0;
+		int offset = currentRowIndex + offsetForColumn;
+		int targetIndex = sourceIndex + offset;
+		sprite.content[targetIndex] = sprite.content[sourceIndex];
+	}
+
+	sprite.width += 1;
+	int newPixelCount = currentPixelCount + sprite.height;
+	// clear pixels in the new column
+	for (int i = insertAtIndex; i < newPixelCount; i += sprite.width)
+	{
 		sprite.content[i].r = 0.0f;
 		sprite.content[i].g = 0.0f;
 		sprite.content[i].b = 0.0f;
 		sprite.content[i].a = 0.0f;
 	}
-
-	sprite.width += 1;
 
 	return 0;
 }
