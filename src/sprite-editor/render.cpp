@@ -9,6 +9,7 @@ static tl::Rect<float> displayTextRect;
 static tl::Rect<float> displayCharFootprint;
 static tl::Rect<float> paletteContainerRect;
 static tl::Rect<float> paletteBoundingRect;
+static tl::Rect<float> modeTextRect;
 
 static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::SpriteC& sprite, const tl::Rect<float> containerRect)
 {
@@ -103,20 +104,29 @@ void SizePalette(const tl::SpriteC& palette)
 
 void InitializeLayout(const EditorState& state)
 {
-	const float textAreaHeight = 30.0f;
-	commandTextRect.halfSize = {
-		(float)state.windowWidth * 0.25f,
-		textAreaHeight
-	};
-	commandTextRect.position = tl::CopyVec2(commandTextRect.halfSize);
-	commandCharFootprint.halfSize = { 0.3f * commandTextRect.halfSize.y, commandTextRect.halfSize.y };
-	commandCharFootprint.position = tl::CopyVec2(commandCharFootprint.halfSize);
+	const float textAreaHalfHeight = 15.0f;
 
-	displayTextRect.halfSize = tl::CopyVec2(commandTextRect.halfSize);
+	float windowHalfWidth = (float)state.windowWidth * 0.5f;
+	modeTextRect.halfSize = {
+		windowHalfWidth / 3,
+		textAreaHalfHeight
+	};
+	commandTextRect.halfSize = modeTextRect.halfSize;
+	displayTextRect.halfSize = modeTextRect.halfSize;
+
+	modeTextRect.position = modeTextRect.halfSize;
+	commandTextRect.position = {
+		modeTextRect.position.x + modeTextRect.halfSize.x + commandTextRect.halfSize.x,
+		commandTextRect.halfSize.y
+	};
 	displayTextRect.position = {
 		commandTextRect.position.x + commandTextRect.halfSize.x + displayTextRect.halfSize.x,
 		displayTextRect.halfSize.y
 	};
+
+	commandCharFootprint.halfSize = { 0.3f * commandTextRect.halfSize.y, commandTextRect.halfSize.y };
+	commandCharFootprint.position = tl::CopyVec2(commandCharFootprint.halfSize);
+
 	displayCharFootprint.halfSize = tl::CopyVec2(commandCharFootprint.halfSize);
 	displayCharFootprint.position = {
 		displayTextRect.position.x - displayTextRect.halfSize.x + displayCharFootprint.halfSize.x,
@@ -124,7 +134,6 @@ void InitializeLayout(const EditorState& state)
 	};
 
 	float paletteHalfWidthPercent = 0.2f;
-	float windowHalfWidth = (float)state.windowWidth * 0.5f;
 	float visualYHalfSize = ((float)state.windowHeight * 0.5f) - commandTextRect.halfSize.y;
 	spriteContainerRect.halfSize = {
 		windowHalfWidth * (1.0f - paletteHalfWidthPercent),
@@ -150,13 +159,15 @@ void InitializeLayout(const EditorState& state)
 void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 {
 	// Render
-	const uint32_t commandBackgroundColor = 0x000000;
-	const uint32_t displayBackgroundColor = 0x111111;
-	const uint32_t spriteBackgroundColor = 0x222222;
-	const uint32_t paletteBackgroundColor = 0x333333;
+	const uint32_t modeTextBackgroundColor = 0x000000;
+	const uint32_t commandBackgroundColor = 0x111111;
+	const uint32_t displayBackgroundColor = 0x222222;
+	const uint32_t spriteBackgroundColor = 0x333333;
+	const uint32_t paletteBackgroundColor = 0x444444;
 	const uint32_t commandTextColor = 0xFFFFFF;
 	const uint32_t displayTextColor = 0xFFFF00;
 
+	tl::DrawRect(renderBuffer, modeTextBackgroundColor, modeTextRect);
 	tl::DrawRect(renderBuffer, commandBackgroundColor, commandTextRect);
 	tl::DrawRect(renderBuffer, displayBackgroundColor, displayTextRect);
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, spriteContainerRect);
