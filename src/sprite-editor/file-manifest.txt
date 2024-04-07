@@ -1,3 +1,4 @@
+src\sprite-editor\commands.test.cpp
 src\sprite-editor\state.cpp
 src\sprite-editor\render.cpp
 src\sprite-editor\sprite-editor-palettes.cpp
