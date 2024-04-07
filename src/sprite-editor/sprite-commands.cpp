@@ -185,10 +185,8 @@ int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int in
 	return 0;
 }
 
-int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory)
+int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
 {
-	int insertAtIndex = 0;
-
 	/*
 		Current: 2x3 grid of pixels
 		oo

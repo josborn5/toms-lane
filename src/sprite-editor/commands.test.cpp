@@ -80,12 +80,12 @@ static void AddColumnTests()
 	AssertSetColorForPixel(0);
 	AssertEmptyColorForPixel(1);
 
-	AppendColumnToSpriteC(sprite, memory);
+	AppendColumnToSpriteC(sprite, memory, 0);
 
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 
-	AppendColumnToSpriteC(sprite, memory);
+	AppendColumnToSpriteC(sprite, memory, 0);
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -104,14 +104,14 @@ static void AddColumnTests()
 	AssertEmptyColorForPixel(2);
 	AssertEmptyColorForPixel(3);
 
-	AppendColumnToSpriteC(sprite, memory);
+	AppendColumnToSpriteC(sprite, memory, 0);
 
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 	AssertSetColorForPixel(3);
 
-	AppendColumnToSpriteC(sprite, memory);
+	AppendColumnToSpriteC(sprite, memory, 0);
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -132,13 +132,13 @@ static void AddColumnTests()
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 
-	AppendColumnToSpriteC(sprite, memory);
+	AppendColumnToSpriteC(sprite, memory, 0);
 
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertSetColorForPixel(2);
 
-	AppendColumnToSpriteC(sprite, memory);
+	AppendColumnToSpriteC(sprite, memory, 0);
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -161,7 +161,7 @@ static void AddColumnTests()
 	AssertSetColorForPixel(3);
 	AssertEmptyColorForPixel(4);
 
-	AppendColumnToSpriteC(sprite, memory);
+	AppendColumnToSpriteC(sprite, memory, 0);
 
 	assert(sprite.width == 3);
 	assert(sprite.height == 2);
@@ -172,7 +172,7 @@ static void AddColumnTests()
 	AssertSetColorForPixel(4);
 	AssertSetColorForPixel(5);
 
-	AppendColumnToSpriteC(sprite, memory);
+	AppendColumnToSpriteC(sprite, memory, 0);
 
 	assert(sprite.width == 4);
 	assert(sprite.height == 2);

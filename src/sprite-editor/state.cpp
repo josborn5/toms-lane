@@ -213,6 +213,16 @@ int Initialize(const tl::GameMemory& gameMemory)
 	return 0;
 }
 
+static int GetSelectedRowIndex()
+{
+	return state.selectedPixelIndex / state.sprite.height;
+}
+
+static int GetSelectedColumnIndex()
+{
+	return state.selectedPixelIndex % state.sprite.width;
+}
+
 static void ExecuteCurrentCommand()
 {
 	switch (commands.get(0))
@@ -234,7 +244,8 @@ static void ExecuteCurrentCommand()
 		{
 			if (commands.get(1) == '\0')
 			{
-				AppendRowToSpriteC(state.sprite, spriteMemory, 0); // TODO: make the MemorySpace a field of the SpriteC struct. The pointer to the sprite content is shared between the two - make it a single pointer owner!
+				int selectedRowIndex = GetSelectedRowIndex();
+				AppendRowToSpriteC(state.sprite, spriteMemory, selectedRowIndex); // TODO: make the MemorySpace a field of the SpriteC struct. The pointer to the sprite content is shared between the two - make it a single pointer owner!
 				SizeGridForSprite(state.sprite);
 			}
 			break;
@@ -243,7 +254,8 @@ static void ExecuteCurrentCommand()
 		{
 			if (commands.get(1) == '\0')
 			{
-				AppendColumnToSpriteC(state.sprite, spriteMemory);
+				int selectedColumnIndex = GetSelectedColumnIndex();
+				AppendColumnToSpriteC(state.sprite, spriteMemory, selectedColumnIndex);
 				SizeGridForSprite(state.sprite);
 			}
 			break;

@@ -11,7 +11,7 @@ void Save(
 	char* filePath
 );
 int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex);
-int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory);
+int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex);
 
 #endif
 
