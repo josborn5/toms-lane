@@ -29,10 +29,10 @@ static void ResetState()
 
 	for (int i = 0; i < pixelCount; i += 1)
 	{
-		spriteContent[0].r = 0.0f;
-		spriteContent[0].g = 0.0f;
-		spriteContent[0].b = 0.0f;
-		spriteContent[0].a = 0.0f;
+		spriteContent[i].r = 0.0f;
+		spriteContent[i].g = 0.0f;
+		spriteContent[i].b = 0.0f;
+		spriteContent[i].a = 0.0f;
 	}
 }
 
@@ -85,6 +85,12 @@ static void AddColumnTests()
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 
+	AppendColumnToSpriteC(sprite, memory);
+
+	AssertEmptyColorForPixel(0);
+	AssertEmptyColorForPixel(1);
+	AssertSetColorForPixel(2);
+
 	// 1x2
 	printf("\n\n1x2 test\n");
 	ResetState();
@@ -105,6 +111,15 @@ static void AddColumnTests()
 	AssertEmptyColorForPixel(2);
 	AssertSetColorForPixel(3);
 
+	AppendColumnToSpriteC(sprite, memory);
+
+	AssertEmptyColorForPixel(0);
+	AssertEmptyColorForPixel(1);
+	AssertSetColorForPixel(2);
+	AssertEmptyColorForPixel(3);
+	AssertEmptyColorForPixel(4);
+	AssertSetColorForPixel(5);
+
 	// 2x1
 	printf("\n\n2x1 test\n");
 	ResetState();
@@ -122,6 +137,53 @@ static void AddColumnTests()
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertSetColorForPixel(2);
+
+	AppendColumnToSpriteC(sprite, memory);
+
+	AssertEmptyColorForPixel(0);
+	AssertEmptyColorForPixel(1);
+	AssertSetColorForPixel(2);
+	AssertSetColorForPixel(3);
+
+	// 2x2
+	printf("\n\n2x2 test\n");
+	ResetState();
+	SetColor(spriteContent[0]);
+	SetColor(spriteContent[1]);
+	SetColor(spriteContent[2]);
+	SetColor(spriteContent[3]);
+	sprite.width = 2;
+	sprite.height = 2;
+
+	AssertSetColorForPixel(0);
+	AssertSetColorForPixel(1);
+	AssertSetColorForPixel(2);
+	AssertSetColorForPixel(3);
+	AssertEmptyColorForPixel(4);
+
+	AppendColumnToSpriteC(sprite, memory);
+
+	assert(sprite.width == 3);
+	assert(sprite.height == 2);
+	AssertEmptyColorForPixel(0);
+	AssertSetColorForPixel(1);
+	AssertSetColorForPixel(2);
+	AssertEmptyColorForPixel(3);
+	AssertSetColorForPixel(4);
+	AssertSetColorForPixel(5);
+
+	AppendColumnToSpriteC(sprite, memory);
+
+	assert(sprite.width == 4);
+	assert(sprite.height == 2);
+	AssertEmptyColorForPixel(0);
+	AssertEmptyColorForPixel(1);
+	AssertSetColorForPixel(2);
+	AssertSetColorForPixel(3);
+	AssertEmptyColorForPixel(4);
+	AssertEmptyColorForPixel(5);
+	AssertSetColorForPixel(6);
+	AssertSetColorForPixel(7);
 
 	printf("All tests complete!!!\n");
 }
