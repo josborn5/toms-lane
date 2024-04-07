@@ -10,6 +10,7 @@ static tl::Rect<float> displayCharFootprint;
 static tl::Rect<float> paletteContainerRect;
 static tl::Rect<float> paletteBoundingRect;
 static tl::Rect<float> modeTextRect;
+static tl::Rect<float> modeTextCharFootprint;
 
 static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::SpriteC& sprite, const tl::Rect<float> containerRect)
 {
@@ -102,9 +103,29 @@ void SizePalette(const tl::SpriteC& palette)
 	paletteBoundingRect = SizeBoundingRectForSpriteInContainingRect(palette, paletteContainerRect);
 }
 
+static void PlaceRectToRightOfRect(const tl::Rect<float>& rect, tl::Rect<float>& toPlace)
+{
+	toPlace.position = {
+		rect.position.x + rect.halfSize.x + toPlace.halfSize.x,
+		rect.position.y
+	};
+}
+
+static void PlaceRectInLeftSideOfContainer(const tl::Rect<float>& container, tl::Rect<float>& toPlace)
+{
+	toPlace.position = {
+		container.position.x - container.halfSize.x + toPlace.halfSize.x,
+		toPlace.halfSize.y
+	};
+}
+
 void InitializeLayout(const EditorState& state)
 {
 	const float textAreaHalfHeight = 15.0f;
+	const tl::Vec2<float> textCharFootprintHalfsize = {
+		0.3f * textAreaHalfHeight,
+		textAreaHalfHeight
+	};
 
 	float windowHalfWidth = (float)state.windowWidth * 0.5f;
 	modeTextRect.halfSize = {
@@ -115,23 +136,15 @@ void InitializeLayout(const EditorState& state)
 	displayTextRect.halfSize = modeTextRect.halfSize;
 
 	modeTextRect.position = modeTextRect.halfSize;
-	commandTextRect.position = {
-		modeTextRect.position.x + modeTextRect.halfSize.x + commandTextRect.halfSize.x,
-		commandTextRect.halfSize.y
-	};
-	displayTextRect.position = {
-		commandTextRect.position.x + commandTextRect.halfSize.x + displayTextRect.halfSize.x,
-		displayTextRect.halfSize.y
-	};
+	PlaceRectToRightOfRect(modeTextRect, commandTextRect);
+	PlaceRectToRightOfRect(commandTextRect, displayTextRect);
 
-	commandCharFootprint.halfSize = { 0.3f * commandTextRect.halfSize.y, commandTextRect.halfSize.y };
-	commandCharFootprint.position = tl::CopyVec2(commandCharFootprint.halfSize);
-
-	displayCharFootprint.halfSize = tl::CopyVec2(commandCharFootprint.halfSize);
-	displayCharFootprint.position = {
-		displayTextRect.position.x - displayTextRect.halfSize.x + displayCharFootprint.halfSize.x,
-		displayTextRect.halfSize.y
-	};
+	modeTextCharFootprint.halfSize = textCharFootprintHalfsize;
+	commandCharFootprint.halfSize = textCharFootprintHalfsize;
+	displayCharFootprint.halfSize = textCharFootprintHalfsize;
+	PlaceRectInLeftSideOfContainer(modeTextRect, modeTextCharFootprint);
+	PlaceRectInLeftSideOfContainer(commandTextRect, commandCharFootprint);
+	PlaceRectInLeftSideOfContainer(displayTextRect, displayCharFootprint);
 
 	float paletteHalfWidthPercent = 0.2f;
 	float visualYHalfSize = ((float)state.windowHeight * 0.5f) - commandTextRect.halfSize.y;
