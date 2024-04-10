@@ -369,9 +369,18 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 		return true;
 	}
 
-	if (tl::IsReleased(input, tl::KEY_V))
+	if (tl::IsReleased(input, tl::KEY_V) && mode == View)
 	{
+		ClearCommandBuffer();
 		mode = Visual;
+		commands.append('V');
+		commands.append('I');
+		commands.append('S');
+		commands.append('U');
+		commands.append('A');
+		commands.append('L');
+		commands.append('\0');
+
 		return true;
 	}
 
@@ -392,6 +401,7 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 			display.append('O');
 			display.append('P');
 			display.append('Y');
+			display.append('\0');
 			return true;
 		}
 		if (hasCopied && tl::IsReleased(input, tl::KEY_V))
@@ -403,6 +413,7 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 			display.append('S');
 			display.append('T');
 			display.append('E');
+			display.append('\0');
 			return true;
 		}
 	}
