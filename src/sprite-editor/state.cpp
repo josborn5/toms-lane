@@ -4,8 +4,17 @@
 #include "./palettes.hpp"
 #include "./commands.hpp"
 
-#define COMMAND_BUFFER_SIZE 15
-#define DISPLAY_BUFFER_SIZE 15
+const int commandBufferSize = 15;
+const int displayBufferSize = 15;
+const int modeBufferSize = 2;
+
+enum Mode
+{
+	View,
+	Command,
+	Visual,
+	Insert
+};
 
 static bool hasCopied = false;
 static tl::MemorySpace spriteMemory;
@@ -17,11 +26,11 @@ static char* filePath;
 tl::GameMemory appMemory;
 
 EditorState state;
-static char commandBuffer[COMMAND_BUFFER_SIZE];
-static char displayBuffer[DISPLAY_BUFFER_SIZE];
-tl::array<char> commands = tl::array<char>(commandBuffer, COMMAND_BUFFER_SIZE);
-tl::array<char> display = tl::array<char>(displayBuffer, DISPLAY_BUFFER_SIZE);
-
+Mode mode;
+static char commandBuffer[commandBufferSize];
+static char displayBuffer[displayBufferSize];
+tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
+tl::array<char> display = tl::array<char>(displayBuffer, displayBufferSize);
 
 static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprite, int& selectedPixelIndex)
 {
@@ -164,6 +173,7 @@ static void ClearDisplayBuffer()
 
 int Initialize(const tl::GameMemory& gameMemory)
 {
+	mode = View;
 	state.commandBuffer = &commands;
 	state.displayBuffer = &display;
 	state.windowWidth = 800;
@@ -355,6 +365,13 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 	if (tl::IsReleased(input, tl::KEY_ESCAPE))
 	{
 		ClearCommandBuffer();
+		mode = View;
+		return true;
+	}
+
+	if (tl::IsReleased(input, tl::KEY_V))
+	{
+		mode = Visual;
 		return true;
 	}
 

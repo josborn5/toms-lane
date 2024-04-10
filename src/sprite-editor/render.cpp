@@ -163,10 +163,8 @@ void InitializeLayout(const EditorState& state)
 		windowHalfWidth * paletteHalfWidthPercent,
 		visualYHalfSize
 	};
-	paletteContainerRect.position = {
-		spriteContainerRect.position.x + spriteContainerRect.halfSize.x + paletteContainerRect.halfSize.x,
-		visualYPosition
-	};
+
+	PlaceRectToRightOfRect(spriteContainerRect, paletteContainerRect);
 }
 
 void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
