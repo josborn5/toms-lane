@@ -16,8 +16,8 @@ struct EditorState
 	int selectedPixelIndex = 0;
 	tl::SpriteC* palette; // Palette can change, so store a pointer to the selected one.
 	int selectedPalettePixelIndex = 0;
-	tl::array<char>* commandBuffer;
-	tl::array<char>* displayBuffer;
+	char* commandBuffer;
+	char* displayBuffer;
 	EditorControl activeControl = SpriteGrid;
 	tl::Vec2<int> mouse = { 0, 0 };
 	int windowWidth;

@@ -29,8 +29,8 @@ EditorState state;
 Mode mode;
 static char commandBuffer[commandBufferSize];
 static char displayBuffer[displayBufferSize];
-tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
-tl::array<char> display = tl::array<char>(displayBuffer, displayBufferSize);
+static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
+static tl::array<char> display = tl::array<char>(displayBuffer, displayBufferSize);
 
 static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprite, int& selectedPixelIndex)
 {
@@ -174,8 +174,8 @@ static void ClearDisplayBuffer()
 int Initialize(const tl::GameMemory& gameMemory)
 {
 	mode = View;
-	state.commandBuffer = &commands;
-	state.displayBuffer = &display;
+	state.commandBuffer = &commandBuffer[0];
+	state.displayBuffer = &displayBuffer[0];
 	state.windowWidth = 800;
 	state.windowHeight = 600;
 

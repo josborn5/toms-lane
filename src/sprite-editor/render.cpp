@@ -201,20 +201,16 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 		state.mouse
 	);
 
-	char firstCommandChar = state.commandBuffer->access(0);
-	char* commandString = &firstCommandChar;
 	tl::DrawAlphabetCharacters(
 		renderBuffer,
-		commandString,
+		state.commandBuffer,
 		commandCharFootprint,
 		commandTextColor
 	);
 
-	char firstDisplayChar = state.displayBuffer->access(0);
-	char* displayString = &firstDisplayChar;
 	tl::DrawAlphabetCharacters(
 		renderBuffer,
-		displayString,
+		state.displayBuffer,
 		displayCharFootprint,
 		displayTextColor
 	);
