@@ -1,14 +1,10 @@
 #include "../tl-library.hpp"
 #include "./editor.hpp"
 
-static tl::Rect<float> spriteContainerRect;
-static tl::Rect<float> spriteBoundingRect;
 static tl::Rect<float> commandTextRect;
 static tl::Rect<float> commandCharFootprint;
 static tl::Rect<float> displayTextRect;
 static tl::Rect<float> displayCharFootprint;
-static tl::Rect<float> paletteContainerRect;
-static tl::Rect<float> paletteBoundingRect;
 static tl::Rect<float> modeTextRect;
 static tl::Rect<float> modeTextCharFootprint;
 
@@ -83,16 +79,6 @@ static void RenderSpriteAsGrid(
 	}
 }
 
-void SizeGridForSprite(const tl::SpriteC& sprite)
-{
-	spriteBoundingRect = SizeBoundingRectForSpriteInContainingRect(sprite, spriteContainerRect);
-}
-
-void SizePalette(const tl::SpriteC& palette)
-{
-	paletteBoundingRect = SizeBoundingRectForSpriteInContainingRect(palette, paletteContainerRect);
-}
-
 void SizeGrid(Grid& grid)
 {
 	grid.footprint = SizeBoundingRectForSpriteInContainingRect(*grid.sprite, grid.container);
@@ -143,27 +129,23 @@ void InitializeLayout(EditorState& state)
 
 	float paletteHalfWidthPercent = 0.2f;
 	float visualYHalfSize = ((float)state.windowHeight * 0.5f) - commandTextRect.halfSize.y;
-	spriteContainerRect.halfSize = {
+	state.pixels.container.halfSize = {
 		windowHalfWidth * (1.0f - paletteHalfWidthPercent),
 		visualYHalfSize
 	};
 
-	float visualYPosition = spriteContainerRect.halfSize.y + commandTextRect.position.y + commandTextRect.halfSize.y;
-	spriteContainerRect.position = {
-		spriteContainerRect.halfSize.x,
+	float visualYPosition = state.pixels.container.halfSize.y + commandTextRect.position.y + commandTextRect.halfSize.y;
+	state.pixels.container.position = {
+		state.pixels.container.halfSize.x,
 		visualYPosition
 	};
 
-	paletteContainerRect.halfSize = {
+	state.palette_.container.halfSize = {
 		windowHalfWidth * paletteHalfWidthPercent,
 		visualYHalfSize
 	};
 
-	PlaceRectToRightOfRect(spriteContainerRect, paletteContainerRect);
-
-
-	state.pixels.container = spriteContainerRect;
-	state.palette_.container = paletteContainerRect;
+	PlaceRectToRightOfRect(state.pixels.container, state.palette_.container);
 }
 
 void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
@@ -180,8 +162,8 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 	tl::DrawRect(renderBuffer, modeTextBackgroundColor, modeTextRect);
 	tl::DrawRect(renderBuffer, commandBackgroundColor, commandTextRect);
 	tl::DrawRect(renderBuffer, displayBackgroundColor, displayTextRect);
-	tl::DrawRect(renderBuffer, spriteBackgroundColor, spriteContainerRect);
-	tl::DrawRect(renderBuffer, paletteBackgroundColor, paletteContainerRect);
+	tl::DrawRect(renderBuffer, spriteBackgroundColor, state.pixels.container);
+	tl::DrawRect(renderBuffer, paletteBackgroundColor, state.palette_.container);
 
 	int displaySelectedPixelIndex = (state.activeControl == SpriteGrid) ? state.pixels.selectedIndex : -1;
 	RenderSpriteAsGrid(
