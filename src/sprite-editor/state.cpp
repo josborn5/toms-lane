@@ -362,34 +362,6 @@ static void ExecuteCurrentCommand()
 
 static bool ProcessImmediateActionKeys(const tl::Input& input)
 {
-	if (tl::IsReleased(input, tl::KEY_ESCAPE))
-	{
-		ClearCommandBuffer();
-		mode = View;
-		return true;
-	}
-
-	if (tl::IsReleased(input, tl::KEY_V) && mode == View)
-	{
-		ClearCommandBuffer();
-		mode = Visual;
-		commands.append('V');
-		commands.append('I');
-		commands.append('S');
-		commands.append('U');
-		commands.append('A');
-		commands.append('L');
-		commands.append('\0');
-
-		return true;
-	}
-
-	if (tl::IsReleased(input, tl::KEY_ENTER))
-	{
-		ExecuteCurrentCommand();
-		return true;
-	}
-
 	if (input.buttons[tl::KEY_CTRL].isDown)
 	{
 		if (tl::IsReleased(input, tl::KEY_C))
@@ -414,6 +386,36 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 			display.append('T');
 			display.append('E');
 			display.append('\0');
+			return true;
+		}
+	}
+	else
+	{
+		if (tl::IsReleased(input, tl::KEY_ESCAPE))
+		{
+			ClearCommandBuffer();
+			mode = View;
+			return true;
+		}
+
+		if (tl::IsReleased(input, tl::KEY_V) && mode == View)
+		{
+			ClearCommandBuffer();
+			mode = Visual;
+			commands.append('V');
+			commands.append('I');
+			commands.append('S');
+			commands.append('U');
+			commands.append('A');
+			commands.append('L');
+			commands.append('\0');
+
+			return true;
+		}
+
+		if (tl::IsReleased(input, tl::KEY_ENTER))
+		{
+			ExecuteCurrentCommand();
 			return true;
 		}
 	}
