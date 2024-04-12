@@ -81,11 +81,8 @@ static int selectedPaletteIndex = 0;
 
 static void SelectPalette(EditorState& state)
 {
-	state.palette = &palettes[selectedPaletteIndex];
-	state.selectedPalettePixelIndex = 0;
 	state.palette_.sprite = &palettes[selectedPaletteIndex];
 	state.palette_.selectedIndex = 0;
-	SizePalette(*state.palette);
 	SizeGrid(state.palette_);
 }
 

@@ -228,12 +228,12 @@ int Initialize(const tl::GameMemory& gameMemory)
 
 static int GetSelectedRowIndex()
 {
-	return state.selectedPixelIndex / state.sprite.height;
+	return state.pixels.selectedIndex / state.sprite.height;
 }
 
 static int GetSelectedColumnIndex()
 {
-	return state.selectedPixelIndex % state.sprite.width;
+	return state.pixels.selectedIndex % state.sprite.width;
 }
 
 static void ExecuteCurrentCommand()
@@ -277,7 +277,7 @@ static void ExecuteCurrentCommand()
 		{
 			char* pointer = tl::GetNextNumberChar(&commands.access(1));
 			tl::MemorySpace transient = appMemory.transient;
-			ParseColorFromCharArray(pointer, transient, state.pixels.sprite->content[state.selectedPixelIndex]);
+			ParseColorFromCharArray(pointer, transient, state.pixels.sprite->content[state.pixels.selectedIndex]);
 			ClearCommandBuffer();
 			break;
 		}
@@ -286,7 +286,7 @@ static void ExecuteCurrentCommand()
 			if (commands.get(1) == '\0')
 			{
 				ClearDisplayBuffer();
-				tl::Color selectedColor = state.pixels.sprite->content[state.selectedPixelIndex];
+				tl::Color selectedColor = state.pixels.sprite->content[state.pixels.selectedIndex];
 
 				int color = (int)(selectedColor.r * 255.0f);
 				char* cursor = &display.access(0);
