@@ -72,10 +72,10 @@ static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprit
 
 static void ProcessCursorMovementInput(const tl::Input &input)
 {
-	tl::SpriteC& activeSprite = (state.activeControl == SpriteGrid) ? state.sprite : *state.palette;
-	int& activeIndex = (state.activeControl == SpriteGrid) ? state.selectedPixelIndex : state.selectedPalettePixelIndex;
+	tl::SpriteC& activeSprite = (state.activeControl == SpriteGrid) ? *state.pixels.sprite : *state.palette_.sprite;
+	int& activeIndex = (state.activeControl == SpriteGrid) ? state.pixels.selectedIndex : state.palette_.selectedIndex;
 	MoveCursorForSprite(input, activeSprite, activeIndex);
-	currentColor = state.palette->content[state.selectedPalettePixelIndex];
+	currentColor = state.palette_.sprite->content[state.palette_.selectedIndex];
 }
 
 static void ProcessActiveControl(const tl::Input &input)
@@ -219,7 +219,10 @@ int Initialize(const tl::GameMemory& gameMemory)
 	state.sprite.content = (tl::Color*)spriteMemory.content;
 	tl::LoadSpriteC(spriteCharArray, tempMemory, state.sprite);
 
+	state.pixels.sprite = &state.sprite;
+
 	SizeGridForSprite(state.sprite);
+	SizeGrid(state.pixels);
 	return 0;
 }
 
@@ -241,12 +244,12 @@ static void ExecuteCurrentCommand()
 		{
 			if (commands.get(1) == '\0') // save to current filePath
 			{
-				Save(appMemory, state.sprite, display, filePath);
+				Save(appMemory, *state.pixels.sprite, display, filePath);
 			}
 			else if (commands.get(1) == ' ' && commands.get(2)) // save to new filePath
 			{
 				filePath = &commands.access(2);
-				Save(appMemory, state.sprite, display, filePath);
+				Save(appMemory, *state.pixels.sprite, display, filePath);
 			}
 			break;
 		}
@@ -255,8 +258,8 @@ static void ExecuteCurrentCommand()
 			if (commands.get(1) == '\0')
 			{
 				int selectedRowIndex = GetSelectedRowIndex();
-				AppendRowToSpriteC(state.sprite, spriteMemory, selectedRowIndex); // TODO: make the MemorySpace a field of the SpriteC struct. The pointer to the sprite content is shared between the two - make it a single pointer owner!
-				SizeGridForSprite(state.sprite);
+				AppendRowToSpriteC(*state.pixels.sprite, spriteMemory, selectedRowIndex); // TODO: make the MemorySpace a field of the SpriteC struct. The pointer to the sprite content is shared between the two - make it a single pointer owner!
+				SizeGrid(state.pixels);
 			}
 			break;
 		}
@@ -265,8 +268,8 @@ static void ExecuteCurrentCommand()
 			if (commands.get(1) == '\0')
 			{
 				int selectedColumnIndex = GetSelectedColumnIndex();
-				AppendColumnToSpriteC(state.sprite, spriteMemory, selectedColumnIndex);
-				SizeGridForSprite(state.sprite);
+				AppendColumnToSpriteC(*state.pixels.sprite, spriteMemory, selectedColumnIndex);
+				SizeGrid(state.pixels);
 			}
 			break;
 		}
@@ -274,7 +277,7 @@ static void ExecuteCurrentCommand()
 		{
 			char* pointer = tl::GetNextNumberChar(&commands.access(1));
 			tl::MemorySpace transient = appMemory.transient;
-			ParseColorFromCharArray(pointer, transient, state.sprite.content[state.selectedPixelIndex]);
+			ParseColorFromCharArray(pointer, transient, state.pixels.sprite->content[state.selectedPixelIndex]);
 			ClearCommandBuffer();
 			break;
 		}
@@ -283,7 +286,7 @@ static void ExecuteCurrentCommand()
 			if (commands.get(1) == '\0')
 			{
 				ClearDisplayBuffer();
-				tl::Color selectedColor = state.sprite.content[state.selectedPixelIndex];
+				tl::Color selectedColor = state.pixels.sprite->content[state.selectedPixelIndex];
 
 				int color = (int)(selectedColor.r * 255.0f);
 				char* cursor = &display.access(0);
@@ -317,7 +320,7 @@ static void ExecuteCurrentCommand()
 		{
 			if (state.activeControl == SpriteGrid)
 			{
-				state.sprite.content[state.selectedPixelIndex] = currentColor;
+				state.pixels.sprite->content[state.pixels.selectedIndex] = currentColor;
 			}
 			break;
 		}
@@ -326,33 +329,33 @@ static void ExecuteCurrentCommand()
 			if (commands.get(1) == 'R' && commands.get(2) == '\0' && state.sprite.height > 1)
 			{
 				// Get start and end index of row
-				int rowIndex = (int)(state.selectedPixelIndex / state.sprite.width);
-				unsigned int startDeleteIndex = rowIndex * state.sprite.width;
-				unsigned int endDeleteIndex = rowIndex + state.sprite.width - 1;
-				unsigned int spriteLength = state.sprite.width * state.sprite.height;
+				int rowIndex = (int)(state.pixels.selectedIndex / state.pixels.sprite->width);
+				unsigned int startDeleteIndex = rowIndex * state.pixels.sprite->width;
+				unsigned int endDeleteIndex = rowIndex + state.pixels.sprite->width - 1;
+				unsigned int spriteLength = state.pixels.sprite->width * state.pixels.sprite->height;
 
 				// Call tl::DeleteFromArray with the sprite content
-				tl::DeleteFromArray(state.sprite.content, startDeleteIndex, endDeleteIndex, spriteLength);
+				tl::DeleteFromArray(state.pixels.sprite->content, startDeleteIndex, endDeleteIndex, spriteLength);
 
 				// Subtract 1 from the sprite height
-				state.sprite.height -= 1;
+				state.pixels.sprite->height -= 1;
 
-				SizeGridForSprite(state.sprite);
+				SizeGrid(state.pixels);
 			}
 			else if (commands.get(1) == 'C' && commands.get(2) == '\0' && state.sprite.width > 1)
 			{
 				// get the column index
-				unsigned int columnIndex = state.selectedPixelIndex % state.sprite.width;
-				unsigned int spriteLength = state.sprite.width * state.sprite.height;
-				for (int i = state.sprite.height - 1; i >= 0; i -= 1)
+				unsigned int columnIndex = state.pixels.selectedIndex % state.pixels.sprite->width;
+				unsigned int spriteLength = state.pixels.sprite->width * state.pixels.sprite->height;
+				for (int i = state.pixels.sprite->height - 1; i >= 0; i -= 1)
 				{
-					unsigned int deleteIndex = (i * state.sprite.width) + columnIndex;
-					tl::DeleteFromArray(state.sprite.content, deleteIndex, deleteIndex, spriteLength);
+					unsigned int deleteIndex = (i * state.pixels.sprite->width) + columnIndex;
+					tl::DeleteFromArray(state.pixels.sprite->content, deleteIndex, deleteIndex, spriteLength);
 					spriteLength -= 1;
 				}
-				state.sprite.width -= 1;
+				state.pixels.sprite->width -= 1;
 
-				SizeGridForSprite(state.sprite);
+				SizeGrid(state.pixels);
 			}
 			break;
 		}
@@ -367,7 +370,7 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 		if (tl::IsReleased(input, tl::KEY_C))
 		{
 			hasCopied = true;
-			copiedColor = state.sprite.content[state.selectedPixelIndex];
+			copiedColor = state.pixels.sprite->content[state.pixels.selectedIndex];
 			ClearDisplayBuffer();
 			display.append('C');
 			display.append('O');
@@ -378,7 +381,7 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 		}
 		if (hasCopied && tl::IsReleased(input, tl::KEY_V))
 		{
-			state.sprite.content[state.selectedPixelIndex] = copiedColor;
+			state.pixels.sprite->content[state.pixels.selectedIndex] = copiedColor;
 			ClearDisplayBuffer();
 			display.append('P');
 			display.append('A');

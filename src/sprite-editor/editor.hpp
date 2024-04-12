@@ -9,8 +9,18 @@ enum EditorControl
 	EditorControlCount
 };
 
+struct Grid
+{
+	tl::SpriteC* sprite;
+	tl::Rect<float> footprint;
+	tl::Rect<float> container;
+	int selectedIndex = 0;
+};
+
 struct EditorState
 {
+	Grid pixels;
+	Grid palette_;
 	tl::SpriteC sprite;
 	int selectedPixelIndex = 0;
 	tl::SpriteC* palette; // Palette can change, so store a pointer to the selected one.

@@ -12,7 +12,7 @@ static tl::Rect<float> paletteBoundingRect;
 static tl::Rect<float> modeTextRect;
 static tl::Rect<float> modeTextCharFootprint;
 
-static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::SpriteC& sprite, const tl::Rect<float> containerRect)
+static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::SpriteC& sprite, const tl::Rect<float>& containerRect)
 {
 	tl::Rect<float> sizeRect;
 	float spriteAspectRatio = (float)sprite.height / (float)sprite.width;
@@ -93,6 +93,11 @@ void SizePalette(const tl::SpriteC& palette)
 	paletteBoundingRect = SizeBoundingRectForSpriteInContainingRect(palette, paletteContainerRect);
 }
 
+void SizeGrid(Grid& grid)
+{
+	grid.footprint = SizeBoundingRectForSpriteInContainingRect(*grid.sprite, grid.container);
+}
+
 static void PlaceRectToRightOfRect(const tl::Rect<float>& rect, tl::Rect<float>& toPlace)
 {
 	toPlace.position = {
@@ -109,7 +114,7 @@ static void PlaceRectInLeftSideOfContainer(const tl::Rect<float>& container, tl:
 	};
 }
 
-void InitializeLayout(const EditorState& state)
+void InitializeLayout(EditorState& state)
 {
 	const float textAreaHalfHeight = 15.0f;
 	const tl::Vec2<float> textCharFootprintHalfsize = {
@@ -155,6 +160,10 @@ void InitializeLayout(const EditorState& state)
 	};
 
 	PlaceRectToRightOfRect(spriteContainerRect, paletteContainerRect);
+
+
+	state.pixels.container = spriteContainerRect;
+	state.palette_.container = paletteContainerRect;
 }
 
 void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
@@ -174,19 +183,19 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, spriteContainerRect);
 	tl::DrawRect(renderBuffer, paletteBackgroundColor, paletteContainerRect);
 
-	int displaySelectedPixelIndex = (state.activeControl == SpriteGrid) ? state.selectedPixelIndex : -1;
+	int displaySelectedPixelIndex = (state.activeControl == SpriteGrid) ? state.pixels.selectedIndex : -1;
 	RenderSpriteAsGrid(
-		state.sprite,
-		spriteBoundingRect,
+		*state.pixels.sprite,
+		state.pixels.footprint,
 		renderBuffer,
 		displaySelectedPixelIndex
 	);
 
 	RenderSpriteAsGrid(
-		*state.palette,
-		paletteBoundingRect,
+		*state.palette_.sprite,
+		state.palette_.footprint,
 		renderBuffer,
-		state.selectedPalettePixelIndex
+		state.palette_.selectedIndex
 	);
 
 	tl::DrawAlphabetCharacters(
