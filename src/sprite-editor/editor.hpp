@@ -5,7 +5,6 @@ enum EditorControl
 {
 	SpriteGrid,
 	PaletteGrid,
-	CommandConsole,
 
 	EditorControlCount
 };

@@ -37,15 +37,6 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::Sprit
 	return sizeRect;
 }
 
-static bool MouseIsInRect(const tl::Vec2<int>& mouse, const tl::Rect<float> rect)
-{
-	int minX = (int)rect.position.x - (int)rect.halfSize.x;
-	int maxX = (int)rect.position.x + (int)rect.halfSize.x;
-	int minY = (int)rect.position.y - (int)rect.halfSize.y;
-	int maxY = (int)rect.position.y + (int)rect.halfSize.y;
-	return mouse.x > minX && mouse.x < maxX && mouse.y > minY && mouse.y < maxY;
-}
-
 static void RenderSpriteAsGrid(
 	const tl::SpriteC& sprite,
 	const tl::Rect<float>& boundingRect,
@@ -74,7 +65,7 @@ static void RenderSpriteAsGrid(
 			pixelFootPrint.position = pixelPosition;
 
 			int pixelIndex = (j * sprite.width) + i;
-			if (pixelIndex == selectedBlockIndex || MouseIsInRect(mouse, pixelFootPrint))
+			if (pixelIndex == selectedBlockIndex)
 			{
 				tl::Rect<float> selectedFootprint;
 				selectedFootprint.position = pixelPosition;
