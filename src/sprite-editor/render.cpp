@@ -41,8 +41,7 @@ static void RenderSpriteAsGrid(
 	const tl::SpriteC& sprite,
 	const tl::Rect<float>& boundingRect,
 	const tl::RenderBuffer& renderBuffer,
-	int selectedBlockIndex,
-	const tl::Vec2<int> mouse
+	int selectedBlockIndex
 ) {
 	const float pixelBorderWidth = 2.0f;
 	const uint32_t selectedPixelColor = 0xFFFF00;
@@ -180,16 +179,14 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 		state.sprite,
 		spriteBoundingRect,
 		renderBuffer,
-		displaySelectedPixelIndex,
-		state.mouse
+		displaySelectedPixelIndex
 	);
 
 	RenderSpriteAsGrid(
 		*state.palette,
 		paletteBoundingRect,
 		renderBuffer,
-		state.selectedPalettePixelIndex,
-		state.mouse
+		state.selectedPalettePixelIndex
 	);
 
 	tl::DrawAlphabetCharacters(

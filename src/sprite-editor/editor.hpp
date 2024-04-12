@@ -18,7 +18,6 @@ struct EditorState
 	char* commandBuffer;
 	char* displayBuffer;
 	EditorControl activeControl = SpriteGrid;
-	tl::Vec2<int> mouse = { 0, 0 };
 	int windowWidth;
 	int windowHeight;
 };

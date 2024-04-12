@@ -473,9 +473,6 @@ const EditorState& GetLatestState(const tl::Input& input)
 	ProcessActiveControl(input);
 	ProcessCursorMovementInput(input);
 
-	state.mouse.x = input.mouse.x;
-	state.mouse.y = input.mouse.y;
-
 	if (!ProcessImmediateActionKeys(input))
 	{
 		ProcessKeyboardInput(input);
