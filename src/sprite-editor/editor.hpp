@@ -21,9 +21,7 @@ struct EditorState
 {
 	Grid pixels;
 	Grid palette_;
-	tl::SpriteC sprite;
 	tl::SpriteC* palette; // Palette can change, so store a pointer to the selected one.
-//	int selectedPalettePixelIndex = 0;
 	char* commandBuffer;
 	char* displayBuffer;
 	EditorControl activeControl = SpriteGrid;

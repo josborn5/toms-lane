@@ -22,6 +22,7 @@ static tl::MemorySpace paletteMemory;
 static tl::Color currentColor;
 static tl::Color copiedColor;
 static char* filePath;
+static tl::SpriteC currentSprite;
 
 tl::GameMemory appMemory;
 
@@ -216,24 +217,23 @@ int Initialize(const tl::GameMemory& gameMemory)
 	InitializePalettes(paletteMemory, tempMemory, state);
 
 	char* spriteCharArray = (char*)fileReadMemory.content;
-	state.sprite.content = (tl::Color*)spriteMemory.content;
-	tl::LoadSpriteC(spriteCharArray, tempMemory, state.sprite);
+	currentSprite.content = (tl::Color*)spriteMemory.content;
+	tl::LoadSpriteC(spriteCharArray, tempMemory, currentSprite);
 
-	state.pixels.sprite = &state.sprite;
+	state.pixels.sprite = &currentSprite;
 
-	SizeGridForSprite(state.sprite);
 	SizeGrid(state.pixels);
 	return 0;
 }
 
 static int GetSelectedRowIndex()
 {
-	return state.pixels.selectedIndex / state.sprite.height;
+	return state.pixels.selectedIndex / state.pixels.sprite->height;
 }
 
 static int GetSelectedColumnIndex()
 {
-	return state.pixels.selectedIndex % state.sprite.width;
+	return state.pixels.selectedIndex % state.pixels.sprite->width;
 }
 
 static void ExecuteCurrentCommand()
@@ -326,7 +326,7 @@ static void ExecuteCurrentCommand()
 		}
 		case 'D': // Delete
 		{
-			if (commands.get(1) == 'R' && commands.get(2) == '\0' && state.sprite.height > 1)
+			if (commands.get(1) == 'R' && commands.get(2) == '\0' && state.pixels.sprite->height > 1)
 			{
 				// Get start and end index of row
 				int rowIndex = (int)(state.pixels.selectedIndex / state.pixels.sprite->width);
@@ -342,7 +342,7 @@ static void ExecuteCurrentCommand()
 
 				SizeGrid(state.pixels);
 			}
-			else if (commands.get(1) == 'C' && commands.get(2) == '\0' && state.sprite.width > 1)
+			else if (commands.get(1) == 'C' && commands.get(2) == '\0' && state.pixels.sprite->width > 1)
 			{
 				// get the column index
 				unsigned int columnIndex = state.pixels.selectedIndex % state.pixels.sprite->width;
