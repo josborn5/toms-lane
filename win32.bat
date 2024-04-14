@@ -3,8 +3,6 @@
 set NAME=toms-lane-win32-tests
 set APP_DIR=%~dp0\bin-tl-win32
 
-del "./test-file.dat"
-
 call .\build-scripts\compile.bat "@%~dp0\src\application\win32\file-manifest.txt" %APP_DIR% %1
 
 lib.exe /OUT:"%APP_DIR%\tl-win32.lib"^
@@ -23,7 +21,16 @@ call .\build-scripts\link.bat %APP_DIR% %NAME%^
  "%APP_DIR%\win32-file.tests.obj"^
  "%APP_DIR%\tl-win32.lib"
 
-call .\build-scripts\run.bat "%APP_DIR%\%NAME%.exe" %1
+SET TEST=%1
+if "%1"=="-dt" (
+	SET TEST=-t
+)
 
-del "./test-file.dat"
+if "%TEST%"=="-t" (
+	del "./test-file.dat"
+	call .\build-scripts\run.bat "%APP_DIR%\%NAME%.exe" %1
+	del "./test-file.dat"
+)
+
+@echo off
 

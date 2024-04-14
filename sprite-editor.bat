@@ -16,7 +16,14 @@ call %~dp0\build-scripts\link.bat %APP_DIR% %NAME%^
  "%~dp0\bin-tl-platform\toms-lane-platform.obj"^
  "%~dp0\bin-tl-win32\tl-win32.lib"
 
-call %~dp0\build-scripts\run.bat "%APP_DIR%\tests.exe" %1
+SET TEST=%1
+if "%TEST%"=="-dt" (
+	SET TEST=-t
+)
 
-call %~dp0\build-scripts\run.bat "%APP_DIR%\%NAME%.exe" %1
+if "%TEST%"=="-t" (
+	call %~dp0\build-scripts\run.bat "%APP_DIR%\tests.exe" %1
+) else (
+	call %~dp0\build-scripts\run.bat "%APP_DIR%\%NAME%.exe" %1
+)
 
