@@ -5,7 +5,7 @@
 
 using namespace tl;
 
-int main()
+int RunFileTests()
 {
 	printf("\n===== File Read & Write =====\n");
 
@@ -47,6 +47,5 @@ int main()
 	char* outputLocation = (char*)fileLocationSpace.content;
 	printf(outputLocation);
 
-	printf("\n===== SUCCESS! =====\n");
 	return 0;
 }

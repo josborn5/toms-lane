@@ -19,7 +19,7 @@ lib.exe /OUT:"%APP_DIR%\tl-win32.lib"^
  winmm.lib
 
 call .\build-scripts\link.bat %APP_DIR% %NAME%^
- "%APP_DIR%\win32-file.tests.obj"^
+ "%APP_DIR%\win32-tests.obj"^
  "%APP_DIR%\tl-win32.lib"
 
 SET TEST=%1

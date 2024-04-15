@@ -1,4 +1,4 @@
-src\application\win32\win32-file.tests.cpp
+src\application\win32\win32-tests.cpp
 src\application\win32\win32-input.cpp
 src\application\win32\win32-window.cpp
 src\application\win32\win32-file.cpp
