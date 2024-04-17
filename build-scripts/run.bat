@@ -1,17 +1,14 @@
 @echo off
 
 set EXE_PATH=%1
-set DEBUG_FLAG=%2
 
 REM Treat '-d' or '-dt' flags as the same thing
-SET DEBUG=%DEBUG_FLAG%
-if "%DEBUG_FLAG%"=="-dt" (
-	SET DEBUG=-d
-)
+SET DEBUG_RUN=%2
+if "-dt"=="%DEBUG_RUN%" SET DEBUG_RUN=-d
 
-if "%DEBUG%"=="-d" (
+if "-d"=="%DEBUG_RUN%" (
 	@echo on
-	echo Running '%EXE_PATH%' in debug
+	echo RUNNING '%EXE_PATH%' IN DEBUG
 	@echo off
 	devenv %EXE_PATH%
 

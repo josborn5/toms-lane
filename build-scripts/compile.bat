@@ -2,7 +2,6 @@
 
 set ENTRY_POINT=%1
 set BIN_DIR=%2
-set DEBUG_FLAG=%3
 
 call "%~dp0\set-vcvars.bat"
 
@@ -10,14 +9,12 @@ REM https://docs.microsoft.com/en-us/cpp/build/reference/compiler-options-listed
 set DEBUG_COMPILER_FLAGS=-MT -nologo -Gm- -GR- -EHa- -Oi -WX -W4 -wd4100 -wd4201 -FC -Z7 /EHsc -Fm
 
 REM treat '-dt' or '-d' flags as the same thing
-SET DEBUG=%DEBUG_FLAG%
-if "%DEBUG_FLAG%"=="-dt" (
-	SET DEBUG=-d 
-)
+SET DEBUG_BUILD=%3
+if "-dt"=="%DEBUG_BUILD%" SET DEBUG_BUILD=-d
 
-if "%DEBUG%"=="-d" (
+if "-d"=="%DEBUG_BUILD%" (
 	@echo on
-	echo Compiling in debug mode
+	echo COMPILING IN DEBUG
 	@echo off
 	set COMPILER_FLAGS=%DEBUG_COMPILER_FLAGS%
 ) else (
