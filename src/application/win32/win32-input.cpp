@@ -39,20 +39,14 @@ bool win32_input_interface_process_message(const MSG& message, Input& input)
 				Button* button = &input.buttons[tlKey];
 				ProcessButtonState(button, isDown, wasDown);
 			}
-
-			if (wasDown != isDown)
+			else if (vKCode >= '0' && vKCode <= '9')
 			{
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '0', KEY_0);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '1', KEY_1);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '2', KEY_2);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '3', KEY_3);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '4', KEY_4);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '5', KEY_5);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '6', KEY_6);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '7', KEY_7);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '8', KEY_8);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '9', KEY_9);
-
+				int tlKey = (KEY_0 - '0') + vKCode;
+				Button* button = &input.buttons[tlKey];
+				ProcessButtonState(button, isDown, wasDown);
+			}
+			else if (wasDown != isDown)
+			{
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_SPACE, KEY_SPACE);
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_UP, KEY_UP);
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_DOWN, KEY_DOWN);
@@ -64,7 +58,6 @@ bool win32_input_interface_process_message(const MSG& message, Input& input)
 
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_CONTROL, KEY_CTRL);
 			}
-
 
 			return true;
 		} break;

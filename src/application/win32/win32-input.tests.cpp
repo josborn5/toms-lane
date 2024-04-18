@@ -7,8 +7,8 @@ static MSG GetMessageKeyEvent(UINT messageType, char key, bool isDown, bool wasD
 	MSG message;
 	message.message = messageType;
 	message.wParam = key;
-	LPARAM wasDownMask = wasDown ? (0 >> 30) : (1 >> 30);
-	LPARAM isDownMask = isDown ? (0 >> 31) : (1 >> 31);
+	LPARAM wasDownMask = wasDown ? (1 << 30) : (0 << 30);
+	LPARAM isDownMask = isDown ? (0 << 31) : (1 << 31);
 	message.lParam = wasDownMask | isDownMask;
 
 	return message;
@@ -40,11 +40,18 @@ void RunInputTests()
 	win32_input_interface_process_message(secondPressFrame, input);
 
 	assert(input.buttons[KEY_C].isDown == true);
+	assert(input.buttons[KEY_C].wasDown == true);
 
 	win32_input_interface_reset(input);
 	win32_input_interface_process_message(firstReleaseFrame, input);
 
+	assert(input.buttons[KEY_C].isDown == false);
+	assert(input.buttons[KEY_C].wasDown == true);
+
 	win32_input_interface_reset(input);
 	win32_input_interface_process_message(nothingPressed, input);
+
+	assert(input.buttons[KEY_C].isDown == false);
+	assert(input.buttons[KEY_C].wasDown == false);
 }
 
