@@ -32,35 +32,16 @@ bool win32_input_interface_process_message(const MSG& message, Input& input)
 			uint32_t vKCode = (uint32_t)message.wParam;
 			bool wasDown = ((message.lParam & (1 << 30)) != 0); // Bit #30 of the LParam tells us what the previous key was
 			bool isDown = ((message.lParam & (1 << 31)) == 0); // Bit #31 of the LParam tells us what the current key is
+
+			if (vKCode >= 'A' && vKCode <= 'Z')
+			{
+				int tlKey = (KEY_A - 'A') + vKCode;
+				Button* button = &input.buttons[tlKey];
+				ProcessButtonState(button, isDown, wasDown);
+			}
+
 			if (wasDown != isDown)
 			{
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'A', KEY_A);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'B', KEY_B);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'C', KEY_C);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'D', KEY_D);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'E', KEY_E);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'F', KEY_F);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'G', KEY_G);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'H', KEY_H);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'I', KEY_I);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'J', KEY_J);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'K', KEY_K);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'L', KEY_L);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'M', KEY_M);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'N', KEY_N);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'O', KEY_O);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'P', KEY_P);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'Q', KEY_Q);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'R', KEY_R);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'S', KEY_S);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'T', KEY_T);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'U', KEY_U);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'V', KEY_V);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'W', KEY_W);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'X', KEY_X);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'Y', KEY_Y);
-				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, 'Z', KEY_Z);
-
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '0', KEY_0);
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '1', KEY_1);
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, '2', KEY_2);
@@ -106,6 +87,7 @@ void win32_input_interface_reset(Input& input)
 	{
 		if (input.buttons[i].keyUp)
 		{
+
 			input.buttons[i].wasDown = false;
 			input.buttons[i].keyUp = false;
 		}

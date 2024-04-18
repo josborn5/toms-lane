@@ -22,20 +22,29 @@ void RunInputTests()
 	MSG nothingPressed = GetMessageKeyEvent(WM_ACTIVATE, 0, false, false);
 	MSG firstPressFrame = GetMessageKeyEvent(WM_KEYDOWN, 'C', true, false);
 	MSG secondPressFrame = GetMessageKeyEvent(WM_KEYDOWN, 'C', true, true);
-	MSG firstReleaseFrame = GetMessageKeyEvent(WM_KEYDOWN, 'C', false, true);
+	MSG firstReleaseFrame = GetMessageKeyEvent(WM_KEYUP, 'C', false, true);
 
+	win32_input_interface_reset(input);
 	win32_input_interface_process_message(nothingPressed, input);
 
 	assert(input.buttons[KEY_C].isDown == false);
 	assert(input.buttons[KEY_C].wasDown == false);
 
+	win32_input_interface_reset(input);
 	win32_input_interface_process_message(firstPressFrame, input);
 
 	assert(input.buttons[KEY_C].isDown == true);
 	assert(input.buttons[KEY_C].wasDown == false);
 
+	win32_input_interface_reset(input);
 	win32_input_interface_process_message(secondPressFrame, input);
 
+	assert(input.buttons[KEY_C].isDown == true);
+
+	win32_input_interface_reset(input);
 	win32_input_interface_process_message(firstReleaseFrame, input);
+
+	win32_input_interface_reset(input);
+	win32_input_interface_process_message(nothingPressed, input);
 }
 
