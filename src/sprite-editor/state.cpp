@@ -38,21 +38,21 @@ static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprit
 	int maxPixelIndex = (sprite.width * sprite.height) - 1;
 	if (!input.buttons[tl::KEY_CTRL].isDown)
 	{
-		if (tl::IsReleased(input, tl::KEY_RIGHT))
+		if (input.buttons[tl::KEY_RIGHT].keyDown)
 		{
 			if (selectedPixelIndex < maxPixelIndex)
 			{
 				selectedPixelIndex += 1;
 			}
 		}
-		else if (tl::IsReleased(input, tl::KEY_LEFT))
+		else if (input.buttons[tl::KEY_LEFT].keyDown)
 		{
 			if (selectedPixelIndex > 0)
 			{
 				selectedPixelIndex -= 1;
 			}
 		}
-		else if (tl::IsReleased(input, tl::KEY_DOWN))
+		else if (input.buttons[tl::KEY_DOWN].keyDown)
 		{
 			int provisionalSelectedPixelIndex = selectedPixelIndex + sprite.width;
 			if (provisionalSelectedPixelIndex <= maxPixelIndex)
@@ -60,7 +60,7 @@ static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprit
 				selectedPixelIndex = provisionalSelectedPixelIndex;
 			}
 		}
-		else if (tl::IsReleased(input, tl::KEY_UP))
+		else if (input.buttons[tl::KEY_UP].keyDown)
 		{
 			int provisionalSelectedPixelIndex = selectedPixelIndex - sprite.width;
 			if (provisionalSelectedPixelIndex >= 0)
@@ -367,7 +367,7 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 {
 	if (input.buttons[tl::KEY_CTRL].isDown)
 	{
-		if (tl::IsReleased(input, tl::KEY_C))
+		if (input.buttons[tl::KEY_C].keyDown)
 		{
 			hasCopied = true;
 			copiedColor = state.pixels.sprite->content[state.pixels.selectedIndex];
@@ -379,7 +379,7 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 			display.append('\0');
 			return true;
 		}
-		if (hasCopied && tl::IsReleased(input, tl::KEY_V))
+		if (hasCopied && input.buttons[tl::KEY_V].keyDown)
 		{
 			state.pixels.sprite->content[state.pixels.selectedIndex] = copiedColor;
 			ClearDisplayBuffer();
@@ -394,7 +394,7 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 	}
 	else
 	{
-		if (tl::IsReleased(input, tl::KEY_ESCAPE))
+		if (input.buttons[tl::KEY_ESCAPE].keyDown)
 		{
 			ClearCommandBuffer();
 			mode = View;

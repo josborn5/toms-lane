@@ -9,6 +9,7 @@ static void ProcessButtonState(Button* button, int isDown, int wasDown)
 	button->isDown = (isDown != 0);
 	button->wasDown = (wasDown != 0);
 	button->keyUp = (!button->isDown && button->wasDown);
+	button->keyDown = (button->isDown && !button->wasDown);
 }
 
 static void Win32_ProcessKeyboardMessage(Button* inputButton, int isDown, int wasDown, int vkCode, int vkButton, KEY key)
@@ -85,9 +86,10 @@ void win32_input_interface_reset(Input& input)
 		// To support this being called in a frame rate much higher than 1 frames
 		// per second, the reset function needs to compare the input state of a button
 		// from the prior frame to determine if it's held down from the previous frame.
-		if (button.isDown && !button.wasDown)
+		if (button.keyDown)
 		{
 			button.wasDown = true;
+			button.keyDown = false;
 		}
 		else if (button.keyUp)
 		{

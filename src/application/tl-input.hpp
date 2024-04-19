@@ -32,11 +32,24 @@ namespace tl
 	};
 
 
+/**
+ * time --->
+ *           _____        _____
+ *                |______|
+ *
+ * button values per frame:
+ * isDown  |0000001111111000000
+ * wasDown |0000000111111100000
+ * keyUp   |0000000000000100000
+ * keyDown |0000001000000000000
+ *
+ */
 	struct Button
 	{
 		bool isDown;
 		bool wasDown;
 		bool keyUp;
+		bool keyDown;
 	};
 
 	struct Mouse
