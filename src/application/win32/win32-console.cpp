@@ -1,6 +1,6 @@
 #include <windows.h>
 
-static HANDLE consoleWriteHandle;
+static HANDLE consoleWriteHandle = INVALID_HANDLE_VALUE;
 
 namespace tl
 {

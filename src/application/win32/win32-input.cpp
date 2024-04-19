@@ -45,7 +45,7 @@ bool win32_input_interface_process_message(const MSG& message, Input& input)
 				Button* button = &input.buttons[tlKey];
 				ProcessButtonState(button, isDown, wasDown);
 			}
-			else if (wasDown != isDown)
+			else
 			{
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_SPACE, KEY_SPACE);
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_UP, KEY_UP);
@@ -78,11 +78,22 @@ void win32_input_interface_reset(Input& input)
 {
 	for (int i = 0; i < KEY_COUNT; i += 1)
 	{
-		if (input.buttons[i].keyUp)
+		Button& button = input.buttons[i];
+		// When holding down a button the first key-down message shows isDown:true
+		// and wasDown:false. The next key-down message to come after than, that
+		// shows isDown:true and wasDown:true only comes ~1 second after the first.
+		// To support this being called in a frame rate much higher than 1 frames
+		// per second, the reset function needs to compare the input state of a button
+		// from the prior frame to determine if it's held down from the previous frame.
+		if (button.isDown && !button.wasDown)
+		{
+			button.wasDown = true;
+		}
+		else if (button.keyUp)
 		{
 
-			input.buttons[i].wasDown = false;
-			input.buttons[i].keyUp = false;
+			button.wasDown = false;
+			button.keyUp = false;
 		}
 	}
 
