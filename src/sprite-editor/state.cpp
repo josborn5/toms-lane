@@ -83,7 +83,7 @@ static void ProcessActiveControl(const tl::Input &input)
 {
 	if (!input.buttons[tl::KEY_CTRL].isDown)
 	{
-		if (tl::IsReleased(input, tl::KEY_TAB))
+		if (input.buttons[tl::KEY_TAB].keyUp)
 		{
 			int nextActiveControlIndex = state.activeControl + 1;
 			state.activeControl = (nextActiveControlIndex < EditorControlCount) ? (EditorControl)nextActiveControlIndex : SpriteGrid;
@@ -401,7 +401,7 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 			return true;
 		}
 
-		if (tl::IsReleased(input, tl::KEY_V) && mode == View)
+		if (input.buttons[tl::KEY_V].keyUp && mode == View)
 		{
 			ClearCommandBuffer();
 			mode = Visual;
@@ -416,7 +416,7 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 			return true;
 		}
 
-		if (tl::IsReleased(input, tl::KEY_ENTER))
+		if (input.buttons[tl::KEY_ENTER].keyUp)
 		{
 			ExecuteCurrentCommand();
 			return true;
@@ -432,7 +432,7 @@ static void ProcessKeyboardInput(const tl::Input& input)
 	{
 		for (int key = tl::KEY_A; key <= tl::KEY_Z; key += 1)
 		{
-			if (tl::IsReleased(input, key))
+			if (input.buttons[key].keyUp)
 			{
 				char commandChar = GetCharForAlphaKey(key);
 				commands.append(commandChar);
@@ -441,14 +441,14 @@ static void ProcessKeyboardInput(const tl::Input& input)
 
 		for (int key = tl::KEY_0; key <= tl::KEY_9; key += 1)
 		{
-			if (tl::IsReleased(input, key))
+			if (input.buttons[key].keyUp)
 			{
 				char commandChar = GetCharForDigitKey(key);
 				commands.append(commandChar);
 			}
 		}
 
-		if (tl::IsReleased(input, tl::KEY_SPACE))
+		if (input.buttons[tl::KEY_SPACE].keyUp)
 		{
 			commands.append(' ');
 		}

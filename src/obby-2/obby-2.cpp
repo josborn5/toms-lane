@@ -52,7 +52,7 @@ int UpdateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer
 	pixelRect.x = renderBuffer.width;
 	pixelRect.y = renderBuffer.height;
 
-	if (tl::IsReleased(input, tl::KEY_R))
+	if (input.buttons[tl::KEY_R].keyUp)
 	{
 		initialized = false;
 	}
@@ -63,7 +63,7 @@ int UpdateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer
 		return InitializeGameState(&gamestate, pixelRect, input);
 	}
 
-	if (tl::IsReleased(input, tl::KEY_H))
+	if (input.buttons[tl::KEY_H].keyUp)
 	{
 		isPaused = !isPaused;
 	}

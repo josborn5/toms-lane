@@ -423,7 +423,7 @@ static void UpdateGameState(
 {
 	if (state->mode == ReadyToStart)
 	{
-		if (tl::IsReleased(input, tl::KEY_S))
+		if (input.buttons[tl::KEY_S].keyUp)
 		{
 			state->mode = StartingNextLevel;
 		}
@@ -531,7 +531,7 @@ static void UpdateGameState(
 
 GameState& GetNewState(const tl::Input& input, float dt)
 {
-	if (tl::IsReleased(input, tl::KEY_R))
+	if (input.buttons[tl::KEY_R].keyUp)
 	{
 		initialized = false;
 	}
@@ -543,7 +543,7 @@ GameState& GetNewState(const tl::Input& input, float dt)
 		return gamestate;
 	}
 
-	if (tl::IsReleased(input, tl::KEY_H))
+	if (input.buttons[tl::KEY_H].keyUp)
 	{
 		isPaused = !isPaused;
 	}
