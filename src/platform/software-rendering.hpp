@@ -2,7 +2,6 @@
 #define TOMS_LANE_SOFTWARE_RENDERING_H
 
 #include "./software-rendering.sprite.hpp"
-#include "./platform.hpp"
 #include "./math.hpp"
 #include "./geometry.hpp"
 #include <stdint.h>

@@ -1,4 +1,3 @@
-#include "./platform.hpp"
 #include "./math.hpp"
 #include "./geometry.hpp"
 #include "./software-rendering.hpp"

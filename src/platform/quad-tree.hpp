@@ -1,8 +1,6 @@
 #ifndef TOMS_LANE_QUAD_TREE_H
 #define TOMS_LANE_QUAD_TREE_H
 
-#include "./platform.hpp"
-
 namespace tl
 {
 	struct rect_node_value

@@ -1,7 +1,6 @@
 #ifndef TOMS_LANE_PLATFORM_PUBLIC_H
 #define TOMS_LANE_PLATFORM_PUBLIC_H
 
-#include "./platform/platform.hpp"
 #include "./platform/math.hpp"
 #include "./platform/geometry.hpp"
 #include "./platform/software-rendering.hpp"
