@@ -83,7 +83,7 @@ static void ProcessActiveControl(const tl::Input &input)
 {
 	if (!input.buttons[tl::KEY_CTRL].isDown)
 	{
-		if (input.buttons[tl::KEY_TAB].keyUp)
+		if (input.buttons[tl::KEY_TAB].keyDown)
 		{
 			int nextActiveControlIndex = state.activeControl + 1;
 			state.activeControl = (nextActiveControlIndex < EditorControlCount) ? (EditorControl)nextActiveControlIndex : SpriteGrid;
@@ -226,10 +226,6 @@ int Initialize(const tl::GameMemory& gameMemory)
 	return 0;
 }
 
-static int GetSelectedRowIndex()
-{
-	return state.pixels.selectedIndex / state.pixels.sprite->height;
-}
 
 static int GetSelectedColumnIndex()
 {
@@ -257,8 +253,7 @@ static void ExecuteCurrentCommand()
 		{
 			if (commands.get(1) == '\0')
 			{
-				int selectedRowIndex = GetSelectedRowIndex();
-				AppendRowToSpriteC(*state.pixels.sprite, spriteMemory, selectedRowIndex); // TODO: make the MemorySpace a field of the SpriteC struct. The pointer to the sprite content is shared between the two - make it a single pointer owner!
+				InsertRow(state, spriteMemory);
 				SizeGrid(state.pixels);
 			}
 			break;
@@ -401,7 +396,7 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 			return true;
 		}
 
-		if (input.buttons[tl::KEY_V].keyUp && mode == View)
+		if (input.buttons[tl::KEY_V].keyDown && mode == View)
 		{
 			ClearCommandBuffer();
 			mode = Visual;
@@ -416,7 +411,7 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 			return true;
 		}
 
-		if (input.buttons[tl::KEY_ENTER].keyUp)
+		if (input.buttons[tl::KEY_ENTER].keyDown)
 		{
 			ExecuteCurrentCommand();
 			return true;
@@ -432,7 +427,7 @@ static void ProcessKeyboardInput(const tl::Input& input)
 	{
 		for (int key = tl::KEY_A; key <= tl::KEY_Z; key += 1)
 		{
-			if (input.buttons[key].keyUp)
+			if (input.buttons[key].keyDown)
 			{
 				char commandChar = GetCharForAlphaKey(key);
 				commands.append(commandChar);
@@ -441,14 +436,14 @@ static void ProcessKeyboardInput(const tl::Input& input)
 
 		for (int key = tl::KEY_0; key <= tl::KEY_9; key += 1)
 		{
-			if (input.buttons[key].keyUp)
+			if (input.buttons[key].keyDown)
 			{
 				char commandChar = GetCharForDigitKey(key);
 				commands.append(commandChar);
 			}
 		}
 
-		if (input.buttons[tl::KEY_SPACE].keyUp)
+		if (input.buttons[tl::KEY_SPACE].keyDown)
 		{
 			commands.append(' ');
 		}

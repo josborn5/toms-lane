@@ -120,7 +120,7 @@ void Save(
 	}
 }
 
-int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
+static int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
 {
 	/*
 		Current: 3x2 grid of pixels
@@ -183,6 +183,21 @@ int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int in
 	sprite.height += 1;
 
 	return 0;
+}
+
+static int GetSelectedRowIndex(const EditorState& state)
+{
+	return state.pixels.selectedIndex / state.pixels.sprite->height;
+}
+
+
+int InsertRow(EditorState& state, tl::MemorySpace spriteMemory)
+{
+	int selectedRowIndex = GetSelectedRowIndex(state);
+
+	state.pixels.selectedIndex += state.pixels.sprite->width;
+
+	return AppendRowToSpriteC(*state.pixels.sprite, spriteMemory, selectedRowIndex);
 }
 
 int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)

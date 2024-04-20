@@ -3,6 +3,7 @@
 
 #include "../tl-application.hpp"
 #include "../tl-library.hpp"
+#include "./editor.hpp"
 
 void Save(
 	const tl::GameMemory& gameMemory,
@@ -10,7 +11,7 @@ void Save(
 	tl::array<char>& displayBuffer,
 	char* filePath
 );
-int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex);
+int InsertRow(EditorState& state, tl::MemorySpace spriteMemory);
 int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex);
 
 #endif
