@@ -198,6 +198,20 @@ static void InsertRowTests()
 	InsertRow(grid, memory);
 
 	assert(grid.selectedIndex == 24); // selected pixel is now the first pixel on the fourth row
+
+	printf("\n2x8 selected index test\n");
+	ResetState();
+	sprite.width = 2;
+	sprite.height = 8;
+	grid.selectedIndex = 3; // select the last pixel in the second row
+
+	InsertRow(grid, memory);
+
+	assert(grid.selectedIndex == 5); // selected pixel is now the last pixel on the third row
+
+	InsertRow(grid, memory);
+
+	assert(grid.selectedIndex == 7); // selected pixel is now the last pixel on the fourth row
 }
 
 static void InsertColumnTests()
@@ -366,6 +380,34 @@ static void InsertColumnTests()
 	InsertColumn(grid, memory);
 
 	assert(grid.selectedIndex == 6); // third column of second for is selected
+
+	printf("\n8x2 selected index test\n");
+	ResetState();
+	sprite.width = 8;
+	sprite.height = 2;
+	grid.selectedIndex = 8; // select the first pixel in the second row
+
+	InsertColumn(grid, memory);
+
+	assert(grid.selectedIndex == 10); // selected pixel is now the second pixel on the second row
+
+	InsertColumn(grid, memory);
+
+	assert(grid.selectedIndex == 12); // selected pixel is now the third pixel on the second row
+
+	printf("\n2x8 selected index test\n");
+	ResetState();
+	sprite.width = 2;
+	sprite.height = 8;
+	grid.selectedIndex = 15; // select the last pixel in the last row
+
+	InsertColumn(grid, memory);
+
+	assert(grid.selectedIndex == 23); // selected pixel is now the last pixel on the last row
+
+	InsertColumn(grid, memory);
+
+	assert(grid.selectedIndex == 31); // selected pixel is now the last pixel on the last row
 }
 
 int main()
