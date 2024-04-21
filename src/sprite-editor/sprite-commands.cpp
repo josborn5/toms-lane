@@ -301,11 +301,9 @@ static int GetSelectedColumnIndex(Grid& grid)
 int InsertColumn(Grid& grid, tl::MemorySpace spriteMemory)
 {
 	int selectedColumnIndex = GetSelectedColumnIndex(grid);
-
-	int returnValue = AppendColumnToSpriteC(*grid.sprite, spriteMemory, selectedColumnIndex);
-
 	int selectedRowIndex = GetSelectedRowIndex(grid);
 	grid.selectedIndex += (1 + selectedRowIndex);
-	return returnValue;
+
+	return AppendColumnToSpriteC(*grid.sprite, spriteMemory, selectedColumnIndex);
 }
 
