@@ -198,7 +198,7 @@ static int GetSelectedRowIndex(const Grid& grid)
 	}
 
 
-	return grid.selectedIndex / grid.sprite->height;
+	return grid.selectedIndex / grid.sprite->width;
 }
 
 

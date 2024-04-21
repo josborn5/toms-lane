@@ -191,13 +191,13 @@ static void InsertRowTests()
 	sprite.height = 2;
 	grid.selectedIndex = 8; // select the first pixel in the second row
 
-//	InsertRow(grid, memory);
+	InsertRow(grid, memory);
 
-//	assert(grid.selectedIndex == 16); // selected pixel is now the first pixel on the third row
+	assert(grid.selectedIndex == 16); // selected pixel is now the first pixel on the third row
 
-//	InsertRow(grid, memory);
+	InsertRow(grid, memory);
 
-//	assert(grid.selectedIndex == 24); // selected pixel is now the first pixel on the fourth row
+	assert(grid.selectedIndex == 24); // selected pixel is now the first pixel on the fourth row
 }
 
 static void InsertColumnTests()
@@ -365,7 +365,7 @@ static void InsertColumnTests()
 
 	InsertColumn(grid, memory);
 
-//	assert(grid.selectedIndex == 6); // third column of second for is selected
+	assert(grid.selectedIndex == 6); // third column of second for is selected
 }
 
 int main()
