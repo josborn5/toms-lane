@@ -113,19 +113,6 @@ static void ProcessCursorMovementInput(const tl::Input &input)
 	currentColor = state.palette_.sprite->content[state.palette_.selectedIndex];
 }
 
-static void ProcessActiveControl(const tl::Input &input)
-{
-	if (!input.buttons[tl::KEY_CTRL].isDown)
-	{
-		if (input.buttons[tl::KEY_TAB].keyDown)
-		{
-			int nextActiveControlIndex = state.activeControl + 1;
-			state.activeControl = (nextActiveControlIndex < EditorControlCount) ? (EditorControl)nextActiveControlIndex : SpriteGrid;
-		}
-	}
-}
-
-
 static char alphaKeyMap[26] = {
 	'A',
 	'B',
@@ -389,6 +376,13 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 			return true;
 		}
 
+		if (input.buttons[tl::KEY_TAB].keyDown)
+		{
+			int nextActiveControlIndex = state.activeControl + 1;
+			state.activeControl = (nextActiveControlIndex < EditorControlCount) ? (EditorControl)nextActiveControlIndex : SpriteGrid;
+			return true;
+		}
+
 		if (input.buttons[tl::KEY_V].keyDown && mode == View)
 		{
 			ClearCommandBuffer();
@@ -461,7 +455,6 @@ int InitializeState(char* commandLine)
 
 const EditorState& GetLatestState(const tl::Input& input)
 {
-	ProcessActiveControl(input);
 	ProcessCursorMovementInput(input);
 
 	if (!ProcessImmediateActionKeys(input))
