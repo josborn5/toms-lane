@@ -12,7 +12,7 @@ void Save(
 	char* filePath
 );
 int InsertRow(Grid& grid, tl::MemorySpace spriteMemory);
-int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex);
+int InsertColumn(Grid& grid, tl::MemorySpace spriteMemory);
 
 #endif
 

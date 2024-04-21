@@ -200,7 +200,7 @@ int InsertRow(Grid& grid, tl::MemorySpace spriteMemory)
 	return AppendRowToSpriteC(*grid.sprite, spriteMemory, selectedRowIndex);
 }
 
-int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
+static int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
 {
 	/*
 		Current: 2x3 grid of pixels
@@ -270,5 +270,16 @@ int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int
 	}
 
 	return 0;
+}
+
+static int GetSelectedColumnIndex(Grid& grid)
+{
+	return grid.selectedIndex % grid.sprite->width;
+}
+
+int InsertColumn(Grid& grid, tl::MemorySpace spriteMemory)
+{
+	int selectedColumnIndex = GetSelectedColumnIndex(grid);
+	return AppendColumnToSpriteC(*grid.sprite, spriteMemory, selectedColumnIndex);
 }
 

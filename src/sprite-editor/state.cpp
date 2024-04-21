@@ -227,11 +227,6 @@ int Initialize(const tl::GameMemory& gameMemory)
 }
 
 
-static int GetSelectedColumnIndex()
-{
-	return state.pixels.selectedIndex % state.pixels.sprite->width;
-}
-
 static void ExecuteCurrentCommand()
 {
 	switch (commands.get(0))
@@ -262,8 +257,7 @@ static void ExecuteCurrentCommand()
 		{
 			if (commands.get(1) == '\0')
 			{
-				int selectedColumnIndex = GetSelectedColumnIndex();
-				AppendColumnToSpriteC(*state.pixels.sprite, spriteMemory, selectedColumnIndex);
+				InsertColumn(state.pixels, spriteMemory);
 				SizeGrid(state.pixels);
 			}
 			break;
