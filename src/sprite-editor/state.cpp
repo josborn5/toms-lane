@@ -71,11 +71,45 @@ static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprit
 	}
 }
 
+static void ClearDisplayBuffer()
+{
+	for (int i = 0; i < display.capacity(); i += 1)
+	{
+		display.access(i) = '\0';
+		display.clear();
+	}
+}
+
 static void ProcessCursorMovementInput(const tl::Input &input)
 {
 	tl::SpriteC& activeSprite = (state.activeControl == SpriteGrid) ? *state.pixels.sprite : *state.palette_.sprite;
 	int& activeIndex = (state.activeControl == SpriteGrid) ? state.pixels.selectedIndex : state.palette_.selectedIndex;
 	MoveCursorForSprite(input, activeSprite, activeIndex);
+
+	ClearDisplayBuffer();
+	if (mode == View && state.activeControl == SpriteGrid)
+	{
+		tl::Color selectedColor = state.pixels.sprite->content[state.pixels.selectedIndex];
+
+		int color = (int)(selectedColor.r * 255.0f);
+		char* cursor = &display.access(0);
+		tl::IntToCharString(color, cursor);
+
+		while (*cursor) cursor++;
+		*cursor = ' ';
+		cursor++;
+
+		color = (int)(selectedColor.g * 255.0f);
+		tl::IntToCharString(color, cursor);
+
+		while (*cursor) cursor++;
+		*cursor = ' ';
+		cursor++;
+
+		color = (int)(selectedColor.b * 255.0f);
+		tl::IntToCharString(color, cursor);
+	}
+
 	currentColor = state.palette_.sprite->content[state.palette_.selectedIndex];
 }
 
@@ -163,14 +197,6 @@ static void ClearCommandBuffer()
 	}
 }
 
-static void ClearDisplayBuffer()
-{
-	for (int i = 0; i < display.capacity(); i += 1)
-	{
-		display.access(i) = '\0';
-		display.clear();
-	}
-}
 
 int Initialize(const tl::GameMemory& gameMemory)
 {
@@ -268,33 +294,6 @@ static void ExecuteCurrentCommand()
 			tl::MemorySpace transient = appMemory.transient;
 			ParseColorFromCharArray(pointer, transient, state.pixels.sprite->content[state.pixels.selectedIndex]);
 			ClearCommandBuffer();
-			break;
-		}
-		case 'I': // inspect color of selected pixel
-		{
-			if (commands.get(1) == '\0')
-			{
-				ClearDisplayBuffer();
-				tl::Color selectedColor = state.pixels.sprite->content[state.pixels.selectedIndex];
-
-				int color = (int)(selectedColor.r * 255.0f);
-				char* cursor = &display.access(0);
-				tl::IntToCharString(color, cursor);
-
-				while (*cursor) cursor++;
-				*cursor = ' ';
-				cursor++;
-
-				color = (int)(selectedColor.g * 255.0f);
-				tl::IntToCharString(color, cursor);
-
-				while (*cursor) cursor++;
-				*cursor = ' ';
-				cursor++;
-
-				color = (int)(selectedColor.b * 255.0f);
-				tl::IntToCharString(color, cursor);
-			}
 			break;
 		}
 		case 'P': // switch palette
