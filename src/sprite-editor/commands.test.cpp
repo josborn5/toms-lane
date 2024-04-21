@@ -16,7 +16,7 @@ int tl::IntToCharString(int a, char* b)
 	return 0;
 }
 
-const int pixelCount = 8;
+const int pixelCount = 32;
 static tl::Color spriteContent[pixelCount];
 static tl::SpriteC sprite;
 tl::MemorySpace memory;
@@ -40,13 +40,21 @@ static void ResetState()
 	}
 }
 
-// tests
 static void SetColor(tl::Color& color)
 {
 	color.r = 255.0f;
 	color.g = 254.0f;
 	color.b = 253.0f;
 	color.a = 252.0f;
+}
+
+static void FillSprite()
+{
+	int count = sprite.width * sprite.height;
+	for (int i = 0; i < count; i += 1)
+	{
+		SetColor(spriteContent[i]);
+	}
 }
 
 static void AssertSetColorForPixel(int pixelIndex)
@@ -76,9 +84,9 @@ static void InsertRowTests()
 	printf("\n\nInsertRow tests\n================\n");
 	printf("\n1x1 pixel content test\n");
 	ResetState();
-	SetColor(spriteContent[0]);
 	sprite.width = 1;
 	sprite.height = 1;
+	FillSprite();
 
 	AssertSetColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -112,10 +120,9 @@ static void InsertRowTests()
 
 	printf("\n2x1 pixel content test\n");
 	ResetState();
-	SetColor(spriteContent[0]);
-	SetColor(spriteContent[1]);
 	sprite.width = 2;
 	sprite.height = 1;
+	FillSprite();
 
 	AssertSetColorForPixel(0);
 	AssertSetColorForPixel(1);
@@ -132,24 +139,21 @@ static void InsertRowTests()
 	ResetState();
 	sprite.width = 2;
 	sprite.height = 1;
-	grid.selectedIndex = 0;
+	grid.selectedIndex = 1; // last column in first row
 
 	InsertRow(grid, memory);
 
-	assert(grid.selectedIndex == 2);
+	assert(grid.selectedIndex == 3); // last column in second row
 
 	InsertRow(grid, memory);
 
-	assert(grid.selectedIndex == 4);
+	assert(grid.selectedIndex == 5); // last colun in third row
 
 	printf("\n2x2 pixel content test\n");
 	ResetState();
-	SetColor(spriteContent[0]);
-	SetColor(spriteContent[1]);
-	SetColor(spriteContent[2]);
-	SetColor(spriteContent[3]);
 	sprite.width = 2;
 	sprite.height = 2;
+	FillSprite();
 	grid.selectedIndex = 2;
 
 	AssertSetColorForPixel(0);
@@ -176,40 +180,69 @@ static void InsertRowTests()
 	InsertRow(grid, memory);
 
 	assert(grid.selectedIndex == 4); // selected pixel is now the first pixel on the third row
+
+	InsertRow(grid, memory);
+
+	assert(grid.selectedIndex == 6); // selected pixel is now the first pixel on the fourth row
+
+	printf("\n8x2 selected index test\n");
+	ResetState();
+	sprite.width = 8;
+	sprite.height = 2;
+	grid.selectedIndex = 8; // select the first pixel in the second row
+
+//	InsertRow(grid, memory);
+
+//	assert(grid.selectedIndex == 16); // selected pixel is now the first pixel on the third row
+
+//	InsertRow(grid, memory);
+
+//	assert(grid.selectedIndex == 24); // selected pixel is now the first pixel on the fourth row
 }
 
 static void InsertColumnTests()
 {
 	printf("\n\nInsertColumn tests\n================\n");
-	printf("\n\n1x1 test\n");
+	printf("\n\n1x1 pixel content test\n");
 	ResetState();
-	SetColor(spriteContent[0]);
 	sprite.width = 1;
 	sprite.height = 1;
+	FillSprite();
 
 	AssertSetColorForPixel(0);
 	AssertEmptyColorForPixel(1);
 
 	InsertColumn(grid, memory);
 
-	assert(grid.selectedIndex == 1);
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
+	AssertEmptyColorForPixel(2);
+
+	InsertColumn(grid, memory);
+
+	AssertEmptyColorForPixel(0);
+	AssertEmptyColorForPixel(1);
+	AssertSetColorForPixel(2);
+	AssertEmptyColorForPixel(3);
+
+	printf("\n\n1x1 selected index test\n");
+	ResetState();
+	sprite.width = 1;
+	sprite.height = 1;
+
+	InsertColumn(grid, memory);
+
+	assert(grid.selectedIndex == 1);
 
 	InsertColumn(grid, memory);
 
 	assert(grid.selectedIndex == 2);
-	AssertEmptyColorForPixel(0);
-	AssertEmptyColorForPixel(1);
-	AssertSetColorForPixel(2);
 
-	// 1x2
-	printf("\n\n1x2 test\n");
+	printf("\n\n1x2 pixel content test\n");
 	ResetState();
-	SetColor(spriteContent[0]);
-	SetColor(spriteContent[1]);
 	sprite.width = 1;
 	sprite.height = 2;
+	FillSprite();
 	grid.selectedIndex = 1; // select first column in bottom row
 
 	AssertSetColorForPixel(0);
@@ -219,7 +252,6 @@ static void InsertColumnTests()
 
 	InsertColumn(grid, memory);
 
-	assert(grid.selectedIndex == 3); // second column in bottom row is now selected
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
@@ -227,7 +259,6 @@ static void InsertColumnTests()
 
 	InsertColumn(grid, memory);
 
-	assert(grid.selectedIndex == 5);
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
 	AssertSetColorForPixel(2);
@@ -235,13 +266,25 @@ static void InsertColumnTests()
 	AssertEmptyColorForPixel(4);
 	AssertSetColorForPixel(5);
 
-	// 2x1
-	printf("\n\n2x1 test\n");
+	printf("\n\n1x2 selected index test\n");
 	ResetState();
-	SetColor(spriteContent[0]);
-	SetColor(spriteContent[1]);
+	sprite.width = 1;
+	sprite.height = 2;
+	grid.selectedIndex = 1; // select first column in bottom row
+
+	InsertColumn(grid, memory);
+
+	assert(grid.selectedIndex == 3); // second column in bottom row is now selected
+
+	InsertColumn(grid, memory);
+
+	assert(grid.selectedIndex == 5); // third column on bottom row is now selected
+
+	printf("\n\n2x1 pixel content test\n");
+	ResetState();
 	sprite.width = 2;
 	sprite.height = 1;
+	FillSprite();
 
 	AssertSetColorForPixel(0);
 	AssertSetColorForPixel(1);
@@ -260,15 +303,25 @@ static void InsertColumnTests()
 	AssertSetColorForPixel(2);
 	AssertSetColorForPixel(3);
 
-	// 2x2
-	printf("\n\n2x2 test\n");
+	printf("\n\n2x1 selected index test\n");
 	ResetState();
-	SetColor(spriteContent[0]);
-	SetColor(spriteContent[1]);
-	SetColor(spriteContent[2]);
-	SetColor(spriteContent[3]);
+	sprite.width = 2;
+	sprite.height = 1;
+	grid.selectedIndex = 1;
+
+	InsertColumn(grid, memory);
+
+	assert(grid.selectedIndex == 2);
+
+	InsertColumn(grid, memory);
+
+	assert(grid.selectedIndex == 3);
+
+	printf("\n\n2x2 pixel content test\n");
+	ResetState();
 	sprite.width = 2;
 	sprite.height = 2;
+	FillSprite();
 
 	AssertSetColorForPixel(0);
 	AssertSetColorForPixel(1);
@@ -299,6 +352,20 @@ static void InsertColumnTests()
 	AssertEmptyColorForPixel(5);
 	AssertSetColorForPixel(6);
 	AssertSetColorForPixel(7);
+
+	printf("\n\n2x2 selected index test\n");
+	ResetState();
+	sprite.width = 2;
+	sprite.height = 2;
+	grid.selectedIndex = 2; // first column of second row is selected
+
+	InsertColumn(grid, memory);
+
+	assert(grid.selectedIndex == 4); // second column of second row is selected
+
+	InsertColumn(grid, memory);
+
+//	assert(grid.selectedIndex == 6); // third column of second for is selected
 }
 
 int main()
