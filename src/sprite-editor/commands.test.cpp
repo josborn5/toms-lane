@@ -74,6 +74,53 @@ static void AssertEmptyColorForPixel(int pixelIndex)
 static void InsertRowTests()
 {
 	printf("\n\nInsertRow tests\n================\n");
+	printf("\n1x1 test\n");
+	ResetState();
+	SetColor(spriteContent[0]);
+	sprite.width = 1;
+	sprite.height = 1;
+
+	AssertSetColorForPixel(0);
+	AssertEmptyColorForPixel(1);
+
+	grid.selectedIndex = 0;
+
+	InsertRow(grid, memory);
+
+	assert(grid.selectedIndex == 1);
+	AssertEmptyColorForPixel(0);
+	AssertSetColorForPixel(1);
+	AssertEmptyColorForPixel(2);
+
+	InsertRow(grid, memory);
+
+	assert(grid.selectedIndex == 2);
+	AssertEmptyColorForPixel(0);
+	AssertEmptyColorForPixel(1);
+	AssertSetColorForPixel(2);
+	AssertEmptyColorForPixel(3);
+
+	printf("\n2x1 test\n");
+	ResetState();
+	SetColor(spriteContent[0]);
+	SetColor(spriteContent[1]);
+	sprite.width = 2;
+	sprite.height = 1;
+
+	AssertSetColorForPixel(0);
+	AssertSetColorForPixel(1);
+	AssertEmptyColorForPixel(2);
+
+	grid.selectedIndex = 0;
+
+	InsertRow(grid, memory);
+
+	assert(grid.selectedIndex == 2);
+	AssertEmptyColorForPixel(0);
+	AssertEmptyColorForPixel(1);
+	AssertSetColorForPixel(2);
+	AssertSetColorForPixel(3);
+
 	printf("\n2x2 test\n");
 	ResetState();
 	SetColor(spriteContent[0]);
@@ -117,11 +164,13 @@ static void InsertColumnTests()
 
 	InsertColumn(grid, memory);
 
+	assert(grid.selectedIndex == 1);
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 
 	InsertColumn(grid, memory);
 
+	assert(grid.selectedIndex == 2);
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
 	AssertSetColorForPixel(2);
@@ -133,6 +182,7 @@ static void InsertColumnTests()
 	SetColor(spriteContent[1]);
 	sprite.width = 1;
 	sprite.height = 2;
+	grid.selectedIndex = 1; // select first column in bottom row
 
 	AssertSetColorForPixel(0);
 	AssertSetColorForPixel(1);
