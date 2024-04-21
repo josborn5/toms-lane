@@ -11,7 +11,7 @@ void Save(
 	tl::array<char>& displayBuffer,
 	char* filePath
 );
-int InsertRow(EditorState& state, tl::MemorySpace spriteMemory);
+int InsertRow(Grid& grid, tl::MemorySpace spriteMemory);
 int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex);
 
 #endif

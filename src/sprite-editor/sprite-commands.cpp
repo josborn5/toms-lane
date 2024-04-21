@@ -185,19 +185,19 @@ static int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory,
 	return 0;
 }
 
-static int GetSelectedRowIndex(const EditorState& state)
+static int GetSelectedRowIndex(const Grid& grid)
 {
-	return state.pixels.selectedIndex / state.pixels.sprite->height;
+	return grid.selectedIndex / grid.sprite->height;
 }
 
 
-int InsertRow(EditorState& state, tl::MemorySpace spriteMemory)
+int InsertRow(Grid& grid, tl::MemorySpace spriteMemory)
 {
-	int selectedRowIndex = GetSelectedRowIndex(state);
+	int selectedRowIndex = GetSelectedRowIndex(grid);
 
-	state.pixels.selectedIndex += state.pixels.sprite->width;
+	grid.selectedIndex += grid.sprite->width;
 
-	return AppendRowToSpriteC(*state.pixels.sprite, spriteMemory, selectedRowIndex);
+	return AppendRowToSpriteC(*grid.sprite, spriteMemory, selectedRowIndex);
 }
 
 int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)

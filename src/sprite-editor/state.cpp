@@ -253,7 +253,7 @@ static void ExecuteCurrentCommand()
 		{
 			if (commands.get(1) == '\0')
 			{
-				InsertRow(state, spriteMemory);
+				InsertRow(state.pixels, spriteMemory);
 				SizeGrid(state.pixels);
 			}
 			break;

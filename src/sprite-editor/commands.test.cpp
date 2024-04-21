@@ -20,9 +20,13 @@ const int pixelCount = 8;
 static tl::Color spriteContent[pixelCount];
 static tl::SpriteC sprite;
 tl::MemorySpace memory;
+static Grid grid = {0};
+
 
 static void ResetState()
 {
+	grid = {0};
+	grid.sprite = &sprite;
 	sprite.content = spriteContent;
 	memory.content = spriteContent;
 	memory.sizeInBytes = sizeof(tl::Color) * pixelCount;
@@ -67,6 +71,37 @@ static void AssertEmptyColorForPixel(int pixelIndex)
 	assert(pixel.a == 0.0f);
 }
 
+static void InsertRowTests()
+{
+	printf("\n\nInsertRow tests\n================\n");
+	printf("\n2x2 test\n");
+	ResetState();
+	SetColor(spriteContent[0]);
+	SetColor(spriteContent[1]);
+	SetColor(spriteContent[2]);
+	SetColor(spriteContent[3]);
+	sprite.width = 2;
+	sprite.height = 2;
+
+	AssertSetColorForPixel(0);
+	AssertSetColorForPixel(1);
+	AssertSetColorForPixel(2);
+	AssertSetColorForPixel(3);
+	AssertEmptyColorForPixel(4);
+
+	grid.selectedIndex = 2; // select the first pixel in the second row
+
+	InsertRow(grid, memory);
+
+	assert(grid.selectedIndex == 4); // selected pixel is now the first pixel on the third row
+
+	AssertSetColorForPixel(0);
+	AssertSetColorForPixel(1);
+	AssertEmptyColorForPixel(2);
+	AssertEmptyColorForPixel(3);
+	AssertSetColorForPixel(4);
+	AssertSetColorForPixel(5);
+}
 
 static void AddColumnTests()
 {
@@ -190,6 +225,8 @@ static void AddColumnTests()
 
 int main()
 {
+
+	InsertRowTests();
 	AddColumnTests();
 	return 0;
 }
