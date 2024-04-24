@@ -291,14 +291,6 @@ static void ExecuteCurrentCommand()
 			}
 			break;
 		}
-		case '\0': // Apply active color from palette
-		{
-			if (state.activeControl == SpriteGrid)
-			{
-				state.pixels.sprite->content[state.pixels.selectedIndex] = currentColor;
-			}
-			break;
-		}
 		case 'D': // Delete
 		{
 			if (commands.get(1) == 'R' && commands.get(2) == '\0' && state.pixels.sprite->height > 1)
@@ -398,9 +390,32 @@ static bool ProcessImmediateActionKeys(const tl::Input& input)
 			return true;
 		}
 
+		if (input.buttons[tl::KEY_I].keyDown && mode == View)
+		{
+			ClearCommandBuffer();
+			mode = Insert;
+			commands.append('I');
+			commands.append('N');
+			commands.append('S');
+			commands.append('E');
+			commands.append('R');
+			commands.append('T');
+			commands.append('\0');
+
+			return true;
+		}
+
 		if (input.buttons[tl::KEY_ENTER].keyDown)
 		{
-			ExecuteCurrentCommand();
+			if (state.activeControl == SpriteGrid && mode == Insert)
+			{
+				state.pixels.sprite->content[state.pixels.selectedIndex] = currentColor;
+			}
+			else
+			{
+				ExecuteCurrentCommand();
+			}
+
 			return true;
 		}
 	}
