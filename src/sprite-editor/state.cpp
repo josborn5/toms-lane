@@ -394,95 +394,92 @@ static void ProcessCommandInput(const tl::Input& input)
 	}
 }
 
-static bool ProcessImmediateActionKeys(const tl::Input& input)
+static void ProcessImmediateActionKeys(const tl::Input& input)
 {
 	if (input.buttons[tl::KEY_ESCAPE].keyDown)
 	{
 		ClearCommandBuffer();
 		mode = View;
-		return true;
+		return;
 	}
 
 	if (input.buttons[tl::KEY_TAB].keyDown)
 	{
 		int nextActiveControlIndex = state.activeControl + 1;
 		state.activeControl = (nextActiveControlIndex < EditorControlCount) ? (EditorControl)nextActiveControlIndex : SpriteGrid;
-		return true;
+		return;
 	}
 
-
-	switch(mode)
+	if (mode == View)
 	{
-		case View:
+		if (CheckForCopy(input)) return;
+		if (CheckForPaste(input)) return;
+
+		if (input.buttons[tl::KEY_V].keyDown)
 		{
-			if (CheckForCopy(input)) return true;
-			if (CheckForPaste(input)) return true;
+			ClearCommandBuffer();
+			mode = Visual;
+			commands.append('V');
+			commands.append('I');
+			commands.append('S');
+			commands.append('U');
+			commands.append('A');
+			commands.append('L');
+			commands.append('\0');
 
-			if (input.buttons[tl::KEY_V].keyDown)
-			{
-				ClearCommandBuffer();
-				mode = Visual;
-				commands.append('V');
-				commands.append('I');
-				commands.append('S');
-				commands.append('U');
-				commands.append('A');
-				commands.append('L');
-				commands.append('\0');
-
-				return true;
-			}
-
-			if (input.buttons[tl::KEY_I].keyDown)
-			{
-				ClearCommandBuffer();
-				mode = Insert;
-				commands.append('I');
-				commands.append('N');
-				commands.append('S');
-				commands.append('E');
-				commands.append('R');
-				commands.append('T');
-				commands.append('\0');
-
-				return true;
-			}
-
-			if (input.buttons[tl::KEY_C].keyDown)
-			{
-				ClearCommandBuffer();
-				mode = Command;
-				return true;
-			}
-			break;
+			return;
 		}
-		case Insert:
+
+		if (input.buttons[tl::KEY_I].keyDown)
 		{
-			if (input.buttons[tl::KEY_ENTER].keyDown && state.activeControl == SpriteGrid)
-			{
-				state.pixels.sprite->content[state.pixels.selectedIndex] = currentColor;
-				return true;
-			}
-			break;
+			ClearCommandBuffer();
+			mode = Insert;
+			commands.append('I');
+			commands.append('N');
+			commands.append('S');
+			commands.append('E');
+			commands.append('R');
+			commands.append('T');
+			commands.append('\0');
+
+			return;
 		}
-		case Visual:
+
+		if (input.buttons[tl::KEY_C].keyDown) // TODO: check for ':' instead of 'C'
 		{
-			if (CheckForCopy(input)) return true;
-			if (CheckForPaste(input)) return true;
-			break;
+			ClearCommandBuffer();
+			mode = Command;
+			return;
 		}
-		case Command:
-		{
-			if (input.buttons[tl::KEY_ENTER].keyDown)
-			{
-				ExecuteCurrentCommand();
-				return true;
-			}
-			ProcessCommandInput(input);
-			break;
-		}
+		return;
 	}
-	return false;
+
+	if (mode == Insert)
+	{
+		if (input.buttons[tl::KEY_ENTER].keyDown && state.activeControl == SpriteGrid)
+		{
+			state.pixels.sprite->content[state.pixels.selectedIndex] = currentColor;
+			return;
+		}
+		return;
+	}
+
+	if (mode == Visual)
+	{
+		if (CheckForCopy(input)) return;
+		if (CheckForPaste(input)) return;
+		return;
+	}
+
+	if (mode == Command)
+	{
+		if (input.buttons[tl::KEY_ENTER].keyDown)
+		{
+			ExecuteCurrentCommand();
+			return;
+		}
+		ProcessCommandInput(input);
+	}
 }
 
 int InitializeState(char* commandLine)
