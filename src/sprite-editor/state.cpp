@@ -330,99 +330,41 @@ static void ExecuteCurrentCommand()
 	ClearCommandBuffer();
 }
 
-static bool ProcessImmediateActionKeys(const tl::Input& input)
+static bool CheckForCopy(const tl::Input& input)
 {
-	if (input.buttons[tl::KEY_CTRL].isDown)
+	if (input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_C].keyDown && state.activeControl == SpriteGrid)
 	{
-		if (input.buttons[tl::KEY_C].keyDown)
-		{
-			hasCopied = true;
-			copiedColor = state.pixels.sprite->content[state.pixels.selectedIndex];
-			ClearDisplayBuffer();
-			display.append('C');
-			display.append('O');
-			display.append('P');
-			display.append('Y');
-			display.append('\0');
-			return true;
-		}
-		if (hasCopied && input.buttons[tl::KEY_V].keyDown)
-		{
-			state.pixels.sprite->content[state.pixels.selectedIndex] = copiedColor;
-			ClearDisplayBuffer();
-			display.append('P');
-			display.append('A');
-			display.append('S');
-			display.append('T');
-			display.append('E');
-			display.append('\0');
-			return true;
-		}
-	}
-	else
-	{
-		if (input.buttons[tl::KEY_ESCAPE].keyDown)
-		{
-			ClearCommandBuffer();
-			mode = View;
-			return true;
-		}
-
-		if (input.buttons[tl::KEY_TAB].keyDown)
-		{
-			int nextActiveControlIndex = state.activeControl + 1;
-			state.activeControl = (nextActiveControlIndex < EditorControlCount) ? (EditorControl)nextActiveControlIndex : SpriteGrid;
-			return true;
-		}
-
-		if (input.buttons[tl::KEY_V].keyDown && mode == View)
-		{
-			ClearCommandBuffer();
-			mode = Visual;
-			commands.append('V');
-			commands.append('I');
-			commands.append('S');
-			commands.append('U');
-			commands.append('A');
-			commands.append('L');
-			commands.append('\0');
-
-			return true;
-		}
-
-		if (input.buttons[tl::KEY_I].keyDown && mode == View)
-		{
-			ClearCommandBuffer();
-			mode = Insert;
-			commands.append('I');
-			commands.append('N');
-			commands.append('S');
-			commands.append('E');
-			commands.append('R');
-			commands.append('T');
-			commands.append('\0');
-
-			return true;
-		}
-
-		if (input.buttons[tl::KEY_ENTER].keyDown)
-		{
-			if (state.activeControl == SpriteGrid && mode == Insert)
-			{
-				state.pixels.sprite->content[state.pixels.selectedIndex] = currentColor;
-			}
-			else
-			{
-				ExecuteCurrentCommand();
-			}
-
-			return true;
-		}
+		hasCopied = true;
+		copiedColor = state.pixels.sprite->content[state.pixels.selectedIndex];
+		ClearDisplayBuffer();
+		display.append('C');
+		display.append('O');
+		display.append('P');
+		display.append('Y');
+		display.append('\0');
+		return true;
 	}
 	return false;
 }
 
-static void ProcessKeyboardInput(const tl::Input& input)
+static bool CheckForPaste(const tl::Input& input)
+{
+	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.activeControl == SpriteGrid)
+	{
+		state.pixels.sprite->content[state.pixels.selectedIndex] = copiedColor;
+		ClearDisplayBuffer();
+		display.append('P');
+		display.append('A');
+		display.append('S');
+		display.append('T');
+		display.append('E');
+		display.append('\0');
+		return true;
+	}
+	return false;
+}
+
+static void ProcessCommandInput(const tl::Input& input)
 {
 	// Update command buffer from input
 	if (commands.length() < commands.capacity())
@@ -452,6 +394,97 @@ static void ProcessKeyboardInput(const tl::Input& input)
 	}
 }
 
+static bool ProcessImmediateActionKeys(const tl::Input& input)
+{
+	if (input.buttons[tl::KEY_ESCAPE].keyDown)
+	{
+		ClearCommandBuffer();
+		mode = View;
+		return true;
+	}
+
+	if (input.buttons[tl::KEY_TAB].keyDown)
+	{
+		int nextActiveControlIndex = state.activeControl + 1;
+		state.activeControl = (nextActiveControlIndex < EditorControlCount) ? (EditorControl)nextActiveControlIndex : SpriteGrid;
+		return true;
+	}
+
+
+	switch(mode)
+	{
+		case View:
+		{
+			if (CheckForCopy(input)) return true;
+			if (CheckForPaste(input)) return true;
+
+			if (input.buttons[tl::KEY_V].keyDown)
+			{
+				ClearCommandBuffer();
+				mode = Visual;
+				commands.append('V');
+				commands.append('I');
+				commands.append('S');
+				commands.append('U');
+				commands.append('A');
+				commands.append('L');
+				commands.append('\0');
+
+				return true;
+			}
+
+			if (input.buttons[tl::KEY_I].keyDown)
+			{
+				ClearCommandBuffer();
+				mode = Insert;
+				commands.append('I');
+				commands.append('N');
+				commands.append('S');
+				commands.append('E');
+				commands.append('R');
+				commands.append('T');
+				commands.append('\0');
+
+				return true;
+			}
+
+			if (input.buttons[tl::KEY_C].keyDown)
+			{
+				ClearCommandBuffer();
+				mode = Command;
+				return true;
+			}
+			break;
+		}
+		case Insert:
+		{
+			if (input.buttons[tl::KEY_ENTER].keyDown && state.activeControl == SpriteGrid)
+			{
+				state.pixels.sprite->content[state.pixels.selectedIndex] = currentColor;
+				return true;
+			}
+			break;
+		}
+		case Visual:
+		{
+			if (CheckForCopy(input)) return true;
+			if (CheckForPaste(input)) return true;
+			break;
+		}
+		case Command:
+		{
+			if (input.buttons[tl::KEY_ENTER].keyDown)
+			{
+				ExecuteCurrentCommand();
+				return true;
+			}
+			ProcessCommandInput(input);
+			break;
+		}
+	}
+	return false;
+}
+
 int InitializeState(char* commandLine)
 {
 	if (*commandLine)
@@ -472,10 +505,6 @@ const EditorState& GetLatestState(const tl::Input& input)
 {
 	ProcessCursorMovementInput(input);
 
-	if (!ProcessImmediateActionKeys(input))
-	{
-		ProcessKeyboardInput(input);
-	}
-
+	ProcessImmediateActionKeys(input);
 	return state;
 }
