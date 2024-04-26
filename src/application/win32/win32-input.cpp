@@ -49,6 +49,10 @@ bool win32_input_interface_process_message(const MSG& message, Input& input)
 			else
 			{
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_SPACE, KEY_SPACE);
+				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_PRIOR, KEY_PAGEUP);
+				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_NEXT, KEY_PAGEDOWN);
+				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_HOME, KEY_HOME);
+				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_END, KEY_END);
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_UP, KEY_UP);
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_DOWN, KEY_DOWN);
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_LEFT, KEY_LEFT);
