@@ -25,52 +25,78 @@ static char displayBuffer[displayBufferSize];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
 static tl::array<char> display = tl::array<char>(displayBuffer, displayBufferSize);
 
-static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprite, int& selectedPixelIndex)
+static int CompareColor(const tl::Color& color1, const tl::Color& color2)
 {
-	int maxPixelIndex = (sprite.width * sprite.height) - 1;
+	if (color1.r == color2.r &&
+		color1.g == color2.g &&
+		color1.b == color2.b &&
+		color1.a == color2.a)
+	{
+		return 0;
+	}
+	return -1;
+}
+
+static void MoveCursorForSprite(const tl::Input &input, Grid& grid)
+{
+	int maxPixelIndex = (grid.sprite->width * grid.sprite->height) - 1;
 	if (input.buttons[tl::KEY_CTRL].isDown)
 	{
 		if (input.buttons[tl::KEY_HOME].keyDown)
 		{
-			selectedPixelIndex = 0;
+			grid.selectedIndex = 0;
 			return;
 		}
 
 		if (input.buttons[tl::KEY_END].keyDown)
 		{
-			selectedPixelIndex = (sprite.height * sprite.width) - 1;
+			grid.selectedIndex = (grid.sprite->height * grid.sprite->width) - 1;
 			return;
 		}
+
+		if (input.buttons[tl::KEY_LEFT].keyDown)
+		{
+			tl::Color activeColor = grid.sprite->content[grid.selectedIndex];
+			int pixelIndex = grid.selectedIndex;
+			bool sameColor = true;
+			while (pixelIndex > 0 && sameColor)
+			{
+				pixelIndex -= 1;
+				sameColor = (CompareColor(activeColor, grid.sprite->content[pixelIndex]) == 0);
+			}
+			grid.selectedIndex = pixelIndex;
+		}
+		return;
 	}
 
 	if (input.buttons[tl::KEY_RIGHT].keyDown)
 	{
-		if (selectedPixelIndex < maxPixelIndex)
+		if (grid.selectedIndex < maxPixelIndex)
 		{
-			selectedPixelIndex += 1;
+			grid.selectedIndex += 1;
 		}
 	}
 	else if (input.buttons[tl::KEY_LEFT].keyDown)
 	{
-		if (selectedPixelIndex > 0)
+		if (grid.selectedIndex > 0)
 		{
-			selectedPixelIndex -= 1;
+			grid.selectedIndex -= 1;
 		}
 	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
-		int provisionalSelectedPixelIndex = selectedPixelIndex + sprite.width;
+		int provisionalSelectedPixelIndex = grid.selectedIndex + grid.sprite->width;
 		if (provisionalSelectedPixelIndex <= maxPixelIndex)
 		{
-			selectedPixelIndex = provisionalSelectedPixelIndex;
+			grid.selectedIndex = provisionalSelectedPixelIndex;
 		}
 	}
 	else if (input.buttons[tl::KEY_UP].keyDown)
 	{
-		int provisionalSelectedPixelIndex = selectedPixelIndex - sprite.width;
+		int provisionalSelectedPixelIndex = grid.selectedIndex - grid.sprite->width;
 		if (provisionalSelectedPixelIndex >= 0)
 		{
-			selectedPixelIndex = provisionalSelectedPixelIndex;
+			grid.selectedIndex = provisionalSelectedPixelIndex;
 		}
 	}
 }
@@ -86,9 +112,8 @@ static void ClearDisplayBuffer()
 
 static void ProcessCursorMovementInput(const tl::Input &input)
 {
-	tl::SpriteC& activeSprite = (state.activeControl == SpriteGrid) ? *state.pixels.sprite : *state.palette_.sprite;
-	int& activeIndex = (state.activeControl == SpriteGrid) ? state.pixels.selectedIndex : state.palette_.selectedIndex;
-	MoveCursorForSprite(input, activeSprite, activeIndex);
+	Grid& activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
+	MoveCursorForSprite(input, activeGrid);
 
 	ClearDisplayBuffer();
 	if (state.mode == View && state.activeControl == SpriteGrid)
