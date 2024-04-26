@@ -8,13 +8,6 @@ const int commandBufferSize = 15;
 const int displayBufferSize = 15;
 const int modeBufferSize = 2;
 
-enum Mode
-{
-	View,
-	Command,
-	Visual,
-	Insert
-};
 
 static bool hasCopied = false;
 static tl::MemorySpace spriteMemory;
@@ -27,7 +20,6 @@ static tl::SpriteC currentSprite;
 tl::GameMemory appMemory;
 
 EditorState state;
-Mode mode;
 static char commandBuffer[commandBufferSize];
 static char displayBuffer[displayBufferSize];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
@@ -87,7 +79,7 @@ static void ProcessCursorMovementInput(const tl::Input &input)
 	MoveCursorForSprite(input, activeSprite, activeIndex);
 
 	ClearDisplayBuffer();
-	if (mode == View && state.activeControl == SpriteGrid)
+	if (state.mode == View && state.activeControl == SpriteGrid)
 	{
 		tl::Color selectedColor = state.pixels.sprite->content[state.pixels.selectedIndex];
 
@@ -187,7 +179,7 @@ static void ClearCommandBuffer()
 
 int Initialize(const tl::GameMemory& gameMemory)
 {
-	mode = View;
+	state.mode = View;
 	state.commandBuffer = &commandBuffer[0];
 	state.displayBuffer = &displayBuffer[0];
 	state.windowWidth = 800;
@@ -399,7 +391,7 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 	if (input.buttons[tl::KEY_ESCAPE].keyDown)
 	{
 		ClearCommandBuffer();
-		mode = View;
+		state.mode = View;
 		return;
 	}
 
@@ -410,7 +402,7 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 		return;
 	}
 
-	if (mode == View)
+	if (state.mode == View)
 	{
 		if (CheckForCopy(input)) return;
 		if (CheckForPaste(input)) return;
@@ -418,7 +410,7 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 		if (input.buttons[tl::KEY_V].keyDown)
 		{
 			ClearCommandBuffer();
-			mode = Visual;
+			state.mode = Visual;
 			commands.append('V');
 			commands.append('I');
 			commands.append('S');
@@ -433,7 +425,7 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 		if (input.buttons[tl::KEY_I].keyDown)
 		{
 			ClearCommandBuffer();
-			mode = Insert;
+			state.mode = Insert;
 			commands.append('I');
 			commands.append('N');
 			commands.append('S');
@@ -448,13 +440,13 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 		if (input.buttons[tl::KEY_C].keyDown) // TODO: check for ':' instead of 'C'
 		{
 			ClearCommandBuffer();
-			mode = Command;
+			state.mode = Command;
 			return;
 		}
 		return;
 	}
 
-	if (mode == Insert)
+	if (state.mode == Insert)
 	{
 		if (input.buttons[tl::KEY_ENTER].keyDown && state.activeControl == SpriteGrid)
 		{
@@ -464,14 +456,14 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 		return;
 	}
 
-	if (mode == Visual)
+	if (state.mode == Visual)
 	{
 		if (CheckForCopy(input)) return;
 		if (CheckForPaste(input)) return;
 		return;
 	}
 
-	if (mode == Command)
+	if (state.mode == Command)
 	{
 		if (input.buttons[tl::KEY_ENTER].keyDown)
 		{
@@ -500,7 +492,10 @@ int InitializeState(char* commandLine)
 
 const EditorState& GetLatestState(const tl::Input& input)
 {
-	ProcessCursorMovementInput(input);
+	if (state.mode != Command)
+	{
+		ProcessCursorMovementInput(input);
+	}
 
 	ProcessImmediateActionKeys(input);
 	return state;

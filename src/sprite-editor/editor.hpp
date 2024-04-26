@@ -17,6 +17,14 @@ struct Grid
 	int selectedIndex = 0;
 };
 
+enum Mode
+{
+	View,
+	Command,
+	Visual,
+	Insert
+};
+
 struct EditorState
 {
 	Grid pixels;
@@ -26,6 +34,7 @@ struct EditorState
 	EditorControl activeControl = SpriteGrid;
 	int windowWidth;
 	int windowHeight;
+	Mode mode;
 };
 
 #endif
