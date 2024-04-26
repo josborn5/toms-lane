@@ -28,37 +28,49 @@ static tl::array<char> display = tl::array<char>(displayBuffer, displayBufferSiz
 static void MoveCursorForSprite(const tl::Input &input, const tl::SpriteC& sprite, int& selectedPixelIndex)
 {
 	int maxPixelIndex = (sprite.width * sprite.height) - 1;
-	if (!input.buttons[tl::KEY_CTRL].isDown)
+	if (input.buttons[tl::KEY_CTRL].isDown)
 	{
-		if (input.buttons[tl::KEY_RIGHT].keyDown)
+		if (input.buttons[tl::KEY_HOME].keyDown)
 		{
-			if (selectedPixelIndex < maxPixelIndex)
-			{
-				selectedPixelIndex += 1;
-			}
+			selectedPixelIndex = 0;
+			return;
 		}
-		else if (input.buttons[tl::KEY_LEFT].keyDown)
+
+		if (input.buttons[tl::KEY_END].keyDown)
 		{
-			if (selectedPixelIndex > 0)
-			{
-				selectedPixelIndex -= 1;
-			}
+			selectedPixelIndex = (sprite.height * sprite.width) - 1;
+			return;
 		}
-		else if (input.buttons[tl::KEY_DOWN].keyDown)
+	}
+
+	if (input.buttons[tl::KEY_RIGHT].keyDown)
+	{
+		if (selectedPixelIndex < maxPixelIndex)
 		{
-			int provisionalSelectedPixelIndex = selectedPixelIndex + sprite.width;
-			if (provisionalSelectedPixelIndex <= maxPixelIndex)
-			{
-				selectedPixelIndex = provisionalSelectedPixelIndex;
-			}
+			selectedPixelIndex += 1;
 		}
-		else if (input.buttons[tl::KEY_UP].keyDown)
+	}
+	else if (input.buttons[tl::KEY_LEFT].keyDown)
+	{
+		if (selectedPixelIndex > 0)
 		{
-			int provisionalSelectedPixelIndex = selectedPixelIndex - sprite.width;
-			if (provisionalSelectedPixelIndex >= 0)
-			{
-				selectedPixelIndex = provisionalSelectedPixelIndex;
-			}
+			selectedPixelIndex -= 1;
+		}
+	}
+	else if (input.buttons[tl::KEY_DOWN].keyDown)
+	{
+		int provisionalSelectedPixelIndex = selectedPixelIndex + sprite.width;
+		if (provisionalSelectedPixelIndex <= maxPixelIndex)
+		{
+			selectedPixelIndex = provisionalSelectedPixelIndex;
+		}
+	}
+	else if (input.buttons[tl::KEY_UP].keyDown)
+	{
+		int provisionalSelectedPixelIndex = selectedPixelIndex - sprite.width;
+		if (provisionalSelectedPixelIndex >= 0)
+		{
+			selectedPixelIndex = provisionalSelectedPixelIndex;
 		}
 	}
 }
