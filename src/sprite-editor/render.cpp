@@ -148,19 +148,43 @@ void InitializeLayout(EditorState& state)
 	PlaceRectToRightOfRect(state.pixels.container, state.palette_.container);
 }
 
+static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const EditorState& state)
+{
+	const uint32_t commandBackgroundColor = 0x111111;
+	const uint32_t commandTextColor = 0xFFFFFF;
+	tl::DrawRect(renderBuffer, commandBackgroundColor, commandTextRect);
+	tl::DrawAlphabetCharacters(
+		renderBuffer,
+		state.commandBuffer,
+		commandCharFootprint,
+		commandTextColor
+	);
+
+	if (state.mode == Command)
+	{
+		tl::Rect<float> cursorFootprint = tl::CopyRect(commandCharFootprint);
+//		cursorFootprint.halfSize = commandCharFootprint.halfSize;
+//		cursorFootprint.position.x = commandChar;
+		char* cursorPointer = state.commandBuffer;
+		while (*cursorPointer)
+		{
+			cursorFootprint.position.x += cursorFootprint.halfSize.x + cursorFootprint.halfSize.x;
+			cursorPointer++;
+		}
+		tl::DrawRect(renderBuffer, commandTextColor, cursorFootprint);
+	}
+}
+
 void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 {
 	// Render
 	const uint32_t modeTextBackgroundColor = 0x000000;
-	const uint32_t commandBackgroundColor = 0x111111;
 	const uint32_t displayBackgroundColor = 0x222222;
 	const uint32_t spriteBackgroundColor = 0x333333;
 	const uint32_t paletteBackgroundColor = 0x444444;
-	const uint32_t commandTextColor = 0xFFFFFF;
 	const uint32_t displayTextColor = 0xFFFF00;
 
 	tl::DrawRect(renderBuffer, modeTextBackgroundColor, modeTextRect);
-	tl::DrawRect(renderBuffer, commandBackgroundColor, commandTextRect);
 	tl::DrawRect(renderBuffer, displayBackgroundColor, displayTextRect);
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, state.pixels.container);
 	tl::DrawRect(renderBuffer, paletteBackgroundColor, state.palette_.container);
@@ -175,18 +199,13 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 		displaySelectedPixelIndex
 	);
 
+	RenderCommandBuffer(renderBuffer, state);
+
 	RenderSpriteAsGrid(
 		*state.palette_.sprite,
 		state.palette_.footprint,
 		renderBuffer,
 		state.palette_.selectedIndex
-	);
-
-	tl::DrawAlphabetCharacters(
-		renderBuffer,
-		state.commandBuffer,
-		commandCharFootprint,
-		commandTextColor
 	);
 
 	tl::DrawAlphabetCharacters(
