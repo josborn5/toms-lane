@@ -3,10 +3,6 @@
 
 static tl::Rect<float> commandTextRect;
 static tl::Rect<float> commandCharFootprint;
-static tl::Rect<float> displayTextRect;
-static tl::Rect<float> displayCharFootprint;
-static tl::Rect<float> modeTextRect;
-static tl::Rect<float> modeTextCharFootprint;
 
 static const float textAreaHalfHeight = 15.0f;
 static const tl::Vec2<float> textCharFootprintHalfsize = {
@@ -153,24 +149,21 @@ static void PlaceRectInLeftSideOfContainer(const tl::Rect<float>& container, tl:
 
 void InitializeLayout(EditorState& state)
 {
-	float windowHalfWidth = (float)state.windowWidth * 0.5f;
-	modeTextRect.halfSize = {
-		windowHalfWidth / 3,
+	tl::Rect<float> windowRect;
+	windowRect.halfSize = {
+		(float)state.windowWidth * 0.5f,
+		(float)state.windowHeight * 0.5f,
+	};
+	windowRect.position = windowRect.halfSize;
+	float windowHalfWidth = windowRect.halfSize.x;
+	commandTextRect.halfSize = {
+		windowHalfWidth,
 		textAreaHalfHeight
 	};
-	commandTextRect.halfSize = modeTextRect.halfSize;
-	displayTextRect.halfSize = modeTextRect.halfSize;
-
-	modeTextRect.position = modeTextRect.halfSize;
-	PlaceRectToRightOfRect(modeTextRect, commandTextRect);
-	PlaceRectToRightOfRect(commandTextRect, displayTextRect);
-
-	modeTextCharFootprint.halfSize = textCharFootprintHalfsize;
 	commandCharFootprint.halfSize = textCharFootprintHalfsize;
-	displayCharFootprint.halfSize = textCharFootprintHalfsize;
-	PlaceRectInLeftSideOfContainer(modeTextRect, modeTextCharFootprint);
+
+	PlaceRectInLeftSideOfContainer(windowRect, commandTextRect);
 	PlaceRectInLeftSideOfContainer(commandTextRect, commandCharFootprint);
-	PlaceRectInLeftSideOfContainer(displayTextRect, displayCharFootprint);
 
 	float paletteHalfWidthPercent = 0.2f;
 	float visualYHalfSize = ((float)state.windowHeight * 0.5f) - commandTextRect.halfSize.y;
@@ -220,14 +213,9 @@ static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const Edit
 
 void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 {
-	// Render
-	const uint32_t modeTextBackgroundColor = 0x000000;
-	const uint32_t displayBackgroundColor = 0x222222;
 	const uint32_t spriteBackgroundColor = 0x333333;
 	const uint32_t paletteBackgroundColor = 0x444444;
 
-	tl::DrawRect(renderBuffer, modeTextBackgroundColor, modeTextRect);
-	tl::DrawRect(renderBuffer, displayBackgroundColor, displayTextRect);
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, state.pixels.container);
 	tl::DrawRect(renderBuffer, paletteBackgroundColor, state.palette_.container);
 
