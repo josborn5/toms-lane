@@ -8,37 +8,45 @@ static tl::Rect<float> displayCharFootprint;
 static tl::Rect<float> modeTextRect;
 static tl::Rect<float> modeTextCharFootprint;
 
+static const float textAreaHalfHeight = 15.0f;
+static const tl::Vec2<float> textCharFootprintHalfsize = {
+	0.3f * textAreaHalfHeight,
+	textAreaHalfHeight
+};
+
 static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::SpriteC& sprite, const tl::Rect<float>& containerRect)
 {
 	tl::Rect<float> sizeRect;
 	float spriteAspectRatio = (float)sprite.height / (float)sprite.width;
-	float backgroundAspectRatio = containerRect.halfSize.y / containerRect.halfSize.x;
+	float backgroundAspectRatio = (containerRect.halfSize.y - textCharFootprintHalfsize.y) / containerRect.halfSize.x;
 	float relativeAspectRatio = spriteAspectRatio / backgroundAspectRatio;
 	if (relativeAspectRatio >= 1.0f)
 	{
-		sizeRect.halfSize.y = containerRect.halfSize.y;
-		sizeRect.halfSize.x = sizeRect.halfSize.y * (float)sprite.width / (float)sprite.height;
+		sizeRect.halfSize.y = containerRect.halfSize.y - textCharFootprintHalfsize.y;
+		sizeRect.halfSize.x = sizeRect.halfSize.y / spriteAspectRatio;
 	}
 	else
 	{
 		sizeRect.halfSize.x = containerRect.halfSize.x;
-		sizeRect.halfSize.y = sizeRect.halfSize.x * (float)sprite.height / (float)sprite.width;
+		sizeRect.halfSize.y = (sizeRect.halfSize.x * spriteAspectRatio) - textCharFootprintHalfsize.y;
 	}
 
 	sizeRect.position = {
 		containerRect.position.x,
-		containerRect.position.y
+		containerRect.position.y + textCharFootprintHalfsize.y
 	};
 
 	return sizeRect;
 }
 
 static void RenderSpriteAsGrid(
-	const tl::SpriteC& sprite,
-	const tl::Rect<float>& boundingRect,
+	const Grid grid,
 	const tl::RenderBuffer& renderBuffer,
 	int selectedBlockIndex
 ) {
+	tl::SpriteC& sprite = *grid.sprite;
+	const tl::Rect<float>& boundingRect = grid.footprint;
+
 	const float pixelBorderWidth = 2.0f;
 	const uint32_t selectedPixelColor = 0xFFFF00;
 
@@ -77,6 +85,13 @@ static void RenderSpriteAsGrid(
 			tl::DrawRect(renderBuffer, color, pixelFootPrint);
 		}
 	}
+
+	tl::Rect<float> charFootprint;
+	charFootprint.halfSize = textCharFootprintHalfsize;
+	charFootprint.position = {
+		0.0f,
+		0.0f
+	};
 }
 
 void SizeGrid(Grid& grid)
@@ -102,12 +117,6 @@ static void PlaceRectInLeftSideOfContainer(const tl::Rect<float>& container, tl:
 
 void InitializeLayout(EditorState& state)
 {
-	const float textAreaHalfHeight = 15.0f;
-	const tl::Vec2<float> textCharFootprintHalfsize = {
-		0.3f * textAreaHalfHeight,
-		textAreaHalfHeight
-	};
-
 	float windowHalfWidth = (float)state.windowWidth * 0.5f;
 	modeTextRect.halfSize = {
 		windowHalfWidth / 3,
@@ -163,8 +172,6 @@ static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const Edit
 	if (state.mode == Command)
 	{
 		tl::Rect<float> cursorFootprint = tl::CopyRect(commandCharFootprint);
-//		cursorFootprint.halfSize = commandCharFootprint.halfSize;
-//		cursorFootprint.position.x = commandChar;
 		char* cursorPointer = state.commandBuffer;
 		while (*cursorPointer)
 		{
@@ -193,8 +200,7 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 		? state.pixels.selectedIndex
 		: -1;
 	RenderSpriteAsGrid(
-		*state.pixels.sprite,
-		state.pixels.footprint,
+		state.pixels,
 		renderBuffer,
 		displaySelectedPixelIndex
 	);
@@ -202,8 +208,7 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 	RenderCommandBuffer(renderBuffer, state);
 
 	RenderSpriteAsGrid(
-		*state.palette_.sprite,
-		state.palette_.footprint,
+		state.palette_,
 		renderBuffer,
 		state.palette_.selectedIndex
 	);
