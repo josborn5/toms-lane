@@ -4,9 +4,8 @@
 #include "./palettes.hpp"
 #include "./commands.hpp"
 
-const int commandBufferSize = 15;
-const int displayBufferSize = 15;
-const int modeBufferSize = 2;
+static const int commandBufferSize = 256;
+static const int modeBufferSize = 2;
 
 
 static bool hasCopied = false;
@@ -21,9 +20,7 @@ tl::GameMemory appMemory;
 
 EditorState state;
 static char commandBuffer[commandBufferSize];
-static char displayBuffer[displayBufferSize];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
-static tl::array<char> display = tl::array<char>(displayBuffer, displayBufferSize);
 
 static int CompareColor(const tl::Color& color1, const tl::Color& color2)
 {
@@ -101,43 +98,10 @@ static void MoveCursorForSprite(const tl::Input &input, Grid& grid)
 	}
 }
 
-static void ClearDisplayBuffer()
-{
-	for (int i = 0; i < display.capacity(); i += 1)
-	{
-		display.access(i) = '\0';
-		display.clear();
-	}
-}
-
 static void ProcessCursorMovementInput(const tl::Input &input)
 {
 	Grid& activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
 	MoveCursorForSprite(input, activeGrid);
-
-	ClearDisplayBuffer();
-	if (state.mode == View && state.activeControl == SpriteGrid)
-	{
-		tl::Color selectedColor = state.pixels.sprite->content[state.pixels.selectedIndex];
-
-		int color = (int)(selectedColor.r * 255.0f);
-		char* cursor = &display.access(0);
-		tl::IntToCharString(color, cursor);
-
-		while (*cursor) cursor++;
-		*cursor = ' ';
-		cursor++;
-
-		color = (int)(selectedColor.g * 255.0f);
-		tl::IntToCharString(color, cursor);
-
-		while (*cursor) cursor++;
-		*cursor = ' ';
-		cursor++;
-
-		color = (int)(selectedColor.b * 255.0f);
-		tl::IntToCharString(color, cursor);
-	}
 
 	currentColor = state.palette_.sprite->content[state.palette_.selectedIndex];
 }
@@ -218,7 +182,6 @@ int Initialize(const tl::GameMemory& gameMemory)
 {
 	state.mode = View;
 	state.commandBuffer = &commandBuffer[0];
-	state.displayBuffer = &displayBuffer[0];
 	state.windowWidth = 800;
 	state.windowHeight = 600;
 
@@ -253,7 +216,6 @@ int Initialize(const tl::GameMemory& gameMemory)
 	}
 
 	ClearCommandBuffer();
-	ClearDisplayBuffer();
 
 	InitializeLayout(state);
 	InitializePalettes(paletteMemory, tempMemory, state);
@@ -277,12 +239,12 @@ static void ExecuteCurrentCommand()
 		{
 			if (commands.get(1) == '\0') // save to current filePath
 			{
-				Save(appMemory, *state.pixels.sprite, display, filePath);
+				Save(appMemory, *state.pixels.sprite, commands, filePath);
 			}
 			else if (commands.get(1) == ' ' && commands.get(2)) // save to new filePath
 			{
 				filePath = &commands.access(2);
-				Save(appMemory, *state.pixels.sprite, display, filePath);
+				Save(appMemory, *state.pixels.sprite, commands, filePath);
 			}
 			break;
 		}
@@ -365,12 +327,6 @@ static bool CheckForCopy(const tl::Input& input)
 	{
 		hasCopied = true;
 		copiedColor = state.pixels.sprite->content[state.pixels.selectedIndex];
-		ClearDisplayBuffer();
-		display.append('C');
-		display.append('O');
-		display.append('P');
-		display.append('Y');
-		display.append('\0');
 		return true;
 	}
 	return false;
@@ -381,13 +337,6 @@ static bool CheckForPaste(const tl::Input& input)
 	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.activeControl == SpriteGrid)
 	{
 		state.pixels.sprite->content[state.pixels.selectedIndex] = copiedColor;
-		ClearDisplayBuffer();
-		display.append('P');
-		display.append('A');
-		display.append('S');
-		display.append('T');
-		display.append('E');
-		display.append('\0');
 		return true;
 	}
 	return false;

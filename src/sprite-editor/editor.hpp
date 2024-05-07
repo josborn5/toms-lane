@@ -30,7 +30,6 @@ struct EditorState
 	Grid pixels;
 	Grid palette_;
 	char* commandBuffer;
-	char* displayBuffer;
 	EditorControl activeControl = SpriteGrid;
 	int windowWidth;
 	int windowHeight;
