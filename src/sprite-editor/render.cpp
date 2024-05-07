@@ -14,6 +14,30 @@ static const tl::Vec2<float> textCharFootprintHalfsize = {
 	textAreaHalfHeight
 };
 
+
+static void GetDisplayStringForGrid(const Grid& grid, char* writeTo)
+{
+	tl::Color selectedColor = grid.sprite->content[grid.selectedIndex];
+
+	int color = (int)(selectedColor.r * 255.0f);
+	char* cursor = writeTo;
+	tl::IntToCharString(color, cursor);
+
+	while (*cursor) cursor++;
+	*cursor = ' ';
+	cursor++;
+
+	color = (int)(selectedColor.g * 255.0f);
+	tl::IntToCharString(color, cursor);
+
+	while (*cursor) cursor++;
+	*cursor = ' ';
+	cursor++;
+
+	color = (int)(selectedColor.b * 255.0f);
+	tl::IntToCharString(color, cursor);
+}
+
 static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::SpriteC& sprite, const tl::Rect<float>& containerRect)
 {
 	tl::Rect<float> sizeRect;
@@ -40,7 +64,7 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::Sprit
 }
 
 static void RenderSpriteAsGrid(
-	const Grid grid,
+	const Grid& grid,
 	const tl::RenderBuffer& renderBuffer,
 	int selectedBlockIndex
 ) {
@@ -89,9 +113,21 @@ static void RenderSpriteAsGrid(
 	tl::Rect<float> charFootprint;
 	charFootprint.halfSize = textCharFootprintHalfsize;
 	charFootprint.position = {
-		0.0f,
-		0.0f
+		grid.container.position.x - grid.container.halfSize.x + textCharFootprintHalfsize.x,
+		grid.container.position.y - grid.container.halfSize.y + textCharFootprintHalfsize.y
 	};
+
+	const uint32_t displayTextColor = 0xFFFF00;
+	const int displayBufferSize = 16;
+	char displayBuffer[displayBufferSize];
+	GetDisplayStringForGrid(grid, displayBuffer);
+
+	tl::DrawAlphabetCharacters(
+		renderBuffer,
+		displayBuffer,
+		charFootprint,
+		displayTextColor
+	);
 }
 
 void SizeGrid(Grid& grid)
@@ -189,7 +225,6 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 	const uint32_t displayBackgroundColor = 0x222222;
 	const uint32_t spriteBackgroundColor = 0x333333;
 	const uint32_t paletteBackgroundColor = 0x444444;
-	const uint32_t displayTextColor = 0xFFFF00;
 
 	tl::DrawRect(renderBuffer, modeTextBackgroundColor, modeTextRect);
 	tl::DrawRect(renderBuffer, displayBackgroundColor, displayTextRect);
@@ -211,12 +246,5 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 		state.palette_,
 		renderBuffer,
 		state.palette_.selectedIndex
-	);
-
-	tl::DrawAlphabetCharacters(
-		renderBuffer,
-		state.displayBuffer,
-		displayCharFootprint,
-		displayTextColor
 	);
 }
