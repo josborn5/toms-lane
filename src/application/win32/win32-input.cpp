@@ -30,6 +30,8 @@ bool win32_input_interface_process_message(const MSG& message, Input& input)
 		case WM_KEYDOWN: // https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#keystroke-messages
 		case WM_KEYUP:
 		{
+			TranslateMessage(&message); // Send it back to windows to translate and dispatch a WM_CHAR message if the key is a character key
+
 			uint32_t vKCode = (uint32_t)message.wParam;
 			bool wasDown = ((message.lParam & (1 << 30)) != 0); // Bit #30 of the LParam tells us what the previous key was
 			bool isDown = ((message.lParam & (1 << 31)) == 0); // Bit #31 of the LParam tells us what the current key is
@@ -74,6 +76,11 @@ bool win32_input_interface_process_message(const MSG& message, Input& input)
 			ProcessButtonState(&input.mouse.buttons[MOUSE_BUTTON_LEFT], isMouseDown, wasMouseDown);
 			return true;
 		} break;
+		case WM_CHAR:
+		{
+			input.character = (char)message.wParam;
+			return true;
+		} break;
 	}
 
 	return false;
@@ -111,6 +118,8 @@ void win32_input_interface_reset(Input& input)
 			input.mouse.buttons[i].keyUp = false;
 		}
 	}
+
+	input.character = 0;
 }
 
 }

@@ -69,6 +69,7 @@ namespace tl
 	{
 		Mouse mouse;
 		Button buttons[KEY_COUNT];
+		char character;
 	};
 }
 

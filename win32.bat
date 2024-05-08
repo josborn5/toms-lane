@@ -21,7 +21,8 @@ lib.exe /OUT:"%APP_DIR%\tl-win32.lib"^
 call .\build-scripts\link.bat %APP_DIR% %NAME%^
  "%APP_DIR%\win32-tests.obj"^
  "%APP_DIR%\win32-file.obj"^
- "%APP_DIR%\win32-input.obj"
+ "%APP_DIR%\win32-input.obj"^
+ user32.lib
 
 SET TEST=%1
 if "%1"=="-dt" (
