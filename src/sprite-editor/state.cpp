@@ -423,7 +423,7 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 			return;
 		}
 
-		if (input.buttons[tl::KEY_C].keyDown) // TODO: check for ':' instead of 'C'
+		if (input.character == ':')
 		{
 			ClearCommandBuffer();
 			state.mode = Command;
@@ -454,6 +454,7 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 		if (input.buttons[tl::KEY_ENTER].keyDown)
 		{
 			ExecuteCurrentCommand();
+			state.mode = View;
 			return;
 		}
 		ProcessCommandInput(input);
