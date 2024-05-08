@@ -1268,7 +1268,7 @@ namespace tl
 	}
 
 
-	void DrawAlphabetCharacters(
+	float DrawAlphabetCharacters(
 		const RenderBuffer &renderBuffer,
 		char *text,
 		const tl::Rect<float> &firstCharFootprint,
@@ -1304,6 +1304,8 @@ namespace tl
 			}
 			charRect.position.x += charWidth;
 		}
+
+		return charRect.position.x - firstCharFootprint.position.x;
 	}
 
 	void DrawNumber(

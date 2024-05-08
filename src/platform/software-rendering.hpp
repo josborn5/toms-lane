@@ -47,7 +47,7 @@ namespace tl
 	void DrawCircle(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<float>& center, float radius);
 
 	// Characters
-	void DrawAlphabetCharacters(
+	float DrawAlphabetCharacters(
 		const RenderBuffer &renderBuffer,
 		char *text,
 		const tl::Rect<float> &footprint,
