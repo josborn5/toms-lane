@@ -106,68 +106,6 @@ static void ProcessCursorMovementInput(const tl::Input &input)
 	currentColor = state.palette_.sprite->content[state.palette_.selectedIndex];
 }
 
-static char alphaKeyMap[26] = {
-	'A',
-	'B',
-	'C',
-	'D',
-	'E',
-	'F',
-	'G',
-	'H',
-	'I',
-	'J',
-	'K',
-	'L',
-	'M',
-	'N',
-	'O',
-	'P',
-	'Q',
-	'R',
-	'S',
-	'T',
-	'U',
-	'V',
-	'W',
-	'X',
-	'Y',
-	'Z'
-};
-
-static char digitKeyMap[10] = {
-	'0',
-	'1',
-	'2',
-	'3',
-	'4',
-	'5',
-	'6',
-	'7',
-	'8',
-	'9'
-};
-
-static char GetCharForAlphaKey(int key)
-{
-	if (key < tl::KEY_A || key > tl::KEY_Z)
-	{
-		return '\0';
-	}
-	int relativeIndex = key - tl::KEY_A;
-	return alphaKeyMap[relativeIndex];
-}
-
-static char GetCharForDigitKey(int key)
-{
-	if (key < tl::KEY_0 || key > tl::KEY_9)
-	{
-		return '\0';
-	}
-	int relativeIndex = key - tl::KEY_0;
-	return digitKeyMap[relativeIndex];
-}
-
 static void ClearCommandBuffer()
 {
 	for (int i = 0; i < commands.capacity(); i += 1)
@@ -345,30 +283,13 @@ static bool CheckForPaste(const tl::Input& input)
 static void ProcessCommandInput(const tl::Input& input)
 {
 	// Update command buffer from input
-	if (commands.length() < commands.capacity())
+	if (commands.length() < commands.capacity() && input.character != 0)
 	{
-		for (int key = tl::KEY_A; key <= tl::KEY_Z; key += 1)
-		{
-			if (input.buttons[key].keyDown)
-			{
-				char commandChar = GetCharForAlphaKey(key);
-				commands.append(commandChar);
-			}
-		}
-
-		for (int key = tl::KEY_0; key <= tl::KEY_9; key += 1)
-		{
-			if (input.buttons[key].keyDown)
-			{
-				char commandChar = GetCharForDigitKey(key);
-				commands.append(commandChar);
-			}
-		}
-
-		if (input.buttons[tl::KEY_SPACE].keyDown)
-		{
-			commands.append(' ');
-		}
+		// Capitalize
+		char toAppend = (input.character >= 'a' && input.character <= 'z')
+			? input.character + ('A' - 'a')
+			: input.character;
+		commands.append(toAppend);
 	}
 }
 
