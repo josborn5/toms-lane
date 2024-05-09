@@ -1297,7 +1297,7 @@ namespace tl
 					renderChar = digits[letterIndex];
 				}
 
-				if (*letterAt != -1)
+				if (letterIndex != -1)
 				{
 					tl::DrawSprite(renderBuffer, renderChar, charRect, color);
 				}
