@@ -1283,23 +1283,25 @@ namespace tl
 		{
 			if (*letterAt != ' ')
 			{
-				int letterIndex = -1;
-				Sprite renderChar;
+				Sprite* renderChar = nullptr;
 				if (*letterAt >= 'A' && *letterAt <= 'Z')
 				{
-					letterIndex = GetLetterIndex(*letterAt);
-					renderChar = letters[letterIndex];
+					int letterIndex = GetLetterIndex(*letterAt);
+					renderChar = &letters[letterIndex];
+				}
+				else if (*letterAt >= '0' && *letterAt <= '9')
+				{
+					int digitIndex = GetDigitIndex(*letterAt);
+					renderChar = &digits[digitIndex];
+				}
+				else if (*letterAt == '-')
+				{
+					renderChar = &negSprite;
 				}
 
-				if (*letterAt >= '0' && *letterAt <= '9')
+				if (renderChar != nullptr)
 				{
-					letterIndex = GetDigitIndex(*letterAt);
-					renderChar = digits[letterIndex];
-				}
-
-				if (letterIndex != -1)
-				{
-					tl::DrawSprite(renderBuffer, renderChar, charRect, color);
+					tl::DrawSprite(renderBuffer, *renderChar, charRect, color);
 				}
 				else
 				{
