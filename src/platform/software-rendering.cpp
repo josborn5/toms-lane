@@ -1257,6 +1257,31 @@ namespace tl
 \n\
 ");
 
+	Sprite periodSprite = LoadSprite("\
+\n\
+\n\
+\n\
+\n\
+\n\
+ 00 \n\
+ 00 ");
+
+	Sprite backSlashSprite = LoadSprite("\
+0\n\
+ 0\n\
+ 0\n\
+  0\n\
+  0\n\
+   0");
+
+	Sprite forwardSlashSprite = LoadSprite("\
+   0\n\
+  0\n\
+  0\n\
+ 0\n\
+ 0\n\
+0");
+
 	int GetLetterIndex(char c)
 	{
 		return c - 'A';
@@ -1297,6 +1322,18 @@ namespace tl
 				else if (*letterAt == '-')
 				{
 					renderChar = &negSprite;
+				}
+				else if (*letterAt == '.')
+				{
+					renderChar = &periodSprite;
+				}
+				else if (*letterAt == '\\')
+				{
+					renderChar = &backSlashSprite;
+				}
+				else if (*letterAt == '/')
+				{
+					renderChar = &forwardSlashSprite;
 				}
 
 				if (renderChar != nullptr)
