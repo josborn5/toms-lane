@@ -171,24 +171,28 @@ int Initialize(const tl::GameMemory& gameMemory)
 
 static void ExecuteCurrentCommand()
 {
-	switch (commands.get(0))
+	if (commands.get(0) != ':')
+	{
+		return;
+	}
+	switch (commands.get(1))
 	{
 		case 'S': // save
 		{
-			if (commands.get(1) == '\0') // save to current filePath
+			if (commands.get(2) == '\0') // save to current filePath
 			{
 				Save(appMemory, *state.pixels.sprite, commands, filePath);
 			}
-			else if (commands.get(1) == ' ' && commands.get(2)) // save to new filePath
+			else if (commands.get(2) == ' ' && commands.get(3)) // save to new filePath
 			{
-				filePath = &commands.access(2);
+				filePath = &commands.access(3);
 				Save(appMemory, *state.pixels.sprite, commands, filePath);
 			}
 			break;
 		}
 		case 'R': // append row
 		{
-			if (commands.get(1) == '\0')
+			if (commands.get(2) == '\0')
 			{
 				InsertRow(state.pixels, spriteMemory);
 				SizeGrid(state.pixels);
@@ -197,7 +201,7 @@ static void ExecuteCurrentCommand()
 		}
 		case 'C': // append column
 		{
-			if (commands.get(1) == '\0')
+			if (commands.get(2) == '\0')
 			{
 				InsertColumn(state.pixels, spriteMemory);
 				SizeGrid(state.pixels);
@@ -214,7 +218,7 @@ static void ExecuteCurrentCommand()
 		}
 		case 'P': // switch palette
 		{
-			if (commands.get(1) == '\0')
+			if (commands.get(2) == '\0')
 			{
 				SwitchPalette(state);
 			}
@@ -222,7 +226,7 @@ static void ExecuteCurrentCommand()
 		}
 		case 'D': // Delete
 		{
-			if (commands.get(1) == 'R' && commands.get(2) == '\0' && state.pixels.sprite->height > 1)
+			if (commands.get(2) == 'R' && commands.get(3) == '\0' && state.pixels.sprite->height > 1)
 			{
 				// Get start and end index of row
 				int rowIndex = (int)(state.pixels.selectedIndex / state.pixels.sprite->width);
@@ -238,7 +242,7 @@ static void ExecuteCurrentCommand()
 
 				SizeGrid(state.pixels);
 			}
-			else if (commands.get(1) == 'C' && commands.get(2) == '\0' && state.pixels.sprite->width > 1)
+			else if (commands.get(2) == 'C' && commands.get(3) == '\0' && state.pixels.sprite->width > 1)
 			{
 				// get the column index
 				unsigned int columnIndex = state.pixels.selectedIndex % state.pixels.sprite->width;
@@ -347,6 +351,7 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 		if (input.character == ':')
 		{
 			ClearCommandBuffer();
+			commands.append(':');
 			state.mode = Command;
 			return;
 		}
