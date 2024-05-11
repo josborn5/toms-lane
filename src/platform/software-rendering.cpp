@@ -1301,6 +1301,10 @@ namespace tl
 				{
 					tl::DrawSprite(renderBuffer, renderChar, charRect, color);
 				}
+				else
+				{
+					tl::DrawRect(renderBuffer, color, charRect);
+				}
 			}
 			charRect.position.x += charWidth;
 		}
