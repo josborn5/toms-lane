@@ -1266,6 +1266,15 @@ namespace tl
  00 \n\
  00 ");
 
+	Sprite colonSprite = LoadSprite("\
+\n\
+ 00 \n\
+ 00 \n\
+\n\
+ 00 \n\
+ 00 \n\
+");
+
 	Sprite backSlashSprite = LoadSprite("\
 0\n\
  0\n\
@@ -1334,6 +1343,10 @@ namespace tl
 				else if (*letterAt == '/')
 				{
 					renderChar = &forwardSlashSprite;
+				}
+				else if (*letterAt == ':')
+				{
+					renderChar = &colonSprite;
 				}
 
 				if (renderChar != nullptr)
