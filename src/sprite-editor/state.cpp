@@ -5,6 +5,7 @@
 #include "./commands.hpp"
 
 static const int commandBufferSize = 256;
+static const int filePathBufferSize = 256;
 static const int modeBufferSize = 2;
 
 
@@ -13,13 +14,14 @@ static tl::MemorySpace spriteMemory;
 static tl::MemorySpace paletteMemory;
 static tl::Color currentColor;
 static tl::Color copiedColor;
-static char* filePath;
 static tl::SpriteC currentSprite;
 
 tl::GameMemory appMemory;
 
 EditorState state;
 static char commandBuffer[commandBufferSize];
+static char filePathBuffer[filePathBufferSize] = {0};
+static char* filePath = &filePathBuffer[0];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
 
 static int CompareColor(const tl::Color& color1, const tl::Color& color2)
@@ -116,7 +118,7 @@ static void ClearCommandBuffer()
 }
 
 
-int Initialize(const tl::GameMemory& gameMemory)
+static int Initialize(const tl::GameMemory& gameMemory)
 {
 	state.mode = View;
 	state.commandBuffer = &commandBuffer[0];
@@ -134,7 +136,7 @@ int Initialize(const tl::GameMemory& gameMemory)
 	tl::MemorySpace tempMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
 
 	// Load file
-	if (filePath)
+	if (*filePath)
 	{
 		uint64_t fileSize = 0;
 		if (tl::file_interface_size_get(filePath, fileSize) != tl::Success)
@@ -168,6 +170,31 @@ int Initialize(const tl::GameMemory& gameMemory)
 	return 0;
 }
 
+static void CopyString(char* source, char* target)
+{
+	while (*source)
+	{
+		*target = *source;
+		target++;
+		source++;
+	}
+}
+
+int InitializeState(char* commandLine)
+{
+	if (*commandLine)
+	{
+		CopyString(commandLine, filePath);
+	}
+
+	tl::InitializeMemory(
+		2,
+		2,
+		appMemory
+	);
+
+	return Initialize(appMemory);
+}
 
 static void ExecuteCurrentCommand()
 {
@@ -210,10 +237,21 @@ static void ExecuteCurrentCommand()
 		}
 		case 'E': // edit color of selected pixel
 		{
-			char* pointer = tl::GetNextNumberChar(&commands.access(1));
-			tl::MemorySpace transient = appMemory.transient;
-			ParseColorFromCharArray(pointer, transient, state.pixels.sprite->content[state.pixels.selectedIndex]);
-			ClearCommandBuffer();
+			if (commands.get(2) == 'D'
+				&& commands.get(3) == 'I'
+				&& commands.get(4) == 'T'
+				&& commands.get(5) == ' '
+				&& commands.get(6) != '\0')
+			{
+				InitializeState(&commands.access(6));
+			}
+			else
+			{
+				char* pointer = tl::GetNextNumberChar(&commands.access(1));
+				tl::MemorySpace transient = appMemory.transient;
+				ParseColorFromCharArray(pointer, transient, state.pixels.sprite->content[state.pixels.selectedIndex]);
+				ClearCommandBuffer();
+			}
 			break;
 		}
 		case 'P': // switch palette
@@ -385,22 +423,6 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 		}
 		ProcessCommandInput(input);
 	}
-}
-
-int InitializeState(char* commandLine)
-{
-	if (*commandLine)
-	{
-		filePath = commandLine;
-	}
-
-	tl::InitializeMemory(
-		2,
-		2,
-		appMemory
-	);
-
-	return Initialize(appMemory);
 }
 
 const EditorState& GetLatestState(const tl::Input& input)
