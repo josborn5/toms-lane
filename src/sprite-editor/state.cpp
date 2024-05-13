@@ -209,11 +209,13 @@ static void ExecuteCurrentCommand()
 			if (commands.get(2) == '\0') // save to current filePath
 			{
 				Save(appMemory, *state.pixels.sprite, commands, filePath);
+				return;
 			}
 			else if (commands.get(2) == ' ' && commands.get(3)) // save to new filePath
 			{
 				filePath = &commands.access(3);
 				Save(appMemory, *state.pixels.sprite, commands, filePath);
+				return;
 			}
 			break;
 		}
@@ -223,6 +225,8 @@ static void ExecuteCurrentCommand()
 			{
 				InsertRow(state.pixels, spriteMemory);
 				SizeGrid(state.pixels);
+				ClearCommandBuffer();
+				return;
 			}
 			break;
 		}
@@ -232,6 +236,8 @@ static void ExecuteCurrentCommand()
 			{
 				InsertColumn(state.pixels, spriteMemory);
 				SizeGrid(state.pixels);
+				ClearCommandBuffer();
+				return;
 			}
 			break;
 		}
@@ -244,6 +250,7 @@ static void ExecuteCurrentCommand()
 				&& commands.get(6) != '\0')
 			{
 				InitializeState(&commands.access(6));
+				return;
 			}
 			else
 			{
@@ -251,6 +258,7 @@ static void ExecuteCurrentCommand()
 				tl::MemorySpace transient = appMemory.transient;
 				ParseColorFromCharArray(pointer, transient, state.pixels.sprite->content[state.pixels.selectedIndex]);
 				ClearCommandBuffer();
+				return;
 			}
 			break;
 		}
@@ -259,6 +267,8 @@ static void ExecuteCurrentCommand()
 			if (commands.get(2) == '\0')
 			{
 				SwitchPalette(state);
+				ClearCommandBuffer();
+				return;
 			}
 			break;
 		}
@@ -279,6 +289,8 @@ static void ExecuteCurrentCommand()
 				state.pixels.sprite->height -= 1;
 
 				SizeGrid(state.pixels);
+				ClearCommandBuffer();
+				return;
 			}
 			else if (commands.get(2) == 'C' && commands.get(3) == '\0' && state.pixels.sprite->width > 1)
 			{
@@ -294,11 +306,35 @@ static void ExecuteCurrentCommand()
 				state.pixels.sprite->width -= 1;
 
 				SizeGrid(state.pixels);
+				ClearCommandBuffer();
+				return;
 			}
 			break;
 		}
+		case 'W':
+		{
+			if (*filePath && commands.get(2) == '\0')
+			{
+				Save(appMemory, *state.pixels.sprite, commands, filePath);
+				return;
+			}
+		}
+		break;
 	}
 	ClearCommandBuffer();
+	commands.append('N');
+	commands.append('O');
+	commands.append('T');
+	commands.append(' ');
+	commands.append('A');
+	commands.append(' ');
+	commands.append('C');
+	commands.append('O');
+	commands.append('M');
+	commands.append('M');
+	commands.append('A');
+	commands.append('N');
+	commands.append('D');
 }
 
 static bool CheckForCopy(const tl::Input& input)
