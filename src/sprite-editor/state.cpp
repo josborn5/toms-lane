@@ -139,9 +139,28 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	if (*filePath)
 	{
 		uint64_t fileSize = 0;
-		if (tl::file_interface_size_get(filePath, fileSize) != tl::Success)
+		int getSizeResult = tl::file_interface_size_get(filePath, fileSize);
+		if (getSizeResult != tl::Success)
 		{
-			return 1;
+			// If the file does not exist, try to create it
+			if (getSizeResult == tl::FileDoesNotExist)
+			{
+				tl::MemorySpace empty;
+				empty.content = (void*)"";
+				empty.sizeInBytes = 0;
+				int createEmptyFileResult = tl::file_interface_write(filePath, empty);
+				if (createEmptyFileResult != tl::Success)
+				{
+					return 1;
+				}
+
+				// Initialize default sprite
+				fileReadMemory.content = "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0";
+			}
+			else
+			{
+				return 1;
+			}
 		}
 
 		if (tl::file_interface_read(filePath, fileReadMemory) != tl::Success)
