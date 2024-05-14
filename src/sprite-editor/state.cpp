@@ -381,6 +381,19 @@ static bool CheckForPaste(const tl::Input& input)
 
 static void ProcessCommandInput(const tl::Input& input)
 {
+	// Backspace
+	const char asciiBackspace = 8;
+	if (input.character == asciiBackspace)
+	{
+		if (commands.length() > 0)
+		{
+			// hack to replace the removed char with a null
+			*(commands.getTailPointer()) = '\0';
+			commands.pop();
+		}
+		return;
+	}
+
 	// Update command buffer from input
 	if (commands.length() < commands.capacity() && input.character != 0)
 	{
