@@ -151,6 +151,7 @@ static int Initialize(const tl::GameMemory& gameMemory)
 				int createEmptyFileResult = tl::file_interface_write(filePath, empty);
 				if (createEmptyFileResult != tl::Success)
 				{
+					state.mode = NoFile;
 					return 1;
 				}
 
@@ -159,19 +160,20 @@ static int Initialize(const tl::GameMemory& gameMemory)
 			}
 			else
 			{
+				state.mode = NoFile;
 				return 1;
 			}
 		}
 
 		if (tl::file_interface_read(filePath, fileReadMemory) != tl::Success)
 		{
+			state.mode = NoFile;
 			return 1;
 		}
 	}
 	else
 	{
-		// Initialize default sprite
-		fileReadMemory.content = "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0";
+		state.mode = NoFile;
 	}
 
 	ClearCommandBuffer();
