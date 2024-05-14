@@ -6,6 +6,13 @@
 namespace tl
 {
 	template<typename T>
+	struct operation
+	{
+		T value;
+		int result;
+	};
+
+	template<typename T>
 	struct array
 	{
 		private:
@@ -44,7 +51,7 @@ namespace tl
 
 			T& get(int index) const
 			{
-				return _content[index];
+				return _content[index]; // TODO: bounds check and return monad value
 			}
 
 			int capacity() const
@@ -66,6 +73,20 @@ namespace tl
 					return 1;
 				}
 				return 0;
+			}
+
+			operation<T> pop()
+			{
+				operation<T> operationValue;
+				if (_length == 0)
+				{
+					operationValue.result = 1;
+					return operationValue;
+				}
+				operationValue.value = _content[_length - 1];
+				operationValue.result = 0;
+				_length -= 1;
+				return operationValue;
 			}
 
 			/*

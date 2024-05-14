@@ -51,6 +51,9 @@ void RunArrayTests()
 	assert(array2.length() == 0);
 	assert(array2.capacity() == 4);
 
+	operation<int> failedRemoval = array1.pop();
+	assert(failedRemoval.result == 1);
+
 	array1.append(5);
 	assert(array1.get(0) == 5);
 	assert(array1.length() == 1);
@@ -66,6 +69,13 @@ void RunArrayTests()
 	assert(array1.capacity() == 4);
 	assert(sixInts[0] == originalMemValue);
 	assert(sixInts[5] == originalMemValue);
+
+	operation<int> removedItem = array1.pop();
+	assert(removedItem.value == 4);
+	assert(removedItem.result == 0);
+	assert(array1.length() == 1);
+	assert(array1.capacity() == 4);
+	array1.append(4);
 
 	MemorySpace remaining = array1.sizeToCurrentLength();
 	assert(array1.get(0) == 5);
@@ -153,9 +163,9 @@ void RunQueueTests()
 
 void RunDataStructureTests()
 {
-	printf("\n===== Heap Array =====\n");
+	printf("\n===== Array =====\n");
 	RunArrayTests();
 
-	printf("\n===== Heap Queue =====\n");
+	printf("\n===== Queue =====\n");
 	RunQueueTests();
 }
