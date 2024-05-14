@@ -483,7 +483,7 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 		return;
 	}
 
-	if (state.mode == Command)
+	if (state.mode == Command || state.mode == NoFile)
 	{
 		if (input.buttons[tl::KEY_ENTER].keyDown)
 		{

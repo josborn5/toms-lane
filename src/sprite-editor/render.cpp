@@ -198,7 +198,7 @@ static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const Edit
 		commandTextColor
 	);
 
-	if (state.mode == Command)
+	if (state.mode == Command || state.mode == NoFile)
 	{
 		tl::Rect<float> cursorFootprint = tl::CopyRect(commandCharFootprint);
 		cursorFootprint.position.x += dx;
