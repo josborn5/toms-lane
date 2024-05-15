@@ -8,7 +8,7 @@
 int updateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
 	EditorState latestState = GetLatestState(input);
-	Render(renderBuffer, latestState);
+	Render(renderBuffer, latestState, dt);
 
 	return 0;
 }

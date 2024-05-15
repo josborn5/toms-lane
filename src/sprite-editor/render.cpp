@@ -10,6 +10,7 @@ static const tl::Vec2<float> textCharFootprintHalfsize = {
 	textAreaHalfHeight
 };
 
+static float cursorTime = 0.0f;
 
 static void GetDisplayStringForGrid(const Grid& grid, char* writeTo)
 {
@@ -186,7 +187,7 @@ void InitializeLayout(EditorState& state)
 	PlaceRectToRightOfRect(state.pixels.container, state.palette_.container);
 }
 
-static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const EditorState& state)
+static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const EditorState& state, float dt)
 {
 	const uint32_t commandBackgroundColor = 0x111111;
 	const uint32_t commandTextColor = 0xFFFFFF;
@@ -198,19 +199,29 @@ static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const Edit
 		commandTextColor
 	);
 
+	cursorTime += dt;
+
 	if (state.mode == Command || state.mode == NoFile)
 	{
 		tl::Rect<float> cursorFootprint = tl::CopyRect(commandCharFootprint);
 		cursorFootprint.position.x += dx;
-		tl::DrawRect(renderBuffer, commandTextColor, cursorFootprint);
+		if (cursorTime <= 0.75f)
+		{
+			tl::DrawRect(renderBuffer, commandTextColor, cursorFootprint);
+		}
+	}
+
+	if (cursorTime > 1.2f)
+	{
+		cursorTime = 0.0f;
 	}
 }
 
-void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
+void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state, float dt)
 {
 	const uint32_t spriteBackgroundColor = 0x333333;
 	const uint32_t paletteBackgroundColor = 0x444444;
-
+	tl::ClearScreen(renderBuffer, 0x000000);
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, state.pixels.container);
 	tl::DrawRect(renderBuffer, paletteBackgroundColor, state.palette_.container);
 
@@ -226,7 +237,7 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state)
 		);
 	}
 
-	RenderCommandBuffer(renderBuffer, state);
+	RenderCommandBuffer(renderBuffer, state, dt);
 
 	RenderSpriteAsGrid(
 		state.palette_,
