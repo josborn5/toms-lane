@@ -36,7 +36,7 @@ static int CompareColor(const tl::Color& color1, const tl::Color& color2)
 	return -1;
 }
 
-static void MoveCursorForSprite(const tl::Input &input, Grid& grid)
+static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
 {
 	int maxPixelIndex = (grid.sprite->width * grid.sprite->height) - 1;
 	if (input.buttons[tl::KEY_CTRL].isDown)
@@ -44,13 +44,13 @@ static void MoveCursorForSprite(const tl::Input &input, Grid& grid)
 		if (input.buttons[tl::KEY_HOME].keyDown)
 		{
 			grid.selectedIndex = 0;
-			return;
+			return true;
 		}
 
 		if (input.buttons[tl::KEY_END].keyDown)
 		{
 			grid.selectedIndex = (grid.sprite->height * grid.sprite->width) - 1;
-			return;
+			return true;
 		}
 
 		if (input.buttons[tl::KEY_LEFT].keyDown)
@@ -64,8 +64,9 @@ static void MoveCursorForSprite(const tl::Input &input, Grid& grid)
 				sameColor = (CompareColor(activeColor, grid.sprite->content[pixelIndex]) == 0);
 			}
 			grid.selectedIndex = pixelIndex;
+			return true;
 		}
-		return;
+		return false;
 	}
 
 	if (input.buttons[tl::KEY_RIGHT].keyDown)
@@ -74,6 +75,7 @@ static void MoveCursorForSprite(const tl::Input &input, Grid& grid)
 		{
 			grid.selectedIndex += 1;
 		}
+		return true;
 	}
 	else if (input.buttons[tl::KEY_LEFT].keyDown)
 	{
@@ -81,6 +83,7 @@ static void MoveCursorForSprite(const tl::Input &input, Grid& grid)
 		{
 			grid.selectedIndex -= 1;
 		}
+		return true;
 	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
@@ -89,6 +92,7 @@ static void MoveCursorForSprite(const tl::Input &input, Grid& grid)
 		{
 			grid.selectedIndex = provisionalSelectedPixelIndex;
 		}
+		return true;
 	}
 	else if (input.buttons[tl::KEY_UP].keyDown)
 	{
@@ -97,15 +101,19 @@ static void MoveCursorForSprite(const tl::Input &input, Grid& grid)
 		{
 			grid.selectedIndex = provisionalSelectedPixelIndex;
 		}
+		return true;
 	}
+	return false;
 }
 
-static void ProcessCursorMovementInput(const tl::Input &input)
+static bool CheckForCursorMovementInput(const tl::Input& input)
 {
 	Grid& activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
-	MoveCursorForSprite(input, activeGrid);
+	bool handledInput = MoveCursorForSprite(input, activeGrid);
 
 	currentColor = state.palette_.sprite->content[state.palette_.selectedIndex];
+
+	return handledInput;
 }
 
 static void ClearCommandBuffer()
@@ -407,6 +415,7 @@ static void ProcessCommandInput(const tl::Input& input)
 
 static void ProcessViewModeInput(const tl::Input& input)
 {
+	if (CheckForCursorMovementInput(input)) return;
 	if (CheckForCopy(input)) return;
 	if (CheckForPaste(input)) return;
 
@@ -449,6 +458,7 @@ static void ProcessViewModeInput(const tl::Input& input)
 
 static void ProcessInsertModeInput(const tl::Input& input)
 {
+	if (CheckForCursorMovementInput(input)) return;
 	if (input.buttons[tl::KEY_ENTER].keyDown && state.activeControl == SpriteGrid)
 	{
 		state.pixels.sprite->content[state.pixels.selectedIndex] = currentColor;
@@ -467,20 +477,20 @@ static void ProcessCommandModeInput(const tl::Input& input)
 	ProcessCommandInput(input);
 }
 
-static void ProcessImmediateActionKeys(const tl::Input& input)
+const EditorState& GetLatestState(const tl::Input& input)
 {
 	if (input.buttons[tl::KEY_ESCAPE].keyDown)
 	{
 		ClearCommandBuffer();
 		state.mode = View;
-		return;
+		return state;
 	}
 
 	if (input.buttons[tl::KEY_TAB].keyDown)
 	{
 		int nextActiveControlIndex = state.activeControl + 1;
 		state.activeControl = (nextActiveControlIndex < EditorControlCount) ? (EditorControl)nextActiveControlIndex : SpriteGrid;
-		return;
+		return state;
 	}
 
 	switch (state.mode)
@@ -492,23 +502,16 @@ static void ProcessImmediateActionKeys(const tl::Input& input)
 			ProcessInsertModeInput(input);
 			break;
 		case Visual:
-			if (CheckForCopy(input)) return;
-			if (CheckForPaste(input)) return;
+			if (CheckForCursorMovementInput(input)) return state;
+			if (CheckForCopy(input)) return state;
+			if (CheckForPaste(input)) return state;
 			break;
 		case Command:
 		case NoFile:
 			ProcessCommandModeInput(input);
 			break;
 	}
-}
 
-const EditorState& GetLatestState(const tl::Input& input)
-{
-	if (state.mode != Command)
-	{
-		ProcessCursorMovementInput(input);
-	}
-
-	ProcessImmediateActionKeys(input);
 	return state;
 }
+
