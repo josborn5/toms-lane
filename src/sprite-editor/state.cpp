@@ -51,11 +51,13 @@ static void MoveCursorToNextColor(Grid& grid, int step, int maxPixelIndex, Check
 {
 	tl::Color activeColor = grid.sprite->content[grid.selectedIndex];
 	int pixelIndex = grid.selectedIndex;
+	int provisionalIndex = pixelIndex + step;
 	bool sameColor = true;
-	while (checkPixelLimit(pixelIndex, maxPixelIndex) && sameColor)
+	while (checkPixelLimit(provisionalIndex, maxPixelIndex) && sameColor)
 	{
-		pixelIndex += step;
+		pixelIndex = provisionalIndex;
 		sameColor = (CompareColor(activeColor, grid.sprite->content[pixelIndex]) == 0);
+		provisionalIndex += step;
 	}
 	grid.selectedIndex = pixelIndex;
 }
@@ -86,6 +88,18 @@ static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
 		if (input.buttons[tl::KEY_RIGHT].keyDown)
 		{
 			MoveCursorToNextColor(grid, 1, maxPixelIndex, CheckIncrementingLimit);
+			return true;
+		}
+
+		if (input.buttons[tl::KEY_UP].keyDown)
+		{
+			MoveCursorToNextColor(grid, -grid.sprite->width, maxPixelIndex, CheckDecrementingLimit);
+			return true;
+		}
+
+		if (input.buttons[tl::KEY_DOWN].keyDown)
+		{
+			MoveCursorToNextColor(grid, grid.sprite->width, maxPixelIndex, CheckIncrementingLimit);
 			return true;
 		}
 		return false;
