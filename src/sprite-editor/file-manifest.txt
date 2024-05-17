@@ -4,4 +4,5 @@ src\sprite-editor\render.cpp
 src\sprite-editor\sprite-editor-palettes.cpp
 src\sprite-editor\sprite-commands.cpp
 src\sprite-editor\sprite-editor.cpp
+src\sprite-editor\utilities.cpp
 

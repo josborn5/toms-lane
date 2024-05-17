@@ -1,6 +1,9 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include "../tl-application.hpp"
+#include "../tl-library.hpp"
+
 enum EditorControl
 {
 	SpriteGrid,

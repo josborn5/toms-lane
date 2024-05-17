@@ -5,6 +5,7 @@ call %~dp0\build-scripts\compile.bat "@%~dp0\src\sprite-editor\file-manifest.txt
 
 call %~dp0\build-scripts\link.bat %APP_DIR% tests^
  "%APP_DIR%\commands.test.obj"^
+ "%APP_DIR%\utilities.obj"^
  "%APP_DIR%\sprite-commands.obj"
 
 call %~dp0\build-scripts\link.bat %APP_DIR% %NAME%^
@@ -13,6 +14,7 @@ call %~dp0\build-scripts\link.bat %APP_DIR% %NAME%^
  "%APP_DIR%\render.obj"^
  "%APP_DIR%\sprite-editor-palettes.obj"^
  "%APP_DIR%\sprite-commands.obj"^
+ "%APP_DIR%\utilities.obj"^
  "%~dp0\bin-tl-platform\toms-lane-platform.obj"^
  "%~dp0\bin-tl-win32\tl-win32.lib"
 

@@ -1,6 +1,7 @@
 #include "../tl-application.hpp"
 #include "../tl-library.hpp"
 #include "./editor.hpp"
+#include "./utilities.hpp"
 
 // Returns the number of chars
 static int SpriteCToCharString(const tl::SpriteC& sprite, tl::MemorySpace memory)
@@ -185,23 +186,6 @@ static int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory,
 	return 0;
 }
 
-static int GetSelectedRowIndex(const Grid& grid)
-{
-	if (grid.sprite->height == 1)
-	{
-		return 0;
-	}
-
-	if (grid.sprite->width == 1)
-	{
-		return grid.selectedIndex;
-	}
-
-
-	return grid.selectedIndex / grid.sprite->width;
-}
-
-
 int InsertRow(Grid& grid, tl::MemorySpace spriteMemory)
 {
 	int selectedRowIndex = GetSelectedRowIndex(grid);
@@ -281,21 +265,6 @@ static int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemo
 	}
 
 	return 0;
-}
-
-static int GetSelectedColumnIndex(Grid& grid)
-{
-	if (grid.sprite->width == 1)
-	{
-		return 0;
-	}
-
-	if (grid.sprite->height == 1)
-	{
-		return grid.selectedIndex;
-	}
-
-	return grid.selectedIndex % grid.sprite->width;
 }
 
 int InsertColumn(Grid& grid, tl::MemorySpace spriteMemory)
