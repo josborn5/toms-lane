@@ -3,6 +3,7 @@
 #include "./render.hpp"
 #include "./palettes.hpp"
 #include "./commands.hpp"
+#include "./utilities.hpp"
 
 static const int commandBufferSize = 256;
 static const int filePathBufferSize = 256;
@@ -70,13 +71,17 @@ static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
 
 		if (input.buttons[tl::KEY_LEFT].keyDown)
 		{
-			MoveCursorToNextColor(grid, -1, 0, maxPixelIndex);
+			int currentRowIndex = GetSelectedRowIndex(grid);
+			int minIndexForRow = grid.sprite->width * currentRowIndex;
+			MoveCursorToNextColor(grid, -1, minIndexForRow , maxPixelIndex);
 			return true;
 		}
 
 		if (input.buttons[tl::KEY_RIGHT].keyDown)
 		{
-			MoveCursorToNextColor(grid, 1, 0, maxPixelIndex);
+			int currentRowIndex = GetSelectedRowIndex(grid);
+			int maxIndexForRow = (grid.sprite->width * (currentRowIndex + 1)) - 1;
+			MoveCursorToNextColor(grid, 1, 0, maxIndexForRow);
 			return true;
 		}
 
