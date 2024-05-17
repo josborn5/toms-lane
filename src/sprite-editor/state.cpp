@@ -36,6 +36,30 @@ static int CompareColor(const tl::Color& color1, const tl::Color& color2)
 	return -1;
 }
 
+typedef bool (*CheckPixelLimit)(int pixelIndex, int maxPixelIndex);
+static bool CheckDecrementingLimit(int pixelIndex, int maxPixelIndex)
+{
+	return pixelIndex > 0;
+}
+
+static bool CheckIncrementingLimit(int pixelIndex, int maxPixelIndex)
+{
+	return pixelIndex < maxPixelIndex;
+}
+
+static void MoveCursorToNextColor(Grid& grid, int step, int maxPixelIndex, CheckPixelLimit checkPixelLimit)
+{
+	tl::Color activeColor = grid.sprite->content[grid.selectedIndex];
+	int pixelIndex = grid.selectedIndex;
+	bool sameColor = true;
+	while (checkPixelLimit(pixelIndex, maxPixelIndex) && sameColor)
+	{
+		pixelIndex += step;
+		sameColor = (CompareColor(activeColor, grid.sprite->content[pixelIndex]) == 0);
+	}
+	grid.selectedIndex = pixelIndex;
+}
+
 static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
 {
 	int maxPixelIndex = (grid.sprite->width * grid.sprite->height) - 1;
@@ -49,35 +73,19 @@ static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
 
 		if (input.buttons[tl::KEY_END].keyDown)
 		{
-			grid.selectedIndex = (grid.sprite->height * grid.sprite->width) - 1;
+			grid.selectedIndex = maxPixelIndex;
 			return true;
 		}
 
 		if (input.buttons[tl::KEY_LEFT].keyDown)
 		{
-			tl::Color activeColor = grid.sprite->content[grid.selectedIndex];
-			int pixelIndex = grid.selectedIndex;
-			bool sameColor = true;
-			while (pixelIndex > 0 && sameColor)
-			{
-				pixelIndex -= 1;
-				sameColor = (CompareColor(activeColor, grid.sprite->content[pixelIndex]) == 0);
-			}
-			grid.selectedIndex = pixelIndex;
+			MoveCursorToNextColor(grid, -1, maxPixelIndex, &CheckDecrementingLimit);
 			return true;
 		}
 
 		if (input.buttons[tl::KEY_RIGHT].keyDown)
 		{
-			tl::Color activeColor = grid.sprite->content[grid.selectedIndex];
-			int pixelIndex = grid.selectedIndex;
-			bool sameColor = true;
-			while (pixelIndex < maxPixelIndex && sameColor)
-			{
-				pixelIndex += 1;
-				sameColor = (CompareColor(activeColor, grid.sprite->content[pixelIndex]) == 0);
-			}
-			grid.selectedIndex = pixelIndex;
+			MoveCursorToNextColor(grid, 1, maxPixelIndex, &CheckIncrementingLimit);
 			return true;
 		}
 		return false;
