@@ -36,7 +36,7 @@ static int CompareColor(const tl::Color& color1, const tl::Color& color2)
 	return -1;
 }
 
-typedef bool (*CheckPixelLimit)(int pixelIndex, int maxPixelIndex);
+typedef bool CheckPixelLimit(int pixelIndex, int maxPixelIndex);
 static bool CheckDecrementingLimit(int pixelIndex, int maxPixelIndex)
 {
 	return pixelIndex > 0;
@@ -47,7 +47,7 @@ static bool CheckIncrementingLimit(int pixelIndex, int maxPixelIndex)
 	return pixelIndex < maxPixelIndex;
 }
 
-static void MoveCursorToNextColor(Grid& grid, int step, int maxPixelIndex, CheckPixelLimit checkPixelLimit)
+static void MoveCursorToNextColor(Grid& grid, int step, int maxPixelIndex, CheckPixelLimit& checkPixelLimit)
 {
 	tl::Color activeColor = grid.sprite->content[grid.selectedIndex];
 	int pixelIndex = grid.selectedIndex;
@@ -79,13 +79,13 @@ static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
 
 		if (input.buttons[tl::KEY_LEFT].keyDown)
 		{
-			MoveCursorToNextColor(grid, -1, maxPixelIndex, &CheckDecrementingLimit);
+			MoveCursorToNextColor(grid, -1, maxPixelIndex, CheckDecrementingLimit);
 			return true;
 		}
 
 		if (input.buttons[tl::KEY_RIGHT].keyDown)
 		{
-			MoveCursorToNextColor(grid, 1, maxPixelIndex, &CheckIncrementingLimit);
+			MoveCursorToNextColor(grid, 1, maxPixelIndex, CheckIncrementingLimit);
 			return true;
 		}
 		return false;
