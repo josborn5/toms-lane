@@ -66,6 +66,20 @@ static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
 			grid.selectedIndex = pixelIndex;
 			return true;
 		}
+
+		if (input.buttons[tl::KEY_RIGHT].keyDown)
+		{
+			tl::Color activeColor = grid.sprite->content[grid.selectedIndex];
+			int pixelIndex = grid.selectedIndex;
+			bool sameColor = true;
+			while (pixelIndex < maxPixelIndex && sameColor)
+			{
+				pixelIndex += 1;
+				sameColor = (CompareColor(activeColor, grid.sprite->content[pixelIndex]) == 0);
+			}
+			grid.selectedIndex = pixelIndex;
+			return true;
+		}
 		return false;
 	}
 
