@@ -110,7 +110,7 @@ static int GetCursorIndex(const tl::Input &input, Grid& grid)
 	return grid.selectedIndex;
 }
 
-static bool CheckForCursorMovementInput(const tl::Input& input)
+static bool ApplyCursorMovementToState(const tl::Input& input)
 {
 	Grid& activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
 	int newCursorIndex = GetCursorIndex(input, activeGrid);
@@ -419,9 +419,9 @@ static void ProcessCommandInput(const tl::Input& input)
 	}
 }
 
-static void ProcessViewModeInput(const tl::Input& input)
+static void ApplyViewModeInputToState(const tl::Input& input)
 {
-	if (CheckForCursorMovementInput(input)) return;
+	if (ApplyCursorMovementToState(input)) return;
 	if (CheckForCopy(input)) return;
 	if (CheckForPaste(input)) return;
 
@@ -462,9 +462,9 @@ static void ProcessViewModeInput(const tl::Input& input)
 	}
 }
 
-static void ProcessInsertModeInput(const tl::Input& input)
+static void ApplyInsertModeInputToState(const tl::Input& input)
 {
-	if (CheckForCursorMovementInput(input)) return;
+	if (ApplyCursorMovementToState(input)) return;
 	if (input.buttons[tl::KEY_ENTER].keyDown && state.activeControl == SpriteGrid)
 	{
 		state.pixels.sprite->content[state.pixels.selectedIndex] = currentColor;
@@ -472,7 +472,7 @@ static void ProcessInsertModeInput(const tl::Input& input)
 	}
 }
 
-static void ProcessCommandModeInput(const tl::Input& input)
+static void ApplyCommandModeInputToState(const tl::Input& input)
 {
 	if (input.buttons[tl::KEY_ENTER].keyDown)
 	{
@@ -502,19 +502,19 @@ const EditorState& GetLatestState(const tl::Input& input)
 	switch (state.mode)
 	{
 		case View:
-			ProcessViewModeInput(input);
+			ApplyViewModeInputToState(input);
 			break;
 		case Insert:
-			ProcessInsertModeInput(input);
+			ApplyInsertModeInputToState(input);
 			break;
 		case Visual:
-			if (CheckForCursorMovementInput(input)) return state;
+			if (ApplyCursorMovementToState(input)) return state;
 			if (CheckForCopy(input)) return state;
 			if (CheckForPaste(input)) return state;
 			break;
 		case Command:
 		case NoFile:
-			ProcessCommandModeInput(input);
+			ApplyCommandModeInputToState(input);
 			break;
 	}
 
