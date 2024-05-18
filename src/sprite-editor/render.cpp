@@ -60,6 +60,15 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::Sprit
 	return sizeRect;
 }
 
+static void GetSelectedRangeFootprint(const Grid& grid, const tl::Rect<float>& selectedPixelFootprint, tl::Rect<float>& rangeFootprint)
+{
+	rangeFootprint.position = selectedPixelFootprint.position;
+	rangeFootprint.halfSize = {
+		selectedPixelFootprint.halfSize.x + 1,
+		selectedPixelFootprint.halfSize.y + 1
+	};
+}
+
 static void RenderSpriteAsGrid(
 	const Grid& grid,
 	const tl::RenderBuffer& renderBuffer,
@@ -92,8 +101,7 @@ static void RenderSpriteAsGrid(
 			if (pixelIndex == selectedBlockIndex)
 			{
 				tl::Rect<float> selectedFootprint;
-				selectedFootprint.position = pixelPosition;
-				selectedFootprint.halfSize = { pixelHalfSize.x + 1, pixelHalfSize.y + 1 };
+				GetSelectedRangeFootprint(grid, pixelFootPrint, selectedFootprint);
 				tl::DrawRect(renderBuffer, selectedPixelColor, selectedFootprint);
 			}
 			tl::Color blockColor = sprite.content[pixelIndex];
