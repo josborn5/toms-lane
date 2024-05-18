@@ -37,7 +37,7 @@ static int CompareColor(const tl::Color& color1, const tl::Color& color2)
 	return -1;
 }
 
-static void MoveCursorToNextColor(Grid& grid, int step, int inclusiveMinPixelIndex, int inclusiveMaxPixelIndex)
+static int GetCursorIndexForNextColor(Grid& grid, int step, int inclusiveMinPixelIndex, int inclusiveMaxPixelIndex)
 {
 	tl::Color activeColor = grid.sprite->content[grid.selectedIndex];
 	int pixelIndex = grid.selectedIndex;
@@ -49,7 +49,7 @@ static void MoveCursorToNextColor(Grid& grid, int step, int inclusiveMinPixelInd
 		sameColor = (CompareColor(activeColor, grid.sprite->content[pixelIndex]) == 0);
 		provisionalIndex += step;
 	}
-	grid.selectedIndex = pixelIndex;
+	return pixelIndex;
 }
 
 static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
@@ -73,7 +73,8 @@ static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
 		{
 			int currentRowIndex = GetSelectedRowIndex(grid);
 			int minIndexForRow = grid.sprite->width * currentRowIndex;
-			MoveCursorToNextColor(grid, -1, minIndexForRow , maxPixelIndex);
+			int newSelectedIndex = GetCursorIndexForNextColor(grid, -1, minIndexForRow , maxPixelIndex);
+			grid.selectedIndex = newSelectedIndex;
 			return true;
 		}
 
@@ -81,19 +82,22 @@ static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
 		{
 			int currentRowIndex = GetSelectedRowIndex(grid);
 			int maxIndexForRow = (grid.sprite->width * (currentRowIndex + 1)) - 1;
-			MoveCursorToNextColor(grid, 1, 0, maxIndexForRow);
+			int newSelectedIndex = GetCursorIndexForNextColor(grid, 1, 0, maxIndexForRow);
+			grid.selectedIndex = newSelectedIndex;
 			return true;
 		}
 
 		if (input.buttons[tl::KEY_UP].keyDown)
 		{
-			MoveCursorToNextColor(grid, -grid.sprite->width, 0, maxPixelIndex);
+			int newSelectedIndex = GetCursorIndexForNextColor(grid, -grid.sprite->width, 0, maxPixelIndex);
+			grid.selectedIndex = newSelectedIndex;
 			return true;
 		}
 
 		if (input.buttons[tl::KEY_DOWN].keyDown)
 		{
-			MoveCursorToNextColor(grid, grid.sprite->width, 0, maxPixelIndex);
+			int newSelectedIndex = GetCursorIndexForNextColor(grid, grid.sprite->width, 0, maxPixelIndex);
+			grid.selectedIndex = newSelectedIndex;
 			return true;
 		}
 		return false;
