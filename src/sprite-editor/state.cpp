@@ -122,6 +122,16 @@ static bool ApplyCursorMovementToState(const tl::Input& input)
 	return handledInput;
 }
 
+static bool ApplySelectedRangeMovementToState(const tl::Input& input)
+{
+	Grid& activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
+	int newCursorIndex = GetCursorIndex(input, activeGrid);
+	bool handledInput = activeGrid.selectedIndex != newCursorIndex;
+	activeGrid.selectedRangeIndex = newCursorIndex;
+
+	return handledInput;
+}
+
 static void ClearCommandBuffer()
 {
 	for (int i = 0; i < commands.capacity(); i += 1)
@@ -508,7 +518,7 @@ const EditorState& GetLatestState(const tl::Input& input)
 			ApplyInsertModeInputToState(input);
 			break;
 		case Visual:
-			if (ApplyCursorMovementToState(input)) return state;
+			if (ApplySelectedRangeMovementToState(input)) return state;
 			if (CheckForCopy(input)) return state;
 			if (CheckForPaste(input)) return state;
 			break;

@@ -18,6 +18,7 @@ struct Grid
 	tl::Rect<float> footprint;
 	tl::Rect<float> container;
 	int selectedIndex = 0;
+	int selectedRangeIndex = 0;
 };
 
 enum Mode
