@@ -52,30 +52,21 @@ static int GetCursorIndexForNextColor(Grid& grid, int step, int inclusiveMinPixe
 	return pixelIndex;
 }
 
-static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
+static int GetCursorIndex(const tl::Input &input, Grid& grid)
 {
 	int maxPixelIndex = (grid.sprite->width * grid.sprite->height) - 1;
 	if (input.buttons[tl::KEY_CTRL].isDown)
 	{
-		if (input.buttons[tl::KEY_HOME].keyDown)
-		{
-			grid.selectedIndex = 0;
-			return true;
-		}
+		if (input.buttons[tl::KEY_HOME].keyDown) return 0;
 
-		if (input.buttons[tl::KEY_END].keyDown)
-		{
-			grid.selectedIndex = maxPixelIndex;
-			return true;
-		}
+		if (input.buttons[tl::KEY_END].keyDown) return maxPixelIndex;
 
 		if (input.buttons[tl::KEY_LEFT].keyDown)
 		{
 			int currentRowIndex = GetSelectedRowIndex(grid);
 			int minIndexForRow = grid.sprite->width * currentRowIndex;
 			int newSelectedIndex = GetCursorIndexForNextColor(grid, -1, minIndexForRow , maxPixelIndex);
-			grid.selectedIndex = newSelectedIndex;
-			return true;
+			return newSelectedIndex;
 		}
 
 		if (input.buttons[tl::KEY_RIGHT].keyDown)
@@ -83,67 +74,48 @@ static bool MoveCursorForSprite(const tl::Input &input, Grid& grid)
 			int currentRowIndex = GetSelectedRowIndex(grid);
 			int maxIndexForRow = (grid.sprite->width * (currentRowIndex + 1)) - 1;
 			int newSelectedIndex = GetCursorIndexForNextColor(grid, 1, 0, maxIndexForRow);
-			grid.selectedIndex = newSelectedIndex;
-			return true;
+			return newSelectedIndex;
 		}
 
 		if (input.buttons[tl::KEY_UP].keyDown)
 		{
-			int newSelectedIndex = GetCursorIndexForNextColor(grid, -grid.sprite->width, 0, maxPixelIndex);
-			grid.selectedIndex = newSelectedIndex;
-			return true;
+			return GetCursorIndexForNextColor(grid, -grid.sprite->width, 0, maxPixelIndex);
 		}
 
 		if (input.buttons[tl::KEY_DOWN].keyDown)
 		{
-			int newSelectedIndex = GetCursorIndexForNextColor(grid, grid.sprite->width, 0, maxPixelIndex);
-			grid.selectedIndex = newSelectedIndex;
-			return true;
+			return GetCursorIndexForNextColor(grid, grid.sprite->width, 0, maxPixelIndex);
 		}
-		return false;
+		return grid.selectedIndex;
 	}
 
 	if (input.buttons[tl::KEY_RIGHT].keyDown)
 	{
-		if (grid.selectedIndex < maxPixelIndex)
-		{
-			grid.selectedIndex += 1;
-		}
-		return true;
+		if (grid.selectedIndex < maxPixelIndex) return grid.selectedIndex + 1;
 	}
 	else if (input.buttons[tl::KEY_LEFT].keyDown)
 	{
-		if (grid.selectedIndex > 0)
-		{
-			grid.selectedIndex -= 1;
-		}
-		return true;
+		if (grid.selectedIndex > 0) return grid.selectedIndex - 1;
 	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
 		int provisionalSelectedPixelIndex = grid.selectedIndex + grid.sprite->width;
-		if (provisionalSelectedPixelIndex <= maxPixelIndex)
-		{
-			grid.selectedIndex = provisionalSelectedPixelIndex;
-		}
-		return true;
+		if (provisionalSelectedPixelIndex <= maxPixelIndex) return provisionalSelectedPixelIndex;
 	}
 	else if (input.buttons[tl::KEY_UP].keyDown)
 	{
 		int provisionalSelectedPixelIndex = grid.selectedIndex - grid.sprite->width;
-		if (provisionalSelectedPixelIndex >= 0)
-		{
-			grid.selectedIndex = provisionalSelectedPixelIndex;
-		}
-		return true;
+		if (provisionalSelectedPixelIndex >= 0) return provisionalSelectedPixelIndex;
 	}
-	return false;
+	return grid.selectedIndex;
 }
 
 static bool CheckForCursorMovementInput(const tl::Input& input)
 {
 	Grid& activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
-	bool handledInput = MoveCursorForSprite(input, activeGrid);
+	int newCursorIndex = GetCursorIndex(input, activeGrid);
+	bool handledInput = activeGrid.selectedIndex != newCursorIndex;
+	activeGrid.selectedIndex = newCursorIndex;
 
 	currentColor = state.palette_.sprite->content[state.palette_.selectedIndex];
 
