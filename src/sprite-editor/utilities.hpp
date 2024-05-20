@@ -3,5 +3,7 @@
 
 int GetSelectedColumnIndex(Grid& grid);
 int GetSelectedRowIndex(const Grid& grid);
+int GetRowIndex(const Grid& grid, int index);
+int GetColumnIndex(const Grid& grid, int index);
 
 #endif

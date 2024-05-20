@@ -1,6 +1,6 @@
 #include "./editor.hpp"
 
-int GetSelectedRowIndex(const Grid& grid)
+int GetRowIndex(const Grid& grid, int index)
 {
 	if (grid.sprite->height == 1)
 	{
@@ -9,25 +9,35 @@ int GetSelectedRowIndex(const Grid& grid)
 
 	if (grid.sprite->width == 1)
 	{
-		return grid.selectedIndex;
+		return index;
 	}
 
+	return index / grid.sprite->width;
+}
 
-	return grid.selectedIndex / grid.sprite->width;
+int GetColumnIndex(const Grid& grid, int index)
+{
+	if (grid.sprite->width == 1)
+	{
+		return 0;
+	}
+
+	if (grid.sprite->height == 1)
+	{
+		return index;
+	}
+
+	return index % grid.sprite->width;
+
+}
+
+int GetSelectedRowIndex(const Grid& grid)
+{
+	return GetRowIndex(grid, grid.selectedIndex);
 }
 
 int GetSelectedColumnIndex(Grid& grid)
 {
-	if (grid.sprite->width == 1)
-	{
-		return 0;
-	}
-
-	if (grid.sprite->height == 1)
-	{
-		return grid.selectedIndex;
-	}
-
-	return grid.selectedIndex % grid.sprite->width;
+	return GetColumnIndex(grid, grid.selectedIndex);
 }
 
