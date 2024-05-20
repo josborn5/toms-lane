@@ -1,5 +1,6 @@
 #include "../tl-library.hpp"
 #include "./editor.hpp"
+#include "./utilities.hpp"
 
 static tl::Rect<float> commandTextRect;
 static tl::Rect<float> commandCharFootprint;
@@ -75,6 +76,23 @@ static void GetSelectedRangeFootprint(
 		};
 		return;
 	}
+
+	int selectedRow = GetRowIndex(grid, grid.selectedIndex);
+	int selectedColumn = GetColumnIndex(grid, grid.selectedIndex);
+	int rangeRow = GetRowIndex(grid, grid.selectedRangeIndex);
+	int rangeColumn = GetColumnIndex(grid, grid.selectedRangeIndex);
+
+	int height = rangeRow - selectedRow + 1;
+	int width = rangeColumn - selectedColumn + 1;
+
+	rangeFootprint.halfSize = {
+		(width * selectedPixelFootprint.halfSize.x) + 1,
+		(height * selectedPixelFootprint.halfSize.y) + 1
+	};
+	rangeFootprint.position = {
+		selectedPixelFootprint.position.x + ((float)(width - 1) * selectedPixelFootprint.halfSize.x),
+		selectedPixelFootprint.position.y - ((float)(height - 1) * selectedPixelFootprint.halfSize.y)
+	};
 }
 
 static void RenderSpriteAsGrid(

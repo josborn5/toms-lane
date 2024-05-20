@@ -439,6 +439,7 @@ static void ApplyViewModeInputToState(const tl::Input& input)
 	{
 		ClearCommandBuffer();
 		state.mode = Visual;
+		state.pixels.selectedRangeIndex = state.pixels.selectedIndex;
 		commands.append('V');
 		commands.append('I');
 		commands.append('S');
