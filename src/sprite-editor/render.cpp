@@ -82,16 +82,23 @@ static void GetSelectedRangeFootprint(
 	int rangeRow = GetRowIndex(grid, grid.selectedRangeIndex);
 	int rangeColumn = GetColumnIndex(grid, grid.selectedRangeIndex);
 
-	int height = rangeRow - selectedRow + 1;
-	int width = rangeColumn - selectedColumn + 1;
+	int height = (rangeRow > selectedRow)
+		? rangeRow - selectedRow + 1
+		: selectedRow - rangeRow + 1;
+	int width = (rangeColumn > selectedColumn)
+		? rangeColumn - selectedColumn + 1
+		: selectedColumn - rangeColumn + 1;
 
 	rangeFootprint.halfSize = {
-		(width * selectedPixelFootprint.halfSize.x) + 1,
-		(height * selectedPixelFootprint.halfSize.y) + 1
+		(width * (selectedPixelFootprint.halfSize.x + 2)),
+		(height * (selectedPixelFootprint.halfSize.y + 2))
 	};
+
+	// Sprite indexing has its origin in the top left corner of the screen.
+	// Rect indexing has its origin in the bottom left corner of the screen
 	rangeFootprint.position = {
-		selectedPixelFootprint.position.x + ((float)(width - 1) * selectedPixelFootprint.halfSize.x),
-		selectedPixelFootprint.position.y - ((float)(height - 1) * selectedPixelFootprint.halfSize.y)
+		selectedPixelFootprint.position.x - selectedPixelFootprint.halfSize.x + rangeFootprint.halfSize.x - 2,
+		selectedPixelFootprint.position.y + selectedPixelFootprint.halfSize.y - rangeFootprint.halfSize.y + 2
 	};
 }
 
