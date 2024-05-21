@@ -96,9 +96,17 @@ static void GetSelectedRangeFootprint(
 
 	// Sprite indexing has its origin in the top left corner of the screen.
 	// Rect indexing has its origin in the bottom left corner of the screen
+	float positionX = (rangeColumn > selectedColumn)
+		? selectedPixelFootprint.position.x - selectedPixelFootprint.halfSize.x + rangeFootprint.halfSize.x - 2
+		: selectedPixelFootprint.position.x + selectedPixelFootprint.halfSize.x - rangeFootprint.halfSize.x + 2;
+
+	float positionY = (rangeRow > selectedRow)
+		? selectedPixelFootprint.position.y + selectedPixelFootprint.halfSize.y - rangeFootprint.halfSize.y + 2
+		: selectedPixelFootprint.position.y - selectedPixelFootprint.halfSize.y + rangeFootprint.halfSize.y - 2;
+
 	rangeFootprint.position = {
-		selectedPixelFootprint.position.x - selectedPixelFootprint.halfSize.x + rangeFootprint.halfSize.x - 2,
-		selectedPixelFootprint.position.y + selectedPixelFootprint.halfSize.y - rangeFootprint.halfSize.y + 2
+		positionX,
+		positionY
 	};
 }
 
@@ -119,6 +127,21 @@ static void RenderSpriteAsGrid(
 	tl::Vec2<float> pixelHalfSize = { 0.5F * pixelDimension, 0.5f * pixelDimension };
 
 	float yOriginalPosition = boundingRect.position.y + boundingRect.halfSize.y - (0.5f * pixelDimensionWithBorder);
+
+	// draw the selected background before drawing any pixels
+	tl::Rect<float> selectedPixelFootprint;
+	int selectedRow = GetRowIndex(grid, grid.selectedIndex);
+	int selectedColumn = GetColumnIndex(grid, grid.selectedIndex);
+	selectedPixelFootprint.halfSize = pixelHalfSize;
+	selectedPixelFootprint.position = {
+		boundingRect.position.x - boundingRect.halfSize.x + (0.5f * pixelDimensionWithBorder) + (selectedColumn * pixelDimensionWithBorder),
+		yOriginalPosition - (selectedRow * pixelDimensionWithBorder)
+	};
+	tl::Rect<float> rangeFootprint;
+	GetSelectedRangeFootprint(grid, selectedPixelFootprint, rangeFootprint, mode);
+	tl::DrawRect(renderBuffer, selectedPixelColor, rangeFootprint);
+
+
 	for (int j = 0; j < sprite.height; j += 1)
 	{
 		float yPosition = yOriginalPosition - (j * pixelDimensionWithBorder);
@@ -132,12 +155,6 @@ static void RenderSpriteAsGrid(
 			pixelFootPrint.position = pixelPosition;
 
 			int pixelIndex = (j * sprite.width) + i;
-			if (pixelIndex == selectedBlockIndex)
-			{
-				tl::Rect<float> selectedFootprint;
-				GetSelectedRangeFootprint(grid, pixelFootPrint, selectedFootprint, mode);
-				tl::DrawRect(renderBuffer, selectedPixelColor, selectedFootprint);
-			}
 			tl::Color blockColor = sprite.content[pixelIndex];
 
 			uint32_t color = tl::GetColorFromRGB(
