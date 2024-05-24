@@ -5,7 +5,7 @@
 static tl::Rect<float> commandTextRect;
 static tl::Rect<float> commandCharFootprint;
 
-static const float textAreaHalfHeight = 15.0f;
+static const float textAreaHalfHeight = 10.0f;
 static const tl::Vec2<float> textCharFootprintHalfsize = {
 	4.0f * textAreaHalfHeight / 7.0f,
 	textAreaHalfHeight
