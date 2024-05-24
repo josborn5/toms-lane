@@ -55,6 +55,7 @@ static int GetCursorIndexForNextColor(Grid& grid, int step, int inclusiveMinPixe
 static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
 {
 	int maxPixelIndex = (grid.sprite->width * grid.sprite->height) - 1;
+	int currentRowIndex = GetRowIndex(grid, prevIndex);
 	if (input.buttons[tl::KEY_CTRL].isDown)
 	{
 		if (input.buttons[tl::KEY_HOME].keyDown) return 0;
@@ -63,7 +64,6 @@ static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
 
 		if (input.buttons[tl::KEY_LEFT].keyDown)
 		{
-			int currentRowIndex = GetRowIndex(grid, prevIndex);
 			int minIndexForRow = grid.sprite->width * currentRowIndex;
 			int newSelectedIndex = GetCursorIndexForNextColor(grid, -1, minIndexForRow , maxPixelIndex, prevIndex);
 			return newSelectedIndex;
@@ -71,7 +71,6 @@ static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
 
 		if (input.buttons[tl::KEY_RIGHT].keyDown)
 		{
-			int currentRowIndex = GetRowIndex(grid, prevIndex);
 			int maxIndexForRow = (grid.sprite->width * (currentRowIndex + 1)) - 1;
 			int newSelectedIndex = GetCursorIndexForNextColor(grid, 1, 0, maxIndexForRow, prevIndex);
 			return newSelectedIndex;
@@ -91,11 +90,13 @@ static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
 
 	if (input.buttons[tl::KEY_RIGHT].keyDown)
 	{
-		if (prevIndex < maxPixelIndex) return prevIndex + 1;
+		int maxIndexForRow = (grid.sprite->width * (currentRowIndex + 1)) - 1;
+		if (prevIndex < maxIndexForRow) return prevIndex + 1;
 	}
 	else if (input.buttons[tl::KEY_LEFT].keyDown)
 	{
-		if (prevIndex > 0) return prevIndex - 1;
+		int minIndexForRow = grid.sprite->width * currentRowIndex;
+		if (prevIndex > minIndexForRow) return prevIndex - 1;
 	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
