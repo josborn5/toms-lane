@@ -7,6 +7,8 @@ State gameState = State();
 
 tl::bitmap bitmap;
 
+tl::MemorySpace memory;
+
 int UpdateAndRender(const tl::RenderBuffer& renderBuffer)
 {
 
@@ -44,6 +46,9 @@ int Initialize()
 	rightGrass.rect = tl::CopyRect(baseRect);
 	rightGrass.color = 0x00FF00;
 	gameState.tiles[2] = rightGrass;
+
+	memory.sizeInBytes = 1024;
+	tl::memory_interface_initialize(memory);
 
 	return 0;
 }
