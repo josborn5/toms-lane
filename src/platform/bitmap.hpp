@@ -2,6 +2,8 @@
 #define TOMS_LANE_PLATFORM_BITMAP
 
 #include <stdint.h>
+#include "../tl-application.hpp"
+#include "./math.hpp"
 
 namespace tl
 {
@@ -12,6 +14,7 @@ namespace tl
 		uint16_t reserved1;
 		uint16_t reserved2;
 
+		uint32_t offsetToPixelDataInBytes;
 		uint32_t headerSizeInBytes;
 
 		int32_t width;
@@ -28,11 +31,18 @@ namespace tl
 
 	struct bitmap
 	{
-		bitmap_header header;
+		bitmap_header* header;
 		void* content;
-	}
+	};
 
-	bitmap_interface_render(const RenderBuffer& buffer, const bitmap& bitmap, Vec2<int> topLeftCornerPosition);
+	int bitmap_interface_initialize(
+		bitmap& bitmap,
+		const MemorySpace& memory);
+
+	int bitmap_interface_render(
+		const RenderBuffer& buffer,
+		const bitmap& bitmap,
+		Vec2<int> topLeftCornerPosition);
 }
 
 #endif

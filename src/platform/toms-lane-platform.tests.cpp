@@ -5,6 +5,7 @@
 #include "./data-structures.tests.cpp"
 #include "./utilities.tests.cpp"
 #include "./quad-tree.tests.cpp"
+#include "./bitmap.tests.cpp"
 
 int main()
 {
@@ -21,6 +22,8 @@ int main()
 	RunUtilitiesTests();
 
 	RunQuadTreeTests();
+
+	RunBitmapTests();
 
 	printf("!!! ALL TESTS COMPLETE !!!");
 }
