@@ -49,6 +49,7 @@ int Initialize()
 
 	memory.sizeInBytes = 1024;
 	tl::memory_interface_initialize(memory);
+	tl::file_interface_read("test.bmp", memory);
 
 	return 0;
 }
