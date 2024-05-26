@@ -5,8 +5,11 @@
 
 State gameState = State();
 
+tl::bitmap bitmap;
+
 int UpdateAndRender(const tl::RenderBuffer& renderBuffer)
 {
+
 	for (int i = 0; i < gameState.tileCount; i += 1)
 	{
 		Tile tile = gameState.tiles[i];

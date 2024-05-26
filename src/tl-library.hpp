@@ -7,6 +7,7 @@
 #include "./platform/collision.hpp"
 #include "./platform/data-structures.hpp"
 #include "./platform/quad-tree.hpp"
+#include "./platform/bitmap.hpp"
 #include "./platform/utilities.hpp"
 
 #endif
