@@ -21,5 +21,16 @@ void RunBitmapTests()
 
 	assert(testBitmap.header->width == 12);
 	assert(testBitmap.header->height == 8);
+
+	assert(testBitmap.header->numberOfColorPlanes == 1);
+	assert(testBitmap.header->numberOfBitsPerPixel == 24);
+	assert(testBitmap.header->compressionMethod == 0);
+	assert(testBitmap.header->imageSizeInBytes == 288);
+
+	assert(testBitmap.header->horizontalPixelsPerMeter == 0);
+	assert(testBitmap.header->verticalPixelsPerMeter == 0);
+	assert(testBitmap.header->numberOfColorsInPalette == 0);
+	assert(testBitmap.header->numberOfImportantColors == 0);
+
 }
 

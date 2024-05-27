@@ -25,14 +25,27 @@ namespace tl
 		uint16_t spacer4;
 
 		int16_t height;
+		uint16_t spacer5;
+
 		uint16_t numberOfColorPlanes;
 		uint16_t numberOfBitsPerPixel;
-		uint32_t compressionMethod;
-		uint32_t imageSize;
-		int32_t horizontalImagePixelsPerMeter;
-		int32_t verticalImagePixelsPerMeter;
-		uint32_t numberOfColorsInPalette;
-		uint32_t numberOfImportantColors;
+		uint16_t compressionMethod;
+		uint16_t spacer6;
+
+		uint16_t imageSizeInBytes;
+		uint16_t spacer7;
+
+		int16_t horizontalPixelsPerMeter;
+		uint16_t spacer8;
+
+		int16_t verticalPixelsPerMeter;
+		uint16_t spacer9;
+
+		uint16_t numberOfColorsInPalette;
+		uint16_t spacer10;
+
+		uint16_t numberOfImportantColors;
+		uint16_t spacer11;
 	};
 
 	struct bitmap
