@@ -10,15 +10,21 @@ namespace tl
 	struct bitmap_header
 	{
 		uint16_t fileType;
-		uint32_t fileSizeInBytes;
+
+		int16_t fileSizeInBytes;
 		uint16_t reserved1;
 		uint16_t reserved2;
+		uint16_t spacer1;
 
-		uint32_t offsetToPixelDataInBytes;
-		uint32_t headerSizeInBytes;
+		uint16_t offsetToPixelDataInBytes;
+		uint16_t spacer2;
+		uint16_t headerSizeInBytes;
+		uint16_t spacer3;
 
-		int32_t width;
-		int32_t height;
+		int16_t width;
+		uint16_t spacer4;
+
+		int16_t height;
 		uint16_t numberOfColorPlanes;
 		uint16_t numberOfBitsPerPixel;
 		uint32_t compressionMethod;
