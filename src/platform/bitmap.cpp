@@ -3,6 +3,13 @@
 namespace tl
 {
 
+struct RGB24Bit
+{
+	uint8_t r;
+	uint8_t g;
+	uint8_t b;
+};
+
 int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 {
 	bitmap.file_header = (bitmap_file_header*)memory.content;
@@ -21,6 +28,13 @@ int bitmap_interface_render(
 {
 	if (bitmap.file_header == nullptr) return -1;
 
+	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
+	for (int i = 0; i < bitmap.dibs_header->width; i += 1)
+	{
+		uint32_t colorRGBA = twentyFourBitContent->r << 16 | twentyFourBitContent->g << 8 | twentyFourBitContent->b;
+		PlotPixel(buffer, colorRGBA, i, 0);
+		twentyFourBitContent++;
+	}
 	return 0;
 }
 

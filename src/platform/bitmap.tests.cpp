@@ -46,8 +46,11 @@ void RunBitmapRenderTest()
 	MemorySpace renderBufferPixels;
 	renderBufferPixels.sizeInBytes = sizeof(unsigned int) * renderBuffer.width * renderBuffer.height;
 	tl::memory_interface_initialize(renderBufferPixels);
+	renderBuffer.pixels = (unsigned int*)renderBufferPixels.content;
 
 	tl::bitmap_interface_render(renderBuffer, testBitmap, { 0, 0 });
+
+	assert((uint32_t)*renderBuffer.pixels == 0x00FF00);
 }
 
 void RunBitmapTests()
