@@ -7,7 +7,7 @@
 
 namespace tl
 {
-	struct bitmap_header
+	struct bitmap_file_header
 	{
 		uint16_t fileType;
 
@@ -18,6 +18,10 @@ namespace tl
 
 		uint16_t offsetToPixelDataInBytes;
 		uint16_t spacer2;
+	};
+
+	struct bitmap_dibs_header
+	{
 		uint16_t headerSizeInBytes;
 		uint16_t spacer3;
 
@@ -28,7 +32,7 @@ namespace tl
 		uint16_t spacer5;
 
 		uint16_t numberOfColorPlanes;
-		uint16_t numberOfBitsPerPixel;
+		uint16_t bitsPerPixel;
 		uint16_t compressionMethod;
 		uint16_t spacer6;
 
@@ -50,8 +54,9 @@ namespace tl
 
 	struct bitmap
 	{
-		bitmap_header* header;
-		void* content;
+		bitmap_file_header* file_header = nullptr;
+		bitmap_dibs_header* dibs_header = nullptr; // will need to change this to void* as the type will vary for different versions of the format
+		void* content = nullptr; // number of bits per pixel can vary
 	};
 
 	int bitmap_interface_initialize(
