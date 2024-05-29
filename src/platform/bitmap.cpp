@@ -29,11 +29,15 @@ int bitmap_interface_render(
 	if (bitmap.file_header == nullptr) return -1;
 
 	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
-	for (int i = 0; i < bitmap.dibs_header->width; i += 1)
+
+	for (int j = 0; j < bitmap.dibs_header->height; j += 1)
 	{
-		uint32_t colorRGBA = twentyFourBitContent->r << 16 | twentyFourBitContent->g << 8 | twentyFourBitContent->b;
-		PlotPixel(buffer, colorRGBA, i, 0);
-		twentyFourBitContent++;
+		for (int i = 0; i < bitmap.dibs_header->width; i += 1)
+		{
+			uint32_t colorRGBA = twentyFourBitContent->r << 16 | twentyFourBitContent->g << 8 | twentyFourBitContent->b;
+			PlotPixel(buffer, colorRGBA, i, j);
+			twentyFourBitContent++;
+		}
 	}
 	return 0;
 }
