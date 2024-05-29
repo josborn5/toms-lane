@@ -50,7 +50,15 @@ void RunBitmapRenderTest()
 
 	tl::bitmap_interface_render(renderBuffer, testBitmap, { 0, 0 });
 
-	assert((uint32_t)*renderBuffer.pixels == 0x00FF00);
+	const uint32_t green = 0x00FF00;
+	const uint32_t blue = 0x0000FF;
+	const uint32_t white = 0xFFFFFF;
+	uint32_t bottomLeftPixel = *renderBuffer.pixels;
+	uint32_t rightOfBottomLeftPixel = *(renderBuffer.pixels + 1);
+	uint32_t bottomRightPixel = *(renderBuffer.pixels + testBitmap.dibs_header->width - 1);
+	assert(bottomLeftPixel == green);
+	assert(rightOfBottomLeftPixel  == white);
+	assert(bottomRightPixel == blue);
 }
 
 void RunBitmapTests()

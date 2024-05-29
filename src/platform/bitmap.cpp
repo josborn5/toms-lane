@@ -5,9 +5,9 @@ namespace tl
 
 struct RGB24Bit
 {
-	uint8_t r;
-	uint8_t g;
 	uint8_t b;
+	uint8_t g;
+	uint8_t r;
 };
 
 int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
