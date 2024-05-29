@@ -11,13 +11,14 @@ tl::MemorySpace memory;
 
 int UpdateAndRender(const tl::RenderBuffer& renderBuffer)
 {
-
 	for (int i = 0; i < gameState.tileCount; i += 1)
 	{
 		Tile tile = gameState.tiles[i];
 		tl::DrawRect(renderBuffer, tile.color, tile.rect);
 	}
-	
+
+	tl::bitmap_interface_render(renderBuffer, bitmap, { 0, 0 });
+
 	return 0;
 }
 
@@ -47,10 +48,10 @@ int Initialize()
 	rightGrass.color = 0x00FF00;
 	gameState.tiles[2] = rightGrass;
 
-	memory.sizeInBytes = 1024;
+	memory.sizeInBytes = 200000;
 	tl::memory_interface_initialize(memory);
 	tl::file_interface_read("test.bmp", memory);
-
+	tl::bitmap_interface_initialize(bitmap, memory);
 	return 0;
 }
 
