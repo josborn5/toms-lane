@@ -44,28 +44,37 @@ void RunBitmapRenderTest()
 	renderBuffer.height = 8;
 	renderBuffer.bytesPerPixel = 4;
 	MemorySpace renderBufferPixels;
+	MemorySpace renderBufferDepth;
 	renderBufferPixels.sizeInBytes = sizeof(unsigned int) * renderBuffer.width * renderBuffer.height;
+	renderBufferDepth.sizeInBytes = sizeof(float) * renderBuffer.width * renderBuffer.height;
 	tl::memory_interface_initialize(renderBufferPixels);
+	tl::memory_interface_initialize(renderBufferDepth);
 	renderBuffer.pixels = (unsigned int*)renderBufferPixels.content;
+	renderBuffer.depth = (float*)renderBufferDepth.content;
 
+	tl::ClearScreen(renderBuffer, 0x000000);
 	tl::bitmap_interface_render(renderBuffer, testBitmap, { 0, 0 });
 
 	const uint32_t red = 0xFFFFFF;
 	const uint32_t green = 0x00FF00;
 	const uint32_t blue = 0x0000FF;
 	const uint32_t white = 0xFFFFFF;
-	uint32_t bottomLeftPixel = *renderBuffer.pixels;
-	uint32_t rightOfBottomLeftPixel = *(renderBuffer.pixels + 1);
-	uint32_t bottomRightPixel = *(renderBuffer.pixels + testBitmap.dibs_header->width - 1);
+	uint32_t* bottomLeftPixel = renderBuffer.pixels;
+	uint32_t* rightOfBottomLeftPixel = renderBuffer.pixels + 1;
+	uint32_t* bottomRightPixel = renderBuffer.pixels + testBitmap.dibs_header->width - 1;
 	int pixelCount = testBitmap.dibs_header->width * testBitmap.dibs_header->height;
-	uint32_t topRightPixel = *(renderBuffer.pixels + pixelCount - 1);
-	uint32_t topLeftPixel = *(renderBuffer.pixels + pixelCount - testBitmap.dibs_header->width - 1);
+	uint32_t* topRightPixel = renderBuffer.pixels + pixelCount - 1;
+	uint32_t* topLeftPixel = renderBuffer.pixels + pixelCount - testBitmap.dibs_header->width - 1;
 
-	assert(bottomLeftPixel == green);
-	assert(rightOfBottomLeftPixel  == white);
-	assert(bottomRightPixel == blue);
-	assert(topRightPixel == blue);
-	assert(topLeftPixel == red);
+	assert(*bottomLeftPixel == green);
+	assert(*rightOfBottomLeftPixel  == white);
+	assert(*bottomRightPixel == blue);
+	assert(*topRightPixel == blue);
+	assert(*topLeftPixel == red);
+
+	tl::ClearScreen(renderBuffer, 0x000000);
+	tl::bitmap_interface_render(renderBuffer, testBitmap, { 6, 4 });
+
 }
 
 void RunBitmapTests()
