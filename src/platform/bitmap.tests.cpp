@@ -59,6 +59,7 @@ void RunBitmapRenderTest()
 	const uint32_t green = 0x00FF00;
 	const uint32_t blue = 0x0000FF;
 	const uint32_t white = 0xFFFFFF;
+	const uint32_t black = 0x000000;
 	uint32_t* bottomLeftPixel = renderBuffer.pixels;
 	uint32_t* rightOfBottomLeftPixel = renderBuffer.pixels + 1;
 	uint32_t* bottomRightPixel = renderBuffer.pixels + testBitmap.dibs_header->width - 1;
@@ -67,14 +68,21 @@ void RunBitmapRenderTest()
 	uint32_t* topLeftPixel = renderBuffer.pixels + pixelCount - testBitmap.dibs_header->width - 1;
 
 	assert(*bottomLeftPixel == green);
-	assert(*rightOfBottomLeftPixel  == white);
+	assert(*rightOfBottomLeftPixel == white);
 	assert(*bottomRightPixel == blue);
 	assert(*topRightPixel == blue);
 	assert(*topLeftPixel == red);
 
-	tl::ClearScreen(renderBuffer, 0x000000);
+	tl::ClearScreen(renderBuffer, black);
 	tl::bitmap_interface_render(renderBuffer, testBitmap, { 6, 4 });
 
+	assert(*bottomLeftPixel == black);
+	assert(*bottomRightPixel == black);
+
+	uint32_t* sixAcrossFourUpFromBottomLeft = renderBuffer.pixels + 6 + (4 * renderBuffer.width);
+	assert(*sixAcrossFourUpFromBottomLeft == green);
+	assert(*(sixAcrossFourUpFromBottomLeft + 1) == white);
+	assert(*(sixAcrossFourUpFromBottomLeft + 2) == black);
 }
 
 void RunBitmapTests()

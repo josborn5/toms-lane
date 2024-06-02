@@ -66,7 +66,7 @@ namespace tl
 	int bitmap_interface_render(
 		const RenderBuffer& buffer,
 		const bitmap& bitmap,
-		Vec2<int> topLeftCornerPosition);
+		Vec2<int> bottomLeftCornerPosition);
 }
 
 #endif
