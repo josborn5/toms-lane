@@ -62,6 +62,12 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	bitmap._dibs_header.headerSizeInBytes = read_int32_from_little_endian<uint32_t>(bitmapDataAsBytes);
 	bitmapDataAsBytes += sizeof(uint32_t);
 
+	bitmap._dibs_header.width = read_int32_from_little_endian<int32_t>(bitmapDataAsBytes);
+	bitmapDataAsBytes += sizeof(uint32_t);
+
+	bitmap._dibs_header.height = read_int32_from_little_endian<int32_t>(bitmapDataAsBytes);
+	bitmapDataAsBytes += sizeof(uint32_t);
+
 	return 0;
 }
 

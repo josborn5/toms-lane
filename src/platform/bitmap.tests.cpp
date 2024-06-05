@@ -27,6 +27,8 @@ static void RunBitmapInitializeTest()
 
 	assert(testBitmap.dibs_header->width == 12);
 	assert(testBitmap.dibs_header->height == 8);
+	assert(testBitmap._dibs_header.width == 12);
+	assert(testBitmap._dibs_header.height == 8);
 
 	assert(testBitmap.dibs_header->numberOfColorPlanes == 1);
 	assert(testBitmap.dibs_header->bitsPerPixel == 24);
