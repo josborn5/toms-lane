@@ -18,6 +18,26 @@ namespace tl
 		int32_t offsetToPixelDataInBytes;
 	};
 
+	struct _bitmap_dibs_header
+	{
+		uint32_t headerSizeInBytes;
+
+		int32_t width;
+		int32_t height;
+
+		uint16_t numberOfColorPlanes;
+		uint16_t bitsPerPixel;
+		uint32_t compressionMethod;
+		uint32_t imageSizeInBytes;
+
+		int32_t horizontalPixelsPerMeter;
+		int32_t verticalPixelsPerMeter;
+
+		uint32_t numberOfColorsInPalette;
+		uint32_t numberOfImportantColors;
+	};
+
+
 	struct bitmap_dibs_header
 	{
 		uint16_t headerSizeInBytes;
@@ -53,6 +73,7 @@ namespace tl
 	struct bitmap
 	{
 		bitmap_file_header file_header = {0};
+		_bitmap_dibs_header _dibs_header = {0};
 		bitmap_dibs_header* dibs_header = nullptr; // will need to change this to void* as the type will vary for different versions of the format
 		void* content = nullptr; // number of bits per pixel can vary
 	};

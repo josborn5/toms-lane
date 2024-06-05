@@ -23,6 +23,8 @@ static void RunBitmapInitializeTest()
 	assert(testBitmap.file_header.offsetToPixelDataInBytes == 54);
 
 	assert(testBitmap.dibs_header->headerSizeInBytes == 40);
+	assert(testBitmap._dibs_header.headerSizeInBytes == 40);
+
 	assert(testBitmap.dibs_header->width == 12);
 	assert(testBitmap.dibs_header->height == 8);
 
