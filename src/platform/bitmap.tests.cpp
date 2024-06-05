@@ -16,11 +16,11 @@ static void RunBitmapInitializeTest()
 {
 	tl::bitmap_interface_initialize(testBitmap, testMemory);
 
-	assert(testBitmap.file_header->fileType == 0x4d42);
-	assert(testBitmap.file_header->fileSizeInBytes == 342);
-	assert(testBitmap.file_header->reserved1 == 0);
-	assert(testBitmap.file_header->reserved2 == 0);
-	assert(testBitmap.file_header->offsetToPixelDataInBytes == 54);
+	assert(testBitmap.file_header.fileType == 0x4d42);
+	assert(testBitmap.file_header.fileSizeInBytes == 342);
+	assert(testBitmap.file_header.reserved1 == 0);
+	assert(testBitmap.file_header.reserved2 == 0);
+	assert(testBitmap.file_header.offsetToPixelDataInBytes == 54);
 
 	assert(testBitmap.dibs_header->headerSizeInBytes == 40);
 	assert(testBitmap.dibs_header->width == 12);

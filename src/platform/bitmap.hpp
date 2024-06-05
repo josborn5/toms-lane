@@ -11,13 +11,11 @@ namespace tl
 	{
 		uint16_t fileType;
 
-		int16_t fileSizeInBytes;
+		int32_t fileSizeInBytes;
 		uint16_t reserved1;
 		uint16_t reserved2;
-		uint16_t spacer1;
 
-		uint16_t offsetToPixelDataInBytes;
-		uint16_t spacer2;
+		int32_t offsetToPixelDataInBytes;
 	};
 
 	struct bitmap_dibs_header
@@ -54,7 +52,7 @@ namespace tl
 
 	struct bitmap
 	{
-		bitmap_file_header* file_header = nullptr;
+		bitmap_file_header file_header = {0};
 		bitmap_dibs_header* dibs_header = nullptr; // will need to change this to void* as the type will vary for different versions of the format
 		void* content = nullptr; // number of bits per pixel can vary
 	};
