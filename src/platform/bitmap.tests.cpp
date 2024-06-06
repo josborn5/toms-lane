@@ -35,10 +35,20 @@ static void RunBitmapInitializeTest()
 	assert(testBitmap.dibs_header->compressionMethod == 0);
 	assert(testBitmap.dibs_header->imageSizeInBytes == 288);
 
+	assert(testBitmap._dibs_header.numberOfColorPlanes == 1);
+	assert(testBitmap._dibs_header.bitsPerPixel == 24);
+	assert(testBitmap._dibs_header.compressionMethod == 0);
+	assert(testBitmap._dibs_header.imageSizeInBytes == 288);
+
 	assert(testBitmap.dibs_header->horizontalPixelsPerMeter == 0);
 	assert(testBitmap.dibs_header->verticalPixelsPerMeter == 0);
 	assert(testBitmap.dibs_header->numberOfColorsInPalette == 0);
 	assert(testBitmap.dibs_header->numberOfImportantColors == 0);
+
+	assert(testBitmap._dibs_header.horizontalPixelsPerMeter == 0);
+	assert(testBitmap._dibs_header.verticalPixelsPerMeter == 0);
+	assert(testBitmap._dibs_header.numberOfColorsInPalette == 0);
+	assert(testBitmap._dibs_header.numberOfImportantColors == 0);
 }
 
 void RunBitmapRenderTest()

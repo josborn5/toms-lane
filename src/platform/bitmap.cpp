@@ -63,10 +63,33 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	bitmapDataAsBytes += sizeof(uint32_t);
 
 	bitmap._dibs_header.width = read_int32_from_little_endian<int32_t>(bitmapDataAsBytes);
-	bitmapDataAsBytes += sizeof(uint32_t);
+	bitmapDataAsBytes += sizeof(int32_t);
 
 	bitmap._dibs_header.height = read_int32_from_little_endian<int32_t>(bitmapDataAsBytes);
+	bitmapDataAsBytes += sizeof(int32_t);
+
+	bitmap._dibs_header.numberOfColorPlanes = read_uint16_t_from_little_endian(bitmapDataAsBytes);
+	bitmapDataAsBytes += sizeof(uint16_t);
+
+	bitmap._dibs_header.bitsPerPixel = read_uint16_t_from_little_endian(bitmapDataAsBytes);
+	bitmapDataAsBytes += sizeof(uint16_t);
+
+	bitmap._dibs_header.compressionMethod = read_int32_from_little_endian<uint32_t>(bitmapDataAsBytes);
 	bitmapDataAsBytes += sizeof(uint32_t);
+
+	bitmap._dibs_header.imageSizeInBytes = read_int32_from_little_endian<uint32_t>(bitmapDataAsBytes);
+	bitmapDataAsBytes += sizeof(uint32_t);
+
+	bitmap._dibs_header.horizontalPixelsPerMeter = read_int32_from_little_endian<int32_t>(bitmapDataAsBytes);
+	bitmapDataAsBytes += sizeof(int32_t);
+
+	bitmap._dibs_header.verticalPixelsPerMeter = read_int32_from_little_endian<int32_t>(bitmapDataAsBytes);
+	bitmapDataAsBytes += sizeof(int32_t);
+
+	bitmap._dibs_header.numberOfColorsInPalette = read_int32_from_little_endian<uint32_t>(bitmapDataAsBytes);
+	bitmapDataAsBytes += sizeof(uint32_t);
+
+	bitmap._dibs_header.numberOfImportantColors = read_int32_from_little_endian<uint32_t>(bitmapDataAsBytes);
 
 	return 0;
 }
