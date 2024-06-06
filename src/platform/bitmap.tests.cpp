@@ -22,33 +22,20 @@ static void RunBitmapInitializeTest()
 	assert(testBitmap.file_header.reserved2 == 0);
 	assert(testBitmap.file_header.offsetToPixelDataInBytes == 54);
 
-	assert(testBitmap.dibs_header->headerSizeInBytes == 40);
-	assert(testBitmap._dibs_header.headerSizeInBytes == 40);
+	assert(testBitmap.dibs_header.headerSizeInBytes == 40);
 
-	assert(testBitmap.dibs_header->width == 12);
-	assert(testBitmap.dibs_header->height == 8);
-	assert(testBitmap._dibs_header.width == 12);
-	assert(testBitmap._dibs_header.height == 8);
+	assert(testBitmap.dibs_header.width == 12);
+	assert(testBitmap.dibs_header.height == 8);
 
-	assert(testBitmap.dibs_header->numberOfColorPlanes == 1);
-	assert(testBitmap.dibs_header->bitsPerPixel == 24);
-	assert(testBitmap.dibs_header->compressionMethod == 0);
-	assert(testBitmap.dibs_header->imageSizeInBytes == 288);
+	assert(testBitmap.dibs_header.numberOfColorPlanes == 1);
+	assert(testBitmap.dibs_header.bitsPerPixel == 24);
+	assert(testBitmap.dibs_header.compressionMethod == 0);
+	assert(testBitmap.dibs_header.imageSizeInBytes == 288);
 
-	assert(testBitmap._dibs_header.numberOfColorPlanes == 1);
-	assert(testBitmap._dibs_header.bitsPerPixel == 24);
-	assert(testBitmap._dibs_header.compressionMethod == 0);
-	assert(testBitmap._dibs_header.imageSizeInBytes == 288);
-
-	assert(testBitmap.dibs_header->horizontalPixelsPerMeter == 0);
-	assert(testBitmap.dibs_header->verticalPixelsPerMeter == 0);
-	assert(testBitmap.dibs_header->numberOfColorsInPalette == 0);
-	assert(testBitmap.dibs_header->numberOfImportantColors == 0);
-
-	assert(testBitmap._dibs_header.horizontalPixelsPerMeter == 0);
-	assert(testBitmap._dibs_header.verticalPixelsPerMeter == 0);
-	assert(testBitmap._dibs_header.numberOfColorsInPalette == 0);
-	assert(testBitmap._dibs_header.numberOfImportantColors == 0);
+	assert(testBitmap.dibs_header.horizontalPixelsPerMeter == 0);
+	assert(testBitmap.dibs_header.verticalPixelsPerMeter == 0);
+	assert(testBitmap.dibs_header.numberOfColorsInPalette == 0);
+	assert(testBitmap.dibs_header.numberOfImportantColors == 0);
 }
 
 void RunBitmapRenderTest()
@@ -76,10 +63,10 @@ void RunBitmapRenderTest()
 	const uint32_t black = 0x000000;
 	uint32_t* bottomLeftPixel = renderBuffer.pixels;
 	uint32_t* rightOfBottomLeftPixel = renderBuffer.pixels + 1;
-	uint32_t* bottomRightPixel = renderBuffer.pixels + testBitmap.dibs_header->width - 1;
-	int pixelCount = testBitmap.dibs_header->width * testBitmap.dibs_header->height;
+	uint32_t* bottomRightPixel = renderBuffer.pixels + testBitmap.dibs_header.width - 1;
+	int pixelCount = testBitmap.dibs_header.width * testBitmap.dibs_header.height;
 	uint32_t* topRightPixel = renderBuffer.pixels + pixelCount - 1;
-	uint32_t* topLeftPixel = renderBuffer.pixels + pixelCount - testBitmap.dibs_header->width - 1;
+	uint32_t* topLeftPixel = renderBuffer.pixels + pixelCount - testBitmap.dibs_header.width - 1;
 
 	assert(*bottomLeftPixel == green);
 	assert(*rightOfBottomLeftPixel == white);
