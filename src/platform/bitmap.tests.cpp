@@ -4,11 +4,19 @@
 static MemorySpace testMemory;
 static bitmap testBitmap;
 
+static MemorySpace largeMemory;
+static bitmap largeBitmap;
+
 static void OneTimeSetup()
 {
 	testMemory.sizeInBytes = 1024;
 	tl::memory_interface_initialize(testMemory);
 	int fileReadResult = tl::file_interface_read("../src/platform/test.bmp", testMemory);
+	assert(fileReadResult == 0);
+
+	largeMemory.sizeInBytes = 1024 * 60;
+	tl::memory_interface_initialize(largeMemory);
+	fileReadResult = tl::file_interface_read("../src/platform/monochrome.bmp", largeMemory);
 	assert(fileReadResult == 0);
 }
 
@@ -36,6 +44,13 @@ static void RunBitmapInitializeTest()
 	assert(testBitmap.dibs_header.verticalPixelsPerMeter == 0);
 	assert(testBitmap.dibs_header.numberOfColorsInPalette == 0);
 	assert(testBitmap.dibs_header.numberOfImportantColors == 0);
+
+	tl::bitmap_interface_initialize(largeBitmap, largeMemory);
+	assert(largeBitmap.file_header.fileType == 0x4d42);
+	assert(largeBitmap.file_header.fileSizeInBytes == 60062);
+
+	assert(largeBitmap.dibs_header.width == 800);
+	assert(largeBitmap.dibs_header.height == 600);
 }
 
 void RunBitmapRenderTest()

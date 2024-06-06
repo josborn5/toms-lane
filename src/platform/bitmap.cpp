@@ -11,10 +11,10 @@ struct RGB24Bit
 };
 
 template<typename T>
-static T read_int32_from_little_endian(char* data)
+static T read_int32_from_little_endian(unsigned char* data)
 {
 	const int bufferSize = 4;
-	char charBuffer[bufferSize];
+	unsigned char charBuffer[bufferSize];
 	for (int i = 0; i < bufferSize; i += 1)
 	{
 		charBuffer[i] = *data;
@@ -24,9 +24,9 @@ static T read_int32_from_little_endian(char* data)
 	return intValue;
 }
 
-static uint16_t read_uint16_t_from_little_endian(char* data)
+static uint16_t read_uint16_t_from_little_endian(unsigned char* data)
 {
-	char charBuffer[2];
+	unsigned char charBuffer[2];
 	charBuffer[0] = *data;
 	data++;
 	charBuffer[1] = *data;
@@ -37,7 +37,7 @@ static uint16_t read_uint16_t_from_little_endian(char* data)
 
 int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 {
-	char* bitmapDataAsBytes = (char*)memory.content;
+	unsigned char* bitmapDataAsBytes = (unsigned char*)memory.content;
 
 	bitmap.file_header.fileType = read_uint16_t_from_little_endian(bitmapDataAsBytes);
 	bitmapDataAsBytes += sizeof(uint16_t);
@@ -56,7 +56,7 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 
 	// Cast to a char pointer to do pointer arithmetic in bytes
 	size_t pixelDataOffsetInBytes = bitmap.file_header.offsetToPixelDataInBytes;
-	bitmap.content = (char*)memory.content + pixelDataOffsetInBytes;
+	bitmap.content = (unsigned char*)memory.content + pixelDataOffsetInBytes;
 
 	bitmap.dibs_header.headerSizeInBytes = read_int32_from_little_endian<uint32_t>(bitmapDataAsBytes);
 	bitmapDataAsBytes += sizeof(uint32_t);
