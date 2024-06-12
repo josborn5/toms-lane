@@ -38,19 +38,6 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 	assert(testBitmap.dibs_header.numberOfImportantColors == 0);
 }
 
-static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)
-{
-	int fileReadResult = tl::file_interface_read("../src/platform/monochrome.bmp", testMemory);
-	assert(fileReadResult == 0);
-
-	tl::bitmap_interface_initialize(largeBitmap, testMemory);
-	assert(largeBitmap.file_header.fileType == 0x4d42);
-	assert(largeBitmap.file_header.fileSizeInBytes == 60062);
-
-	assert(largeBitmap.dibs_header.width == 800);
-	assert(largeBitmap.dibs_header.height == 600);
-}
-
 void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 {
 	RenderBuffer renderBuffer;
@@ -104,6 +91,34 @@ static void RunSmallBitmapTest()
 	tl::bitmap smallBitmap;
 	RunInitializeSmallBitmapTest(smallBitmap);
 	RunSmallBitmapRenderTest(smallBitmap);
+}
+
+static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)
+{
+	int fileReadResult = tl::file_interface_read("../src/platform/monochrome.bmp", testMemory);
+	assert(fileReadResult == 0);
+
+	tl::bitmap_interface_initialize(largeBitmap, testMemory);
+	assert(largeBitmap.file_header.fileType == 0x4d42);
+	assert(largeBitmap.file_header.fileSizeInBytes == 60062);
+	assert(largeBitmap.file_header.reserved1 == 0);
+	assert(largeBitmap.file_header.reserved2 == 0);
+	assert(largeBitmap.file_header.offsetToPixelDataInBytes == 62);
+
+	assert(largeBitmap.dibs_header.headerSizeInBytes == 40);
+
+	assert(largeBitmap.dibs_header.width == 800);
+	assert(largeBitmap.dibs_header.height == 600);
+
+	assert(largeBitmap.dibs_header.numberOfColorPlanes == 1);
+	assert(largeBitmap.dibs_header.bitsPerPixel == 1);
+	assert(largeBitmap.dibs_header.compressionMethod == 0);
+	assert(largeBitmap.dibs_header.imageSizeInBytes == 60000);
+
+	assert(largeBitmap.dibs_header.horizontalPixelsPerMeter == 0);
+	assert(largeBitmap.dibs_header.verticalPixelsPerMeter == 0);
+	assert(largeBitmap.dibs_header.numberOfColorsInPalette == 0);
+	assert(largeBitmap.dibs_header.numberOfImportantColors == 0);
 }
 
 static void RunLargeBitmapTest()
