@@ -1,20 +1,35 @@
 #include <assert.h>
 #include "./bitmap.hpp"
 
-static MemorySpace testMemory;
+static MemorySpace bitmapMemory;
+static MemorySpace renderBufferPixels;
+static MemorySpace renderBufferDepth;
+static RenderBuffer renderBuffer;
 
 static void InitializeMemory()
 {
-	testMemory.sizeInBytes = 1024 * 60;
-	tl::memory_interface_initialize(testMemory);
+	bitmapMemory.sizeInBytes = 1024 * 60;
+	tl::memory_interface_initialize(bitmapMemory);
+
+	renderBuffer.width = 12;
+	renderBuffer.height = 8;
+	renderBuffer.bytesPerPixel = 4;
+
+	renderBufferPixels.sizeInBytes = sizeof(unsigned int) * renderBuffer.width * renderBuffer.height;
+	renderBufferDepth.sizeInBytes = sizeof(float) * renderBuffer.width * renderBuffer.height;
+	tl::memory_interface_initialize(renderBufferPixels);
+	tl::memory_interface_initialize(renderBufferDepth);
+	renderBuffer.pixels = (unsigned int*)renderBufferPixels.content;
+	renderBuffer.depth = (float*)renderBufferDepth.content;
+
 }
 
 static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 {
-	int fileReadResult = tl::file_interface_read("../src/platform/test.bmp", testMemory);
+	int fileReadResult = tl::file_interface_read("../src/platform/test.bmp", bitmapMemory);
 	assert(fileReadResult == 0);
 
-	tl::bitmap_interface_initialize(testBitmap, testMemory);
+	tl::bitmap_interface_initialize(testBitmap, bitmapMemory);
 
 	assert(testBitmap.file_header.fileType == 0x4d42);
 	assert(testBitmap.file_header.fileSizeInBytes == 342);
@@ -40,19 +55,6 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 
 void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 {
-	RenderBuffer renderBuffer;
-	renderBuffer.width = 12;
-	renderBuffer.height = 8;
-	renderBuffer.bytesPerPixel = 4;
-	MemorySpace renderBufferPixels;
-	MemorySpace renderBufferDepth;
-	renderBufferPixels.sizeInBytes = sizeof(unsigned int) * renderBuffer.width * renderBuffer.height;
-	renderBufferDepth.sizeInBytes = sizeof(float) * renderBuffer.width * renderBuffer.height;
-	tl::memory_interface_initialize(renderBufferPixels);
-	tl::memory_interface_initialize(renderBufferDepth);
-	renderBuffer.pixels = (unsigned int*)renderBufferPixels.content;
-	renderBuffer.depth = (float*)renderBufferDepth.content;
-
 	tl::ClearScreen(renderBuffer, 0x000000);
 	tl::bitmap_interface_render(renderBuffer, testBitmap, { 0, 0 });
 
@@ -95,10 +97,10 @@ static void RunSmallBitmapTest()
 
 static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)
 {
-	int fileReadResult = tl::file_interface_read("../src/platform/monochrome.bmp", testMemory);
+	int fileReadResult = tl::file_interface_read("../src/platform/monochrome.bmp", bitmapMemory);
 	assert(fileReadResult == 0);
 
-	tl::bitmap_interface_initialize(largeBitmap, testMemory);
+	tl::bitmap_interface_initialize(largeBitmap, bitmapMemory);
 	assert(largeBitmap.file_header.fileType == 0x4d42);
 	assert(largeBitmap.file_header.fileSizeInBytes == 60062);
 	assert(largeBitmap.file_header.reserved1 == 0);
