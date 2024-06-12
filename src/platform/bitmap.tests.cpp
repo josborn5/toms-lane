@@ -1,6 +1,12 @@
 #include <assert.h>
 #include "./bitmap.hpp"
 
+static const uint32_t red = 0xFFFFFF;
+static const uint32_t green = 0x00FF00;
+static const uint32_t blue = 0x0000FF;
+static const uint32_t white = 0xFFFFFF;
+static const uint32_t black = 0x000000;
+
 static MemorySpace bitmapMemory;
 static MemorySpace renderBufferPixels;
 static MemorySpace renderBufferDepth;
@@ -55,14 +61,9 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 
 void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 {
-	tl::ClearScreen(renderBuffer, 0x000000);
+	tl::ClearScreen(renderBuffer, white);
 	tl::bitmap_interface_render(renderBuffer, testBitmap, { 0, 0 });
 
-	const uint32_t red = 0xFFFFFF;
-	const uint32_t green = 0x00FF00;
-	const uint32_t blue = 0x0000FF;
-	const uint32_t white = 0xFFFFFF;
-	const uint32_t black = 0x000000;
 	uint32_t* bottomLeftPixel = renderBuffer.pixels;
 	uint32_t* rightOfBottomLeftPixel = renderBuffer.pixels + 1;
 	uint32_t* bottomRightPixel = renderBuffer.pixels + testBitmap.dibs_header.width - 1;
@@ -123,10 +124,20 @@ static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)
 	assert(largeBitmap.dibs_header.numberOfImportantColors == 0);
 }
 
+static void RunLargeBitmapRenderTest(const tl::bitmap& largeBitmap)
+{
+	tl::ClearScreen(renderBuffer, red);
+	tl::bitmap_interface_render(renderBuffer, largeBitmap, { 0, 0 });
+
+//	uint32_t* bottomLeftPixel = renderBuffer.pixels;
+//	assert(*bottomLeftPixel == white);
+}
+
 static void RunLargeBitmapTest()
 {
 	tl::bitmap largeBitmap;
 	RunInitializeLargeBitmapTest(largeBitmap);
+	RunLargeBitmapRenderTest(largeBitmap);
 }
 
 void RunBitmapTests()
