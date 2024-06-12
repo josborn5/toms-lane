@@ -2,26 +2,18 @@
 #include "./bitmap.hpp"
 
 static MemorySpace testMemory;
-static bitmap testBitmap;
 
-static MemorySpace largeMemory;
-static bitmap largeBitmap;
-
-static void OneTimeSetup()
+static void InitializeMemory()
 {
-	testMemory.sizeInBytes = 1024;
+	testMemory.sizeInBytes = 1024 * 60;
 	tl::memory_interface_initialize(testMemory);
+}
+
+static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
+{
 	int fileReadResult = tl::file_interface_read("../src/platform/test.bmp", testMemory);
 	assert(fileReadResult == 0);
 
-	largeMemory.sizeInBytes = 1024 * 60;
-	tl::memory_interface_initialize(largeMemory);
-	fileReadResult = tl::file_interface_read("../src/platform/monochrome.bmp", largeMemory);
-	assert(fileReadResult == 0);
-}
-
-static void RunBitmapInitializeTest()
-{
 	tl::bitmap_interface_initialize(testBitmap, testMemory);
 
 	assert(testBitmap.file_header.fileType == 0x4d42);
@@ -44,8 +36,14 @@ static void RunBitmapInitializeTest()
 	assert(testBitmap.dibs_header.verticalPixelsPerMeter == 0);
 	assert(testBitmap.dibs_header.numberOfColorsInPalette == 0);
 	assert(testBitmap.dibs_header.numberOfImportantColors == 0);
+}
 
-	tl::bitmap_interface_initialize(largeBitmap, largeMemory);
+static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)
+{
+	int fileReadResult = tl::file_interface_read("../src/platform/monochrome.bmp", testMemory);
+	assert(fileReadResult == 0);
+
+	tl::bitmap_interface_initialize(largeBitmap, testMemory);
 	assert(largeBitmap.file_header.fileType == 0x4d42);
 	assert(largeBitmap.file_header.fileSizeInBytes == 60062);
 
@@ -53,7 +51,7 @@ static void RunBitmapInitializeTest()
 	assert(largeBitmap.dibs_header.height == 600);
 }
 
-void RunBitmapRenderTest()
+void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 {
 	RenderBuffer renderBuffer;
 	renderBuffer.width = 12;
@@ -101,12 +99,25 @@ void RunBitmapRenderTest()
 	assert(*(sixAcrossFourUpFromBottomLeft + 2) == black);
 }
 
+static void RunSmallBitmapTest()
+{
+	tl::bitmap smallBitmap;
+	RunInitializeSmallBitmapTest(smallBitmap);
+	RunSmallBitmapRenderTest(smallBitmap);
+}
+
+static void RunLargeBitmapTest()
+{
+	tl::bitmap largeBitmap;
+	RunInitializeLargeBitmapTest(largeBitmap);
+}
+
 void RunBitmapTests()
 {
-	OneTimeSetup();
+	InitializeMemory();
 
-	RunBitmapInitializeTest();
+	RunSmallBitmapTest();
 
-	RunBitmapRenderTest();
+	RunLargeBitmapTest();
 }
 
