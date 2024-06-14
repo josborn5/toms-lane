@@ -93,13 +93,12 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	return 0;
 }
 
-int bitmap_interface_render(
+static void FillBitmapContentFor24Bits(
 	const RenderBuffer& buffer,
 	const bitmap& bitmap,
-	Vec2<int> bottomLeftCornerPosition)
+	Vec2<int> bottomLeftCornerPosition
+)
 {
-	if (bitmap.file_header.fileType == 0) return -1;
-
 	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
 
 	for (int j = bottomLeftCornerPosition.y; j < bitmap.dibs_header.height; j += 1)
@@ -111,6 +110,47 @@ int bitmap_interface_render(
 			twentyFourBitContent++;
 		}
 	}
+}
+
+static void FillBitmapContentFor1Bits(
+	const RenderBuffer& buffer,
+	const bitmap& bitmap,
+	Vec2<int> bottomLeftCornerPosition
+)
+{
+	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
+	const uint32_t white = 0xFFFFFF;
+	const uint32_t black = 0x000000;
+
+	uint8_t value = *eightBitContent;
+	int x = 0;
+	for (int b = 7; b >= 0; b -= 1)
+	{
+		// 1.shift the bit of interest over to the right most bit
+		// 2. AND with a mask to evaluate the right most bit as true/false
+		// 3. true --> white, false --> black
+		uint32_t color = ((value >> b) & 0b00000001) ? white : black;
+		PlotPixel(buffer, color, x, 0);
+	}
+}
+
+int bitmap_interface_render(
+	const RenderBuffer& buffer,
+	const bitmap& bitmap,
+	Vec2<int> bottomLeftCornerPosition)
+{
+	if (bitmap.file_header.fileType == 0) return -1;
+
+	switch (bitmap.dibs_header.bitsPerPixel)
+	{
+		case 24:
+			FillBitmapContentFor24Bits(buffer, bitmap, bottomLeftCornerPosition);
+			break;
+		case 1:
+			FillBitmapContentFor1Bits(buffer, bitmap, bottomLeftCornerPosition);
+			break;
+	}
+
 	return 0;
 }
 

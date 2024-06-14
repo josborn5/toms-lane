@@ -1,7 +1,7 @@
 #include <assert.h>
 #include "./bitmap.hpp"
 
-static const uint32_t red = 0xFFFFFF;
+static const uint32_t red = 0xFF0000;
 static const uint32_t green = 0x00FF00;
 static const uint32_t blue = 0x0000FF;
 static const uint32_t white = 0xFFFFFF;
@@ -75,7 +75,7 @@ void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 	assert(*rightOfBottomLeftPixel == white);
 	assert(*bottomRightPixel == blue);
 	assert(*topRightPixel == blue);
-	assert(*topLeftPixel == red);
+	assert(*topLeftPixel == white);
 
 	tl::ClearScreen(renderBuffer, black);
 	tl::bitmap_interface_render(renderBuffer, testBitmap, { 6, 4 });
@@ -129,8 +129,8 @@ static void RunLargeBitmapRenderTest(const tl::bitmap& largeBitmap)
 	tl::ClearScreen(renderBuffer, red);
 	tl::bitmap_interface_render(renderBuffer, largeBitmap, { 0, 0 });
 
-//	uint32_t* bottomLeftPixel = renderBuffer.pixels;
-//	assert(*bottomLeftPixel == white);
+	uint32_t* bottomLeftPixel = renderBuffer.pixels;
+	assert(*bottomLeftPixel == white);
 }
 
 static void RunLargeBitmapTest()
