@@ -123,14 +123,15 @@ static void FillBitmapContentFor1Bits(
 	const uint32_t black = 0x000000;
 
 	uint8_t value = *eightBitContent;
-	int x = 0;
-	for (int b = 7; b >= 0; b -= 1)
+	const int byteSize = 8;
+	for (int i = 0; i < byteSize; i += 1)
 	{
+		int bitOffset = byteSize - i - 1;
 		// 1.shift the bit of interest over to the right most bit
 		// 2. AND with a mask to evaluate the right most bit as true/false
 		// 3. true --> white, false --> black
-		uint32_t color = ((value >> b) & 0b00000001) ? white : black;
-		PlotPixel(buffer, color, x, 0);
+		uint32_t color = ((value >> bitOffset) & 0b00000001) ? white : black;
+		PlotPixel(buffer, color, i, 0);
 	}
 }
 
