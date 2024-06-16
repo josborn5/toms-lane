@@ -122,16 +122,34 @@ static void FillBitmapContentFor1Bits(
 	const uint32_t white = 0xFFFFFF;
 	const uint32_t black = 0x000000;
 
-	uint8_t value = *eightBitContent;
 	const int byteSize = 8;
-	for (int i = 0; i < byteSize; i += 1)
+	int x = 0;
+	int y = 0;
+	int rowCounter = 0;
+	for (uint32_t byteIndex = 0; byteIndex < bitmap.dibs_header.imageSizeInBytes; byteIndex += 1)
 	{
-		int bitOffset = byteSize - i - 1;
-		// 1.shift the bit of interest over to the right most bit
-		// 2. AND with a mask to evaluate the right most bit as true/false
-		// 3. true --> white, false --> black
-		uint32_t color = ((value >> bitOffset) & 0b00000001) ? white : black;
-		PlotPixel(buffer, color, i, 0);
+		uint8_t value = *eightBitContent;
+		for (int bitIndex = 0; bitIndex < byteSize; bitIndex += 1)
+		{
+			int bitOffset = byteSize - bitIndex - 1;
+			// 1.shift the bit of interest over to the right most bit
+			// 2. AND with a mask to evaluate the right most bit as true/false
+			// 3. true --> white, false --> black
+			uint32_t color = ((value >> bitOffset) & 0b00000001) ? white : black;
+			PlotPixel(buffer, color, x, y);
+			rowCounter += 1;
+			if (rowCounter == bitmap.dibs_header.width)
+			{
+				rowCounter = 0;
+				x = 0;
+				y += 1;
+			}
+			else
+			{
+				x += 1;
+			}
+		}
+		eightBitContent++;
 	}
 }
 

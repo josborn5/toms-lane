@@ -130,7 +130,9 @@ static void RunLargeBitmapRenderTest(const tl::bitmap& largeBitmap)
 	tl::bitmap_interface_render(renderBuffer, largeBitmap, { 0, 0 });
 
 	uint32_t* bottomLeftPixel = renderBuffer.pixels;
+	uint32_t* rightOfBottomLeftPixel = renderBuffer.pixels + 1;
 	assert(*bottomLeftPixel == white);
+	assert(*rightOfBottomLeftPixel == black);
 }
 
 static void RunLargeBitmapTest()
