@@ -69,13 +69,13 @@ void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 	uint32_t* bottomRightPixel = renderBuffer.pixels + testBitmap.dibs_header.width - 1;
 	int pixelCount = testBitmap.dibs_header.width * testBitmap.dibs_header.height;
 	uint32_t* topRightPixel = renderBuffer.pixels + pixelCount - 1;
-	uint32_t* topLeftPixel = renderBuffer.pixels + pixelCount - testBitmap.dibs_header.width - 1;
+	uint32_t* topLeftPixel = renderBuffer.pixels + pixelCount - testBitmap.dibs_header.width;
 
 	assert(*bottomLeftPixel == green);
 	assert(*rightOfBottomLeftPixel == white);
 	assert(*bottomRightPixel == blue);
 	assert(*topRightPixel == blue);
-	assert(*topLeftPixel == white);
+	assert(*topLeftPixel == red);
 
 	tl::ClearScreen(renderBuffer, black);
 	tl::bitmap_interface_render(renderBuffer, testBitmap, { 6, 4 });
