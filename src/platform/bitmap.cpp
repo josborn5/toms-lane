@@ -123,8 +123,8 @@ static void FillBitmapContentFor1Bits(
 	const uint32_t black = 0x000000;
 
 	const int byteSize = 8;
-	int x = 0;
-	int y = 0;
+	int x = bottomLeftCornerPosition.x;
+	int y = bottomLeftCornerPosition.y;
 	int rowCounter = 0;
 	for (uint32_t byteIndex = 0; byteIndex < bitmap.dibs_header.imageSizeInBytes; byteIndex += 1)
 	{

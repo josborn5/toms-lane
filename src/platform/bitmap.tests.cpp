@@ -133,6 +133,16 @@ static void RunLargeBitmapRenderTest(const tl::bitmap& largeBitmap)
 	uint32_t* rightOfBottomLeftPixel = renderBuffer.pixels + 1;
 	assert(*bottomLeftPixel == white);
 	assert(*rightOfBottomLeftPixel == black);
+
+	tl::ClearScreen(renderBuffer, red);
+	tl::bitmap_interface_render(renderBuffer, largeBitmap, { 6, 4 });
+
+	assert(*bottomLeftPixel == red);
+
+	uint32_t* sixAcrossFourUpFromBottomLeft = renderBuffer.pixels + 6 + (4 * renderBuffer.width);
+	assert(*sixAcrossFourUpFromBottomLeft == white);
+	assert(*(sixAcrossFourUpFromBottomLeft + 1) == black);
+	assert(*(sixAcrossFourUpFromBottomLeft + 2) == white);
 }
 
 static void RunLargeBitmapTest()
