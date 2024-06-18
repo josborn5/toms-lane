@@ -1,6 +1,7 @@
 #include <assert.h>
 #include "./bitmap.hpp"
 
+static const uint32_t grey = 0xAAAAAA;
 static const uint32_t red = 0xFF0000;
 static const uint32_t green = 0x00FF00;
 static const uint32_t blue = 0x0000FF;
@@ -61,32 +62,45 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 
 void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 {
-	tl::ClearScreen(renderBuffer, white);
+	tl::ClearScreen(renderBuffer, grey);
 	tl::bitmap_interface_render(renderBuffer, testBitmap, { 0, 0 });
 
 	uint32_t* bottomLeftPixel = renderBuffer.pixels;
-	uint32_t* rightOfBottomLeftPixel = renderBuffer.pixels + 1;
-	uint32_t* bottomRightPixel = renderBuffer.pixels + testBitmap.dibs_header.width - 1;
-	int pixelCount = testBitmap.dibs_header.width * testBitmap.dibs_header.height;
+	uint32_t* bottomRightPixel = renderBuffer.pixels + renderBuffer.width - 1;
+	int pixelCount = renderBuffer.width * renderBuffer.height;
 	uint32_t* topRightPixel = renderBuffer.pixels + pixelCount - 1;
-	uint32_t* topLeftPixel = renderBuffer.pixels + pixelCount - testBitmap.dibs_header.width;
+	uint32_t* topLeftPixel = renderBuffer.pixels + pixelCount - renderBuffer.width;
 
 	assert(*bottomLeftPixel == green);
-	assert(*rightOfBottomLeftPixel == white);
-	assert(*bottomRightPixel == blue);
-	assert(*topRightPixel == blue);
-	assert(*topLeftPixel == red);
+	assert(*(bottomLeftPixel + 1) == white);
+	assert(*(bottomLeftPixel + 2) == black);
 
-	tl::ClearScreen(renderBuffer, black);
+	assert(*(bottomRightPixel - 2) == black);
+	assert(*(bottomRightPixel - 1) == white);
+	assert(*bottomRightPixel == blue);
+
+	assert(*topLeftPixel == red);
+	assert(*(topLeftPixel + 1) == white);
+	assert(*(topLeftPixel + 2) == black);
+
+	assert(*(topRightPixel - 2) == black);
+	assert(*(topRightPixel - 1) == white);
+	assert(*topRightPixel == blue);
+
+	tl::ClearScreen(renderBuffer, grey);
 	tl::bitmap_interface_render(renderBuffer, testBitmap, { 6, 4 });
 
-	assert(*bottomLeftPixel == black);
-	assert(*bottomRightPixel == black);
+	assert(*bottomLeftPixel == grey);
+	assert(*bottomRightPixel == grey);
 
 	uint32_t* sixAcrossFourUpFromBottomLeft = renderBuffer.pixels + 6 + (4 * renderBuffer.width);
 	assert(*sixAcrossFourUpFromBottomLeft == green);
 	assert(*(sixAcrossFourUpFromBottomLeft + 1) == white);
 	assert(*(sixAcrossFourUpFromBottomLeft + 2) == black);
+
+	assert(*(topRightPixel - 2) == black);
+	assert(*(topRightPixel - 1) == black);
+	assert(*topRightPixel == white);
 }
 
 static void RunSmallBitmapTest()
