@@ -37,8 +37,8 @@ static void ResetBalls()
 		newBall.velocity.y = minimumBallSpeed;
 		newBall.velocity.x = minimumBallSpeed;
 		newBall.halfSize = { 10.0f, 10.0f };
-		newBall.position.y = 100 + balls[i].halfSize.y;
-		newBall.position.x = 100 + balls[i].halfSize.x;
+		newBall.position.y = gamestate.player.position.y + gamestate.player.halfSize.y + balls[i].halfSize.y;
+		newBall.position.x = gamestate.player.position.x;
 		gamestate.balls.append(newBall);
 	}
 }
