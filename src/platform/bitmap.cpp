@@ -173,4 +173,11 @@ int bitmap_interface_render(
 	return 0;
 }
 
+	int bitmap_interface_write(
+		const bitmap& bitmap,
+		const MemorySpace& memory)
+{
+	return 0;
+}
+
 }

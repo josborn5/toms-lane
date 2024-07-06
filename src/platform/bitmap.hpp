@@ -53,6 +53,10 @@ namespace tl
 		const RenderBuffer& buffer,
 		const bitmap& bitmap,
 		Vec2<int> bottomLeftCornerPosition);
+
+	int bitmap_interface_write(
+		const bitmap& bitmap,
+		const MemorySpace& memory);
 }
 
 #endif
