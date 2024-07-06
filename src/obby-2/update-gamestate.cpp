@@ -93,7 +93,7 @@ static void UpdateGameState(
 {
 	if (state->mode == ReadyToStart)
 	{
-		if (tl::IsReleased(input, tl::KEY_S))
+		if (input.buttons[tl::KEY_S].keyUp)
 		{
 			state->mode = Started;
 		}
