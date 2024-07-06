@@ -109,12 +109,13 @@ static void RunSmallBitmapWriteTest(const bitmap& bitmap)
 {
 	tl::bitmap_interface_write(bitmap, bitmapWriteMemory);
 
-	int writtenBytes = sizeof(tl::bitmap_file_header) + bitmap.dibs_header.headerSizeInBytes + bitmap.dibs_header.imageSizeInBytes;
+	uint8_t* readMemory = (uint8_t*)bitmapReadMemory.content;
+	uint8_t* writeMemory = (uint8_t*)bitmapWriteMemory.content;
 
-//	uint8_t* readMemory = (uint8_t*)
-	for (int i = 0; i < writtenBytes; i += 1)
+	for (int i = 0; i < sizeof(tl::bitmap_file_header); i += 1)
 	{
-	
+		readMemory++;
+		writeMemory++;
 	}
 }
 
