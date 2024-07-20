@@ -24,6 +24,25 @@ static T read_int32_from_little_endian(uint8_t* data)
 	return intValue;
 }
 
+template<typename T>
+static uint8_t* write_four_byte_value_to_little_endian(T four_byte_value, uint8_t* data)
+{
+	const int bufferSize = 4;
+	uint8_t charBuffer[bufferSize];
+	charBuffer[0] = (uint8_t)(four_byte_value & 0x000000FF);
+	charBuffer[1] = (uint8_t)((four_byte_value & 0x0000FF00) >> 8);
+	charBuffer[2] = (uint8_t)((four_byte_value & 0x00FF0000) >> 16);
+	charBuffer[3] = (uint8_t)((four_byte_value & 0xFF000000) >> 24);
+
+	for (int i = 0; i < bufferSize; i += 1)
+	{
+		*data = charBuffer[i];
+		data++;
+	}
+
+	return data;
+}
+
 static uint16_t read_uint16_t_from_little_endian(uint8_t* data)
 {
 	uint8_t charBuffer[2];
@@ -34,6 +53,23 @@ static uint16_t read_uint16_t_from_little_endian(uint8_t* data)
 	uint16_t intValue = charBuffer[1] << 8 | charBuffer[0];
 	return intValue;
 }
+
+static uint8_t* write_uint16_t_value_to_little_endian(uint16_t two_byte_value, uint8_t* data)
+{
+	const int bufferSize = 2;
+	uint8_t charBuffer[bufferSize];
+	charBuffer[0] = (uint8_t)(two_byte_value & 0x00FF);
+	charBuffer[1] = (uint8_t)((two_byte_value & 0xFF00) >> 8);
+
+	for (int i = 0; i < bufferSize; i += 1)
+	{
+		*data = charBuffer[i];
+		data++;
+	}
+
+	return data;
+}
+
 
 int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 {
@@ -173,10 +209,18 @@ int bitmap_interface_render(
 	return 0;
 }
 
-	int bitmap_interface_write(
-		const bitmap& bitmap,
-		const MemorySpace& memory)
+int bitmap_interface_write(
+	const bitmap& bitmap,
+	const MemorySpace& memory)
 {
+	// TODO: compare memory and bitmap size to check there is space
+	uint8_t* writeTargetAsBytes = (uint8_t*)memory.content;
+
+	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.fileType, writeTargetAsBytes);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.file_header.fileSizeInBytes, writeTargetAsBytes);
+	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.reserved1, writeTargetAsBytes);
+	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.reserved2, writeTargetAsBytes);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.file_header.offsetToPixelDataInBytes, writeTargetAsBytes);
 	return 0;
 }
 

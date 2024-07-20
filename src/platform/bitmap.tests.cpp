@@ -112,8 +112,10 @@ static void RunSmallBitmapWriteTest(const bitmap& bitmap)
 	uint8_t* readMemory = (uint8_t*)bitmapReadMemory.content;
 	uint8_t* writeMemory = (uint8_t*)bitmapWriteMemory.content;
 
-	for (int i = 0; i < sizeof(tl::bitmap_file_header); i += 1)
+	const int bitmapFileHeaderSizeInBytes = 14;
+	for (int i = 0; i < bitmapFileHeaderSizeInBytes ; i += 1)
 	{
+		assert(*readMemory == *writeMemory);
 		readMemory++;
 		writeMemory++;
 	}
