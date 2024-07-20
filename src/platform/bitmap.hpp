@@ -42,7 +42,7 @@ namespace tl
 	{
 		bitmap_file_header file_header = {0};
 		bitmap_dibs_header dibs_header = {0};
-		void* content = nullptr; // number of bits per pixel can vary
+		uint8_t* content = nullptr; // number of bits per pixel can vary
 	};
 
 	int bitmap_interface_initialize(

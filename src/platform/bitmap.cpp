@@ -236,6 +236,14 @@ int bitmap_interface_write(
 	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.numberOfColorsInPalette, writeTargetAsBytes);
 	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.numberOfImportantColors, writeTargetAsBytes);
 
+	// write the content
+	uint8_t* readContent = bitmap.content;
+	for (uint32_t i = 0; i < bitmap.dibs_header.imageSizeInBytes; i += 1)
+	{
+		*writeTargetAsBytes = *readContent;
+		writeTargetAsBytes++;
+		readContent++;
+	}
 	return 0;
 }
 

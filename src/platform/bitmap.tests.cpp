@@ -113,7 +113,7 @@ static void RunBitmapWriteTest(const bitmap& bitmap)
 	uint8_t* writeMemory = (uint8_t*)bitmapWriteMemory.content;
 
 	const int bitmapFileHeaderSizeInBytes = 14;
-	for (int i = 0; i < bitmapFileHeaderSizeInBytes ; i += 1)
+	for (int i = 0; i < bitmapFileHeaderSizeInBytes; i += 1)
 	{
 		assert(*readMemory == *writeMemory);
 		readMemory++;
@@ -121,7 +121,14 @@ static void RunBitmapWriteTest(const bitmap& bitmap)
 	}
 
 	int bitmapDibsHeaderSizeInBytes = bitmap.file_header.offsetToPixelDataInBytes - bitmapFileHeaderSizeInBytes;
-	for (int i = 0; i < bitmapDibsHeaderSizeInBytes  ; i += 1)
+	for (int i = 0; i < bitmapDibsHeaderSizeInBytes; i += 1)
+	{
+		assert(*readMemory == *writeMemory);
+		readMemory++;
+		writeMemory++;
+	}
+
+	for (unsigned int i = 0; i < bitmap.dibs_header.imageSizeInBytes; i += 1)
 	{
 		assert(*readMemory == *writeMemory);
 		readMemory++;
