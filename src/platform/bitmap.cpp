@@ -216,11 +216,26 @@ int bitmap_interface_write(
 	// TODO: compare memory and bitmap size to check there is space
 	uint8_t* writeTargetAsBytes = (uint8_t*)memory.content;
 
+	// write the file header
 	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.fileType, writeTargetAsBytes);
 	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.file_header.fileSizeInBytes, writeTargetAsBytes);
 	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.reserved1, writeTargetAsBytes);
 	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.reserved2, writeTargetAsBytes);
 	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.file_header.offsetToPixelDataInBytes, writeTargetAsBytes);
+
+	// write the dibs header
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.headerSizeInBytes, writeTargetAsBytes);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.width, writeTargetAsBytes);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.height, writeTargetAsBytes);
+	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.dibs_header.numberOfColorPlanes, writeTargetAsBytes);
+	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.dibs_header.bitsPerPixel, writeTargetAsBytes);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.compressionMethod, writeTargetAsBytes);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.imageSizeInBytes, writeTargetAsBytes);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.horizontalPixelsPerMeter, writeTargetAsBytes);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.verticalPixelsPerMeter, writeTargetAsBytes);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.numberOfColorsInPalette, writeTargetAsBytes);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.numberOfImportantColors, writeTargetAsBytes);
+
 	return 0;
 }
 

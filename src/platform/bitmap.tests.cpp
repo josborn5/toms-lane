@@ -105,7 +105,7 @@ void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 	assert(*topRightPixel == white);
 }
 
-static void RunSmallBitmapWriteTest(const bitmap& bitmap)
+static void RunBitmapWriteTest(const bitmap& bitmap)
 {
 	tl::bitmap_interface_write(bitmap, bitmapWriteMemory);
 
@@ -119,6 +119,14 @@ static void RunSmallBitmapWriteTest(const bitmap& bitmap)
 		readMemory++;
 		writeMemory++;
 	}
+
+	int bitmapDibsHeaderSizeInBytes = bitmap.file_header.offsetToPixelDataInBytes - bitmapFileHeaderSizeInBytes;
+	for (int i = 0; i < bitmapDibsHeaderSizeInBytes  ; i += 1)
+	{
+		assert(*readMemory == *writeMemory);
+		readMemory++;
+		writeMemory++;
+	}
 }
 
 static void RunSmallBitmapTest()
@@ -126,7 +134,7 @@ static void RunSmallBitmapTest()
 	tl::bitmap smallBitmap;
 	RunInitializeSmallBitmapTest(smallBitmap);
 	RunSmallBitmapRenderTest(smallBitmap);
-	RunSmallBitmapWriteTest(smallBitmap);
+	RunBitmapWriteTest(smallBitmap);
 }
 
 static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)
