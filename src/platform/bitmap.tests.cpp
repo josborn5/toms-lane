@@ -136,12 +136,20 @@ static void RunBitmapWriteTest(const bitmap& bitmap)
 	}
 }
 
+static void RunBitmapWriteToSmallMemoryTest(const bitmap& bitmap)
+{
+	MemorySpace uninitializedMemory;
+
+	tl::bitmap_interface_write(bitmap, uninitializedMemory);
+}
+
 static void RunSmallBitmapTest()
 {
 	tl::bitmap smallBitmap;
 	RunInitializeSmallBitmapTest(smallBitmap);
 	RunSmallBitmapRenderTest(smallBitmap);
 	RunBitmapWriteTest(smallBitmap);
+	RunBitmapWriteToSmallMemoryTest(smallBitmap);
 }
 
 static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)

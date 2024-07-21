@@ -213,7 +213,13 @@ int bitmap_interface_write(
 	const bitmap& bitmap,
 	const MemorySpace& memory)
 {
-	// TODO: compare memory and bitmap size to check there is space
+	uint64_t requiredSpaceInBytes = bitmap.file_header.fileSizeInBytes;
+	uint64_t actualSpaceInBytes = memory.sizeInBytes;
+	if (actualSpaceInBytes < requiredSpaceInBytes)
+	{
+		return 0;
+	}
+
 	uint8_t* writeTargetAsBytes = (uint8_t*)memory.content;
 
 	// write the file header

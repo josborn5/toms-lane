@@ -7,8 +7,8 @@ namespace tl
 {
 	struct MemorySpace
 	{
-		void* content;
-		uint64_t sizeInBytes;
+		void* content = nullptr;
+		uint64_t sizeInBytes = 0;
 	};
 
 	struct GameMemory
