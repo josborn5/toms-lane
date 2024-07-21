@@ -73,6 +73,18 @@ static uint8_t* write_uint16_t_value_to_little_endian(uint16_t two_byte_value, u
 
 int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 {
+	if (!memory.content)
+	{
+		return bitmap_read_missing_memory_source;
+	}
+
+	// Need at least 6 bytes available to be able to read the file size
+	const int minimumBytesNeededToReadFileSize = 6; 
+	if (memory.sizeInBytes < minimumBytesNeededToReadFileSize )
+	{
+		return bitmap_read_invalid_memory_source;
+	}
+
 	uint8_t* bitmapDataAsBytes = (uint8_t*)memory.content;
 
 	bitmap.file_header.fileType = read_uint16_t_from_little_endian(bitmapDataAsBytes);
@@ -80,6 +92,11 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 
 	bitmap.file_header.fileSizeInBytes = read_int32_from_little_endian<int32_t>(bitmapDataAsBytes);
 	bitmapDataAsBytes += sizeof(int32_t);
+
+	if (memory.sizeInBytes < bitmap.file_header.fileSizeInBytes)
+	{
+		return bitmap_read_invalid_memory_source;
+	}
 
 	bitmap.file_header.reserved1 = read_uint16_t_from_little_endian(bitmapDataAsBytes);
 	bitmapDataAsBytes += sizeof(uint16_t);

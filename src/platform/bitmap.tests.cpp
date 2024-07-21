@@ -8,6 +8,8 @@ static const uint32_t blue = 0x0000FF;
 static const uint32_t white = 0xFFFFFF;
 static const uint32_t black = 0x000000;
 
+static const int smallBitmapFileSizeInBytes = 342;
+
 static MemorySpace bitmapReadMemory;
 static MemorySpace bitmapWriteMemory;
 static MemorySpace renderBufferPixels;
@@ -41,7 +43,7 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 	tl::bitmap_interface_initialize(testBitmap, bitmapReadMemory);
 
 	assert(testBitmap.file_header.fileType == 0x4d42);
-	assert(testBitmap.file_header.fileSizeInBytes == 342);
+	assert(testBitmap.file_header.fileSizeInBytes == smallBitmapFileSizeInBytes );
 	assert(testBitmap.file_header.reserved1 == 0);
 	assert(testBitmap.file_header.reserved2 == 0);
 	assert(testBitmap.file_header.offsetToPixelDataInBytes == 54);
@@ -142,8 +144,27 @@ static void RunBitmapWriteToSmallMemoryTest(const bitmap& bitmap)
 	MemorySpace uninitializedMemory;
 
 	int writeResult = tl::bitmap_interface_write(bitmap, uninitializedMemory);
-
 	assert(writeResult == tl::bitmap_write_not_enough_space);
+}
+
+static void RunBitmapReadFromBadMemoryTests(bitmap& bitmap)
+{
+	MemorySpace badMemory;
+
+	int readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
+
+	assert(readResult == tl::bitmap_read_missing_memory_source);
+
+	// source memory is not big enough to read the file size
+	badMemory.content = bitmapReadMemory.content;
+	badMemory.sizeInBytes = 5;
+	readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
+	assert(readResult == tl::bitmap_read_invalid_memory_source);
+
+	// source memory is big enough to read the file size but is smaller that the read file size
+	badMemory.sizeInBytes = smallBitmapFileSizeInBytes - 1; 
+	readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
+	assert(readResult == tl::bitmap_read_invalid_memory_source);
 }
 
 static void RunSmallBitmapTest()
@@ -153,6 +174,7 @@ static void RunSmallBitmapTest()
 	RunSmallBitmapRenderTest(smallBitmap);
 	RunBitmapWriteTest(smallBitmap);
 	RunBitmapWriteToSmallMemoryTest(smallBitmap);
+	RunBitmapReadFromBadMemoryTests(smallBitmap);
 }
 
 static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)

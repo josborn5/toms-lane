@@ -13,6 +13,13 @@ namespace tl
 		bitmap_write_not_enough_space
 	};
 
+	enum bitmap_read_result
+	{
+		bitmap_read_success,
+		bitmap_read_missing_memory_source,
+		bitmap_read_invalid_memory_source
+	};
+
 	struct bitmap_file_header
 	{
 		uint16_t fileType;
