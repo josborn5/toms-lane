@@ -7,6 +7,12 @@
 
 namespace tl
 {
+	enum bitmap_write_result
+	{
+		bitmap_write_success,
+		bitmap_write_not_enough_space
+	};
+
 	struct bitmap_file_header
 	{
 		uint16_t fileType;

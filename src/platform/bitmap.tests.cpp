@@ -107,7 +107,8 @@ void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 
 static void RunBitmapWriteTest(const bitmap& bitmap)
 {
-	tl::bitmap_interface_write(bitmap, bitmapWriteMemory);
+	int writeResult = tl::bitmap_interface_write(bitmap, bitmapWriteMemory);
+	assert(writeResult == tl::bitmap_write_success);
 
 	uint8_t* readMemory = (uint8_t*)bitmapReadMemory.content;
 	uint8_t* writeMemory = (uint8_t*)bitmapWriteMemory.content;
@@ -140,7 +141,9 @@ static void RunBitmapWriteToSmallMemoryTest(const bitmap& bitmap)
 {
 	MemorySpace uninitializedMemory;
 
-	tl::bitmap_interface_write(bitmap, uninitializedMemory);
+	int writeResult = tl::bitmap_interface_write(bitmap, uninitializedMemory);
+
+	assert(writeResult == tl::bitmap_write_not_enough_space);
 }
 
 static void RunSmallBitmapTest()

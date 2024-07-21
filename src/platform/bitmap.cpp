@@ -217,7 +217,7 @@ int bitmap_interface_write(
 	uint64_t actualSpaceInBytes = memory.sizeInBytes;
 	if (actualSpaceInBytes < requiredSpaceInBytes)
 	{
-		return 0;
+		return bitmap_write_not_enough_space;
 	}
 
 	uint8_t* writeTargetAsBytes = (uint8_t*)memory.content;
@@ -250,7 +250,7 @@ int bitmap_interface_write(
 		writeTargetAsBytes++;
 		readContent++;
 	}
-	return 0;
+	return bitmap_write_success;
 }
 
 }
