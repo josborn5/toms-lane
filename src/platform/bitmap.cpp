@@ -226,6 +226,14 @@ int bitmap_interface_render(
 	return 0;
 }
 
+int bitmap_interface_render(
+	const RenderBuffer& buffer,
+	const bitmap& bitmap,
+	Rect<float> footprint)
+{
+	return 0;
+}
+
 int bitmap_interface_write(
 	const bitmap& bitmap,
 	const MemorySpace& memory)

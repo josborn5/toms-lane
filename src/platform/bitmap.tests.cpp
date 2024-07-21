@@ -67,7 +67,7 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 {
 	tl::ClearScreen(renderBuffer, grey);
-	tl::bitmap_interface_render(renderBuffer, testBitmap, { 0, 0 });
+	tl::bitmap_interface_render(renderBuffer, testBitmap, tl::Vec2<int>{ 0, 0 });
 
 	uint32_t* bottomLeftPixel = renderBuffer.pixels;
 	uint32_t* bottomRightPixel = renderBuffer.pixels + renderBuffer.width - 1;
@@ -92,7 +92,7 @@ void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 	assert(*topRightPixel == blue);
 
 	tl::ClearScreen(renderBuffer, grey);
-	tl::bitmap_interface_render(renderBuffer, testBitmap, { 6, 4 });
+	tl::bitmap_interface_render(renderBuffer, testBitmap, tl::Vec2<int>{ 6, 4 });
 
 	assert(*bottomLeftPixel == grey);
 	assert(*bottomRightPixel == grey);
@@ -105,6 +105,17 @@ void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 	assert(*(topRightPixel - 2) == black);
 	assert(*(topRightPixel - 1) == black);
 	assert(*topRightPixel == white);
+
+	// Render scaled up
+	tl::ClearScreen(renderBuffer, grey);
+	tl::Rect<float> renderFootprint;
+	renderFootprint.halfSize = {
+		(float)renderBuffer.width / 2,
+		(float)renderBuffer.height / 2
+	};
+	renderFootprint.position = renderFootprint.halfSize;
+	tl::bitmap_interface_render(renderBuffer, testBitmap, renderFootprint);
+
 }
 
 static void RunBitmapWriteTest(const bitmap& bitmap)
@@ -208,7 +219,7 @@ static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)
 static void RunLargeBitmapRenderTest(const tl::bitmap& largeBitmap)
 {
 	tl::ClearScreen(renderBuffer, red);
-	tl::bitmap_interface_render(renderBuffer, largeBitmap, { 0, 0 });
+	tl::bitmap_interface_render(renderBuffer, largeBitmap, tl::Vec2<int>{ 0, 0 });
 
 	uint32_t* bottomLeftPixel = renderBuffer.pixels;
 	uint32_t* rightOfBottomLeftPixel = renderBuffer.pixels + 1;
@@ -216,7 +227,7 @@ static void RunLargeBitmapRenderTest(const tl::bitmap& largeBitmap)
 	assert(*rightOfBottomLeftPixel == black);
 
 	tl::ClearScreen(renderBuffer, red);
-	tl::bitmap_interface_render(renderBuffer, largeBitmap, { 6, 4 });
+	tl::bitmap_interface_render(renderBuffer, largeBitmap, tl::Vec2<int>{ 6, 4 });
 
 	assert(*bottomLeftPixel == red);
 
