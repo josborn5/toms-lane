@@ -6,6 +6,7 @@
 #include "software-rendering.tests.sprite.cpp"
 #include "software-rendering.tests.draw-line.cpp"
 #include "software-rendering.tests.color.cpp"
+#include "draw-rect.tests.cpp"
 
 void ClearPixelAndDepthArray(uint32_t* pixelArray, float* depthArray, int arrayLength)
 {
@@ -762,4 +763,6 @@ void RunSoftwareRenderingTests()
 	RunSpriteTests();
 
 	RunColorTests();
+
+	RunDrawRectTests();
 }

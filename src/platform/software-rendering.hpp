@@ -41,7 +41,11 @@ namespace tl
 	);
 
 	// Rects
-	void DrawRect(const RenderBuffer &renderBuffer, uint32_t color, const Rect<float> &rect);
+	void DrawRect(
+		const RenderBuffer &renderBuffer,
+		uint32_t color,
+		const Rect<float> &rect
+	);
 
 	// Circles
 	void DrawCircle(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<float>& center, float radius);
