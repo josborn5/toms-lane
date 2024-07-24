@@ -25,5 +25,13 @@ void RunDrawRectTests()
 
 	tl::DrawRect(renderBuffer, 0xFF0000, wholeBufferRect);
 
+	assert(*renderBuffer.pixels == 0xFF0000);
+	assert(*(renderBuffer.pixels + 20) == 0xFF0000);
+
+	wholeBufferRect.halfSize = { 8.0f, 6.0f };
+
+	tl::DrawRect(renderBuffer, 0xFF0000, wholeBufferRect);
+
+	assert(*renderBuffer.pixels == 0xFF0000);
 	assert(*(renderBuffer.pixels + 20) == 0xFF0000);
 }

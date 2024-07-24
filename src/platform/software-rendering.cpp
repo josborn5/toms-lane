@@ -240,9 +240,9 @@ namespace tl
 	static void DrawRectInPixels(const RenderBuffer &renderBuffer, uint32_t color, int x0, int y0, int x1, int y1)
 	{
 		// Make sure writing to the render buffer does not escape its bounds
-		x0 = ClampInt(1, x0, renderBuffer.width);
+		x0 = ClampInt(0, x0, renderBuffer.width);
 		x1 = ClampInt(1, x1, renderBuffer.width);
-		y0 = ClampInt(1, y0, renderBuffer.height);
+		y0 = ClampInt(0, y0, renderBuffer.height);
 		y1 = ClampInt(1, y1, renderBuffer.height);
 
 		for (int y = y0; y < y1; y++)
