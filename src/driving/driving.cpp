@@ -17,7 +17,7 @@ int UpdateAndRender(const tl::RenderBuffer& renderBuffer)
 		tl::DrawRect(renderBuffer, tile.color, tile.rect);
 	}
 
-	tl::bitmap_interface_render(renderBuffer, bitmap, { 0, 0 });
+	tl::bitmap_interface_render(renderBuffer, bitmap, tl::Vec2<int>{ 0, 0 });
 
 	return 0;
 }

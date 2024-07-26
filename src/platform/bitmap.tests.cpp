@@ -104,14 +104,14 @@ void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 
 	assert(*(topRightPixel - 2) == black);
 	assert(*(topRightPixel - 1) == black);
-	assert(*topRightPixel == white);
+	assert(*topRightPixel == black);
 
-	// Render scaled up
+	// Render scaled up by a factor of 2
 	tl::ClearScreen(renderBuffer, grey);
 	tl::Rect<float> renderFootprint;
 	renderFootprint.halfSize = {
-		(float)renderBuffer.width / 2,
-		(float)renderBuffer.height / 2
+		(float)renderBuffer.width,
+		(float)renderBuffer.height
 	};
 	renderFootprint.position = renderFootprint.halfSize;
 	tl::bitmap_interface_render(renderBuffer, testBitmap, renderFootprint);

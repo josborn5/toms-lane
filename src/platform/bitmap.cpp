@@ -146,23 +146,18 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	return 0;
 }
 
-static void FillBitmapContentFor24Bits(
-	const RenderBuffer& buffer,
-	const bitmap& bitmap,
-	Vec2<int> bottomLeftCornerPosition
-)
-{
-	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
+typedef uint32_t GetColorFromBitmap(const bitmap& bitmap, int xOrdinal, int yOrdinal);
 
-	for (int j = bottomLeftCornerPosition.y; j < bitmap.dibs_header.height; j += 1)
-	{
-		for (int i = bottomLeftCornerPosition.x; i < bitmap.dibs_header.width; i += 1)
-		{
-			uint32_t colorRGBA = twentyFourBitContent->r << 16 | twentyFourBitContent->g << 8 | twentyFourBitContent->b;
-			PlotPixel(buffer, colorRGBA, i, j);
-			twentyFourBitContent++;
-		}
-	}
+static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int xOrdinal, int yOrdinal)
+{
+	int pixelOffset = (yOrdinal * bitmap.dibs_header.width) + xOrdinal;
+
+	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
+	RGB24Bit* bitmapPixel = twentyFourBitContent + pixelOffset;
+
+	uint32_t colorRGB = bitmapPixel->r << 16 | bitmapPixel->g << 8 | bitmapPixel->b;
+
+	return colorRGB;
 }
 
 static void FillBitmapContentFor1Bits(
@@ -213,16 +208,37 @@ int bitmap_interface_render(
 {
 	if (bitmap.file_header.fileType == 0) return -1;
 
+	GetColorFromBitmap* colorResolutionFunction = nullptr;
 	switch (bitmap.dibs_header.bitsPerPixel)
 	{
 		case 24:
-			FillBitmapContentFor24Bits(buffer, bitmap, bottomLeftCornerPosition);
+			colorResolutionFunction = &GetColorFrom24BitBitmap;
 			break;
 		case 1:
 			FillBitmapContentFor1Bits(buffer, bitmap, bottomLeftCornerPosition);
 			break;
 	}
 
+	int bitmapEndX = bottomLeftCornerPosition.x + bitmap.dibs_header.width;
+	int bitmapEndY = bottomLeftCornerPosition.y + bitmap.dibs_header.height;
+	int endX = (bitmapEndX > buffer.width) ? buffer.width : bitmapEndX;
+	int endY = (bitmapEndY > buffer.height) ? buffer.height : bitmapEndY;
+
+	int bitmapY = 0;
+	for (int j = bottomLeftCornerPosition.y; j < endY; j += 1)
+	{
+		int bitmapX = 0;
+		for (int i = bottomLeftCornerPosition.x; i < endX; i += 1)
+		{
+			if (colorResolutionFunction != nullptr)
+			{
+				uint32_t pixelColor = (*colorResolutionFunction)(bitmap, bitmapX, bitmapY);
+				PlotPixel(buffer, pixelColor, i, j);
+			}
+			bitmapX += 1;
+		}
+		bitmapY += 1;
+	}
 	return 0;
 }
 
@@ -231,6 +247,20 @@ int bitmap_interface_render(
 	const bitmap& bitmap,
 	Rect<float> footprint)
 {
+	Rect<float> pixelFootprint;
+	pixelFootprint.halfSize = {
+		footprint.halfSize.x / (float)buffer.width,
+		footprint.halfSize.y / (float)buffer.height
+	};
+	pixelFootprint.position = {
+		footprint.position.x - footprint.halfSize.x + pixelFootprint.halfSize.x,
+		footprint.position.y - footprint.halfSize.y + pixelFootprint.halfSize.y
+	};
+
+	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
+	uint32_t colorRGBA = twentyFourBitContent->r << 16 | twentyFourBitContent->g << 8 | twentyFourBitContent->b;
+	DrawRect(buffer, colorRGBA, pixelFootprint);
+
 	return 0;
 }
 
