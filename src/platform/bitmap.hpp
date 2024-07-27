@@ -69,7 +69,7 @@ namespace tl
 	int bitmap_interface_render(
 		const RenderBuffer& buffer,
 		const bitmap& bitmap,
-		Rect<float> footprint);
+		const Rect<float>& footprint);
 
 	int bitmap_interface_write(
 		const bitmap& bitmap,
