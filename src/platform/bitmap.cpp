@@ -184,7 +184,7 @@ static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int xOrdinal, int y
 int bitmap_interface_render(
 	const RenderBuffer& buffer,
 	const bitmap& bitmap,
-	Vec2<int> bottomLeftCornerPosition)
+	const Vec2<int>& bottomLeftCornerPosition)
 {
 	if (bitmap.file_header.fileType == 0) return -1;
 
