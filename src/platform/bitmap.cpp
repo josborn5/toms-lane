@@ -180,6 +180,19 @@ static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int xOrdinal, int y
 	return color;
 }
 
+static GetColorFromBitmap* resolve_color_resolution_function(const bitmap_dibs_header& dibs_header)
+{
+	switch (dibs_header.bitsPerPixel)
+	{
+		case 24:
+			return &GetColorFrom24BitBitmap;
+		case 1:
+			return &GetColorFrom1BitBitmap;
+		default:
+			return nullptr;
+	}
+}
+
 int bitmap_interface_render(
 	const RenderBuffer& buffer,
 	const bitmap& bitmap,
@@ -187,18 +200,8 @@ int bitmap_interface_render(
 {
 	if (bitmap.file_header.fileType == 0) return -1;
 
-	GetColorFromBitmap* colorResolutionFunction = nullptr;
-	switch (bitmap.dibs_header.bitsPerPixel)
-	{
-		case 24:
-			colorResolutionFunction = &GetColorFrom24BitBitmap;
-			break;
-		case 1:
-			colorResolutionFunction = &GetColorFrom1BitBitmap;
-			break;
-		default:
-			return -1;
-	}
+	GetColorFromBitmap* colorResolutionFunction = resolve_color_resolution_function(bitmap.dibs_header);
+	if (colorResolutionFunction == nullptr) return -2;
 
 	int bitmapEndX = bottomLeftCornerPosition.x + bitmap.dibs_header.width;
 	int bitmapEndY = bottomLeftCornerPosition.y + bitmap.dibs_header.height;
@@ -227,18 +230,8 @@ int bitmap_interface_render(
 {
 	if (bitmap.file_header.fileType == 0) return -1;
 
-	GetColorFromBitmap* colorResolutionFunction = nullptr;
-	switch (bitmap.dibs_header.bitsPerPixel)
-	{
-		case 24:
-			colorResolutionFunction = &GetColorFrom24BitBitmap;
-			break;
-		case 1:
-			colorResolutionFunction = &GetColorFrom1BitBitmap;
-			break;
-		default:
-			return -1;
-	}
+	GetColorFromBitmap* colorResolutionFunction = resolve_color_resolution_function(bitmap.dibs_header);
+	if (colorResolutionFunction == nullptr) return -2;
 
 	float xBitmapIncrement = 0.5f * (float)bitmap.dibs_header.width / footprint.halfSize.x;
 	float yBitmapIncrement = 0.5f * (float)bitmap.dibs_header.height / footprint.halfSize.y;
