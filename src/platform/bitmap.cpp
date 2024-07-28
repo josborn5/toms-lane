@@ -193,6 +193,20 @@ static GetColorFromBitmap* resolve_color_resolution_function(const bitmap_dibs_h
 	}
 }
 
+static void resolve_bitmap_render_bounds(
+	const RenderBuffer& buffer,
+	const Vec2<int>& renderStart,
+	const Vec2<int>& renderEnd,
+	Vec2<int>& resolvedStart,
+	Vec2<int>& resolvedEnd
+)
+{
+	resolvedStart.x = (renderStart.x < 0) ? 0 : renderStart.x;
+	resolvedStart.y = (renderStart.y < 0) ? 0 : renderStart.y;
+	resolvedEnd.x = (renderEnd.x > buffer.width) ? buffer.width : renderEnd.x;
+	resolvedEnd.y = (renderEnd.y > buffer.height) ? buffer.height : renderEnd.y;
+}
+
 int bitmap_interface_render(
 	const RenderBuffer& buffer,
 	const bitmap& bitmap,
@@ -203,16 +217,18 @@ int bitmap_interface_render(
 	GetColorFromBitmap* colorResolutionFunction = resolve_color_resolution_function(bitmap.dibs_header);
 	if (colorResolutionFunction == nullptr) return -2;
 
-	int bitmapEndX = bottomLeftCornerPosition.x + bitmap.dibs_header.width;
-	int bitmapEndY = bottomLeftCornerPosition.y + bitmap.dibs_header.height;
-	int endX = (bitmapEndX > buffer.width) ? buffer.width : bitmapEndX;
-	int endY = (bitmapEndY > buffer.height) ? buffer.height : bitmapEndY;
+	Vec2<int> bitmapEnd = {
+		bottomLeftCornerPosition.x + bitmap.dibs_header.width,
+		bottomLeftCornerPosition.y + bitmap.dibs_header.height
+	};
+	Vec2<int> start, end;
+	resolve_bitmap_render_bounds(buffer, bottomLeftCornerPosition, bitmapEnd, start, end);
 
 	int bitmapY = 0;
-	for (int j = bottomLeftCornerPosition.y; j < endY; j += 1)
+	for (int j = start.y; j < end.y; j += 1)
 	{
 		int bitmapX = 0;
-		for (int i = bottomLeftCornerPosition.x; i < endX; i += 1)
+		for (int i = start.x; i < end.x; i += 1)
 		{
 			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, bitmapX, bitmapY);
 			PlotPixel(buffer, pixelColor, i, j);
@@ -222,6 +238,7 @@ int bitmap_interface_render(
 	}
 	return 0;
 }
+
 
 int bitmap_interface_render(
 	const RenderBuffer& buffer,
@@ -233,30 +250,32 @@ int bitmap_interface_render(
 	GetColorFromBitmap* colorResolutionFunction = resolve_color_resolution_function(bitmap.dibs_header);
 	if (colorResolutionFunction == nullptr) return -2;
 
-	float xBitmapIncrement = 0.5f * (float)bitmap.dibs_header.width / footprint.halfSize.x;
-	float yBitmapIncrement = 0.5f * (float)bitmap.dibs_header.height / footprint.halfSize.y;
-
-	int bitmapStartX = (int)(footprint.position.x - footprint.halfSize.x);
-	int bitmapStartY = (int)(footprint.position.y - footprint.halfSize.y);
-	int startX = (bitmapStartX < 0) ? 0 : bitmapStartX;
-	int startY = (bitmapStartY < 0) ? 0 : bitmapStartY;
-
-	int bitmapEndX = (int)(footprint.position.x + footprint.halfSize.x);
-	int bitmapEndY = (int)(footprint.position.y + footprint.halfSize.y);
-	int endX = (bitmapEndX > buffer.width) ? buffer.width : bitmapEndX;
-	int endY = (bitmapEndY > buffer.height) ? buffer.height : bitmapEndY;
+	Vec2<float> bitmapIncrement = {
+		0.5f * (float)bitmap.dibs_header.width / footprint.halfSize.x,
+		0.5f * (float)bitmap.dibs_header.height / footprint.halfSize.y
+	};
+	Vec2<int> bitmapStart = {
+		(int)(footprint.position.x - footprint.halfSize.x),
+		(int)(footprint.position.y - footprint.halfSize.y)
+	};
+	Vec2<int> bitmapEnd = {
+		(int)(footprint.position.x + footprint.halfSize.x),
+		(int)(footprint.position.y + footprint.halfSize.y)
+	};
+	Vec2<int> start, end;
+	resolve_bitmap_render_bounds(buffer, bitmapStart, bitmapEnd, start, end);
 
 	float bitmapY = 0.0f;
-	for (int j = startY; j < endY; j += 1)
+	for (int j = start.y; j < end.y; j += 1)
 	{
 		float bitmapX = 0.0f;
-		for (int i = startX; i < endX; i += 1)
+		for (int i = start.x; i < end.x; i += 1)
 		{
 			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, (int)bitmapX, (int)bitmapY);
 			PlotPixel(buffer, pixelColor, i, j);
-			bitmapX += xBitmapIncrement;
+			bitmapX += bitmapIncrement.x;
 		}
-		bitmapY += yBitmapIncrement;
+		bitmapY += bitmapIncrement.y;
 	}
 	return 0;
 }
