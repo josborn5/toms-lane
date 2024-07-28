@@ -156,7 +156,6 @@ static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int xOrdinal, int 
 	RGB24Bit* bitmapPixel = twentyFourBitContent + pixelOffset;
 
 	uint32_t colorRGB = bitmapPixel->r << 16 | bitmapPixel->g << 8 | bitmapPixel->b;
-
 	return colorRGB;
 }
 
@@ -226,20 +225,46 @@ int bitmap_interface_render(
 	const bitmap& bitmap,
 	const Rect<float>& footprint)
 {
-	Rect<float> pixelFootprint;
-	pixelFootprint.halfSize = {
-		footprint.halfSize.x / (float)buffer.width,
-		footprint.halfSize.y / (float)buffer.height
-	};
-	pixelFootprint.position = {
-		footprint.position.x - footprint.halfSize.x + pixelFootprint.halfSize.x,
-		footprint.position.y - footprint.halfSize.y + pixelFootprint.halfSize.y
-	};
+	if (bitmap.file_header.fileType == 0) return -1;
 
-	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
-	uint32_t colorRGBA = twentyFourBitContent->r << 16 | twentyFourBitContent->g << 8 | twentyFourBitContent->b;
-	DrawRect(buffer, colorRGBA, pixelFootprint);
+	GetColorFromBitmap* colorResolutionFunction = nullptr;
+	switch (bitmap.dibs_header.bitsPerPixel)
+	{
+		case 24:
+			colorResolutionFunction = &GetColorFrom24BitBitmap;
+			break;
+		case 1:
+			colorResolutionFunction = &GetColorFrom1BitBitmap;
+			break;
+		default:
+			return -1;
+	}
 
+	float xBitmapIncrement = 0.5f * (float)bitmap.dibs_header.width / footprint.halfSize.x;
+	float yBitmapIncrement = 0.5f * (float)bitmap.dibs_header.height / footprint.halfSize.y;
+
+	int bitmapStartX = (int)(footprint.position.x - footprint.halfSize.x);
+	int bitmapStartY = (int)(footprint.position.y - footprint.halfSize.y);
+	int startX = (bitmapStartX < 0) ? 0 : bitmapStartX;
+	int startY = (bitmapStartY < 0) ? 0 : bitmapStartY;
+
+	int bitmapEndX = (int)(footprint.position.x + footprint.halfSize.x);
+	int bitmapEndY = (int)(footprint.position.y + footprint.halfSize.y);
+	int endX = (bitmapEndX > buffer.width) ? buffer.width : bitmapEndX;
+	int endY = (bitmapEndY > buffer.height) ? buffer.height : bitmapEndY;
+
+	float bitmapY = 0.0f;
+	for (int j = startY; j < endY; j += 1)
+	{
+		float bitmapX = 0.0f;
+		for (int i = startX; i < endX; i += 1)
+		{
+			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, (int)bitmapX, (int)bitmapY);
+			PlotPixel(buffer, pixelColor, i, j);
+			bitmapX += xBitmapIncrement;
+		}
+		bitmapY += yBitmapIncrement;
+	}
 	return 0;
 }
 

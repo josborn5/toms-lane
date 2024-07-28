@@ -116,6 +116,11 @@ void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 	renderFootprint.position = renderFootprint.halfSize;
 	tl::bitmap_interface_render(renderBuffer, testBitmap, renderFootprint);
 
+	assert(*(bottomLeftPixel) == green);
+	assert(*(bottomLeftPixel + 1) == green);
+	assert(*(bottomLeftPixel + 2) == white);
+	assert(*(bottomLeftPixel + 3) == white);
+	assert(*(bottomLeftPixel + 4) == black);
 }
 
 static void RunBitmapWriteTest(const bitmap& bitmap)
