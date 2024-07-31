@@ -130,7 +130,7 @@ void SaveBitmap(
 )
 {
 	tl::bitmap blankBitmap;
-	initializeBitmapFromSpriteC(sprite, blankBitmap);
+	InitializeBitmapFromSpriteC(sprite, blankBitmap, gameMemory.transient);
 
 	displayBuffer.clear();
 	displayBuffer.append('B');

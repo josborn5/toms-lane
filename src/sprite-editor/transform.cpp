@@ -1,6 +1,16 @@
 #include "../tl-library.hpp"
 
-static void initializeBitmapFromSpriteC(const tl::SpriteC& sprite, tl::bitmap& bitmap)
+struct RGB24Bit
+{
+	uint8_t b;
+	uint8_t g;
+	uint8_t r;
+};
+
+static void InitializeBitmapFromSpriteC(
+	const tl::SpriteC& sprite,
+	tl::bitmap& bitmap,
+	const tl::MemorySpace tempMemory)
 {
 	const int bitsPerPixel = 24;
 	uint32_t imageSizeInBytes = bitsPerPixel * sprite.height * sprite.width / 8;
@@ -20,11 +30,21 @@ static void initializeBitmapFromSpriteC(const tl::SpriteC& sprite, tl::bitmap& b
 
 	bitmap.file_header.fileSizeInBytes = bitmap.file_header.offsetToPixelDataInBytes + bitmap.dibs_header.imageSizeInBytes;
 
+	if (bitmap.file_header.fileSizeInBytes > tempMemory.sizeInBytes) return;
+
+	bitmap.content = (uint8_t*)tempMemory.content;
+	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
 	int spritePixelCount = sprite.width * sprite.height;
 
 	for (int i = 0; i < spritePixelCount; i += 1)
 	{
-
+		tl::Color spriteColor = sprite.content[i];
+		RGB24Bit bitmapPixel;
+		bitmapPixel.r = (uint8_t)(255.0f * spriteColor.r);
+		bitmapPixel.g = (uint8_t)(255.0f * spriteColor.g);
+		bitmapPixel.b = (uint8_t)(255.0f * spriteColor.b);
+		*twentyFourBitContent = bitmapPixel;
+		twentyFourBitContent++;
 	}
 }
 
