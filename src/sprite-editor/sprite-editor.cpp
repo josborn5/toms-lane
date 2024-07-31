@@ -4,7 +4,6 @@
 #include "./render.hpp"
 #include "./state.hpp"
 
-
 int updateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
 	EditorState latestState = GetLatestState(input);

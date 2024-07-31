@@ -2,6 +2,7 @@
 #include "../tl-library.hpp"
 #include "./editor.hpp"
 #include "./utilities.hpp"
+#include "./transform.cpp"
 
 // Returns the number of chars
 static int SpriteCToCharString(const tl::SpriteC& sprite, tl::MemorySpace memory)
@@ -119,6 +120,26 @@ void Save(
 		displayBuffer.append('R');
 		displayBuffer.append('\0');
 	}
+}
+
+void SaveBitmap(
+	const tl::GameMemory& gameMemory,
+	const tl::SpriteC& sprite,
+	tl::array<char>& displayBuffer,
+	char* filePath
+)
+{
+	tl::bitmap blankBitmap;
+	initializeBitmapFromSpriteC(sprite, blankBitmap);
+
+	displayBuffer.clear();
+	displayBuffer.append('B');
+	displayBuffer.append('I');
+	displayBuffer.append('T');
+	displayBuffer.append('M');
+	displayBuffer.append('A');
+	displayBuffer.append('P');
+	displayBuffer.append('\0');
 }
 
 static int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)

@@ -11,6 +11,12 @@ void Save(
 	tl::array<char>& displayBuffer,
 	char* filePath
 );
+void SaveBitmap(
+	const tl::GameMemory& gameMemory,
+	const tl::SpriteC& sprite,
+	tl::array<char>& displayBuffer,
+	char* filePath
+);
 int InsertRow(Grid& grid, tl::MemorySpace spriteMemory);
 int InsertColumn(Grid& grid, tl::MemorySpace spriteMemory);
 

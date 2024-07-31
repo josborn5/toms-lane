@@ -203,6 +203,12 @@ static int Initialize(const tl::GameMemory& gameMemory)
 
 	ClearCommandBuffer();
 
+	if (state.mode == NoFile)
+	{
+		// Initialize default sprite
+		fileReadMemory.content = "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0";
+	}
+
 	InitializeLayout(state);
 	InitializePalettes(paletteMemory, tempMemory, state);
 
@@ -362,6 +368,23 @@ static void ExecuteCurrentCommand()
 			if (*filePath && commands.get(2) == '\0')
 			{
 				Save(appMemory, *state.pixels.sprite, commands, filePath);
+				return;
+			}
+			if (commands.get(2) == ' ' && commands.get(3)) // save to new filePath
+			{
+				filePath = &commands.access(3);
+				Save(appMemory, *state.pixels.sprite, commands, filePath);
+				return;
+			}
+			if (*filePath && commands.get(2) == 'B' && commands.get(3) == '\0')
+			{
+				SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
+				return;
+			}
+			if (commands.get(2) == 'B' && commands.get(3) == ' ' && commands.get(4)) // save to new filePath
+			{
+				filePath = &commands.access(3);
+				SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
 				return;
 			}
 		}
