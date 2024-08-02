@@ -130,16 +130,36 @@ void SaveBitmap(
 )
 {
 	tl::bitmap blankBitmap;
-	InitializeBitmapFromSpriteC(sprite, blankBitmap, gameMemory.transient);
+	tl::MemorySpace remainder;
+	remainder.content = gameMemory.transient.content;
+	remainder.sizeInBytes = gameMemory.transient.sizeInBytes;
+	int bitmapWriteResult = InitializeBitmapFromSpriteC(sprite, blankBitmap, remainder);
+	if (bitmapWriteResult != 0) return;
+
+	tl::CarveMemorySpace(blankBitmap.file_header.fileSizeInBytes, remainder);
+
+	int writeResult = tl::bitmap_interface_write(blankBitmap, remainder);
+	if (writeResult != tl::bitmap_write_success) return;
 
 	displayBuffer.clear();
-	displayBuffer.append('B');
-	displayBuffer.append('I');
-	displayBuffer.append('T');
-	displayBuffer.append('M');
-	displayBuffer.append('A');
-	displayBuffer.append('P');
-	displayBuffer.append('\0');
+	if (tl::file_interface_write(filePath, remainder) == tl::Success)
+	{
+		displayBuffer.append('S');
+		displayBuffer.append('A');
+		displayBuffer.append('V');
+		displayBuffer.append('E');
+		displayBuffer.append('D');
+		displayBuffer.append('\0');
+	}
+	else
+	{
+		displayBuffer.append('E');
+		displayBuffer.append('R');
+		displayBuffer.append('R');
+		displayBuffer.append('O');
+		displayBuffer.append('R');
+		displayBuffer.append('\0');
+	}
 }
 
 static int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)

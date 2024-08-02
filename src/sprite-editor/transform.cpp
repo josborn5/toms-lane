@@ -7,7 +7,7 @@ struct RGB24Bit
 	uint8_t r;
 };
 
-static void InitializeBitmapFromSpriteC(
+static int InitializeBitmapFromSpriteC(
 	const tl::SpriteC& sprite,
 	tl::bitmap& bitmap,
 	const tl::MemorySpace tempMemory)
@@ -30,7 +30,7 @@ static void InitializeBitmapFromSpriteC(
 
 	bitmap.file_header.fileSizeInBytes = bitmap.file_header.offsetToPixelDataInBytes + bitmap.dibs_header.imageSizeInBytes;
 
-	if (bitmap.file_header.fileSizeInBytes > tempMemory.sizeInBytes) return;
+	if (bitmap.file_header.fileSizeInBytes > tempMemory.sizeInBytes) return -1;
 
 	bitmap.content = (uint8_t*)tempMemory.content;
 	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
@@ -46,5 +46,7 @@ static void InitializeBitmapFromSpriteC(
 		*twentyFourBitContent = bitmapPixel;
 		twentyFourBitContent++;
 	}
+
+	return 0;
 }
 
