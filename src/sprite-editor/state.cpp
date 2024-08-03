@@ -383,7 +383,7 @@ static void ExecuteCurrentCommand()
 			}
 			if (commands.get(2) == 'B' && commands.get(3) == ' ' && commands.get(4)) // save to new filePath
 			{
-				filePath = &commands.access(3);
+				filePath = &commands.access(4);
 				SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
 				return;
 			}
