@@ -141,8 +141,10 @@ void SaveBitmap(
 	int writeResult = tl::bitmap_interface_write(blankBitmap, remainder);
 	if (writeResult != tl::bitmap_write_success) return;
 
+	tl::MemorySpace fileData = CarveMemorySpace(blankBitmap.file_header.fileSizeInBytes, remainder);
+
 	displayBuffer.clear();
-	if (tl::file_interface_write(filePath, remainder) == tl::Success)
+	if (tl::file_interface_write(filePath, fileData) == tl::Success)
 	{
 		displayBuffer.append('S');
 		displayBuffer.append('A');
