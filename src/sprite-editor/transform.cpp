@@ -36,15 +36,22 @@ static int InitializeBitmapFromSpriteC(
 	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
 	int spritePixelCount = sprite.width * sprite.height;
 
-	for (int i = 0; i < spritePixelCount; i += 1)
+	// SpriteC origin is top left
+	// Bitmap origin is bottom left
+	int bottomLeftSpritePixelIndex =  spritePixelCount - sprite.width;
+	for (int startRowPixelIndex = bottomLeftSpritePixelIndex; startRowPixelIndex >= 0; startRowPixelIndex  -= sprite.width)
 	{
-		tl::Color spriteColor = sprite.content[i];
-		RGB24Bit bitmapPixel;
-		bitmapPixel.r = (uint8_t)(255.0f * spriteColor.r);
-		bitmapPixel.g = (uint8_t)(255.0f * spriteColor.g);
-		bitmapPixel.b = (uint8_t)(255.0f * spriteColor.b);
-		*twentyFourBitContent = bitmapPixel;
-		twentyFourBitContent++;
+		for (int columnIndex = 0; columnIndex < sprite.width; columnIndex += 1)
+		{
+			int pixelIndex = startRowPixelIndex + columnIndex;
+			tl::Color spriteColor = sprite.content[pixelIndex];
+			RGB24Bit bitmapPixel;
+			bitmapPixel.r = (uint8_t)(255.0f * spriteColor.r);
+			bitmapPixel.g = (uint8_t)(255.0f * spriteColor.g);
+			bitmapPixel.b = (uint8_t)(255.0f * spriteColor.b);
+			*twentyFourBitContent = bitmapPixel;
+			twentyFourBitContent++;
+		}
 	}
 
 	return 0;
