@@ -263,11 +263,10 @@ int LoadSprites(const tl::GameMemory& gameMemory)
 		permanent
 	);
 
-	LoadSpriteFromFile(
-		"checkpoint.sprc",
-		gamestate.checkpointBlockSprite,
-		permanent,
-		transient
+	LoadBitmapFromFile(
+		"checkpoint.bmp",
+		gamestate.checkpointBitmap,
+		permanent
 	);
 
 	LoadBitmapFromFile(
