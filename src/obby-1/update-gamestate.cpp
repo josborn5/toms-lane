@@ -231,17 +231,36 @@ int LoadSpriteFromFile(
 	return 0;
 }
 
+int LoadBitmapFromFile(
+	char* fileName,
+	tl::bitmap& bitmap,
+	tl::MemorySpace& permanent
+) {
+	int fileReadResult = tl::file_interface_read(
+		fileName,
+		permanent
+	);
+	if (fileReadResult != tl::Success) return 1;
+
+	tl::bitmap_interface_initialize(
+		bitmap,
+		permanent
+	);
+	tl::CarveMemorySpace(bitmap.file_header.fileSizeInBytes, permanent);
+
+	return 0;
+}
+
 int LoadSprites(const tl::GameMemory& gameMemory)
 {
 	tl::MemorySpace permanent = gameMemory.permanent;
 	tl::MemorySpace transient = gameMemory.transient;
 
 	// Read spritec files
-	LoadSpriteFromFile(
-		".\\brick.sprc",
-		gamestate.regularBlockSprite,
-		permanent,
-		transient
+	LoadBitmapFromFile(
+		"brick.bmp",
+		gamestate.regularBlockBitmap,
+		permanent
 	);
 
 	LoadSpriteFromFile(
@@ -251,15 +270,11 @@ int LoadSprites(const tl::GameMemory& gameMemory)
 		transient
 	);
 
-	tl::file_interface_read(
+	LoadBitmapFromFile(
 		"player.bmp",
-		permanent
-	);
-	tl::bitmap_interface_initialize(
 		gamestate.player.bitmap,
 		permanent
 	);
-
 	return 0;
 }
 
@@ -332,21 +347,25 @@ int PopulateBlocksForLevelString_(
 						block->type = Checkpoint;
 						block->color = 0x000000;
 						block->sprite = &gamestate.checkpointBlockSprite;
+						block->bitmap = &gamestate.checkpointBitmap;
 						break;
 					case 's':
 						block->type = Spawn;
 						block->color = 0x0000AA;
 						block->sprite = nullptr;
+						block->bitmap = nullptr;
 						break;
 					case 'K':
 						block->type = Killbrick;
 						block->color = 0xF79226;
 						block->sprite = nullptr;
+						block->bitmap = nullptr;
 						break;
 					default:
 						block->type = Regular;
 						block->color = 0x000000;
 						block->sprite = &gamestate.regularBlockSprite;
+						block->bitmap = &gamestate.regularBlockBitmap;
 				}
 				block->halfSize = blockHalfSize;
 				block->position = blockPosition;

@@ -175,10 +175,9 @@ static void RenderGameState(
 		}
 		else
 		{
-			tl::SpriteC sprite = *block.sprite;
-			tl::DrawSpriteC(
+			tl::bitmap_interface_render(
 				renderBuffer,
-				sprite,
+				*block.bitmap,
 				blockInCameraSpace
 			);
 		}

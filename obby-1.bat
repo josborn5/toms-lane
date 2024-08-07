@@ -7,7 +7,7 @@ call .\build-scripts\link.bat %APP_DIR% %NAME%^
  "%~dp0\bin-tl-platform\toms-lane-platform.obj"^
  "%~dp0\bin-tl-win32\tl-win32.lib"
 
-xcopy "%~dp0\src\obby-1\brick.sprc" "%APP_DIR%\"
+xcopy "%~dp0\src\obby-1\brick.bmp" "%APP_DIR%\"
 xcopy "%~dp0\src\obby-1\checkpoint.sprc" "%APP_DIR%\"
 xcopy "%~dp0\src\obby-1\player.bmp" "%APP_DIR%\"
 
