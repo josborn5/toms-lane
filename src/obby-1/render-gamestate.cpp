@@ -169,7 +169,7 @@ static void RenderGameState(
 			blockInCameraSpace
 		);
 
-		if (block.sprite == nullptr)
+		if (block.bitmap == nullptr)
 		{
 			tl::DrawRect(renderBuffer, block.color, blockInCameraSpace);
 		}

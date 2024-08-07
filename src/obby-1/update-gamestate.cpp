@@ -208,29 +208,6 @@ tl::Vec2<float> GetPlayerStartPosition(Block* block, int arraySize)
 	return tl::Vec2<float> { 0.0f, 0.0f };
 }
 
-int LoadSpriteFromFile(
-	char* fileName,
-	tl::SpriteC& spriteTarget,
-	tl::MemorySpace& permanent,
-	tl::MemorySpace transient // Purposefully don't pass as a reference so as not to modify the transient space - it can be overwritten after the function call
-) {
-	uint64_t fileSize = 0;
-	tl::file_interface_size_get(fileName, fileSize);
-	if (tl::file_interface_read(fileName, transient) != tl::Success)
-	{
-		return 1;
-	}
-	tl::MemorySpace tempFileContentMemory = tl::CarveMemorySpace(fileSize, transient);
-
-	// Generate SpriteCs in perm space
-	char* spriteCharArray = (char*)tempFileContentMemory.content;
-	spriteTarget.content = (tl::Color*)permanent.content;
-	tl::LoadSpriteC(spriteCharArray, transient, spriteTarget);
-	tl::CarveMemorySpace(GetSpriteSpaceInBytes(spriteTarget), permanent);
-
-	return 0;
-}
-
 int LoadBitmapFromFile(
 	char* fileName,
 	tl::bitmap& bitmap,
@@ -256,7 +233,6 @@ int LoadSprites(const tl::GameMemory& gameMemory)
 	tl::MemorySpace permanent = gameMemory.permanent;
 	tl::MemorySpace transient = gameMemory.transient;
 
-	// Read spritec files
 	LoadBitmapFromFile(
 		"brick.bmp",
 		gamestate.regularBlockBitmap,
@@ -345,25 +321,21 @@ int PopulateBlocksForLevelString_(
 					case 'c':
 						block->type = Checkpoint;
 						block->color = 0x000000;
-						block->sprite = &gamestate.checkpointBlockSprite;
 						block->bitmap = &gamestate.checkpointBitmap;
 						break;
 					case 's':
 						block->type = Spawn;
 						block->color = 0x0000AA;
-						block->sprite = nullptr;
 						block->bitmap = nullptr;
 						break;
 					case 'K':
 						block->type = Killbrick;
 						block->color = 0xF79226;
-						block->sprite = nullptr;
 						block->bitmap = nullptr;
 						break;
 					default:
 						block->type = Regular;
 						block->color = 0x000000;
-						block->sprite = &gamestate.regularBlockSprite;
 						block->bitmap = &gamestate.regularBlockBitmap;
 				}
 				block->halfSize = blockHalfSize;

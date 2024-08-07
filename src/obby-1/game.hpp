@@ -41,7 +41,6 @@ struct Block : tl::Rect<float> {
 	int color;
 	bool isCheckpoint;
 	BlockType type;
-	tl::SpriteC* sprite;
 	tl::bitmap* bitmap;
 };
 
@@ -57,8 +56,6 @@ struct PlayerMovement
 struct Player : tl::Rect<float>
 {
 	PlayerMovement movement;
-	tl::Sprite sprite;
-	tl::SpriteC spriteTest;
 	tl::bitmap bitmap;
 	float pixelHalfSize;
 	tl::Vec2<float> prevPosition;
@@ -76,9 +73,7 @@ struct GameState
 	int blockCount = BLOCK_ARRAY_SIZE;
 	const int blockCapacity = BLOCK_ARRAY_SIZE;
 	tl::Rect<float> restartLevelButton = {0};
-	tl::SpriteC regularBlockSprite;
 	tl::bitmap regularBlockBitmap;
-	tl::SpriteC checkpointBlockSprite;
 	tl::bitmap checkpointBitmap;
 	tl::Rect<float> world;
 	tl::Rect<float> camera;
