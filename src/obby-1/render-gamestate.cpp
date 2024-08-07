@@ -191,9 +191,9 @@ static void RenderGameState(
 		state.player,
 		playerInCameraSpace
 	);
-	tl::DrawSpriteC(
+	tl::bitmap_interface_render(
 		renderBuffer,
-		state.player.spriteTest,
+		state.player.bitmap,
 		playerInCameraSpace
 	);
 }

@@ -251,11 +251,13 @@ int LoadSprites(const tl::GameMemory& gameMemory)
 		transient
 	);
 
-	LoadSpriteFromFile(
-		"player.sprc",
-		gamestate.player.spriteTest,
-		permanent,
-		transient
+	tl::file_interface_read(
+		"player.bmp",
+		permanent
+	);
+	tl::bitmap_interface_initialize(
+		gamestate.player.bitmap,
+		permanent
 	);
 
 	return 0;
@@ -396,8 +398,8 @@ static int InitializeGameState(GameState *state, const tl::Input &input)
 
 	state->mode = ReadyToStart;
 
-	state->player.halfSize.x = state->player.spriteTest.width * state->player.pixelHalfSize;
-	state->player.halfSize.y = state->player.spriteTest.height * state->player.pixelHalfSize;
+	state->player.halfSize.x = state->player.bitmap.dibs_header.width * state->player.pixelHalfSize;
+	state->player.halfSize.y = state->player.bitmap.dibs_header.height * state->player.pixelHalfSize;
 
 	state->player.velocity.x = 0.0f;
 	state->player.velocity.y = 0.0f;
