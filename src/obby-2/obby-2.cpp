@@ -6,7 +6,9 @@
 #include "./levels.cpp"
 
 tl::SpriteC backgroundSprite;
+tl::bitmap backgroundBitmap;
 tl::SpriteC playersprites;
+tl::bitmap playerBitmaps;
 
 #include "./render-gamestate.cpp"
 #include "./update-gamestate.cpp"
@@ -29,18 +31,16 @@ int Initialize(const tl::GameMemory& gameMemory)
 	tl::MemorySpace transient = gameMemory.transient;
 
 	// Read spritec files
-	LoadSpriteFromFile(
-		"background.sprc",
-		backgroundSprite,
-		permanent,
-		transient
+	LoadBitmapFromFile(
+		"background.bmp",
+		backgroundBitmap,
+		permanent
 	);
 
-		LoadSpriteFromFile(
-		"obby2-player.sprc",
-		playersprites,
-		permanent,
-		transient
+	LoadBitmapFromFile(
+		"obby2-player.bmp",
+		playerBitmaps,
+		permanent
 	);
 
 	return 0;

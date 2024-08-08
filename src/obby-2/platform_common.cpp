@@ -284,25 +284,3 @@ void RenderBlocks(
 	}
 }
 
-int LoadSpriteFromFile(
-	char* fileName,
-	tl::SpriteC& spriteTarget,
-	tl::MemorySpace& permanent,
-	tl::MemorySpace transient // Purposefully don't pass as a reference so as not to modify the transient space - it can be overwritten after the function call
-) {
-	uint64_t fileSize = 0;
-	tl::file_interface_size_get(fileName, fileSize);
-	if (tl::file_interface_read(fileName, transient) != tl::Success)
-	{
-		return 1;
-	}
-	tl::MemorySpace tempFileContentMemory = tl::CarveMemorySpace(fileSize, transient);
-
-	// Generate SpriteCs in perm space
-	char* spriteCharArray = (char*)tempFileContentMemory.content;
-	spriteTarget.content = (tl::Color*)permanent.content;
-	tl::LoadSpriteC(spriteCharArray, transient, spriteTarget);
-	tl::CarveMemorySpace(GetSpriteSpaceInBytes(spriteTarget), permanent);
-
-	return 0;
-}

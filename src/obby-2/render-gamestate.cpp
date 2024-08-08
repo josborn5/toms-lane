@@ -179,9 +179,9 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	tl::Rect<float> backgroundRect;
 	backgroundRect.halfSize = { 640.0f, 360.0f };
 	backgroundRect.position = { 640.0f, 360.0f };
-	tl::DrawSpriteC(
+	tl::bitmap_interface_render(
 		renderBuffer,
-		backgroundSprite,
+		backgroundBitmap,
 		backgroundRect
 	);
 
@@ -199,9 +199,9 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	RenderBlocks(renderBuffer, state);
 	
 	// player
-	tl::DrawSpriteC(
+	tl::bitmap_interface_render(
 		renderBuffer,
-		playersprites,
+		playerBitmaps,
 		state.player
 	);
 }

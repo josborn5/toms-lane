@@ -56,6 +56,7 @@ struct PlayerMovement
 struct Player : tl::Rect<float>
 {
 	PlayerMovement movement;
+	tl::bitmap bitmap;
 	tl::Sprite sprite;
 	tl::SpriteC spriteTest;
 	float pixelHalfSize;

@@ -45,6 +45,26 @@ static int StartLevel(int newLevel, const tl::Vec2<int> &pixelRect)
 	return returnVal;
 }
 
+int LoadBitmapFromFile(
+	char* fileName,
+	tl::bitmap& bitmap,
+	tl::MemorySpace& permanent
+) {
+	int fileReadResult = tl::file_interface_read(
+		fileName,
+		permanent
+	);
+	if (fileReadResult != tl::Success) return 1;
+
+	tl::bitmap_interface_initialize(
+		bitmap,
+		permanent
+	);
+	tl::CarveMemorySpace(bitmap.file_header.fileSizeInBytes, permanent);
+
+	return 0;
+}
+
 static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect, const tl::Input &input)
 {
 	state->mode = ReadyToStart;
