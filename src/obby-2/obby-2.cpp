@@ -5,9 +5,7 @@
 #include "./platform_common.cpp"
 #include "./levels.cpp"
 
-tl::SpriteC backgroundSprite;
 tl::bitmap backgroundBitmap;
-tl::SpriteC playersprites;
 tl::bitmap playerBitmaps;
 
 #include "./render-gamestate.cpp"
