@@ -47,18 +47,6 @@ namespace tl
 	uint64_t GetSpriteSpaceInBytes(const SpriteC& sprite);
 	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite);
 
-	void DrawSpriteC(
-		const RenderBuffer &renderBuffer,
-		const SpriteC &sprite,
-		const Rect<float> &footprint
-	);
-	void DrawSpriteC(
-		const RenderBuffer &renderBuffer,
-		const SpriteC &sprite,
-		const Vec2<float> &position,
-		const float contentHalfSize
-	);
-
 }
 
 #endif
