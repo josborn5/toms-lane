@@ -8,7 +8,7 @@ struct RGB24Bit
 };
 
 static int InitializeBitmapFromSpriteC(
-	const tl::SpriteC& sprite,
+	const SpriteC& sprite,
 	tl::bitmap& bitmap,
 	const tl::MemorySpace tempMemory)
 {
@@ -44,7 +44,7 @@ static int InitializeBitmapFromSpriteC(
 		for (int columnIndex = 0; columnIndex < sprite.width; columnIndex += 1)
 		{
 			int pixelIndex = startRowPixelIndex + columnIndex;
-			tl::Color spriteColor = sprite.content[pixelIndex];
+			Color spriteColor = sprite.content[pixelIndex];
 			RGB24Bit bitmapPixel;
 			bitmapPixel.r = (uint8_t)(255.0f * spriteColor.r);
 			bitmapPixel.g = (uint8_t)(255.0f * spriteColor.g);

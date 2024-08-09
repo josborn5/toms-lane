@@ -17,8 +17,8 @@ int tl::IntToCharString(int a, char* b)
 }
 
 const int pixelCount = 32;
-static tl::Color spriteContent[pixelCount];
-static tl::SpriteC sprite;
+static Color spriteContent[pixelCount];
+static SpriteC sprite;
 tl::MemorySpace memory;
 static Grid grid = {0};
 
@@ -29,7 +29,7 @@ static void ResetState()
 	grid.sprite = &sprite;
 	sprite.content = spriteContent;
 	memory.content = spriteContent;
-	memory.sizeInBytes = sizeof(tl::Color) * pixelCount;
+	memory.sizeInBytes = sizeof(Color) * pixelCount;
 
 	for (int i = 0; i < pixelCount; i += 1)
 	{
@@ -40,7 +40,7 @@ static void ResetState()
 	}
 }
 
-static void SetColor(tl::Color& color)
+static void SetColor(Color& color)
 {
 	color.r = 255.0f;
 	color.g = 254.0f;
@@ -59,7 +59,7 @@ static void FillSprite()
 
 static void AssertSetColorForPixel(int pixelIndex)
 {
-	tl::Color pixel = sprite.content[pixelIndex];
+	Color pixel = sprite.content[pixelIndex];
 	printf("checking pixel %d is set\n", pixelIndex);
 
 	assert(pixel.r == 255.0f);
@@ -70,7 +70,7 @@ static void AssertSetColorForPixel(int pixelIndex)
 
 static void AssertEmptyColorForPixel(int pixelIndex)
 {
-	tl::Color pixel = sprite.content[pixelIndex];
+	Color pixel = sprite.content[pixelIndex];
 	printf("checking pixel %d is empty\n", pixelIndex);
 
 	assert(pixel.r == 0.0f);

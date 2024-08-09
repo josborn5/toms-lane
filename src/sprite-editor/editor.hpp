@@ -4,6 +4,21 @@
 #include "../tl-application.hpp"
 #include "../tl-library.hpp"
 
+struct Color
+{
+	float r = 0.0f;
+	float g = 0.0f;
+	float b = 0.0f;
+	float a = 0.0f;
+};
+
+struct SpriteC
+{
+	int width;
+	int height;
+	Color* content;
+};
+
 enum EditorControl
 {
 	SpriteGrid,
@@ -14,7 +29,7 @@ enum EditorControl
 
 struct Grid
 {
-	tl::SpriteC* sprite;
+	SpriteC* sprite;
 	tl::Rect<float> footprint;
 	tl::Rect<float> container;
 	int selectedIndex = 0;

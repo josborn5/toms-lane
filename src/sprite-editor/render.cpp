@@ -15,7 +15,7 @@ static float cursorTime = 0.0f;
 
 static void GetDisplayStringForGrid(const Grid& grid, char* writeTo)
 {
-	tl::Color selectedColor = grid.sprite->content[grid.selectedIndex];
+	Color selectedColor = grid.sprite->content[grid.selectedIndex];
 
 	int color = (int)(selectedColor.r * 255.0f);
 	char* cursor = writeTo;
@@ -36,7 +36,7 @@ static void GetDisplayStringForGrid(const Grid& grid, char* writeTo)
 	tl::IntToCharString(color, cursor);
 }
 
-static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const tl::SpriteC& sprite, const tl::Rect<float>& containerRect)
+static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& sprite, const tl::Rect<float>& containerRect)
 {
 	tl::Rect<float> sizeRect;
 	float spriteAspectRatio = (float)sprite.height / (float)sprite.width;
@@ -79,7 +79,7 @@ static void RenderSpriteAsGrid(
 	int selectedBlockIndex,
 	Mode mode
 ) {
-	tl::SpriteC& sprite = *grid.sprite;
+	SpriteC& sprite = *grid.sprite;
 	const tl::Rect<float>& boundingRect = grid.footprint;
 
 	const float pixelBorderWidth = 2.0f;
@@ -130,7 +130,7 @@ static void RenderSpriteAsGrid(
 			}
 
 			int pixelIndex = (j * sprite.width) + i;
-			tl::Color blockColor = sprite.content[pixelIndex];
+			Color blockColor = sprite.content[pixelIndex];
 
 			uint32_t color = tl::GetColorFromRGB(
 				(int)(255.0f * blockColor.r),

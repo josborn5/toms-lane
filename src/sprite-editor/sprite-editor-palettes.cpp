@@ -1,8 +1,15 @@
 #include "../tl-library.hpp"
 #include "./editor.hpp"
 #include "./render.hpp"
+#include "./state.hpp"
 
 #define PALETTE_COUNT 4
+
+static uint64_t GetSpriteSpaceInBytes(const SpriteC& sprite)
+{
+	int pixelCount = sprite.width * sprite.height;
+	return sizeof(Color) * pixelCount;
+}
 
 char* rgrPaletteContent = "\
 2\n\
@@ -75,8 +82,8 @@ char* paletteContents[PALETTE_COUNT] = {
 	fantasyConsolePaletteContent
 };
 
-static tl::SpriteC palettes[PALETTE_COUNT];
-static tl::SpriteC rgrPalette;
+static SpriteC palettes[PALETTE_COUNT];
+static SpriteC rgrPalette;
 static int selectedPaletteIndex = 0;
 
 static void SelectPalette(EditorState& state)
@@ -90,9 +97,9 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 {
 	for (int i = 0; i < PALETTE_COUNT; i += 1)
 	{
-		palettes[i].content = (tl::Color*)paletteMemory.content;
-		tl::LoadSpriteC(paletteContents[i], tempMemory, palettes[i]);
-		uint64_t paletteSize = tl::GetSpriteSpaceInBytes(palettes[i]);
+		palettes[i].content = (Color*)paletteMemory.content;
+		LoadSpriteC(paletteContents[i], tempMemory, palettes[i]);
+		uint64_t paletteSize = GetSpriteSpaceInBytes(palettes[i]);
 		tl::CarveMemorySpace(paletteSize, paletteMemory);
 	}
 	SelectPalette(state);

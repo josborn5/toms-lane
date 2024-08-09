@@ -5,7 +5,7 @@
 #include "./transform.cpp"
 
 // Returns the number of chars
-static int SpriteCToCharString(const tl::SpriteC& sprite, tl::MemorySpace memory)
+static int SpriteCToCharString(const SpriteC& sprite, tl::MemorySpace memory)
 {
 	int charCount = 0;
 	int pixelCount = sprite.height * sprite.width;
@@ -45,7 +45,7 @@ static int SpriteCToCharString(const tl::SpriteC& sprite, tl::MemorySpace memory
 
 	for (int i = 0; i < pixelCount; i += 1)
 	{
-		tl::Color color = sprite.content[i];
+		Color color = sprite.content[i];
 		tl::IntToCharString((int)(color.r * 255), cursor);
 		while (*cursor)
 		{
@@ -92,7 +92,7 @@ static int SpriteCToCharString(const tl::SpriteC& sprite, tl::MemorySpace memory
 
 void Save(
 	const tl::GameMemory& gameMemory,
-	const tl::SpriteC& sprite,
+	const SpriteC& sprite,
 	tl::array<char>& displayBuffer,
 	char* filePath
 ) {
@@ -124,7 +124,7 @@ void Save(
 
 void SaveBitmap(
 	const tl::GameMemory& gameMemory,
-	const tl::SpriteC& sprite,
+	const SpriteC& sprite,
 	tl::array<char>& displayBuffer,
 	char* filePath
 )
@@ -164,7 +164,7 @@ void SaveBitmap(
 	}
 }
 
-static int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
+static int AppendRowToSpriteC(SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
 {
 	/*
 		Current: 3x2 grid of pixels
@@ -193,8 +193,8 @@ static int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory,
 
 	// Check there is space to add a final row
 	int currentPixelCount = sprite.width * sprite.height;
-	uint64_t currentPixelSpace = currentPixelCount * sizeof(tl::Color);
-	uint64_t newPixelSpace = sprite.width * sizeof(tl::Color);
+	uint64_t currentPixelSpace = currentPixelCount * sizeof(Color);
+	uint64_t newPixelSpace = sprite.width * sizeof(Color);
 	uint64_t availableSpace = spriteMemory.sizeInBytes - currentPixelSpace;
 
 	if (availableSpace < newPixelSpace)
@@ -216,7 +216,7 @@ static int AppendRowToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory,
 	int firstMovedPixelIndex = firstNewPixelIndex + sprite.width;
 	for (int i = firstNewPixelIndex; i < firstMovedPixelIndex; i += 1)
 	{
-		tl::Color pixel;
+		Color pixel;
 		pixel.r = 0.0f;
 		pixel.g = 0.0f;
 		pixel.b = 0.0f;
@@ -238,7 +238,7 @@ int InsertRow(Grid& grid, tl::MemorySpace spriteMemory)
 	return AppendRowToSpriteC(*grid.sprite, spriteMemory, selectedRowIndex);
 }
 
-static int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
+static int AppendColumnToSpriteC(SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
 {
 	/*
 		Current: 2x3 grid of pixels
@@ -275,8 +275,8 @@ static int AppendColumnToSpriteC(tl::SpriteC& sprite, tl::MemorySpace spriteMemo
 
 	// Check there is space to add a final column
 	int currentPixelCount = sprite.width * sprite.height;
-	uint64_t currentPixelSpace = currentPixelCount * sizeof(tl::Color);
-	uint64_t newPixelSpace = sprite.height * sizeof(tl::Color);
+	uint64_t currentPixelSpace = currentPixelCount * sizeof(Color);
+	uint64_t newPixelSpace = sprite.height * sizeof(Color);
 	uint64_t availableSpace = spriteMemory.sizeInBytes - currentPixelSpace;
 
 	if (availableSpace < newPixelSpace)

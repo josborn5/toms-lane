@@ -3,6 +3,7 @@
 
 int InitializeState(char* commandLine);
 const EditorState& GetLatestState(const tl::Input& input);
+void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite);
 
 #endif 
 

@@ -7,13 +7,13 @@
 
 void Save(
 	const tl::GameMemory& gameMemory,
-	const tl::SpriteC& sprite,
+	const SpriteC& sprite,
 	tl::array<char>& displayBuffer,
 	char* filePath
 );
 void SaveBitmap(
 	const tl::GameMemory& gameMemory,
-	const tl::SpriteC& sprite,
+	const SpriteC& sprite,
 	tl::array<char>& displayBuffer,
 	char* filePath
 );

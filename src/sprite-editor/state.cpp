@@ -13,9 +13,9 @@ static const int modeBufferSize = 2;
 static bool hasCopied = false;
 static tl::MemorySpace spriteMemory;
 static tl::MemorySpace paletteMemory;
-static tl::Color currentColor;
-static tl::Color copiedColor;
-static tl::SpriteC currentSprite;
+static Color currentColor;
+static Color copiedColor;
+static SpriteC currentSprite;
 
 tl::GameMemory appMemory;
 
@@ -25,7 +25,67 @@ static char filePathBuffer[filePathBufferSize] = {0};
 static char* filePath = &filePathBuffer[0];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
 
-static int CompareColor(const tl::Color& color1, const tl::Color& color2)
+static char* ParseColorFromCharArray(char* content, tl::MemorySpace& space, Color& color)
+{
+	char* buffer = (char*)space.content;
+	char* workingPointer = content;
+
+	/// RBGA values
+	int rgbaContent[4] = { 0, 0, 0, 255 }; // Default alpha to 100%
+
+	for (int i = 0; i < 4 && *workingPointer; i += 1)
+	{
+		workingPointer = tl::GetNextNumberChar(workingPointer);
+		if (*workingPointer)
+		{
+			workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
+			rgbaContent[i] = tl::CharStringToInt(buffer);
+		}
+	}
+
+	color.r = (float)rgbaContent[0] / 255.0f;
+	color.g = (float)rgbaContent[1] / 255.0f;
+	color.b = (float)rgbaContent[2] / 255.0f;
+	color.a = (float)rgbaContent[3] / 255.0f;
+
+	return workingPointer;
+}
+
+/*
+* Assumed char* format is:
+* width<int>\n
+* height<int>\n
+* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // 1st pixel
+* :
+* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // Nth pixel
+*/
+void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
+{
+	char* buffer = (char*)space.content;
+	// Width
+	char* workingPointer = tl::GetNextNumberChar(content);
+	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
+	int width = tl::CharStringToInt(buffer);
+
+	// Height
+	workingPointer = tl::GetNextNumberChar(workingPointer);
+	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
+	int height = tl::CharStringToInt(buffer);
+
+	// Content
+	int contentCount = height * width;
+
+	sprite.width = width;
+	sprite.height = height;
+
+	for (int i = 0; i < contentCount && *workingPointer; i += 1)
+	{
+		workingPointer = ParseColorFromCharArray(workingPointer, space, sprite.content[i]);
+	}
+}
+
+
+static int CompareColor(const Color& color1, const Color& color2)
 {
 	if (color1.r == color2.r &&
 		color1.g == color2.g &&
@@ -39,7 +99,7 @@ static int CompareColor(const tl::Color& color1, const tl::Color& color2)
 
 static int GetCursorIndexForNextColor(Grid& grid, int step, int inclusiveMinPixelIndex, int inclusiveMaxPixelIndex, int prevIndex)
 {
-	tl::Color activeColor = grid.sprite->content[grid.selectedIndex];
+	Color activeColor = grid.sprite->content[grid.selectedIndex];
 	int pixelIndex = prevIndex;
 	int provisionalIndex = pixelIndex + step;
 	bool sameColor = true;
@@ -213,8 +273,8 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	InitializePalettes(paletteMemory, tempMemory, state);
 
 	char* spriteCharArray = (char*)fileReadMemory.content;
-	currentSprite.content = (tl::Color*)spriteMemory.content;
-	tl::LoadSpriteC(spriteCharArray, tempMemory, currentSprite);
+	currentSprite.content = (Color*)spriteMemory.content;
+	LoadSpriteC(spriteCharArray, tempMemory, currentSprite);
 
 	state.pixels.sprite = &currentSprite;
 
@@ -520,7 +580,7 @@ static void ApplyCommandModeInputToState(const tl::Input& input)
 
 const EditorState& GetLatestState(const tl::Input& input)
 {
-	if (input.buttons[tl::KEY_ESCAPE].keyDown)
+	if (input.buttons[tl::KEY_ESCAPE].keyDown && state.mode != NoFile)
 	{
 		ClearCommandBuffer();
 		state.mode = View;
