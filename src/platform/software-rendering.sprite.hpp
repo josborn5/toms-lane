@@ -26,27 +26,6 @@ namespace tl
 		uint32_t color
 	);
 
-
-	// full-color sprite
-	struct Color
-	{
-		float r = 0.0f;
-		float g = 0.0f;
-		float b = 0.0f;
-		float a = 0.0f;
-	};
-
-	struct SpriteC
-	{
-		int width;
-		int height;
-		Color* content;
-	};
-
-	char* ParseColorFromCharArray(char* content, MemorySpace& space, Color& color);
-	uint64_t GetSpriteSpaceInBytes(const SpriteC& sprite);
-	void LoadSpriteC(char* content, MemorySpace& space, SpriteC& sprite);
-
 }
 
 #endif
