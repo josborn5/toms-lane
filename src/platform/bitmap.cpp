@@ -207,6 +207,7 @@ static void resolve_bitmap_render_bounds(
 	resolvedEnd.y = (renderEnd.y > buffer.height) ? buffer.height : renderEnd.y;
 }
 
+
 int bitmap_interface_render(
 	const RenderBuffer& buffer,
 	const bitmap& bitmap,
@@ -227,11 +228,13 @@ int bitmap_interface_render(
 	int bitmapY = 0;
 	for (int j = start.y; j < end.y; j += 1)
 	{
+		uint32_t* pixel = buffer.pixels + (buffer.width * j) + start.x;
 		int bitmapX = 0;
 		for (int i = start.x; i < end.x; i += 1)
 		{
 			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, bitmapX, bitmapY);
-			PlotPixel(buffer, pixelColor, i, j);
+			*pixel = pixelColor;
+			pixel++;
 			bitmapX += 1;
 		}
 		bitmapY += 1;
@@ -268,11 +271,13 @@ int bitmap_interface_render(
 	float bitmapY = 0.0f;
 	for (int j = start.y; j < end.y; j += 1)
 	{
+		uint32_t* pixel = buffer.pixels + (buffer.width * j) + start.x;
 		float bitmapX = 0.0f;
 		for (int i = start.x; i < end.x; i += 1)
 		{
 			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, (int)bitmapX, (int)bitmapY);
-			PlotPixel(buffer, pixelColor, i, j);
+			*pixel = pixelColor;
+			pixel++;
 			bitmapX += bitmapIncrement.x;
 		}
 		bitmapY += bitmapIncrement.y;

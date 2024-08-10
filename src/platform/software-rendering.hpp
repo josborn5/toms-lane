@@ -14,16 +14,6 @@ namespace tl
 	 *	|---|---|---|
 	 *	0   1   2   3	position ordinals
 	 *
-	 * x & y parameters are the pixel and NOT the position ordinals
-	 */
-	void PlotPixel(const RenderBuffer &renderBuffer, uint32_t color, int x, int y);
-
-	/**
-	 *	|---|---|---|
-	 *	| 0 | 1 | 2 |	pixel ordinals
-	 *	|---|---|---|
-	 *	0   1   2   3	position ordinals
-	 *
 	 * p0 & p1 are pixel and NOT position ordinals
 	 */
 	// Implemented with Bresenham's algorithm
