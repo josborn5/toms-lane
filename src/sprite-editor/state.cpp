@@ -12,6 +12,7 @@ static const int modeBufferSize = 2;
 
 static bool hasCopied = false;
 static tl::MemorySpace spriteMemory;
+static tl::MemorySpace fileReadMemory;
 static tl::MemorySpace paletteMemory;
 static Color currentColor;
 static Color copiedColor;
@@ -216,8 +217,8 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	const uint64_t oneMegaByteInBytes = oneKiloByteInBytes * 1024;
 	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, perm);
 	spriteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, perm);
+	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, perm);
 	tl::MemorySpace temp = gameMemory.transient;
-	tl::MemorySpace fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
 	tl::MemorySpace tempMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
 
 	// Load file
@@ -300,8 +301,8 @@ int InitializeState(char* commandLine)
 	}
 
 	tl::InitializeMemory(
-		2,
-		2,
+		3,
+		1,
 		appMemory
 	);
 
