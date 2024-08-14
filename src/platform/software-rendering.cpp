@@ -13,7 +13,7 @@ namespace tl
 	 *
 	 * x & y parameters are the pixel and NOT the position ordinals
 	 */
-	void PlotPixel(const RenderBuffer &renderBuffer, uint32_t color, int x, int y)
+	static void PlotPixel(const RenderBuffer &renderBuffer, uint32_t color, int x, int y)
 	{
 		// Make sure writing to the render buffer does not escape its bounds
 		if (x < 0 || x >(renderBuffer.width - 1) || y < 0 || y >(renderBuffer.height - 1))
