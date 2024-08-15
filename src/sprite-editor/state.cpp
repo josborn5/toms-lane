@@ -4,6 +4,7 @@
 #include "./palettes.hpp"
 #include "./commands.hpp"
 #include "./utilities.hpp"
+#include "./transform.hpp"
 
 static const int commandBufferSize = 256;
 static const int filePathBufferSize = 256;
@@ -17,6 +18,7 @@ static tl::MemorySpace paletteMemory;
 static Color currentColor;
 static Color copiedColor;
 static SpriteC currentSprite;
+static tl::bitmap currentBitmap;
 
 tl::GameMemory appMemory;
 
@@ -236,6 +238,13 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	InitializePalettes(paletteMemory, tempMemory, state);
 
 	currentSprite.content = (Color*)spriteMemory.content;
+
+	tl::bitmap_interface_initialize(currentBitmap, fileReadMemory);
+	InitializeSpriteCFromBitmap(
+		currentSprite,
+		currentBitmap,
+		tempMemory);
+
 	LoadSpriteC(spriteCharArray, tempMemory, currentSprite);
 
 	state.pixels.sprite = &currentSprite;

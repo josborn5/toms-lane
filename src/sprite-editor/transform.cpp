@@ -59,3 +59,10 @@ int InitializeBitmapFromSpriteC(
 	return 0;
 }
 
+int InitializeSpriteCFromBitmap(
+	SpriteC& sprite,
+	const tl::bitmap& bitmap,
+	const tl::MemorySpace tempMemory)
+{
+	return 0;
+}
