@@ -1,4 +1,6 @@
+#include "../tl-application.hpp"
 #include "../tl-library.hpp"
+#include "./editor.hpp"
 
 struct RGB24Bit
 {
@@ -7,7 +9,7 @@ struct RGB24Bit
 	uint8_t r;
 };
 
-static int InitializeBitmapFromSpriteC(
+int InitializeBitmapFromSpriteC(
 	const SpriteC& sprite,
 	tl::bitmap& bitmap,
 	const tl::MemorySpace tempMemory)

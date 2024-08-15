@@ -2,7 +2,7 @@
 #include "../tl-library.hpp"
 #include "./editor.hpp"
 #include "./utilities.hpp"
-#include "./transform.cpp"
+#include "./transform.hpp"
 
 // Returns the number of chars
 static int SpriteCToCharString(const SpriteC& sprite, tl::MemorySpace memory)
