@@ -203,7 +203,6 @@ static void ClearCommandBuffer()
 	}
 }
 
-
 static int Initialize(const tl::GameMemory& gameMemory)
 {
 	state.mode = View;
@@ -222,58 +221,20 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	tl::MemorySpace tempMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
 
 	// Load file
-	if (*filePath)
-	{
-		uint64_t fileSize = 0;
-		int getSizeResult = tl::file_interface_size_get(filePath, fileSize);
-		if (getSizeResult != tl::Success)
-		{
-			// If the file does not exist, try to create it
-			if (getSizeResult == tl::FileDoesNotExist)
-			{
-				tl::MemorySpace empty;
-				empty.content = (void*)"";
-				empty.sizeInBytes = 0;
-				int createEmptyFileResult = tl::file_interface_write(filePath, empty);
-				if (createEmptyFileResult != tl::Success)
-				{
-					state.mode = NoFile;
-					return 1;
-				}
-
-				// Initialize default sprite
-				fileReadMemory.content = "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0";
-			}
-			else
-			{
-				state.mode = NoFile;
-				return 1;
-			}
-		}
-
-		if (tl::file_interface_read(filePath, fileReadMemory) != tl::Success)
-		{
-			state.mode = NoFile;
-			return 1;
-		}
-	}
-	else
+	if (!*filePath || tl::file_interface_read(filePath, fileReadMemory) != tl::Success)
 	{
 		state.mode = NoFile;
 	}
 
 	ClearCommandBuffer();
 
-	if (state.mode == NoFile)
-	{
-		// Initialize default sprite
-		fileReadMemory.content = "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0";
-	}
+	char* spriteCharArray = (state.mode == NoFile)
+		? "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0"
+		: (char*)fileReadMemory.content;
 
 	InitializeLayout(state);
 	InitializePalettes(paletteMemory, tempMemory, state);
 
-	char* spriteCharArray = (char*)fileReadMemory.content;
 	currentSprite.content = (Color*)spriteMemory.content;
 	LoadSpriteC(spriteCharArray, tempMemory, currentSprite);
 
