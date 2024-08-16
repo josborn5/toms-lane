@@ -5,7 +5,7 @@
 // mock implementations of libraries used
 int tl::file_interface_write(
 	char* fileName,
-	const MemorySpace& writeBuffer
+	const tl::MemorySpace& writeBuffer
 )
 {
 	return 0;
@@ -15,6 +15,20 @@ int tl::IntToCharString(int a, char* b)
 {
 	return 0;
 }
+
+int tl::bitmap_interface_write(
+	const tl::bitmap& bitmap,
+	const tl::MemorySpace& memory)
+{
+	return 0;
+}
+
+tl::MemorySpace tl::CarveMemorySpace(uint64_t carveSizeInBytes, tl::MemorySpace& toCarve)
+{
+	return toCarve;
+}
+
+
 
 const int pixelCount = 32;
 static Color spriteContent[pixelCount];
