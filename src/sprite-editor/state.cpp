@@ -222,32 +222,27 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	tl::MemorySpace temp = gameMemory.transient;
 	tl::MemorySpace tempMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
 
+	currentSprite.content = (Color*)spriteMemory.content;
+	state.pixels.sprite = &currentSprite;
+
 	// Load file
 	if (!*filePath || tl::file_interface_read(filePath, fileReadMemory) != tl::Success)
 	{
 		state.mode = NoFile;
+		LoadSpriteC("2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0", tempMemory, currentSprite);
+	}
+	else
+	{
+		tl::bitmap_interface_initialize(currentBitmap, fileReadMemory);
+		InitializeSpriteCFromBitmap(
+			currentSprite,
+			currentBitmap,
+			spriteMemory);
 	}
 
 	ClearCommandBuffer();
-
-//	char* spriteCharArray = (state.mode == NoFile)
-//		? "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0"
-//		: (char*)fileReadMemory.content;
-
 	InitializeLayout(state);
 	InitializePalettes(paletteMemory, tempMemory, state);
-
-	currentSprite.content = (Color*)spriteMemory.content;
-
-	tl::bitmap_interface_initialize(currentBitmap, fileReadMemory);
-	InitializeSpriteCFromBitmap(
-		currentSprite,
-		currentBitmap,
-		spriteMemory);
-
-//	LoadSpriteC(spriteCharArray, tempMemory, currentSprite);
-
-	state.pixels.sprite = &currentSprite;
 
 	SizeGrid(state.pixels);
 	return 0;
