@@ -41,7 +41,7 @@ int InitializeBitmapFromSpriteC(
 	// SpriteC origin is top left
 	// Bitmap origin is bottom left
 	int bottomLeftSpritePixelIndex =  spritePixelCount - sprite.width;
-	for (int startRowPixelIndex = bottomLeftSpritePixelIndex; startRowPixelIndex >= 0; startRowPixelIndex  -= sprite.width)
+	for (int startRowPixelIndex = bottomLeftSpritePixelIndex; startRowPixelIndex >= 0; startRowPixelIndex -= sprite.width)
 	{
 		for (int columnIndex = 0; columnIndex < sprite.width; columnIndex += 1)
 		{
@@ -62,7 +62,39 @@ int InitializeBitmapFromSpriteC(
 int InitializeSpriteCFromBitmap(
 	SpriteC& sprite,
 	const tl::bitmap& bitmap,
-	const tl::MemorySpace tempMemory)
+	const tl::MemorySpace spriteMemory)
 {
+	const int supportedBitsPerPixel = 24;
+	int bytesPerPixel = supportedBitsPerPixel / 8;
+	if (bitmap.dibs_header.bitsPerPixel != supportedBitsPerPixel) return -1;
+
+	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
+	int spritePixelCount = bitmap.dibs_header.imageSizeInBytes / bytesPerPixel;
+
+	if ((sizeof(Color) * spritePixelCount) > spriteMemory.sizeInBytes) return -2;
+
+	sprite.width = bitmap.dibs_header.width;
+	sprite.height = bitmap.dibs_header.height;
+
+	// SpriteC origin is top left
+	// Bitmap origin is bottom left
+	int bottomLeftSpritePixelIndex =  spritePixelCount - sprite.width;
+	for (int startRowPixelIndex = bottomLeftSpritePixelIndex; startRowPixelIndex >= 0; startRowPixelIndex -= sprite.width)
+	{
+		for (int columnIndex = 0; columnIndex < sprite.width; columnIndex += 1)
+		{
+			RGB24Bit bitmapPixel = *twentyFourBitContent;
+			twentyFourBitContent++;
+
+			Color spriteColor;
+			spriteColor.r = (float)bitmapPixel.r / 255.0f;
+			spriteColor.g = (float)bitmapPixel.g / 255.0f;
+			spriteColor.b = (float)bitmapPixel.b / 255.0f;
+
+			int pixelIndex = startRowPixelIndex + columnIndex;
+			sprite.content[pixelIndex] = spriteColor;
+		}
+	}
+
 	return 0;
 }

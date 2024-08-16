@@ -230,9 +230,9 @@ static int Initialize(const tl::GameMemory& gameMemory)
 
 	ClearCommandBuffer();
 
-	char* spriteCharArray = (state.mode == NoFile)
-		? "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0"
-		: (char*)fileReadMemory.content;
+//	char* spriteCharArray = (state.mode == NoFile)
+//		? "2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0"
+//		: (char*)fileReadMemory.content;
 
 	InitializeLayout(state);
 	InitializePalettes(paletteMemory, tempMemory, state);
@@ -243,9 +243,9 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	InitializeSpriteCFromBitmap(
 		currentSprite,
 		currentBitmap,
-		tempMemory);
+		spriteMemory);
 
-	LoadSpriteC(spriteCharArray, tempMemory, currentSprite);
+//	LoadSpriteC(spriteCharArray, tempMemory, currentSprite);
 
 	state.pixels.sprite = &currentSprite;
 
