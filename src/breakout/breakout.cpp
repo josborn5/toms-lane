@@ -47,13 +47,15 @@ int tl::main(char* commandLine)
 
 	tl::console_interface_open();
 
-	int windowOpenResult = tl::OpenWindow(settings);
+
+	int clientX, clientY;
+	int windowOpenResult = tl::OpenWindow(settings, clientX, clientY);
 	if (windowOpenResult != 0)
 	{
 		return windowOpenResult;
 	}
 
-	InitializeGameState();
+	InitializeGameState(clientX, clientY);
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }

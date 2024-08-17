@@ -3,7 +3,7 @@
 
 #include "../tl-application.hpp"
 
-void InitializeGameState();
+void InitializeGameState(int clientX, int clientY);
 GameState& UpdateGameState(const tl::Input& input, float dt);
 int startSound();
 

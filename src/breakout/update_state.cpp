@@ -4,10 +4,10 @@
 #include "sound.cpp"
 
 
-static const Boundary topBoundary = { Top, 720, -1.0f };
+static Boundary topBoundary = { Top, 720, -1.0f };
 static const Boundary bottomBoundary = { Bottom, 0, 1.0f };
 static const Boundary leftBoundary = { Left, 0, 1.0f };
-static const Boundary rightBoundary = { Right, 1280, -1.0f };
+static Boundary rightBoundary = { Right, 1280, -1.0f };
 
 static const int blockCapacity = 64;
 static tl::rect_node blockTreeStorage[blockCapacity];
@@ -63,11 +63,13 @@ static void StartNextLevel()
 	);
 }
 
-void InitializeGameState()
+void InitializeGameState(int clientX, int clientY)
 {
 	gamestate.mode = ReadyToStart;
-	float worldHalfX = 0.5f * (float)rightBoundary.position;
-	float worldHalfY = 0.5f * (float)topBoundary.position;
+	rightBoundary.position = (float)clientX;
+	topBoundary.position = (float)clientY;
+	float worldHalfX = 0.5f * rightBoundary.position;
+	float worldHalfY = 0.5f * topBoundary.position;
 	gamestate.world.halfSize.x = worldHalfX;
 	gamestate.world.halfSize.y = worldHalfY;
 	gamestate.world.position.x = worldHalfX;
@@ -375,7 +377,7 @@ GameState& UpdateGameState(const tl::Input& input, float dt)
 
 	if (input.buttons[tl::KEY_R].keyUp || gamestate.mode == GameOver)
 	{
-		InitializeGameState();
+		InitializeGameState((int)rightBoundary.position, (int)topBoundary.position);
 		return gamestate;
 	}
 
