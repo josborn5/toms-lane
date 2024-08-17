@@ -205,12 +205,12 @@ static void ClearCommandBuffer()
 	}
 }
 
-static int Initialize(const tl::GameMemory& gameMemory)
+static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY)
 {
 	state.mode = View;
 	state.commandBuffer = &commandBuffer[0];
-	state.windowWidth = 800;
-	state.windowHeight = 600;
+	state.windowWidth = clientX;
+	state.windowHeight = clientY;
 
 	// Define memory slices
 	tl::MemorySpace perm = gameMemory.permanent;
@@ -258,7 +258,7 @@ static void CopyString(char* source, char* target)
 	}
 }
 
-int InitializeState(char* commandLine)
+int InitializeState(char* commandLine, int clientX, int clientY)
 {
 	if (*commandLine)
 	{
@@ -271,7 +271,7 @@ int InitializeState(char* commandLine)
 		appMemory
 	);
 
-	return Initialize(appMemory);
+	return Initialize(appMemory, clientX, clientY);
 }
 
 static void ExecuteCurrentCommand()
@@ -312,7 +312,7 @@ static void ExecuteCurrentCommand()
 				&& commands.get(5) == ' '
 				&& commands.get(6) != '\0') // edit new file
 			{
-				InitializeState(&commands.access(6));
+				InitializeState(&commands.access(6), state.windowWidth, state.windowHeight);
 				return;
 			}
 			else // edit color of selected pixel

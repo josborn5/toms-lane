@@ -27,13 +27,14 @@ int tl::main(char* commandLine)
 	settings.width = 800;
 	settings.height = 600;
 
-	int windowOpenResult = tl::OpenWindow(settings);
+	int clientX, clientY;
+	int windowOpenResult = tl::OpenWindow(settings, clientX, clientY);
 	if (windowOpenResult != 0)
 	{
 		return windowOpenResult;
 	}
 
-	InitializeState(commandLine);
+	InitializeState(commandLine, clientX, clientY);
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
