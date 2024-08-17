@@ -172,11 +172,11 @@ int OpenWindow(const WindowSettings& settings)
 	return OpenWindowInner(instanceHandle, settings);
 }
 
-int OpenWindow(const WindowSettings& settings, int clientX, int clientY)
+int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY)
 {
 	int openWindowResult = OpenWindow(settings);
-	clientX = globalRenderBuffer.width;
-	clientY = globalRenderBuffer.height;
+	outClientX = globalRenderBuffer.width;
+	outClientY = globalRenderBuffer.height;
 
 	return openWindowResult;
 }

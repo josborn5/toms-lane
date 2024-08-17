@@ -23,7 +23,7 @@ namespace tl
 	};
 
 	int OpenWindow(const WindowSettings& settings);
-	int OpenWindow(const WindowSettings& settings, int clientX, int clientY);
+	int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY);
 
 	// Define function signature of updating the video buffer
 	typedef int (*UpdateWindowCallback)(const Input& input, int dtInMilliseconds, RenderBuffer& renderBuffer);
