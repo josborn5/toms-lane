@@ -5,12 +5,6 @@
 #include "../tl-library.hpp"
 #include "./editor.hpp"
 
-void Save(
-	const tl::GameMemory& gameMemory,
-	const SpriteC& sprite,
-	tl::array<char>& displayBuffer,
-	char* filePath
-);
 void SaveBitmap(
 	const tl::GameMemory& gameMemory,
 	const SpriteC& sprite,

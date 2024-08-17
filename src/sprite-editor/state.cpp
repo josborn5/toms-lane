@@ -282,21 +282,6 @@ static void ExecuteCurrentCommand()
 	}
 	switch (commands.get(1))
 	{
-		case 'S': // save
-		{
-			if (commands.get(2) == '\0') // save to current filePath
-			{
-				Save(appMemory, *state.pixels.sprite, commands, filePath);
-				return;
-			}
-			else if (commands.get(2) == ' ' && commands.get(3)) // save to new filePath
-			{
-				filePath = &commands.access(3);
-				Save(appMemory, *state.pixels.sprite, commands, filePath);
-				return;
-			}
-			break;
-		}
 		case 'R': // append row
 		{
 			if (commands.get(2) == '\0')
@@ -319,18 +304,18 @@ static void ExecuteCurrentCommand()
 			}
 			break;
 		}
-		case 'E': // edit color of selected pixel
+		case 'E':
 		{
 			if (commands.get(2) == 'D'
 				&& commands.get(3) == 'I'
 				&& commands.get(4) == 'T'
 				&& commands.get(5) == ' '
-				&& commands.get(6) != '\0')
+				&& commands.get(6) != '\0') // edit new file
 			{
 				InitializeState(&commands.access(6));
 				return;
 			}
-			else
+			else // edit color of selected pixel
 			{
 				char* pointer = tl::GetNextNumberChar(&commands.access(1));
 				tl::MemorySpace transient = appMemory.transient;
@@ -393,23 +378,12 @@ static void ExecuteCurrentCommand()
 		{
 			if (*filePath && commands.get(2) == '\0')
 			{
-				Save(appMemory, *state.pixels.sprite, commands, filePath);
+				SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
 				return;
 			}
 			if (commands.get(2) == ' ' && commands.get(3)) // save to new filePath
 			{
 				filePath = &commands.access(3);
-				Save(appMemory, *state.pixels.sprite, commands, filePath);
-				return;
-			}
-			if (*filePath && commands.get(2) == 'B' && commands.get(3) == '\0')
-			{
-				SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
-				return;
-			}
-			if (commands.get(2) == 'B' && commands.get(3) == ' ' && commands.get(4)) // save to new filePath
-			{
-				filePath = &commands.access(4);
 				SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
 				return;
 			}
@@ -430,6 +404,7 @@ static void ExecuteCurrentCommand()
 	commands.append('A');
 	commands.append('N');
 	commands.append('D');
+	commands.append('\0');
 }
 
 static bool CheckForCopy(const tl::Input& input)
