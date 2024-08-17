@@ -128,7 +128,7 @@ static void Win32_ProcessPendingMessages(Input* input)
 	}
 }
 
-int OpenWindow(HINSTANCE instance, const WindowSettings& settings)
+static int OpenWindowInner(HINSTANCE instance, const WindowSettings& settings)
 {
 	WNDCLASSA windowClass = {0};
 	windowClass.style = CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
@@ -169,7 +169,16 @@ int OpenWindow(HINSTANCE instance, const WindowSettings& settings)
 int OpenWindow(const WindowSettings& settings)
 {
 	HINSTANCE instanceHandle = instance_handle_get();
-	return OpenWindow(instanceHandle, settings);
+	return OpenWindowInner(instanceHandle, settings);
+}
+
+int OpenWindow(const WindowSettings& settings, int clientX, int clientY)
+{
+	int openWindowResult = OpenWindow(settings);
+	clientX = globalRenderBuffer.width;
+	clientY = globalRenderBuffer.height;
+
+	return openWindowResult;
 }
 
 int RunWindowUpdateLoop(
