@@ -521,10 +521,13 @@ static void ApplyCommandModeInputToState(const tl::Input& input)
 
 const EditorState& GetLatestState(const tl::Input& input)
 {
-	if (input.buttons[tl::KEY_ESCAPE].keyDown && state.mode != NoFile)
+	if (input.buttons[tl::KEY_ESCAPE].keyDown)
 	{
 		ClearCommandBuffer();
-		state.mode = View;
+		if (state.mode != NoFile)
+		{
+			state.mode = View;
+		}
 		return state;
 	}
 
