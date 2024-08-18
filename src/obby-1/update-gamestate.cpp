@@ -384,8 +384,6 @@ static int StartLevel(int newLevel)
 
 static int InitializeGameState(GameState *state, const tl::Input &input)
 {
-	state->camera.halfSize = { 1280.0f * 0.75f, 720.0f * 0.75f };
-
 	state->mode = ReadyToStart;
 
 	state->player.halfSize.x = state->player.bitmap.dibs_header.width * state->player.pixelHalfSize;

@@ -39,11 +39,15 @@ int tl::main(char* commandLine)
 	settings.width = 1280;
 	settings.height = 720;
 
-	int windowOpenResult = tl::OpenWindow(settings);
+	int clientX, clientY;
+	int windowOpenResult = tl::OpenWindow(settings, clientX, clientY);
 	if (windowOpenResult != 0)
 	{
 		return windowOpenResult;
 	}
+
+	gamestate.camera.halfSize.x = (float)(clientX / 2);
+	gamestate.camera.halfSize.y = (float)(clientY / 2);
 
 	tl::InitializeMemory(
 		2,
