@@ -29,6 +29,335 @@ static int GetDigitIndex(char c)
 
 void font_interface_initialize()
 {
+	digits[0] = LoadSprite("\
+ 00\n\
+0  0\n\
+0  0\n\
+0000\n\
+0  0\n\
+0  0\n\
+0  0");
+	digits[1] = LoadSprite("\
+000\n\
+0  0\n\
+0  0\n\
+000\n\
+0  0\n\
+0  0\n\
+000");
+	digits[2] = LoadSprite("\
+ 000\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+ 000");
+	digits[3] = LoadSprite("\
+000\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+000");
+	digits[4] = LoadSprite("\
+0000\n\
+0\n\
+0\n\
+000\n\
+0\n\
+0\n\
+0000");
+	digits[5] = LoadSprite("\
+0000\n\
+0\n\
+0\n\
+000\n\
+0\n\
+0\n\
+0");
+	digits[6] = LoadSprite("\
+ 000\n\
+0\n\
+0\n\
+0 00\n\
+0  0\n\
+0  0\n\
+ 000");
+	digits[7] = LoadSprite("\
+0  0\n\
+0  0\n\
+0  0\n\
+0000\n\
+0  0\n\
+0  0\n\
+0  0");
+	digits[8] = LoadSprite("\
+000\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+000");
+	digits[9] = LoadSprite("\
+ 000\n\
+   0\n\
+   0\n\
+   0\n\
+0  0\n\
+0  0\n\
+ 000");
+	digits[10] = LoadSprite("\
+0  0\n\
+0  0\n\
+0 0\n\
+00\n\
+0 0\n\
+0  0\n\
+0  0");
+	digits[11] = LoadSprite("\
+0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0000");
+	digits[12] = LoadSprite("\
+00 00\n\
+0 0 0\n\
+0 0 0\n\
+0   0\n\
+0   0\n\
+0   0\n\
+0   0");
+	digits[13] = LoadSprite("\
+0   0\n\
+0   0\n\
+00  0\n\
+0 0 0\n\
+0  00\n\
+0   0\n\
+0   0");
+	digits[14] = LoadSprite("\
+ 00 \n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+ 00");
+	digits[15] = LoadSprite("\
+000\n\
+0  0\n\
+0  0\n\
+000\n\
+0\n\
+0\n\
+0");
+	digits[16] = LoadSprite("\
+ 000\n\
+0   0\n\
+0   0\n\
+0   0\n\
+0 0 0\n\
+0  0\n\
+ 00 0");
+	digits[17] = LoadSprite("\
+000\n\
+0  0\n\
+0  0\n\
+000\n\
+0  0\n\
+0  0\n\
+0  0");
+	digits[18] = LoadSprite("\
+ 000\n\
+0\n\
+0\n\
+ 00\n\
+   0\n\
+   0\n\
+000");
+	digits[19] = LoadSprite("\
+000\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0");
+	digits[20] = LoadSprite("\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+ 00");
+	digits[21] = LoadSprite("\
+0   0\n\
+0   0\n\
+0   0\n\
+ 0 0\n\
+ 0 0\n\
+  0\n\
+  0");
+	digits[22] = LoadSprite("\
+0   0\n\
+0   0\n\
+0   0\n\
+0 0 0\n\
+0 0 0\n\
+ 0 0\n\
+ 0 0");
+	digits[23] = LoadSprite("\
+0   0\n\
+0   0\n\
+ 0 0\n\
+  0\n\
+ 0 0\n\
+0   0\n\
+0   0");
+	digits[24] = LoadSprite("\
+0   0\n\
+0   0\n\
+ 0 0\n\
+ 0 0\n\
+  0\n\
+  0\n\
+  0");
+	digits[25] = LoadSprite("\
+0000\n\
+   0\n\
+  0\n\
+ 0\n\
+0\n\
+0\n\
+0000");
+
+	digits[0] = LoadSprite("\
+ 000 \n\
+0   0\n\
+0  00\n\
+0 0 0\n\
+00  0\n\
+0   0\n\
+ 000");
+	digits[1] = LoadSprite("\
+ 0\n\
+00\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+000");
+	digits[2] = LoadSprite("\
+ 00\n\
+0  0\n\
+   0\n\
+  0\n\
+ 0\n\
+0\n\
+0000");
+	digits[3] = LoadSprite("\
+ 00\n\
+0  0\n\
+   0\n\
+ 00\n\
+   0\n\
+0  0\n\
+ 00");
+	digits[4] = LoadSprite("\
+  00\n\
+ 0 0\n\
+0  0\n\
+0000\n\
+   0\n\
+   0\n\
+   0");
+	digits[5] = LoadSprite("\
+0000\n\
+0\n\
+0\n\
+000\n\
+   0\n\
+   0\n\
+000");
+	digits[6] = LoadSprite("\
+ 000\n\
+0\n\
+0\n\
+000\n\
+0  0\n\
+0  0\n\
+ 00");
+	digits[7] = LoadSprite("\
+0000\n\
+   0\n\
+   0\n\
+  0\n\
+ 0\n\
+0\n\
+0");
+	digits[8] = LoadSprite("\
+ 00\n\
+0  0\n\
+0  0\n\
+ 00\n\
+0  0\n\
+0  0\n\
+ 00");
+	digits[9] = LoadSprite("\
+ 00\n\
+0  0\n\
+0  0\n\
+ 00\n\
+  0\n\
+ 0\n\
+0");
+
+	negSprite = LoadSprite("\
+\n\
+\n\
+\n\
+0000\n\
+\n\
+\n\
+");
+	periodSprite = LoadSprite("\
+\n\
+\n\
+\n\
+\n\
+\n\
+ 00 \n\
+ 00 ");
+	colonSprite = LoadSprite("\
+\n\
+ 00 \n\
+ 00 \n\
+\n\
+ 00 \n\
+ 00 \n\
+");
+	backSlashSprite = LoadSprite("\
+0\n\
+ 0\n\
+ 0\n\
+  0\n\
+  0\n\
+   0");
+	forwardSlashSprite = LoadSprite("\
+   0\n\
+  0\n\
+  0\n\
+ 0\n\
+ 0\n\
+0");
+
 	initialized = true;
 }
 
@@ -39,6 +368,8 @@ float font_interface_render_alphabet(
 	uint32_t color
 )
 {
+	if (!initialized) return 0.0f;
+
 	Rect<float> charRect;
 	charRect.halfSize = firstCharFootprint.halfSize;
 	charRect.position = tl::Vec2<float> { firstCharFootprint.position.x, firstCharFootprint.position.y };
@@ -102,6 +433,8 @@ void font_interface_render_integer(
 	uint32_t color
 )
 {
+	if (!initialized) return;
+
 	Rect<float> charRect;
 	charRect.halfSize = firstCharFootprint.halfSize;
 	charRect.position = tl::Vec2<float> { firstCharFootprint.position.x, firstCharFootprint.position.y };
