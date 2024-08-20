@@ -153,7 +153,7 @@ static void RenderSpriteAsGrid(
 	char displayBuffer[displayBufferSize];
 	GetDisplayStringForGrid(grid, displayBuffer);
 
-	tl::DrawAlphabetCharacters(
+	tl::font_interface_render_chars(
 		renderBuffer,
 		displayBuffer,
 		charFootprint,
@@ -226,7 +226,7 @@ static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const Edit
 	const uint32_t commandBackgroundColor = 0x111111;
 	const uint32_t commandTextColor = 0xFFFFFF;
 	tl::DrawRect(renderBuffer, commandBackgroundColor, commandTextRect);
-	float dx = tl::DrawAlphabetCharacters(
+	float dx = tl::font_interface_render_chars(
 		renderBuffer,
 		state.commandBuffer,
 		commandCharFootprint,

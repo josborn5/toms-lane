@@ -245,6 +245,8 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 	InitializePalettes(paletteMemory, tempMemory, state);
 
 	SizeGrid(state.pixels);
+
+	tl::font_interface_initialize();
 	return 0;
 }
 
