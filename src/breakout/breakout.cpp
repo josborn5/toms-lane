@@ -46,7 +46,7 @@ int tl::main(char* commandLine)
 	settings.height = 720;
 
 	tl::console_interface_open();
-
+	tl::font_interface_initialize();
 
 	int clientX, clientY;
 	int windowOpenResult = tl::OpenWindow(settings, clientX, clientY);

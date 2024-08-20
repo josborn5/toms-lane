@@ -81,7 +81,7 @@ void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& stat
 		tl::Rect<float> titleCharRect;
 		titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
 		titleCharRect.halfSize = tl::Vec2<float> { 0.5f * TITLE_FONT_SIZE, TITLE_FONT_SIZE };
-		tl::DrawAlphabetCharacters(
+		tl::font_interface_render_chars(
 			renderBuffer,
 			"BREAKOUT",
 			titleCharRect,
@@ -91,7 +91,7 @@ void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& stat
 		tl::Rect<float> smallCharRect;
 		smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f};
 		smallCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
-		tl::DrawAlphabetCharacters(
+		tl::font_interface_render_chars(
 			renderBuffer,
 			"PRESS S TO START",
 			smallCharRect,
@@ -136,18 +136,18 @@ void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& stat
 	inGameCursor.halfSize = inGameFontHalfSize;
 	inGameCursor.position = tl::Vec2<float> { 100.0f, 100.0f };
 
-	DrawAlphabetCharacters(renderBuffer, "BALLS", inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_chars(renderBuffer, "BALLS", inGameCursor, TEXT_COLOR);
 	inGameCursor.position = tl::Vec2<float> { 250.0f, 100.0f };
-	DrawNumber(renderBuffer, state.lives, inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_int(renderBuffer, state.lives, inGameCursor, TEXT_COLOR);
 
 	inGameCursor.position = tl::Vec2<float> { 450.0f, 100.0f };
-	DrawAlphabetCharacters(renderBuffer, "LEVEL", inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_chars(renderBuffer, "LEVEL", inGameCursor, TEXT_COLOR);
 	inGameCursor.position = tl::Vec2<float> { 600.0f, 100.0f };
-	DrawNumber(renderBuffer, state.level, inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_int(renderBuffer, state.level, inGameCursor, TEXT_COLOR);
 
 	inGameCursor.position = tl::Vec2<float> { 900.0f, 100.0f };
-	DrawAlphabetCharacters(renderBuffer, "SCORE", inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_chars(renderBuffer, "SCORE", inGameCursor, TEXT_COLOR);
 	inGameCursor.position = tl::Vec2<float> { 1050.0f, 100.0f };
-	DrawNumber(renderBuffer, state.score, inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_int(renderBuffer, state.score, inGameCursor, TEXT_COLOR);
 }
 
