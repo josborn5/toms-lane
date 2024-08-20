@@ -56,7 +56,7 @@ int tl::main(char* commandLine)
 	);
 
 	Initialize(appMemory);
-
+	tl::font_interface_initialize();
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
 

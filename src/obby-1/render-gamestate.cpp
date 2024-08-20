@@ -93,7 +93,7 @@ static void RenderGameState(
 		tl::Rect<float> titleCharRect;
 		titleCharRect.halfSize = titleFontHalfSize;
 		titleCharRect.position = tl::Vec2<float> { 200.0f, 500.0f };
-		tl::DrawAlphabetCharacters(
+		tl::font_interface_render_chars(
 			renderBuffer,
 			"PLAY GAME SO I CAN GET BOBUX  ",
 			titleCharRect,
@@ -103,7 +103,7 @@ static void RenderGameState(
 		tl::Rect<float> smallCharRect;
 		smallCharRect.halfSize = smallFontHalfSize;
 		smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f };
-		tl::DrawAlphabetCharacters(
+		tl::font_interface_render_chars(
 			renderBuffer,
 			"PRESS S TO START",
 			smallCharRect,
@@ -136,7 +136,7 @@ static void RenderGameState(
 		tl::Rect<float> titleCharRect = {0};
 		titleCharRect.halfSize = tl::Vec2<float> { 50.0f, 75.0f };
 		titleCharRect.position = tl::Vec2<float> { 200.0f, 500.0f };
-		tl::DrawAlphabetCharacters(
+		tl::font_interface_render_chars(
 			renderBuffer,
 			"YOU DIED",
 			titleCharRect,
