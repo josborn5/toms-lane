@@ -64,6 +64,7 @@ template float Clamp(float min, float value, float max);
 
 static int Initialize(const tl::GameMemory& gameMemory)
 {
+	tl::font_interface_initialize();
 	tl::MemorySpace transientMemory = gameMemory.transient;
 	tl::MemorySpace permanentMemory = gameMemory.permanent;
 	meshArray.initialize(permanentMemory);
@@ -187,7 +188,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		tl::Rect<float> titleCharRect = tl::Rect<float>();
 		titleCharRect.position = { 100.0f, 350.0f };
 		titleCharRect.halfSize = { 20.0f, 30.0f };
-		tl::DrawAlphabetCharacters(
+		tl::font_interface_render_chars(
 			renderBuffer,
 			"TL DEMO",
 			titleCharRect,
@@ -197,7 +198,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		tl::Rect<float> subtitleCharRect;
 		subtitleCharRect.position = { 100.0f, 250.0f };
 		subtitleCharRect.halfSize = MultiplyVectorByScalar(titleCharRect.halfSize, 0.5f);
-		tl::DrawAlphabetCharacters(
+		tl::font_interface_render_chars(
 			renderBuffer,
 			"RUN AS ADMIN FOR TEAPOT",
 			subtitleCharRect,
@@ -205,7 +206,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		);
 
 		subtitleCharRect.position.y -= 100.0f;
-		tl::DrawAlphabetCharacters(
+		tl::font_interface_render_chars(
 			renderBuffer,
 			"PRESS S TO START",
 			subtitleCharRect,
@@ -302,36 +303,36 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	charFoot.position = { 100.0f, infoHeight };
 	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
 
-	tl::DrawAlphabetCharacters(renderBuffer, "MAX", charFoot, 0xAAAAAA);
+	tl::font_interface_render_chars(renderBuffer, "MAX", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)max.x, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)max.x, charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)max.y, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)max.y, charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)max.z, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)max.z, charFoot, 0xAAAAAA);
 
 	charFoot.position = { 200.0f, infoHeight };
-	tl::DrawAlphabetCharacters(renderBuffer, "MIN", charFoot, 0xAAAAAA);
+	tl::font_interface_render_chars(renderBuffer, "MIN", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)min.x, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)min.x, charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)min.y, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)min.y, charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)min.z, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)min.z, charFoot, 0xAAAAAA);
 
 	charFoot.position = { 300.0f, infoHeight };
-	tl::DrawAlphabetCharacters(renderBuffer, "POS", charFoot, 0xAAAAAA);
+	tl::font_interface_render_chars(renderBuffer, "POS", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)camera.position.x, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)camera.position.x, charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)camera.position.y, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)camera.position.y, charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)camera.position.z, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)camera.position.z, charFoot, 0xAAAAAA);
 
 	charFoot.position = { 400.0f, infoHeight };
-	tl::DrawAlphabetCharacters(renderBuffer, "MESH", charFoot, 0xAAAAAA);
+	tl::font_interface_render_chars(renderBuffer, "MESH", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, meshArray.length(), charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, meshArray.length(), charFoot, 0xAAAAAA);
 
 	// Draw the map
 	tl::DrawRect(renderBuffer, 0x333399, map);
@@ -352,10 +353,10 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	tl::Vec2<float> mapCameraPointPosition = Transform2DVector(topDownPointPosition, mapProjectionMatrix);
 
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)pointPosition.x, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)pointPosition.x, charFoot, 0xAAAAAA);
 
 	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, (int)mapCameraPointPosition.y, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)mapCameraPointPosition.y, charFoot, 0xAAAAAA);
 
 	mapCameraPosition = Transform2DVector(topDownCameraPosition, mapProjectionMatrix);
 	tl::DrawCircle(renderBuffer, 0x993333, mapCameraPosition, 10.0f);
