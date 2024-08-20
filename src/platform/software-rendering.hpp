@@ -40,21 +40,6 @@ namespace tl
 	// Circles
 	void DrawCircle(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<float>& center, float radius);
 
-	// Characters
-	float DrawAlphabetCharacters(
-		const RenderBuffer &renderBuffer,
-		char *text,
-		const tl::Rect<float> &footprint,
-		uint32_t color
-	);
-
-	void DrawNumber(
-		const RenderBuffer &renderBuffer,
-		int number,
-		const tl::Rect<float> &firstCharFootprint,
-		uint32_t color
-	);
-
 	// Triangles
 	void FillTriangleInPixels(const RenderBuffer &renderBuffer, uint32_t color, const Vec3<int> &p0, const Vec3<int> &p1, const Vec3<int> &p2, float z);
 	void DrawTriangleInPixels(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<int> &p0, const Vec2<int> &p1, const Vec2<int> &p2);
