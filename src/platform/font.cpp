@@ -29,7 +29,7 @@ static int GetDigitIndex(char c)
 
 void font_interface_initialize()
 {
-	digits[0] = LoadSprite("\
+	letters[0] = LoadSprite("\
  00\n\
 0  0\n\
 0  0\n\
@@ -37,7 +37,7 @@ void font_interface_initialize()
 0  0\n\
 0  0\n\
 0  0");
-	digits[1] = LoadSprite("\
+	letters[1] = LoadSprite("\
 000\n\
 0  0\n\
 0  0\n\
@@ -45,7 +45,7 @@ void font_interface_initialize()
 0  0\n\
 0  0\n\
 000");
-	digits[2] = LoadSprite("\
+	letters[2] = LoadSprite("\
  000\n\
 0\n\
 0\n\
@@ -53,7 +53,7 @@ void font_interface_initialize()
 0\n\
 0\n\
  000");
-	digits[3] = LoadSprite("\
+	letters[3] = LoadSprite("\
 000\n\
 0  0\n\
 0  0\n\
@@ -61,7 +61,7 @@ void font_interface_initialize()
 0  0\n\
 0  0\n\
 000");
-	digits[4] = LoadSprite("\
+	letters[4] = LoadSprite("\
 0000\n\
 0\n\
 0\n\
@@ -69,7 +69,7 @@ void font_interface_initialize()
 0\n\
 0\n\
 0000");
-	digits[5] = LoadSprite("\
+	letters[5] = LoadSprite("\
 0000\n\
 0\n\
 0\n\
@@ -77,7 +77,7 @@ void font_interface_initialize()
 0\n\
 0\n\
 0");
-	digits[6] = LoadSprite("\
+	letters[6] = LoadSprite("\
  000\n\
 0\n\
 0\n\
@@ -85,7 +85,7 @@ void font_interface_initialize()
 0  0\n\
 0  0\n\
  000");
-	digits[7] = LoadSprite("\
+	letters[7] = LoadSprite("\
 0  0\n\
 0  0\n\
 0  0\n\
@@ -93,7 +93,7 @@ void font_interface_initialize()
 0  0\n\
 0  0\n\
 0  0");
-	digits[8] = LoadSprite("\
+	letters[8] = LoadSprite("\
 000\n\
  0\n\
  0\n\
@@ -101,7 +101,7 @@ void font_interface_initialize()
  0\n\
  0\n\
 000");
-	digits[9] = LoadSprite("\
+	letters[9] = LoadSprite("\
  000\n\
    0\n\
    0\n\
@@ -109,7 +109,7 @@ void font_interface_initialize()
 0  0\n\
 0  0\n\
  000");
-	digits[10] = LoadSprite("\
+	letters[10] = LoadSprite("\
 0  0\n\
 0  0\n\
 0 0\n\
@@ -117,7 +117,7 @@ void font_interface_initialize()
 0 0\n\
 0  0\n\
 0  0");
-	digits[11] = LoadSprite("\
+	letters[11] = LoadSprite("\
 0\n\
 0\n\
 0\n\
@@ -125,7 +125,7 @@ void font_interface_initialize()
 0\n\
 0\n\
 0000");
-	digits[12] = LoadSprite("\
+	letters[12] = LoadSprite("\
 00 00\n\
 0 0 0\n\
 0 0 0\n\
@@ -133,7 +133,7 @@ void font_interface_initialize()
 0   0\n\
 0   0\n\
 0   0");
-	digits[13] = LoadSprite("\
+	letters[13] = LoadSprite("\
 0   0\n\
 0   0\n\
 00  0\n\
@@ -141,7 +141,7 @@ void font_interface_initialize()
 0  00\n\
 0   0\n\
 0   0");
-	digits[14] = LoadSprite("\
+	letters[14] = LoadSprite("\
  00 \n\
 0  0\n\
 0  0\n\
@@ -149,7 +149,7 @@ void font_interface_initialize()
 0  0\n\
 0  0\n\
  00");
-	digits[15] = LoadSprite("\
+	letters[15] = LoadSprite("\
 000\n\
 0  0\n\
 0  0\n\
@@ -157,7 +157,7 @@ void font_interface_initialize()
 0\n\
 0\n\
 0");
-	digits[16] = LoadSprite("\
+	letters[16] = LoadSprite("\
  000\n\
 0   0\n\
 0   0\n\
@@ -165,7 +165,7 @@ void font_interface_initialize()
 0 0 0\n\
 0  0\n\
  00 0");
-	digits[17] = LoadSprite("\
+	letters[17] = LoadSprite("\
 000\n\
 0  0\n\
 0  0\n\
@@ -173,7 +173,7 @@ void font_interface_initialize()
 0  0\n\
 0  0\n\
 0  0");
-	digits[18] = LoadSprite("\
+	letters[18] = LoadSprite("\
  000\n\
 0\n\
 0\n\
@@ -181,7 +181,7 @@ void font_interface_initialize()
    0\n\
    0\n\
 000");
-	digits[19] = LoadSprite("\
+	letters[19] = LoadSprite("\
 000\n\
  0\n\
  0\n\
@@ -189,7 +189,7 @@ void font_interface_initialize()
  0\n\
  0\n\
  0");
-	digits[20] = LoadSprite("\
+	letters[20] = LoadSprite("\
 0  0\n\
 0  0\n\
 0  0\n\
@@ -197,7 +197,7 @@ void font_interface_initialize()
 0  0\n\
 0  0\n\
  00");
-	digits[21] = LoadSprite("\
+	letters[21] = LoadSprite("\
 0   0\n\
 0   0\n\
 0   0\n\
@@ -205,7 +205,7 @@ void font_interface_initialize()
  0 0\n\
   0\n\
   0");
-	digits[22] = LoadSprite("\
+	letters[22] = LoadSprite("\
 0   0\n\
 0   0\n\
 0   0\n\
@@ -213,7 +213,7 @@ void font_interface_initialize()
 0 0 0\n\
  0 0\n\
  0 0");
-	digits[23] = LoadSprite("\
+	letters[23] = LoadSprite("\
 0   0\n\
 0   0\n\
  0 0\n\
@@ -221,7 +221,7 @@ void font_interface_initialize()
  0 0\n\
 0   0\n\
 0   0");
-	digits[24] = LoadSprite("\
+	letters[24] = LoadSprite("\
 0   0\n\
 0   0\n\
  0 0\n\
@@ -229,7 +229,7 @@ void font_interface_initialize()
   0\n\
   0\n\
   0");
-	digits[25] = LoadSprite("\
+	letters[25] = LoadSprite("\
 0000\n\
    0\n\
   0\n\

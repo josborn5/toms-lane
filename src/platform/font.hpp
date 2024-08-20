@@ -9,7 +9,7 @@ namespace tl
 
 void font_interface_initialize();
 
-void font_interface_render_chars(
+float font_interface_render_chars(
 	const RenderBuffer& buffer,
 	char* text,
 	const Rect<float>& firstCharFootprint,
