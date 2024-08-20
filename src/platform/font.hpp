@@ -9,14 +9,14 @@ namespace tl
 
 void font_interface_initialize();
 
-void font_interface_render_alphabet(
+void font_interface_render_chars(
 	const RenderBuffer& buffer,
 	char* text,
 	const Rect<float>& firstCharFootprint,
 	uint32_t color
 );
 
-void font_interface_render_integer(
+void font_interface_render_int(
 	const RenderBuffer& buffer,
 	int number,
 	const Rect<float>& firstCharFootprint,

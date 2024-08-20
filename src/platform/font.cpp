@@ -361,7 +361,7 @@ void font_interface_initialize()
 	initialized = true;
 }
 
-float font_interface_render_alphabet(
+float font_interface_render_chars(
 	const RenderBuffer& buffer,
 	char* text,
 	const Rect<float>& firstCharFootprint,
@@ -426,7 +426,7 @@ float font_interface_render_alphabet(
 	return charRect.position.x - firstCharFootprint.position.x;
 }
 
-void font_interface_render_integer(
+void font_interface_render_int(
 	const RenderBuffer& buffer,
 	int number,
 	const Rect<float>& firstCharFootprint,
