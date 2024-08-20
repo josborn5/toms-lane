@@ -129,7 +129,7 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 		tl::Rect<float> titleCharRect;
 		titleCharRect.halfSize = titleFontHalfSize;
 		titleCharRect.position = tl::Vec2<float> { 200.0f, 500.0f };
-		tl::DrawAlphabetCharacters(
+		tl::font_interface_render_chars(
 			renderBuffer,
 			"GIVE ME BOBUX",
 			titleCharRect,
@@ -139,7 +139,7 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 		tl::Rect<float> smallCharRect;
 		smallCharRect.halfSize = smallFontHalfSize;
 		smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f };
-		tl::DrawAlphabetCharacters(
+		tl::font_interface_render_chars(
 			renderBuffer,
 			"PRESS S TO START",
 			smallCharRect,
@@ -166,7 +166,7 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 		tl::Rect<float> titleCharRect = {0};
 		titleCharRect.halfSize = tl::Vec2<float> { 50.0f, 75.0f };
 		titleCharRect.position = tl::Vec2<float> { 200.0f, 500.0f };
-		tl::DrawAlphabetCharacters(
+		tl::font_interface_render_chars(
 			renderBuffer,
 			"YOU DIED",
 			titleCharRect,
@@ -184,17 +184,6 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 		backgroundBitmap,
 		backgroundRect
 	);
-
-	// Show info about z-position
-	float fontSize = 16.0f;
-	float infoHeight = 4.0f * fontSize;
-	tl::Rect<float> charFoot;
-	charFoot.position = { 100.0f, infoHeight };
-	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
-
-	tl::DrawAlphabetCharacters(renderBuffer, "COL", charFoot, 0x999999);
-	charFoot.position.y -= fontSize;
-	tl::DrawNumber(renderBuffer, state.collision, charFoot, 0x999999);
 
 	RenderBlocks(renderBuffer, state);
 	

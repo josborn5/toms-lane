@@ -72,21 +72,6 @@ int UpdateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer
 	}
 
 	RenderGameState(renderBuffer, gamestate);
-
-	float fontSize = 16.0f;
-	float infoHeight = 4.0f * fontSize;
-	tl::Rect<float> charFoot;
-	charFoot.position = { 200.0f, infoHeight };
-	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
-
-	tl::DrawAlphabetCharacters(renderBuffer, "SPACE", charFoot, 0x999999);
-	charFoot.position.y -= fontSize;
-	int spaceIsDown = input.buttons[tl::KEY_SPACE].isDown ? 1 : 0;
-	tl::DrawNumber(renderBuffer, spaceIsDown, charFoot, 0x999999);
-	charFoot.position.y -= fontSize;
-	int spaceWasDown = input.buttons[tl::KEY_SPACE].wasDown ? 1 : 0;
-	tl::DrawNumber(renderBuffer, spaceWasDown, charFoot, 0x999999);
-
 	return 0;
 }
 
@@ -118,6 +103,7 @@ int tl::main(char* commandLine)
 	);
 
 	Initialize(appMemory);
+	tl::font_interface_initialize();
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
