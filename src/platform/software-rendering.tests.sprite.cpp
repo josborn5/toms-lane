@@ -35,7 +35,7 @@ static void RunSpriteRenderTests()
 	tl::Sprite testSprite;
 	testSprite.width = 4;
 	testSprite.height = 3;
-	testSprite.content = "0\n  00\n00";
+	testSprite.content = "0\n  00\n00\n00\n\n";
 
 	tl::Rect<float> footprint;
 	footprint.halfSize = { 2.0f, 1.5f };
