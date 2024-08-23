@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <iostream>
 
-void TestSprite(char* inputContent, int expectedHeight, int expectedWidth)
+static void TestSprite(char* inputContent, int expectedHeight, int expectedWidth)
 {
 	std::cout << "Sprite tests" << std::endl;
 	
@@ -17,6 +17,46 @@ void TestSprite(char* inputContent, int expectedHeight, int expectedWidth)
 	assert(inputContent == testSprite.content);
 	assert(expectedHeight == testSprite.height);
 	assert(expectedWidth == testSprite.width);
+}
+
+static void RunSpriteRenderTests()
+{
+	tl::RenderBuffer buffer;
+	buffer.width = 4;
+	buffer.height = 3;
+	int pixelCount = buffer.width * buffer.height;
+	buffer.pixels = (uint32_t*)malloc(sizeof(uint32_t) * pixelCount);
+
+	for (int i = 0; i < pixelCount; i += 1)
+	{
+		buffer.pixels[i] = 0x000000;
+	}
+
+	tl::Sprite testSprite;
+	testSprite.width = 4;
+	testSprite.height = 3;
+	testSprite.content = "0\n  00\n00";
+
+	tl::Rect<float> footprint;
+	footprint.halfSize = { 2.0f, 1.5f };
+	footprint.position = { 2.0f, 1.5f };
+
+	DrawSprite(buffer, testSprite, footprint, 0xFFFFFF);
+
+	assert(*buffer.pixels == 0xFFFFFF);
+	assert(*(buffer.pixels + 1) == 0xFFFFFF);
+	assert(*(buffer.pixels + 2) == 0x000000);
+	assert(*(buffer.pixels + 3) == 0x000000);
+
+	assert(*(buffer.pixels + 4) == 0x000000);
+	assert(*(buffer.pixels + 5) == 0x000000);
+	assert(*(buffer.pixels + 6) == 0xFFFFFF);
+	assert(*(buffer.pixels + 7) == 0xFFFFFF);
+
+	assert(*(buffer.pixels + 8) == 0xFFFFFF);
+	assert(*(buffer.pixels + 9) == 0x000000);
+	assert(*(buffer.pixels + 10) == 0x000000);
+	assert(*(buffer.pixels + 11) == 0x000000);
 }
 
 void RunSpriteTests()
@@ -59,4 +99,6 @@ void RunSpriteTests()
  \n\
                         ";
 	TestSprite(inputSprite, 8, 24);
+
+	RunSpriteRenderTests();
 }
