@@ -7,6 +7,191 @@
 namespace tl
 {
 
+static char* letterDefinitions = "\
+ 00\n\
+0  0\n\
+0  0\n\
+0000\n\
+0  0\n\
+0  0\n\
+0  0\n\
+000\n\
+0  0\n\
+0  0\n\
+000\n\
+0  0\n\
+0  0\n\
+000\n\
+ 000\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+ 000\n\
+000\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+000\n\
+0000\n\
+0\n\
+0\n\
+000\n\
+0\n\
+0\n\
+0000\n\
+0000\n\
+0\n\
+0\n\
+000\n\
+0\n\
+0\n\
+0\n\
+ 000\n\
+0\n\
+0\n\
+0 00\n\
+0  0\n\
+0  0\n\
+ 000\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0000\n\
+0  0\n\
+0  0\n\
+0  0\n\
+000\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+000\n\
+ 000\n\
+   0\n\
+   0\n\
+   0\n\
+0  0\n\
+0  0\n\
+ 000\n\
+0  0\n\
+0  0\n\
+0 0\n\
+00\n\
+0 0\n\
+0  0\n\
+0  0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0\n\
+0000\n\
+00 00\n\
+0 0 0\n\
+0 0 0\n\
+0   0\n\
+0   0\n\
+0   0\n\
+0   0\n\
+0   0\n\
+0   0\n\
+00  0\n\
+0 0 0\n\
+0  00\n\
+0   0\n\
+0   0\n\
+ 00 \n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+ 00\n\
+000\n\
+0  0\n\
+0  0\n\
+000\n\
+0\n\
+0\n\
+0\n\
+ 000\n\
+0   0\n\
+0   0\n\
+0   0\n\
+0 0 0\n\
+0  0\n\
+ 00 0\n\
+000\n\
+0  0\n\
+0  0\n\
+000\n\
+0  0\n\
+0  0\n\
+0  0\n\
+ 000\n\
+0\n\
+0\n\
+ 00\n\
+   0\n\
+   0\n\
+000\n\
+000\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+0  0\n\
+ 00\n\
+0   0\n\
+0   0\n\
+0   0\n\
+ 0 0\n\
+ 0 0\n\
+  0\n\
+  0\n\
+0   0\n\
+0   0\n\
+0   0\n\
+0 0 0\n\
+0 0 0\n\
+ 0 0\n\
+ 0 0\n\
+0   0\n\
+0   0\n\
+ 0 0\n\
+  0\n\
+ 0 0\n\
+0   0\n\
+0   0\n\
+0   0\n\
+0   0\n\
+ 0 0\n\
+ 0 0\n\
+  0\n\
+  0\n\
+  0\n\
+0000\n\
+   0\n\
+  0\n\
+ 0\n\
+0\n\
+0\n\
+0000\n";
+
+
 static Sprite digits[10];
 static Sprite letters[26];
 static Sprite negSprite;
@@ -29,214 +214,25 @@ static int GetDigitIndex(char c)
 
 void font_interface_initialize()
 {
-	letters[0] = LoadSprite("\
- 00\n\
-0  0\n\
-0  0\n\
-0000\n\
-0  0\n\
-0  0\n\
-0  0");
-	letters[1] = LoadSprite("\
-000\n\
-0  0\n\
-0  0\n\
-000\n\
-0  0\n\
-0  0\n\
-000");
-	letters[2] = LoadSprite("\
- 000\n\
-0\n\
-0\n\
-0\n\
-0\n\
-0\n\
- 000");
-	letters[3] = LoadSprite("\
-000\n\
-0  0\n\
-0  0\n\
-0  0\n\
-0  0\n\
-0  0\n\
-000");
-	letters[4] = LoadSprite("\
-0000\n\
-0\n\
-0\n\
-000\n\
-0\n\
-0\n\
-0000");
-	letters[5] = LoadSprite("\
-0000\n\
-0\n\
-0\n\
-000\n\
-0\n\
-0\n\
-0");
-	letters[6] = LoadSprite("\
- 000\n\
-0\n\
-0\n\
-0 00\n\
-0  0\n\
-0  0\n\
- 000");
-	letters[7] = LoadSprite("\
-0  0\n\
-0  0\n\
-0  0\n\
-0000\n\
-0  0\n\
-0  0\n\
-0  0");
-	letters[8] = LoadSprite("\
-000\n\
- 0\n\
- 0\n\
- 0\n\
- 0\n\
- 0\n\
-000");
-	letters[9] = LoadSprite("\
- 000\n\
-   0\n\
-   0\n\
-   0\n\
-0  0\n\
-0  0\n\
- 000");
-	letters[10] = LoadSprite("\
-0  0\n\
-0  0\n\
-0 0\n\
-00\n\
-0 0\n\
-0  0\n\
-0  0");
-	letters[11] = LoadSprite("\
-0\n\
-0\n\
-0\n\
-0\n\
-0\n\
-0\n\
-0000");
-	letters[12] = LoadSprite("\
-00 00\n\
-0 0 0\n\
-0 0 0\n\
-0   0\n\
-0   0\n\
-0   0\n\
-0   0");
-	letters[13] = LoadSprite("\
-0   0\n\
-0   0\n\
-00  0\n\
-0 0 0\n\
-0  00\n\
-0   0\n\
-0   0");
-	letters[14] = LoadSprite("\
- 00 \n\
-0  0\n\
-0  0\n\
-0  0\n\
-0  0\n\
-0  0\n\
- 00");
-	letters[15] = LoadSprite("\
-000\n\
-0  0\n\
-0  0\n\
-000\n\
-0\n\
-0\n\
-0");
-	letters[16] = LoadSprite("\
- 000\n\
-0   0\n\
-0   0\n\
-0   0\n\
-0 0 0\n\
-0  0\n\
- 00 0");
-	letters[17] = LoadSprite("\
-000\n\
-0  0\n\
-0  0\n\
-000\n\
-0  0\n\
-0  0\n\
-0  0");
-	letters[18] = LoadSprite("\
- 000\n\
-0\n\
-0\n\
- 00\n\
-   0\n\
-   0\n\
-000");
-	letters[19] = LoadSprite("\
-000\n\
- 0\n\
- 0\n\
- 0\n\
- 0\n\
- 0\n\
- 0");
-	letters[20] = LoadSprite("\
-0  0\n\
-0  0\n\
-0  0\n\
-0  0\n\
-0  0\n\
-0  0\n\
- 00");
-	letters[21] = LoadSprite("\
-0   0\n\
-0   0\n\
-0   0\n\
- 0 0\n\
- 0 0\n\
-  0\n\
-  0");
-	letters[22] = LoadSprite("\
-0   0\n\
-0   0\n\
-0   0\n\
-0 0 0\n\
-0 0 0\n\
- 0 0\n\
- 0 0");
-	letters[23] = LoadSprite("\
-0   0\n\
-0   0\n\
- 0 0\n\
-  0\n\
- 0 0\n\
-0   0\n\
-0   0");
-	letters[24] = LoadSprite("\
-0   0\n\
-0   0\n\
- 0 0\n\
- 0 0\n\
-  0\n\
-  0\n\
-  0");
-	letters[25] = LoadSprite("\
-0000\n\
-   0\n\
-  0\n\
- 0\n\
-0\n\
-0\n\
-0000");
+	char* readCursor = letterDefinitions;
+
+
+	for (int i = 0; i < 26; i += 1)
+	{
+		letters[i].width = 4;
+		letters[i].height = 7;
+		letters[i].content = readCursor;
+
+		int rowCounter = 0;
+		while (*readCursor && (rowCounter < letters[i].height))
+		{
+			if (*readCursor == '\n')
+			{
+				rowCounter += 1;
+			}
+			readCursor++;
+		}
+	}
 
 	digits[0] = LoadSprite("\
  000 \n\
