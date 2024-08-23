@@ -8,6 +8,8 @@ namespace tl
 {
 
 static char* letterDefinitions = "\
+4\n\
+7\n\
  00\n\
 0  0\n\
 0  0\n\
@@ -216,11 +218,18 @@ void font_interface_initialize()
 {
 	char* readCursor = letterDefinitions;
 
+	char parsedWidth = *readCursor;
+	readCursor += 2; // increment past the new line
+	char parsedHeight = *readCursor;
+	readCursor += 2; // increment past the new line
+
+	int width = parsedWidth - '0';
+	int height = parsedHeight - '0';
 
 	for (int i = 0; i < 26; i += 1)
 	{
-		letters[i].width = 4;
-		letters[i].height = 7;
+		letters[i].width = width;
+		letters[i].height = height;
 		letters[i].content = readCursor;
 
 		int rowCounter = 0;
