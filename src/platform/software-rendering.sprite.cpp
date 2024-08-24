@@ -81,17 +81,19 @@ namespace tl
 		float xMinCursorPos = pCopy.x;
 		char* content = sprite.content;
 		int rowCounter = 0;
+		int columnCounter = 0;
 		while (*content && rowCounter < sprite.height)
 		{
 			if (*content == '\n')
 			{
 				rowCounter += 1;
+				columnCounter = 0;
 				pCopy.y -= blockHeight;	// We're populating blocks in the sprint left to right, top to bottom. So y is decreasing.
 				pCopy.x = xMinCursorPos; // reset cursor to start of next row
 			}
 			else
 			{
-				if (*content != ' ')
+				if (*content != ' ' && columnCounter < sprite.width)
 				{
 					Rect<float> blockRect;
 					blockRect.position = pCopy;
@@ -99,6 +101,7 @@ namespace tl
 					DrawRect(renderBuffer, color, blockRect);
 				}
 				pCopy.x += blockWidth;
+				columnCounter += 1;
 			}
 			content++;
 		}
