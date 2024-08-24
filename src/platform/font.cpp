@@ -193,6 +193,80 @@ static char* letterDefinitions = "\
 0\n\
 0000\n";
 
+static char* numberDefinitions = "\
+4\n\
+7\n\
+ 00 \n\
+0  0\n\
+0 00\n\
+0000\n\
+00 0\n\
+0  0\n\
+ 00\n\
+ 0\n\
+00\n\
+ 0\n\
+ 0\n\
+ 0\n\
+ 0\n\
+000\n\
+ 00\n\
+0  0\n\
+   0\n\
+  0\n\
+ 0\n\
+0\n\
+0000\n\
+ 00\n\
+0  0\n\
+   0\n\
+ 00\n\
+   0\n\
+0  0\n\
+ 00\n\
+  00\n\
+ 0 0\n\
+0  0\n\
+0000\n\
+   0\n\
+   0\n\
+   0\n\
+0000\n\
+0\n\
+0\n\
+000\n\
+   0\n\
+   0\n\
+000\n\
+ 000\n\
+0\n\
+0\n\
+000\n\
+0  0\n\
+0  0\n\
+ 00\n\
+0000\n\
+   0\n\
+   0\n\
+  0\n\
+ 0\n\
+0\n\
+0\n\
+ 00\n\
+0  0\n\
+0  0\n\
+ 00\n\
+0  0\n\
+0  0\n\
+ 00\n\
+ 00\n\
+0  0\n\
+0  0\n\
+ 00\n\
+  0\n\
+ 0\n\
+0\n";
+
 
 static Sprite digits[10];
 static Sprite letters[26];
@@ -214,9 +288,9 @@ static int GetDigitIndex(char c)
 	return c - '0';
 }
 
-void font_interface_initialize()
+static void load_sprites(Sprite* target, int count, char* source)
 {
-	char* readCursor = letterDefinitions;
+	char* readCursor = source;
 
 	char parsedWidth = *readCursor;
 	readCursor += 2; // increment past the new line
@@ -226,14 +300,14 @@ void font_interface_initialize()
 	int width = parsedWidth - '0';
 	int height = parsedHeight - '0';
 
-	for (int i = 0; i < 26; i += 1)
+	for (int i = 0; i < count; i += 1)
 	{
-		letters[i].width = width;
-		letters[i].height = height;
-		letters[i].content = readCursor;
+		target[i].width = width;
+		target[i].height = height;
+		target[i].content = readCursor;
 
 		int rowCounter = 0;
-		while (*readCursor && (rowCounter < letters[i].height))
+		while (*readCursor && (rowCounter < target[i].height))
 		{
 			if (*readCursor == '\n')
 			{
@@ -242,88 +316,12 @@ void font_interface_initialize()
 			readCursor++;
 		}
 	}
+}
 
-	digits[0] = LoadSprite("\
- 000 \n\
-0   0\n\
-0  00\n\
-0 0 0\n\
-00  0\n\
-0   0\n\
- 000");
-	digits[1] = LoadSprite("\
- 0\n\
-00\n\
- 0\n\
- 0\n\
- 0\n\
- 0\n\
-000");
-	digits[2] = LoadSprite("\
- 00\n\
-0  0\n\
-   0\n\
-  0\n\
- 0\n\
-0\n\
-0000");
-	digits[3] = LoadSprite("\
- 00\n\
-0  0\n\
-   0\n\
- 00\n\
-   0\n\
-0  0\n\
- 00");
-	digits[4] = LoadSprite("\
-  00\n\
- 0 0\n\
-0  0\n\
-0000\n\
-   0\n\
-   0\n\
-   0");
-	digits[5] = LoadSprite("\
-0000\n\
-0\n\
-0\n\
-000\n\
-   0\n\
-   0\n\
-000");
-	digits[6] = LoadSprite("\
- 000\n\
-0\n\
-0\n\
-000\n\
-0  0\n\
-0  0\n\
- 00");
-	digits[7] = LoadSprite("\
-0000\n\
-   0\n\
-   0\n\
-  0\n\
- 0\n\
-0\n\
-0");
-	digits[8] = LoadSprite("\
- 00\n\
-0  0\n\
-0  0\n\
- 00\n\
-0  0\n\
-0  0\n\
- 00");
-	digits[9] = LoadSprite("\
- 00\n\
-0  0\n\
-0  0\n\
- 00\n\
-  0\n\
- 0\n\
-0");
-
+void font_interface_initialize()
+{
+	load_sprites(letters, 26, letterDefinitions);
+	load_sprites(digits, 10, numberDefinitions);
 	negSprite = LoadSprite("\
 \n\
 \n\
