@@ -80,10 +80,12 @@ namespace tl
 		// iterate through the sprite content and fill blocks in the render buffer
 		float xMinCursorPos = pCopy.x;
 		char* content = sprite.content;
-		while (*content)
+		int rowCounter = 0;
+		while (*content && rowCounter < sprite.height)
 		{
 			if (*content == '\n')
 			{
+				rowCounter += 1;
 				pCopy.y -= blockHeight;	// We're populating blocks in the sprint left to right, top to bottom. So y is decreasing.
 				pCopy.x = xMinCursorPos; // reset cursor to start of next row
 			}

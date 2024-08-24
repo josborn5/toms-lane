@@ -19,27 +19,33 @@ static void TestSprite(char* inputContent, int expectedHeight, int expectedWidth
 	assert(expectedWidth == testSprite.width);
 }
 
-static void RunSpriteRenderTests()
+static void ClearBuffer(tl::RenderBuffer& buffer)
 {
-	tl::RenderBuffer buffer;
-	buffer.width = 4;
-	buffer.height = 3;
 	int pixelCount = buffer.width * buffer.height;
-	buffer.pixels = (uint32_t*)malloc(sizeof(uint32_t) * pixelCount);
-
 	for (int i = 0; i < pixelCount; i += 1)
 	{
 		buffer.pixels[i] = 0x000000;
 	}
+}
+
+static void RunSpriteRenderTests()
+{
+	tl::RenderBuffer buffer;
+	buffer.width = 4;
+	buffer.height = 4;
+	int pixelCount = buffer.width * buffer.height;
+	buffer.pixels = (uint32_t*)malloc(sizeof(uint32_t) * pixelCount);
+
+	ClearBuffer(buffer);
 
 	tl::Sprite testSprite;
-	testSprite.width = 4;
+	testSprite.width = buffer.width;
 	testSprite.height = 3;
 	testSprite.content = "0\n  00\n00\n00\n\n";
 
 	tl::Rect<float> footprint;
-	footprint.halfSize = { 2.0f, 1.5f };
-	footprint.position = { 2.0f, 1.5f };
+	footprint.halfSize = { 0.5f * (float)testSprite.width, 0.5f * (float)testSprite.height };
+	footprint.position = footprint.halfSize;
 
 	DrawSprite(buffer, testSprite, footprint, 0xFFFFFF);
 
@@ -57,6 +63,32 @@ static void RunSpriteRenderTests()
 	assert(*(buffer.pixels + 9) == 0x000000);
 	assert(*(buffer.pixels + 10) == 0x000000);
 	assert(*(buffer.pixels + 11) == 0x000000);
+
+	ClearBuffer(buffer);
+
+	footprint.position.y = (float)buffer.height - footprint.halfSize.y;
+
+	DrawSprite(buffer, testSprite, footprint, 0xFFFFFF);
+
+	assert(*buffer.pixels == 0x000000);
+	assert(*(buffer.pixels + 1) == 0x000000);
+	assert(*(buffer.pixels + 2) == 0x000000);
+	assert(*(buffer.pixels + 3) == 0x000000);
+
+	assert(*(buffer.pixels + 4) == 0xFFFFFF);
+	assert(*(buffer.pixels + 5) == 0xFFFFFF);
+	assert(*(buffer.pixels + 6) == 0x000000);
+	assert(*(buffer.pixels + 7) == 0x000000);
+
+	assert(*(buffer.pixels + 8) == 0x000000);
+	assert(*(buffer.pixels + 9) == 0x000000);
+	assert(*(buffer.pixels + 10) == 0xFFFFFF);
+	assert(*(buffer.pixels + 11) == 0xFFFFFF);
+
+	assert(*(buffer.pixels + 12) == 0xFFFFFF);
+	assert(*(buffer.pixels + 13) == 0x000000);
+	assert(*(buffer.pixels + 14) == 0x000000);
+	assert(*(buffer.pixels + 15) == 0x000000);
 }
 
 void RunSpriteTests()
