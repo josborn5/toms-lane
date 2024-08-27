@@ -7,26 +7,9 @@
 
 namespace tl
 {
-
-static Sprite digits[10];
-static Sprite letters[26];
-static Sprite negSprite;
-static Sprite periodSprite;
-static Sprite colonSprite;
-static Sprite backSlashSprite;
-static Sprite forwardSlashSprite;
+static Sprite ascii_chars[94];
 
 static bool initialized = false;
-
-static int GetLetterIndex(char c)
-{
-	return c - 'A';
-}
-
-static int GetDigitIndex(char c)
-{
-	return c - '0';
-}
 
 static void load_sprites(Sprite* target, int count, char* source)
 {
@@ -60,47 +43,7 @@ static void load_sprites(Sprite* target, int count, char* source)
 
 void font_interface_initialize()
 {
-	load_sprites(letters, 26, letterDefinitions);
-	load_sprites(digits, 10, numberDefinitions);
-	negSprite = LoadSprite("\
-\n\
-\n\
-\n\
-0000\n\
-\n\
-\n\
-");
-	periodSprite = LoadSprite("\
-\n\
-\n\
-\n\
-\n\
-\n\
- 00 \n\
- 00 ");
-	colonSprite = LoadSprite("\
-\n\
- 00 \n\
- 00 \n\
-\n\
- 00 \n\
- 00 \n\
-");
-	backSlashSprite = LoadSprite("\
-0\n\
- 0\n\
- 0\n\
-  0\n\
-  0\n\
-   0");
-	forwardSlashSprite = LoadSprite("\
-   0\n\
-  0\n\
-  0\n\
- 0\n\
- 0\n\
-0");
-
+	load_sprites(ascii_chars, 94, ASCII_33_126);
 	initialized = true;
 }
 
@@ -122,41 +65,11 @@ float font_interface_render_chars(
 	{
 		if (*letterAt != ' ')
 		{
-			Sprite* renderChar = nullptr;
-			if (*letterAt >= 'A' && *letterAt <= 'Z')
+			if (*letterAt >= '!' && *letterAt <= '~')
 			{
-				int letterIndex = GetLetterIndex(*letterAt);
-				renderChar = &letters[letterIndex];
-			}
-			else if (*letterAt >= '0' && *letterAt <= '9')
-			{
-				int digitIndex = GetDigitIndex(*letterAt);
-				renderChar = &digits[digitIndex];
-			}
-			else if (*letterAt == '-')
-			{
-				renderChar = &negSprite;
-			}
-			else if (*letterAt == '.')
-			{
-				renderChar = &periodSprite;
-			}
-			else if (*letterAt == '\\')
-			{
-				renderChar = &backSlashSprite;
-			}
-			else if (*letterAt == '/')
-			{
-				renderChar = &forwardSlashSprite;
-			}
-			else if (*letterAt == ':')
-			{
-				renderChar = &colonSprite;
-			}
-
-			if (renderChar != nullptr)
-			{
-				tl::DrawSprite(buffer, *renderChar, charRect, color);
+				int ascii_char_index = *letterAt - '!';
+				Sprite renderChar = ascii_chars[ascii_char_index];
+				tl::DrawSprite(buffer, renderChar, charRect, color);
 			}
 			else
 			{
@@ -200,12 +113,13 @@ void font_interface_render_int(
 		char digit = *intAsString;
 		if (digit == '-')
 		{
-			tl::DrawSprite(buffer, negSprite, charRect, color);
+			Sprite neg_sprite = ascii_chars['-' - '!'];
+			tl::DrawSprite(buffer, neg_sprite, charRect, color);
 		}
 		else
 		{
-			char digitIndex = (digit) - '0';
-			Sprite charDigit = digits[digitIndex];
+			char digitIndex = digit - '!';
+			Sprite charDigit = ascii_chars[digitIndex];
 			tl::DrawSprite(buffer, charDigit, charRect, color);
 		}
 
