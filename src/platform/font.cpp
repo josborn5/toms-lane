@@ -41,6 +41,20 @@ static void load_sprites(Sprite* target, int count, char* source)
 	}
 }
 
+int font_interface_initialize_from_file(char* file_name, const MemorySpace& memory)
+{
+	int file_read_result = file_interface_read(file_name, memory);
+	if (file_read_result != 0)
+	{
+		return file_read_result;
+	}
+
+	load_sprites(ascii_chars, 94, (char*)memory.content);
+	initialized = true;
+
+	return 0;
+}
+
 void font_interface_initialize()
 {
 	load_sprites(ascii_chars, 94, ASCII_33_126);

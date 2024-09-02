@@ -8,6 +8,8 @@ lib.exe /OUT:"%APP_DIR%\tl-library.lib"^
  "%APP_DIR%\toms-lane-platform.obj"^
  "%APP_DIR%\font.obj"
 
+xcopy "%~dp0\src\platform\font-mono.tlsf" "%APP_DIR%\"
+
 call .\build-scripts\link.bat %APP_DIR% platform-tests^
  "%APP_DIR%\toms-lane-platform.tests.obj"^
  "%~dp0\bin-tl-platform\toms-lane-platform.obj"^
