@@ -12,6 +12,7 @@ static const int modeBufferSize = 2;
 
 
 static bool hasCopied = false;
+static tl::MemorySpace fontMemory;
 static tl::MemorySpace spriteMemory;
 static tl::MemorySpace fileReadMemory;
 static tl::MemorySpace paletteMemory;
@@ -216,9 +217,13 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 	tl::MemorySpace perm = gameMemory.permanent;
 	const uint64_t oneKiloByteInBytes = 1024;
 	const uint64_t oneMegaByteInBytes = oneKiloByteInBytes * 1024;
-	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, perm);
-	spriteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, perm);
-	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, perm);
+
+	tl::MemorySpace working;
+	tl::font_interface_initialize_from_file("font-mono.tlsf", perm, working);
+
+	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
+	spriteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
+	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
 	tl::MemorySpace temp = gameMemory.transient;
 	tl::MemorySpace tempMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
 
@@ -246,7 +251,6 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 
 	SizeGrid(state.pixels);
 
-	tl::font_interface_initialize();
 	return 0;
 }
 

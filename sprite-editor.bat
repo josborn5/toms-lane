@@ -20,6 +20,8 @@ call %~dp0\build-scripts\link.bat %APP_DIR% %NAME%^
  "%~dp0\bin-tl-platform\tl-library.lib"^
  "%~dp0\bin-tl-win32\tl-win32.lib"
 
+xcopy "%~dp0\bin-tl-platform\font-mono.tlsf" "%APP_DIR%\"
+
 SET TEST=%1
 if "%TEST%"=="-dt" (
 	SET TEST=-t
@@ -28,6 +30,8 @@ if "%TEST%"=="-dt" (
 if "%TEST%"=="-t" (
 	call %~dp0\build-scripts\run.bat "%APP_DIR%\tests.exe" %1
 ) else (
-	call %~dp0\build-scripts\run.bat "%APP_DIR%\%NAME%.exe" %1
+	pushd "%APP_DIR%"
+	call %~dp0\build-scripts\run.bat "%NAME%.exe" %1
+	popd
 )
 
