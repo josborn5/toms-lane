@@ -7,7 +7,7 @@
 namespace tl
 {
 
-int font_interface_initialize_from_file(char* file_name, const MemorySpace& memory);
+int font_interface_initialize_from_file(char* file_name, MemorySpace& target, MemorySpace& remainder);
 
 void font_interface_initialize();
 
