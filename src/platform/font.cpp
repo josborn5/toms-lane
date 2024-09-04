@@ -3,7 +3,6 @@
 #include "./utilities.hpp"
 #include "./software-rendering.hpp"
 #include "./software-rendering.sprite.hpp"
-#include "./font-mono.cpp"
 
 namespace tl
 {
@@ -59,12 +58,6 @@ int font_interface_initialize_from_file(char* file_name, MemorySpace& target, Me
 	target = CarveMemorySpace(font_file_size, remainder);
 
 	return 0;
-}
-
-void font_interface_initialize()
-{
-	load_sprites(ascii_chars, 94, ASCII_33_126);
-	initialized = true;
 }
 
 float font_interface_render_chars(
