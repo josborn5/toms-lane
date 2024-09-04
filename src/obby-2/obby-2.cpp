@@ -20,6 +20,7 @@ tl::bitmap playerBitmaps;
 */
 
 tl::GameMemory appMemory;
+tl::MemorySpace font_memory;
 bool initialized = false;
 bool isPaused = false;
 
@@ -102,8 +103,10 @@ int tl::main(char* commandLine)
 		appMemory
 	);
 
+	font_memory = appMemory.permanent;
+	tl::font_interface_initialize_from_file("font-mono.tlsf", font_memory, appMemory.permanent);
+
 	Initialize(appMemory);
-	tl::font_interface_initialize();
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
