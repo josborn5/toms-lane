@@ -64,11 +64,13 @@ template float Clamp(float min, float value, float max);
 
 static int Initialize(const tl::GameMemory& gameMemory)
 {
-	tl::font_interface_initialize();
 	tl::MemorySpace transientMemory = gameMemory.transient;
 	tl::MemorySpace permanentMemory = gameMemory.permanent;
-	meshArray.initialize(permanentMemory);
-	
+	tl::MemorySpace working;
+	tl::font_interface_initialize_from_file("font-mono.tlsf", permanentMemory, working);
+
+	meshArray.initialize(working);
+
 	// EXE must be run as admin in order to have read permission for the file. need to figure out how to fix this.
 	if (!tl::ReadObjFileToArray4("./teapot.obj", meshArray, transientMemory))
 	{
