@@ -10,6 +10,7 @@ call .\build-scripts\link.bat %APP_DIR% %NAME%^
 xcopy "%~dp0\src\obby-1\brick.bmp" "%APP_DIR%\"
 xcopy "%~dp0\src\obby-1\checkpoint.bmp" "%APP_DIR%\"
 xcopy "%~dp0\src\obby-1\player.bmp" "%APP_DIR%\"
+xcopy "%~dp0\bin-tl-platform\font-mono.tlsf" "%APP_DIR%\"
 
 pushd "%APP_DIR%\"
 call ..\build-scripts\run.bat "obby-1.exe" %1
