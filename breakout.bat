@@ -10,4 +10,8 @@ call .\build-scripts\link.bat %APP_DIR% %NAME%^
  "%~dp0\bin-tl-platform\tl-library.lib"^
  "%~dp0\bin-tl-win32\tl-win32.lib"
 
-call .\build-scripts\run.bat "%APP_DIR%\%NAME%.exe" %1
+xcopy "%~dp0\bin-tl-platform\font-mono.tlsf" "%APP_DIR%\"
+
+pushd "%APP_DIR%"
+call ..\build-scripts\run.bat "%APP_DIR%\%NAME%.exe" %1
+popd
