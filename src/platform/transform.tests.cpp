@@ -1,4 +1,5 @@
 #include "./transform.hpp"
+#include <assert.h>
 
 void RunTransformTests()
 {
@@ -17,4 +18,12 @@ void RunTransformTests()
 		largeRect,
 		transformMatrix
 	);
+
+	assert(transformMatrix.m[0][0] == 10.0f);
+	assert(transformMatrix.m[0][1] == 0.0f);
+	assert(transformMatrix.m[0][2] == 800.0f);
+
+	assert(transformMatrix.m[1][0] == 0.0f);
+	assert(transformMatrix.m[1][1] == 10.0f);
+	assert(transformMatrix.m[1][2] == 500.0f);
 }
