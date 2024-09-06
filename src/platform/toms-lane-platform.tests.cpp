@@ -6,6 +6,7 @@
 #include "./utilities.tests.cpp"
 #include "./quad-tree.tests.cpp"
 #include "./bitmap.tests.cpp"
+#include "./transform.tests.cpp"
 
 int main()
 {
@@ -24,6 +25,8 @@ int main()
 	RunQuadTreeTests();
 
 	RunBitmapTests();
+
+	RunTransformTests();
 
 	printf("!!! ALL TESTS COMPLETE !!!");
 }
