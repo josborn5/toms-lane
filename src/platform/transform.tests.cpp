@@ -11,4 +11,10 @@ void RunTransformTests()
 	smallRect.halfSize = { 8.0f, 5.0f };
 
 	Matrix2x3<float> transformMatrix;
+
+	tl::transform_interface_create_2d_projection_matrix(
+		smallRect,
+		largeRect,
+		transformMatrix
+	);
 }
