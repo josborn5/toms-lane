@@ -23,4 +23,12 @@ void transform_interface_create_2d_projection_matrix(
 	matrix.m[1][2] = scale_factor * dY;
 }
 
+void transform_interface_project_rect(
+	const Matrix2x3<float>& projection,
+	const Rect<float> source
+)
+{
+
+}
+
 }
