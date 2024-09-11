@@ -1,5 +1,5 @@
 #ifndef TOMS_LANE_TRANSFORM_HPP
-#define TOMS_LANE_TRANSFROM_HPP
+#define TOMS_LANE_TRANSFORM_HPP
 
 namespace tl
 {

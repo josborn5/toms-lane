@@ -10,5 +10,6 @@
 #include "./platform/bitmap.hpp"
 #include "./platform/font.hpp"
 #include "./platform/utilities.hpp"
+#include "./platform/transform.hpp"
 
 #endif
