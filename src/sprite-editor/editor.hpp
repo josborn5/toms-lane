@@ -32,6 +32,7 @@ struct Grid
 	SpriteC* sprite;
 	tl::Rect<float> footprint;
 	tl::Rect<float> container;
+	tl::Rect<float> camera;
 	int selectedIndex = 0;
 	int selectedRangeIndex = 0;
 };

@@ -17,16 +17,16 @@ void transform_interface_create_2d_projection_matrix(
 )
 {
 	float scale_factor = target.halfSize.x / source.halfSize.x;
-	float dX = -source.position.x + target.position.x;
-	float dY = -source.position.y + target.position.y;
+	float dX = target.position.x - (source.position.x * scale_factor);
+	float dY = target.position.y - (source.position.y * scale_factor);
 
 	projection.m[0][0] = scale_factor;
 	projection.m[0][1] = 0.0f;
-	projection.m[0][2] = scale_factor * dX;
+	projection.m[0][2] = dX;
 
 	projection.m[1][0] = 0.0f;
 	projection.m[1][1] = scale_factor;
-	projection.m[1][2] = scale_factor * dY;
+	projection.m[1][2] = dY;
 }
 
 void transform_interface_project_rect(
