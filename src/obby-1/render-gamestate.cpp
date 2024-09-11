@@ -1,3 +1,5 @@
+#include "../tl-library.hpp"
+
 int rainbowColor = 0;
 const tl::Vec2<float> smallFontHalfSize = { 5.0f, 10.0f };
 const tl::Vec2<float> titleFontHalfSize = { 15.0f, 30.0f };
@@ -13,39 +15,6 @@ char* jumpScare = "\
 ";
 tl::Sprite jumpScareSprite = tl::LoadSprite(jumpScare);
 
-
-float CreateWorldToCameraProjectionMatrix(
-	const tl::Rect<float>& from,
-	const tl::RenderBuffer& to,
-	tl::Matrix2x3<float>& matrix
-)
-{
-	float scaleFactor = (float)to.width / (2.0f * from.halfSize.x);
-	float dX = -from.position.x + from.halfSize.x;
-	float dY = -from.position.y + from.halfSize.y;
-
-	matrix.m[0][0] = scaleFactor;
-	matrix.m[0][1] = 0.0f;
-	matrix.m[0][2] = scaleFactor * dX;
-
-	matrix.m[1][0] = 0.0f;
-	matrix.m[1][1] = scaleFactor;
-	matrix.m[1][2] = scaleFactor * dY;
-
-	return scaleFactor;
-}
-
-void TransformFromWorldToCamera(
-	float scaleFactor,
-	const tl::Matrix2x3<float>& projection,
-	const tl::Rect<float>& worldSpace,
-	tl::Rect<float>& cameraSpace
-)
-{
-	cameraSpace.position = tl::Transform2DVector(worldSpace.position, projection);
-	cameraSpace.halfSize.x = worldSpace.halfSize.x * scaleFactor;
-	cameraSpace.halfSize.y = worldSpace.halfSize.y * scaleFactor;
-}
 
 static void RenderGameState(
 	const tl::RenderBuffer &renderBuffer,
@@ -151,9 +120,12 @@ static void RenderGameState(
 	tl::ClearScreen(renderBuffer, 0x222222);
 
 	tl::Matrix2x3<float> worldToCameraProjection;
-	float scaleFactor = CreateWorldToCameraProjectionMatrix(
+	tl::Rect<float> renderCamera;
+	renderCamera.halfSize = { (float)(renderBuffer.width / 2), (float)(renderBuffer.height / 2) };
+	renderCamera.position = renderCamera.halfSize;
+	tl::transform_interface_create_2d_projection_matrix(
 		state.camera,
-		renderBuffer,
+		renderCamera,
 		worldToCameraProjection
 	);
 
@@ -162,8 +134,7 @@ static void RenderGameState(
 		Block block = state.blocks[i];
 
 		tl::Rect<float> blockInCameraSpace;
-		TransformFromWorldToCamera(
-			scaleFactor,
+		tl::transform_interface_project_rect(
 			worldToCameraProjection,
 			block,
 			blockInCameraSpace
@@ -184,8 +155,7 @@ static void RenderGameState(
 	}
 
 	tl::Rect<float> playerInCameraSpace;
-	TransformFromWorldToCamera(
-		scaleFactor,
+	tl::transform_interface_project_rect(
 		worldToCameraProjection,
 		state.player,
 		playerInCameraSpace
