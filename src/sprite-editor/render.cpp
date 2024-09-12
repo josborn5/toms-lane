@@ -109,6 +109,13 @@ static void RenderSpriteAsGrid(
 		? selectedRowIndex
 		: rangeRowIndex;
 
+	tl::Matrix2x3<float> gridToRenderProjection;
+	tl::transform_interface_create_2d_projection_matrix(
+		grid.camera,
+		grid.footprint,
+		gridToRenderProjection
+	);
+
 	for (int j = 0; j < sprite.height; j += 1)
 	{
 		float yPosition = yOriginalPosition - (j * pixelDimensionWithBorder);
