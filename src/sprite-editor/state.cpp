@@ -418,20 +418,7 @@ static void ExecuteCurrentCommand()
 		break;
 	}
 	ClearCommandBuffer();
-	commands.append('N');
-	commands.append('O');
-	commands.append('T');
-	commands.append(' ');
-	commands.append('A');
-	commands.append(' ');
-	commands.append('C');
-	commands.append('O');
-	commands.append('M');
-	commands.append('M');
-	commands.append('A');
-	commands.append('N');
-	commands.append('D');
-	commands.append('\0');
+	WriteStringToCommandBuffer("NOT A COMMAND");
 }
 
 static bool CheckForCopy(const tl::Input& input)
@@ -489,38 +476,23 @@ static void ApplyViewModeInputToState(const tl::Input& input)
 
 	if (input.buttons[tl::KEY_V].keyDown)
 	{
-		ClearCommandBuffer();
 		state.mode = Visual;
 		state.pixels.selectedRangeIndex = state.pixels.selectedIndex;
-		commands.append('V');
-		commands.append('I');
-		commands.append('S');
-		commands.append('U');
-		commands.append('A');
-		commands.append('L');
-		commands.append('\0');
+		WriteStringToCommandBuffer("VISUAL");
 		return;
 	}
 
 	if (input.buttons[tl::KEY_I].keyDown)
 	{
-		ClearCommandBuffer();
 		state.mode = Insert;
-		commands.append('I');
-		commands.append('N');
-		commands.append('S');
-		commands.append('E');
-		commands.append('R');
-		commands.append('T');
-		commands.append('\0');
+		WriteStringToCommandBuffer("INSERT");
 		return;
 	}
 
 	if (input.character == ':')
 	{
-		ClearCommandBuffer();
-		commands.append(':');
 		state.mode = Command;
+		WriteStringToCommandBuffer(":");
 		return;
 	}
 }
