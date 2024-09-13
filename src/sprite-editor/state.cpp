@@ -206,6 +206,17 @@ static void ClearCommandBuffer()
 	}
 }
 
+static void WriteStringToCommandBuffer(char* character)
+{
+	ClearCommandBuffer();
+	while(*character)
+	{
+		commands.append(*character);
+		character++;
+	}
+	commands.append('\0');
+}
+
 static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY)
 {
 	state.mode = View;
@@ -243,25 +254,11 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 
 		if (!*filePath)
 		{
-			commands.append('N');
-			commands.append('O');
-			commands.append(' ');
-			commands.append('F');
-			commands.append('I');
-			commands.append('L');
-			commands.append('E');
-			commands.append('\0');
+			WriteStringToCommandBuffer("NO FILE");
 		}
 		else
 		{
-			commands.append('F');
-			commands.append('I');
-			commands.append('L');
-			commands.append('E');
-			commands.append(' ');
-			commands.append('D');
-			commands.append('O');
-			commands.append('\0');
+			WriteStringToCommandBuffer("BAD FILE READ");
 		}
 	}
 	else
