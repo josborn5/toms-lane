@@ -126,8 +126,14 @@ static void RenderSpriteAsGrid(
 
 			tl::Vec2<float> pixelPosition = { xPosition, yPosition };
 			tl::Rect<float> pixelFootPrint;
+			tl::Rect<float> pixelRenderFootprint;
 			pixelFootPrint.halfSize = pixelHalfSize;
 			pixelFootPrint.position = pixelPosition;
+			tl::transform_interface_project_rect(
+				gridToRenderProjection,
+				pixelFootPrint,
+				pixelRenderFootprint
+			);
 
 			if (yIsInSelectedRange && i >= startColIndex && i <= endColIndex)
 			{
