@@ -230,11 +230,39 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 	currentSprite.content = (Color*)spriteMemory.content;
 	state.pixels.sprite = &currentSprite;
 
+	ClearCommandBuffer();
+	InitializeLayout(state);
+	InitializePalettes(paletteMemory, tempMemory, state);
+
 	// Load file
-	if (!*filePath || tl::file_interface_read(filePath, fileReadMemory) != tl::Success)
+	int fileReadResult = (filePath) ? tl::file_interface_read(filePath, fileReadMemory) : -1;
+	if (!*filePath || fileReadResult != tl::Success)
 	{
 		state.mode = NoFile;
 		LoadSpriteC("2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0", tempMemory, currentSprite);
+
+		if (!*filePath)
+		{
+			commands.append('N');
+			commands.append('O');
+			commands.append(' ');
+			commands.append('F');
+			commands.append('I');
+			commands.append('L');
+			commands.append('E');
+			commands.append('\0');
+		}
+		else
+		{
+			commands.append('F');
+			commands.append('I');
+			commands.append('L');
+			commands.append('E');
+			commands.append(' ');
+			commands.append('D');
+			commands.append('O');
+			commands.append('\0');
+		}
 	}
 	else
 	{
@@ -244,10 +272,6 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 			currentBitmap,
 			spriteMemory);
 	}
-
-	ClearCommandBuffer();
-	InitializeLayout(state);
-	InitializePalettes(paletteMemory, tempMemory, state);
 
 	SizeGrid(state.pixels);
 
