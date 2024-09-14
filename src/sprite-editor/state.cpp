@@ -177,6 +177,8 @@ static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
 
 static bool ApplyCursorMovementToState(const tl::Input& input)
 {
+	if (input.buttons[tl::KEY_CTRL].isDown) return false;
+
 	Grid& activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
 	int newCursorIndex = GetCursorIndex(input, activeGrid, activeGrid.selectedIndex);
 	bool handledInput = activeGrid.selectedIndex != newCursorIndex;
