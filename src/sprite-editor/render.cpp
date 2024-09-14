@@ -62,7 +62,6 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& 
 }
 
 static void GetSelectedRangeFootprint(
-	const Grid& grid,
 	const tl::Rect<float>& selectedPixelFootprint,
 	tl::Rect<float>& rangeFootprint)
 {
@@ -138,7 +137,7 @@ static void RenderSpriteAsGrid(
 			if (yIsInSelectedRange && i >= startColIndex && i <= endColIndex)
 			{
 				tl::Rect<float> selectedFootprint;
-				GetSelectedRangeFootprint(grid, pixelRenderFootprint, selectedFootprint);
+				GetSelectedRangeFootprint(pixelRenderFootprint, selectedFootprint);
 				tl::DrawRect(renderBuffer, selectedPixelColor, selectedFootprint);
 			}
 
