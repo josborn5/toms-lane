@@ -138,7 +138,7 @@ static void RenderSpriteAsGrid(
 			if (yIsInSelectedRange && i >= startColIndex && i <= endColIndex)
 			{
 				tl::Rect<float> selectedFootprint;
-				GetSelectedRangeFootprint(grid, pixelFootPrint, selectedFootprint);
+				GetSelectedRangeFootprint(grid, pixelRenderFootprint, selectedFootprint);
 				tl::DrawRect(renderBuffer, selectedPixelColor, selectedFootprint);
 			}
 
@@ -150,7 +150,7 @@ static void RenderSpriteAsGrid(
 				(int)(255.0f * blockColor.g),
 				(int)(255.0f * blockColor.b)
 			);
-			tl::DrawRect(renderBuffer, color, pixelFootPrint);
+			tl::DrawRect(renderBuffer, color, pixelRenderFootprint);
 		}
 	}
 
@@ -177,6 +177,7 @@ static void RenderSpriteAsGrid(
 void SizeGrid(Grid& grid)
 {
 	grid.footprint = SizeBoundingRectForSpriteInContainingRect(*grid.sprite, grid.container);
+	grid.camera = grid.footprint;
 }
 
 static void PlaceRectToRightOfRect(const tl::Rect<float>& rect, tl::Rect<float>& toPlace)
