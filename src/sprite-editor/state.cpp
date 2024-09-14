@@ -206,6 +206,26 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 		state.pixels.camera.halfSize.y /= 0.75f;
 		return true;
 	}
+	else if (input.buttons[tl::KEY_UP].keyDown)
+	{
+		state.pixels.camera.position.y += (state.pixels.camera.halfSize.y * 0.2f);
+		return true;
+	}
+	else if (input.buttons[tl::KEY_DOWN].keyDown)
+	{
+		state.pixels.camera.position.y -= (state.pixels.camera.halfSize.y * 0.2f);
+		return true;
+	}
+	else if (input.buttons[tl::KEY_LEFT].keyDown)
+	{
+		state.pixels.camera.position.x -= (state.pixels.camera.halfSize.x * 0.2f);
+		return true;
+	}
+	else if (input.buttons[tl::KEY_RIGHT].keyDown)
+	{
+		state.pixels.camera.position.x += (state.pixels.camera.halfSize.x * 0.2f);
+		return true;
+	}
 
 	return false;
 }
