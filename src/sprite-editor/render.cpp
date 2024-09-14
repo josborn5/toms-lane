@@ -248,7 +248,7 @@ static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const Edit
 
 	cursorTime += dt;
 
-	if (state.mode == Command || state.mode == NoFile)
+	if (state.mode == Command)
 	{
 		tl::Rect<float> cursorFootprint = tl::CopyRect(commandCharFootprint);
 		cursorFootprint.position.x += dx;
@@ -272,18 +272,15 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state, floa
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, state.pixels.container);
 	tl::DrawRect(renderBuffer, paletteBackgroundColor, state.palette_.container);
 
-	if (state.mode != NoFile)
-	{
-		int displaySelectedPixelIndex = (state.activeControl == SpriteGrid && state.mode != Command)
-			? state.pixels.selectedIndex
-			: -1;
-		RenderSpriteAsGrid(
-			state.pixels,
-			renderBuffer,
-			displaySelectedPixelIndex,
-			state.mode
-		);
-	}
+	int displaySelectedPixelIndex = (state.activeControl == SpriteGrid && state.mode != Command)
+		? state.pixels.selectedIndex
+		: -1;
+	RenderSpriteAsGrid(
+		state.pixels,
+		renderBuffer,
+		displaySelectedPixelIndex,
+		state.mode
+	);
 
 	RenderCommandBuffer(renderBuffer, state, dt);
 

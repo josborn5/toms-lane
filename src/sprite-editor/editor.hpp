@@ -42,8 +42,7 @@ enum Mode
 	View,
 	Command,
 	Visual,
-	Insert,
-	NoFile
+	Insert
 };
 
 struct EditorState

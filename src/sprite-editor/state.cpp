@@ -209,12 +209,13 @@ static void ClearCommandBuffer()
 static void WriteStringToCommandBuffer(char* character)
 {
 	ClearCommandBuffer();
-	while(*character)
+	int counter = 1;
+	while(*character && counter < commandBufferSize)
 	{
 		commands.append(*character);
 		character++;
+		counter += 1;
 	}
-	commands.append('\0');
 }
 
 static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY)
@@ -249,7 +250,6 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 	int fileReadResult = tl::file_interface_read(filePath, fileReadMemory);
 	if (fileReadResult != tl::Success)
 	{
-		state.mode = NoFile;
 		LoadSpriteC("2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0", tempMemory, currentSprite);
 
 		switch (fileReadResult)
@@ -524,10 +524,7 @@ const EditorState& GetLatestState(const tl::Input& input)
 	if (input.buttons[tl::KEY_ESCAPE].keyDown)
 	{
 		ClearCommandBuffer();
-		if (state.mode != NoFile)
-		{
-			state.mode = View;
-		}
+		state.mode = View;
 		return state;
 	}
 
@@ -552,7 +549,6 @@ const EditorState& GetLatestState(const tl::Input& input)
 			if (CheckForPaste(input)) return state;
 			break;
 		case Command:
-		case NoFile:
 			ApplyCommandModeInputToState(input);
 			break;
 	}
