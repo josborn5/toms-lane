@@ -246,19 +246,20 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 	InitializePalettes(paletteMemory, tempMemory, state);
 
 	// Load file
-	int fileReadResult = (filePath) ? tl::file_interface_read(filePath, fileReadMemory) : -1;
-	if (!*filePath || fileReadResult != tl::Success)
+	int fileReadResult = tl::file_interface_read(filePath, fileReadMemory);
+	if (fileReadResult != tl::Success)
 	{
 		state.mode = NoFile;
 		LoadSpriteC("2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0", tempMemory, currentSprite);
 
-		if (!*filePath)
+		switch (fileReadResult)
 		{
-			WriteStringToCommandBuffer("NO FILE");
-		}
-		else
-		{
-			WriteStringToCommandBuffer("BAD FILE READ");
+			case tl::InvalidFilePath:
+			case tl::FileDoesNotExist:
+				WriteStringToCommandBuffer("File not found");
+				break;
+			default:
+				WriteStringToCommandBuffer("BAD FILE READ");
 		}
 	}
 	else
@@ -293,7 +294,7 @@ int InitializeState(char* commandLine, int clientX, int clientY)
 	}
 
 	tl::InitializeMemory(
-		3,
+		4,
 		1,
 		appMemory
 	);
