@@ -187,6 +187,29 @@ static bool ApplyCursorMovementToState(const tl::Input& input)
 	return handledInput;
 }
 
+static bool ApplyCameraMovementToState(const tl::Input& input)
+{
+	if (state.activeControl != SpriteGrid || !input.buttons[tl::KEY_CTRL].isDown)
+	{
+		return false;
+	}
+
+	if (input.buttons[tl::KEY_I].keyDown)
+	{
+		state.pixels.camera.halfSize.x *= 0.75f;
+		state.pixels.camera.halfSize.y *= 0.75f;
+		return true;
+	}
+	else if (input.buttons[tl::KEY_U].keyDown)
+	{
+		state.pixels.camera.halfSize.x /= 0.75f;
+		state.pixels.camera.halfSize.y /= 0.75f;
+		return true;
+	}
+
+	return false;
+}
+
 static bool ApplySelectedRangeMovementToState(const tl::Input& input)
 {
 	Grid& activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
@@ -472,6 +495,7 @@ static void ProcessCommandInput(const tl::Input& input)
 static void ApplyViewModeInputToState(const tl::Input& input)
 {
 	if (ApplyCursorMovementToState(input)) return;
+	if (ApplyCameraMovementToState(input)) return;
 	if (CheckForCopy(input)) return;
 	if (CheckForPaste(input)) return;
 
