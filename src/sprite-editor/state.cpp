@@ -347,6 +347,20 @@ int InitializeState(char* commandLine, int clientX, int clientY)
 	return Initialize(appMemory, clientX, clientY);
 }
 
+static bool CommandStartsWith(char* prefix)
+{
+	int counter = 1;
+	bool match = true;
+	while (*prefix && match && counter < commandBufferSize)
+	{
+		match = (commands.get(counter) == *prefix);
+		counter += 1;
+		prefix++;
+	}
+
+	return match & (commands.get(counter) != '\0');
+}
+
 static bool CommandIs(char* command)
 {
 	int counter = 1;
@@ -367,6 +381,7 @@ static void ExecuteCurrentCommand()
 	{
 		return;
 	}
+
 	if (CommandIs("R")) // append row
 	{
 		InsertRow(state.pixels, spriteMemory);
@@ -405,7 +420,7 @@ static void ExecuteCurrentCommand()
 		ClearCommandBuffer();
 		return;
 	}
-	else if (CommandIs("DC") && state.pixels.sprite->width > 1)
+	else if (CommandIs("DC") && state.pixels.sprite->width > 1) // delete column
 	{
 		// get the column index
 		unsigned int columnIndex = state.pixels.selectedIndex % state.pixels.sprite->width;
@@ -422,46 +437,31 @@ static void ExecuteCurrentCommand()
 		ClearCommandBuffer();
 		return;
 	}
-	else if (CommandIs("W"))
+	else if (CommandIs("W")) // write existing file
 	{
 		SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
 		return;
 	}
-
-	switch (commands.get(1))
+	else if (CommandStartsWith("EDIT ")) // edit new file
 	{
-		case 'E':
-		{
-			if (commands.get(2) == 'D'
-				&& commands.get(3) == 'I'
-				&& commands.get(4) == 'T'
-				&& commands.get(5) == ' '
-				&& commands.get(6) != '\0') // edit new file
-			{
-				InitializeState(&commands.access(6), state.windowWidth, state.windowHeight);
-				return;
-			}
-			else // edit color of selected pixel
-			{
-				char* pointer = tl::GetNextNumberChar(&commands.access(1));
-				tl::MemorySpace transient = appMemory.transient;
-				ParseColorFromCharArray(pointer, transient, state.pixels.sprite->content[state.pixels.selectedIndex]);
-				ClearCommandBuffer();
-				return;
-			}
-			break;
-		}
-		case 'W':
-		{
-			if (commands.get(2) == ' ' && commands.get(3)) // save to new filePath
-			{
-				filePath = &commands.access(3);
-				SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
-				return;
-			}
-		}
-		break;
+		InitializeState(&commands.access(6), state.windowWidth, state.windowHeight);
+		return;
 	}
+	else if (CommandStartsWith("W ")) // write to new file
+	{
+		filePath = &commands.access(3);
+		SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
+		return;
+	}
+	else if (CommandStartsWith("E ")) // edit selected pixel
+	{
+		char* pointer = tl::GetNextNumberChar(&commands.access(1));
+		tl::MemorySpace transient = appMemory.transient;
+		ParseColorFromCharArray(pointer, transient, state.pixels.sprite->content[state.pixels.selectedIndex]);
+		ClearCommandBuffer();
+		return;
+	}
+
 	ClearCommandBuffer();
 	WriteStringToCommandBuffer("NOT A COMMAND");
 }
