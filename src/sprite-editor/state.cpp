@@ -347,32 +347,29 @@ int InitializeState(char* commandLine, int clientX, int clientY)
 	return Initialize(appMemory, clientX, clientY);
 }
 
+static bool CommandHas(char* compare, int& cursor)
+{
+	cursor = 1;
+	bool match = true;
+	while (*compare && match && cursor < commandBufferSize)
+	{
+		match = (commands.get(cursor) == *compare);
+		cursor += 1;
+		compare++;
+	}
+	return match;
+}
+
 static bool CommandStartsWith(char* prefix)
 {
-	int counter = 1;
-	bool match = true;
-	while (*prefix && match && counter < commandBufferSize)
-	{
-		match = (commands.get(counter) == *prefix);
-		counter += 1;
-		prefix++;
-	}
-
-	return match & (commands.get(counter) != '\0');
+	int cursor;
+	return CommandHas(prefix, cursor) & (commands.get(cursor) != '\0');
 }
 
 static bool CommandIs(char* command)
 {
-	int counter = 1;
-	bool match = true;
-	while (*command && match && counter < commandBufferSize)
-	{
-		match = (commands.get(counter) == *command);
-		counter += 1;
-		command++;
-	}
-
-	return match & (commands.get(counter) == '\0');
+	int cursor;
+	return CommandHas(command, cursor) & (commands.get(cursor) == '\0');
 }
 
 static void ExecuteCurrentCommand()
