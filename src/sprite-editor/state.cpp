@@ -422,6 +422,11 @@ static void ExecuteCurrentCommand()
 		ClearCommandBuffer();
 		return;
 	}
+	else if (CommandIs("W"))
+	{
+		SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
+		return;
+	}
 
 	switch (commands.get(1))
 	{
@@ -448,11 +453,6 @@ static void ExecuteCurrentCommand()
 		}
 		case 'W':
 		{
-			if (*filePath && commands.get(2) == '\0')
-			{
-				SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
-				return;
-			}
 			if (commands.get(2) == ' ' && commands.get(3)) // save to new filePath
 			{
 				filePath = &commands.access(3);
