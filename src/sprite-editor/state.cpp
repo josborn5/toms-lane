@@ -347,36 +347,84 @@ int InitializeState(char* commandLine, int clientX, int clientY)
 	return Initialize(appMemory, clientX, clientY);
 }
 
+static bool CommandIs(char* command)
+{
+	int counter = 1;
+	bool match = true;
+	while (*command && match && counter < commandBufferSize)
+	{
+		match = (commands.get(counter) == *command);
+		counter += 1;
+		command++;
+	}
+
+	return match & (commands.get(counter) == '\0');
+}
+
 static void ExecuteCurrentCommand()
 {
 	if (commands.get(0) != ':')
 	{
 		return;
 	}
+	if (CommandIs("R")) // append row
+	{
+		InsertRow(state.pixels, spriteMemory);
+		SizeGrid(state.pixels);
+		ClearCommandBuffer();
+		return;
+	}
+	else if (CommandIs("C")) // append column
+	{
+		InsertColumn(state.pixels, spriteMemory);
+		SizeGrid(state.pixels);
+		ClearCommandBuffer();
+		return;
+	}
+	else if (CommandIs("P")) // switch palette
+	{
+		SwitchPalette(state);
+		ClearCommandBuffer();
+		return;
+	}
+	else if (CommandIs("DR") && state.pixels.sprite->height > 1) // delete row
+	{
+		// Get start and end index of row
+		int rowIndex = (int)(state.pixels.selectedIndex / state.pixels.sprite->width);
+		unsigned int startDeleteIndex = rowIndex * state.pixels.sprite->width;
+		unsigned int endDeleteIndex = rowIndex + state.pixels.sprite->width - 1;
+		unsigned int spriteLength = state.pixels.sprite->width * state.pixels.sprite->height;
+
+		// Call tl::DeleteFromArray with the sprite content
+		tl::DeleteFromArray(state.pixels.sprite->content, startDeleteIndex, endDeleteIndex, spriteLength);
+
+		// Subtract 1 from the sprite height
+		state.pixels.sprite->height -= 1;
+
+		SizeGrid(state.pixels);
+		ClearCommandBuffer();
+		return;
+	}
+	else if (CommandIs("DC") && state.pixels.sprite->width > 1)
+	{
+		// get the column index
+		unsigned int columnIndex = state.pixels.selectedIndex % state.pixels.sprite->width;
+		unsigned int spriteLength = state.pixels.sprite->width * state.pixels.sprite->height;
+		for (int i = state.pixels.sprite->height - 1; i >= 0; i -= 1)
+		{
+			unsigned int deleteIndex = (i * state.pixels.sprite->width) + columnIndex;
+			tl::DeleteFromArray(state.pixels.sprite->content, deleteIndex, deleteIndex, spriteLength);
+			spriteLength -= 1;
+		}
+		state.pixels.sprite->width -= 1;
+
+		SizeGrid(state.pixels);
+		ClearCommandBuffer();
+		return;
+	}
+
 	switch (commands.get(1))
 	{
-		case 'R': // append row
-		{
-			if (commands.get(2) == '\0')
-			{
-				InsertRow(state.pixels, spriteMemory);
-				SizeGrid(state.pixels);
-				ClearCommandBuffer();
-				return;
-			}
-			break;
-		}
-		case 'C': // append column
-		{
-			if (commands.get(2) == '\0')
-			{
-				InsertColumn(state.pixels, spriteMemory);
-				SizeGrid(state.pixels);
-				ClearCommandBuffer();
-				return;
-			}
-			break;
-		}
 		case 'E':
 		{
 			if (commands.get(2) == 'D'
@@ -393,55 +441,6 @@ static void ExecuteCurrentCommand()
 				char* pointer = tl::GetNextNumberChar(&commands.access(1));
 				tl::MemorySpace transient = appMemory.transient;
 				ParseColorFromCharArray(pointer, transient, state.pixels.sprite->content[state.pixels.selectedIndex]);
-				ClearCommandBuffer();
-				return;
-			}
-			break;
-		}
-		case 'P': // switch palette
-		{
-			if (commands.get(2) == '\0')
-			{
-				SwitchPalette(state);
-				ClearCommandBuffer();
-				return;
-			}
-			break;
-		}
-		case 'D': // Delete
-		{
-			if (commands.get(2) == 'R' && commands.get(3) == '\0' && state.pixels.sprite->height > 1)
-			{
-				// Get start and end index of row
-				int rowIndex = (int)(state.pixels.selectedIndex / state.pixels.sprite->width);
-				unsigned int startDeleteIndex = rowIndex * state.pixels.sprite->width;
-				unsigned int endDeleteIndex = rowIndex + state.pixels.sprite->width - 1;
-				unsigned int spriteLength = state.pixels.sprite->width * state.pixels.sprite->height;
-
-				// Call tl::DeleteFromArray with the sprite content
-				tl::DeleteFromArray(state.pixels.sprite->content, startDeleteIndex, endDeleteIndex, spriteLength);
-
-				// Subtract 1 from the sprite height
-				state.pixels.sprite->height -= 1;
-
-				SizeGrid(state.pixels);
-				ClearCommandBuffer();
-				return;
-			}
-			else if (commands.get(2) == 'C' && commands.get(3) == '\0' && state.pixels.sprite->width > 1)
-			{
-				// get the column index
-				unsigned int columnIndex = state.pixels.selectedIndex % state.pixels.sprite->width;
-				unsigned int spriteLength = state.pixels.sprite->width * state.pixels.sprite->height;
-				for (int i = state.pixels.sprite->height - 1; i >= 0; i -= 1)
-				{
-					unsigned int deleteIndex = (i * state.pixels.sprite->width) + columnIndex;
-					tl::DeleteFromArray(state.pixels.sprite->content, deleteIndex, deleteIndex, spriteLength);
-					spriteLength -= 1;
-				}
-				state.pixels.sprite->width -= 1;
-
-				SizeGrid(state.pixels);
 				ClearCommandBuffer();
 				return;
 			}
