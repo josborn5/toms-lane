@@ -434,20 +434,24 @@ static void ExecuteCurrentCommand()
 		ClearCommandBuffer();
 		return;
 	}
-	else if (CommandIs("W")) // write existing file
+	else if (CommandIs("W") || CommandStartsWith("W ")) // write to file
 	{
-		SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
+		char* targetFilePath = CommandIs("W") ? filePath : &commands.access(3);
+
+		int saveResult = SaveBitmap(appMemory, *state.pixels.sprite, targetFilePath);
+		if (saveResult == tl::Success)
+		{
+			WriteStringToCommandBuffer("Saved");
+		}
+		else
+		{
+			WriteStringToCommandBuffer("Save error");
+		}
 		return;
 	}
 	else if (CommandStartsWith("EDIT ")) // edit new file
 	{
 		InitializeState(&commands.access(6), state.windowWidth, state.windowHeight);
-		return;
-	}
-	else if (CommandStartsWith("W ")) // write to new file
-	{
-		filePath = &commands.access(3);
-		SaveBitmap(appMemory, *state.pixels.sprite, commands, filePath);
 		return;
 	}
 	else if (CommandStartsWith("E ")) // edit selected pixel

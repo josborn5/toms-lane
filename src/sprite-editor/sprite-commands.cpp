@@ -5,10 +5,9 @@
 #include "./transform.hpp"
 
 
-void SaveBitmap(
+int SaveBitmap(
 	const tl::GameMemory& gameMemory,
 	const SpriteC& sprite,
-	tl::array<char>& displayBuffer,
 	char* filePath
 )
 {
@@ -17,34 +16,16 @@ void SaveBitmap(
 	remainder.content = gameMemory.transient.content;
 	remainder.sizeInBytes = gameMemory.transient.sizeInBytes;
 	int bitmapWriteResult = InitializeBitmapFromSpriteC(sprite, blankBitmap, remainder);
-	if (bitmapWriteResult != 0) return;
+	if (bitmapWriteResult != 0) return -1;
 
 	tl::CarveMemorySpace(blankBitmap.file_header.fileSizeInBytes, remainder);
 
 	int writeResult = tl::bitmap_interface_write(blankBitmap, remainder);
-	if (writeResult != tl::bitmap_write_success) return;
+	if (writeResult != tl::bitmap_write_success) return -2;
 
 	tl::MemorySpace fileData = CarveMemorySpace(blankBitmap.file_header.fileSizeInBytes, remainder);
 
-	displayBuffer.clear();
-	if (tl::file_interface_write(filePath, fileData) == tl::Success)
-	{
-		displayBuffer.append('S');
-		displayBuffer.append('A');
-		displayBuffer.append('V');
-		displayBuffer.append('E');
-		displayBuffer.append('D');
-		displayBuffer.append('\0');
-	}
-	else
-	{
-		displayBuffer.append('E');
-		displayBuffer.append('R');
-		displayBuffer.append('R');
-		displayBuffer.append('O');
-		displayBuffer.append('R');
-		displayBuffer.append('\0');
-	}
+	return tl::file_interface_write(filePath, fileData);
 }
 
 static int AppendRowToSpriteC(SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
