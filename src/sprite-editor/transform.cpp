@@ -67,6 +67,7 @@ int InitializeSpriteCFromBitmap(
 	const int supportedBitsPerPixel = 24;
 	int bytesPerPixel = supportedBitsPerPixel / 8;
 	if (bitmap.dibs_header.bitsPerPixel != supportedBitsPerPixel) return -1;
+	sprite.bitsPerPixel = bitmap.dibs_header.bitsPerPixel;
 
 	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
 	int spritePixelCount = bitmap.dibs_header.imageSizeInBytes / bytesPerPixel;
