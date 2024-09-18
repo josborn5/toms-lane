@@ -462,6 +462,20 @@ static void ExecuteCurrentCommand()
 		ClearCommandBuffer();
 		return;
 	}
+	else if (CommandStartsWith("BPP ")) // set bits per pixel
+	{
+		int newBitValue = tl::CharStringToInt(&commands.access(5));
+		if (newBitValue == 24)
+		{
+			state.pixels.bitsPerPixel = newBitValue;
+			ClearCommandBuffer();
+		}
+		else
+		{
+			WriteStringToCommandBuffer("Invalid bits per pixel");
+		}
+		return;
+	}
 
 	ClearCommandBuffer();
 	WriteStringToCommandBuffer("NOT A COMMAND");

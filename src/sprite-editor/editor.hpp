@@ -35,6 +35,7 @@ struct Grid
 	tl::Rect<float> camera;
 	int selectedIndex = 0;
 	int selectedRangeIndex = 0;
+	int bitsPerPixel = 24;
 };
 
 enum Mode
