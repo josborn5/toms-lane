@@ -17,6 +17,7 @@ struct SpriteC
 	int width;
 	int height;
 	Color* content;
+	int bitsPerPixel = 24;
 };
 
 enum EditorControl
@@ -35,7 +36,6 @@ struct Grid
 	tl::Rect<float> camera;
 	int selectedIndex = 0;
 	int selectedRangeIndex = 0;
-	int bitsPerPixel = 24;
 };
 
 enum Mode
