@@ -146,12 +146,10 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	return 0;
 }
 
-typedef uint32_t GetColorFromBitmap(const bitmap& bitmap, int xOrdinal, int yOrdinal);
+typedef uint32_t GetColorFromBitmap(const bitmap& bitmap, int pixelIndex);
 
-static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int xOrdinal, int yOrdinal)
+static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int pixelOffset)
 {
-	int pixelOffset = (yOrdinal * bitmap.dibs_header.width) + xOrdinal;
-
 	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
 	RGB24Bit* bitmapPixel = twentyFourBitContent + pixelOffset;
 
@@ -159,10 +157,9 @@ static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int xOrdinal, int 
 	return colorRGB;
 }
 
-static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int xOrdinal, int yOrdinal)
+static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int contentOffset)
 {
 	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
-	int contentOffset = (yOrdinal * bitmap.dibs_header.width) + xOrdinal;
 	const uint32_t white = 0xFFFFFF;
 	const uint32_t black = 0x000000;
 
@@ -232,7 +229,8 @@ int bitmap_interface_render(
 		int bitmapX = 0;
 		for (int i = start.x; i < end.x; i += 1)
 		{
-			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, bitmapX, bitmapY);
+			int pixelOffset = (bitmapY * bitmap.dibs_header.width) + bitmapX;
+			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, pixelOffset);
 			*pixel = pixelColor;
 			pixel++;
 			bitmapX += 1;
@@ -275,7 +273,8 @@ int bitmap_interface_render(
 		float bitmapX = 0.0f;
 		for (int i = start.x; i < end.x; i += 1)
 		{
-			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, (int)bitmapX, (int)bitmapY);
+			int pixelOffset = ((int)bitmapY * bitmap.dibs_header.width) + (int)bitmapX;
+			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, pixelOffset );
 			*pixel = pixelColor;
 			pixel++;
 			bitmapX += bitmapIncrement.x;
