@@ -467,7 +467,7 @@ static void ExecuteCurrentCommand()
 		int newBitValue = tl::CharStringToInt(&commands.access(5));
 		if (newBitValue == 24)
 		{
-			state.pixels.sprite->bitsPerPixel = newBitValue;
+			state.pixels.sprite->bitsPerPixel = (uint16_t)newBitValue;
 			ClearCommandBuffer();
 		}
 		else

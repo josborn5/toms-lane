@@ -17,7 +17,7 @@ struct SpriteC
 	int width;
 	int height;
 	Color* content;
-	int bitsPerPixel = 24;
+	uint16_t bitsPerPixel = 24;
 };
 
 enum EditorControl

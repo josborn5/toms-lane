@@ -14,7 +14,7 @@ int InitializeBitmapFromSpriteC(
 	tl::bitmap& bitmap,
 	const tl::MemorySpace tempMemory)
 {
-	const int bitsPerPixel = 24;
+	uint16_t bitsPerPixel = sprite.bitsPerPixel;
 	uint32_t imageSizeInBytes = bitsPerPixel * sprite.height * sprite.width / 8;
 
 	bitmap.file_header.fileType = 0x4d42;
