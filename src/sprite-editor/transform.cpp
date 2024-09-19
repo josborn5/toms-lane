@@ -64,6 +64,8 @@ int InitializeBitmapFromSpriteC(
 	return 0;
 }
 
+typedef Color BitmapToColor (const tl::bitmap& bitmap, int bitmapPixelIndex);
+
 static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIndex)
 {
 	RGB24Bit bitmapPixel = *((RGB24Bit*)bitmap.content + bitmapPixelIndex);
@@ -76,16 +78,28 @@ static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIn
 	return spriteColor;
 }
 
+static BitmapToColor* ResolveBitmapToColorTransformer(int bitsPerPixel)
+{
+	switch (bitsPerPixel)
+	{
+		case 24:
+			return &GetColorFrom24BitBitmap;
+	}
+
+	return nullptr;
+}
+
 int InitializeSpriteCFromBitmap(
 	SpriteC& sprite,
 	const tl::bitmap& bitmap,
-	const tl::MemorySpace spriteMemory)
+	const tl::MemorySpace spriteMemory
+)
 {
-	const int supportedBitsPerPixel = 24;
-	int bytesPerPixel = supportedBitsPerPixel / 8;
-	if (bitmap.dibs_header.bitsPerPixel != supportedBitsPerPixel) return -1;
-	sprite.bitsPerPixel = bitmap.dibs_header.bitsPerPixel;
+	BitmapToColor* bitmapToColorTransformer = ResolveBitmapToColorTransformer(bitmap.dibs_header.bitsPerPixel);
+	if (bitmapToColorTransformer  == nullptr) return -1;
 
+	sprite.bitsPerPixel = bitmap.dibs_header.bitsPerPixel;
+	int bytesPerPixel = bitmap.dibs_header.bitsPerPixel / 8;
 	int spritePixelCount = bitmap.dibs_header.imageSizeInBytes / bytesPerPixel;
 
 	if ((sizeof(Color) * spritePixelCount) > spriteMemory.sizeInBytes) return -2;
@@ -102,7 +116,7 @@ int InitializeSpriteCFromBitmap(
 		for (int columnIndex = 0; columnIndex < sprite.width; columnIndex += 1)
 		{
 			int spritePixelIndex = startRowPixelIndex + columnIndex;
-			sprite.content[spritePixelIndex] = GetColorFrom24BitBitmap(bitmap, bitmapPixelIndex);
+			sprite.content[spritePixelIndex] = (*bitmapToColorTransformer)(bitmap, bitmapPixelIndex);
 			bitmapPixelIndex += 1;
 		}
 	}
