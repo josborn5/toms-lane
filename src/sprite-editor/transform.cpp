@@ -9,6 +9,8 @@ struct RGB24Bit
 	uint8_t r;
 };
 
+typedef void ColorToBitmap (const Color& spriteColor, int bitmapPixelIndex, tl::bitmap& bitmap);
+
 static void WriteColorTo24BitBitmap(const Color& spriteColor, int bitmapPixelIndex, tl::bitmap& bitmap)
 {
 	RGB24Bit bitmapPixel;
@@ -18,11 +20,25 @@ static void WriteColorTo24BitBitmap(const Color& spriteColor, int bitmapPixelInd
 	*((RGB24Bit*)bitmap.content + bitmapPixelIndex) = bitmapPixel;
 }
 
+static ColorToBitmap* ResolveColorToBitmapTransformer(int bitsPerPixel)
+{
+	switch (bitsPerPixel)
+	{
+		case 24:
+			return &WriteColorTo24BitBitmap;
+	}
+
+	return nullptr;
+}
+
 int InitializeBitmapFromSpriteC(
 	const SpriteC& sprite,
 	tl::bitmap& bitmap,
 	const tl::MemorySpace tempMemory)
 {
+	ColorToBitmap* colorToBitmapTransformer = ResolveColorToBitmapTransformer(sprite.bitsPerPixel);
+	if (colorToBitmapTransformer == nullptr) return -2;
+
 	uint16_t bitsPerPixel = sprite.bitsPerPixel;
 	uint32_t imageSizeInBytes = bitsPerPixel * sprite.height * sprite.width / 8;
 
@@ -56,7 +72,7 @@ int InitializeBitmapFromSpriteC(
 		{
 			int spritePixelIndex = startRowPixelIndex + columnIndex;
 			Color spriteColor = sprite.content[spritePixelIndex];
-			WriteColorTo24BitBitmap(spriteColor, bitmapPixelIndex, bitmap);
+			(*colorToBitmapTransformer)(spriteColor, bitmapPixelIndex, bitmap);
 			bitmapPixelIndex += 1;
 		}
 	}
