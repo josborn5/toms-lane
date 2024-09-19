@@ -9,6 +9,15 @@ struct RGB24Bit
 	uint8_t r;
 };
 
+static void WriteColorTo24BitBitmap(const Color& spriteColor, int bitmapPixelIndex, tl::bitmap& bitmap)
+{
+	RGB24Bit bitmapPixel;
+	bitmapPixel.r = (uint8_t)(255.0f * spriteColor.r);
+	bitmapPixel.g = (uint8_t)(255.0f * spriteColor.g);
+	bitmapPixel.b = (uint8_t)(255.0f * spriteColor.b);
+	*((RGB24Bit*)bitmap.content + bitmapPixelIndex) = bitmapPixel;
+}
+
 int InitializeBitmapFromSpriteC(
 	const SpriteC& sprite,
 	tl::bitmap& bitmap,
@@ -47,16 +56,24 @@ int InitializeBitmapFromSpriteC(
 		{
 			int spritePixelIndex = startRowPixelIndex + columnIndex;
 			Color spriteColor = sprite.content[spritePixelIndex];
-			RGB24Bit bitmapPixel;
-			bitmapPixel.r = (uint8_t)(255.0f * spriteColor.r);
-			bitmapPixel.g = (uint8_t)(255.0f * spriteColor.g);
-			bitmapPixel.b = (uint8_t)(255.0f * spriteColor.b);
-			*((RGB24Bit*)bitmap.content + bitmapPixelIndex) = bitmapPixel;
+			WriteColorTo24BitBitmap(spriteColor, bitmapPixelIndex, bitmap);
 			bitmapPixelIndex += 1;
 		}
 	}
 
 	return 0;
+}
+
+static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIndex)
+{
+	RGB24Bit bitmapPixel = *((RGB24Bit*)bitmap.content + bitmapPixelIndex);
+
+	Color spriteColor;
+	spriteColor.r = (float)bitmapPixel.r / 255.0f;
+	spriteColor.g = (float)bitmapPixel.g / 255.0f;
+	spriteColor.b = (float)bitmapPixel.b / 255.0f;
+
+	return spriteColor;
 }
 
 int InitializeSpriteCFromBitmap(
@@ -84,16 +101,9 @@ int InitializeSpriteCFromBitmap(
 	{
 		for (int columnIndex = 0; columnIndex < sprite.width; columnIndex += 1)
 		{
-			RGB24Bit bitmapPixel = *((RGB24Bit*)bitmap.content + bitmapPixelIndex);
-			bitmapPixelIndex += 1;
-
-			Color spriteColor;
-			spriteColor.r = (float)bitmapPixel.r / 255.0f;
-			spriteColor.g = (float)bitmapPixel.g / 255.0f;
-			spriteColor.b = (float)bitmapPixel.b / 255.0f;
-
 			int spritePixelIndex = startRowPixelIndex + columnIndex;
-			sprite.content[spritePixelIndex] = spriteColor;
+			sprite.content[spritePixelIndex] = GetColorFrom24BitBitmap(bitmap, bitmapPixelIndex);
+			bitmapPixelIndex += 1;
 		}
 	}
 
