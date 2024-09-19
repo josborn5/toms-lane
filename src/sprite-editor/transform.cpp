@@ -35,7 +35,7 @@ int InitializeBitmapFromSpriteC(
 	if (bitmap.file_header.fileSizeInBytes > tempMemory.sizeInBytes) return -1;
 
 	bitmap.content = (uint8_t*)tempMemory.content;
-	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
+	int bitmapPixelIndex = 0;
 	int spritePixelCount = sprite.width * sprite.height;
 
 	// SpriteC origin is top left
@@ -45,14 +45,14 @@ int InitializeBitmapFromSpriteC(
 	{
 		for (int columnIndex = 0; columnIndex < sprite.width; columnIndex += 1)
 		{
-			int pixelIndex = startRowPixelIndex + columnIndex;
-			Color spriteColor = sprite.content[pixelIndex];
+			int spritePixelIndex = startRowPixelIndex + columnIndex;
+			Color spriteColor = sprite.content[spritePixelIndex];
 			RGB24Bit bitmapPixel;
 			bitmapPixel.r = (uint8_t)(255.0f * spriteColor.r);
 			bitmapPixel.g = (uint8_t)(255.0f * spriteColor.g);
 			bitmapPixel.b = (uint8_t)(255.0f * spriteColor.b);
-			*twentyFourBitContent = bitmapPixel;
-			twentyFourBitContent++;
+			*((RGB24Bit*)bitmap.content + bitmapPixelIndex) = bitmapPixel;
+			bitmapPixelIndex += 1;
 		}
 	}
 
@@ -69,7 +69,6 @@ int InitializeSpriteCFromBitmap(
 	if (bitmap.dibs_header.bitsPerPixel != supportedBitsPerPixel) return -1;
 	sprite.bitsPerPixel = bitmap.dibs_header.bitsPerPixel;
 
-	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
 	int spritePixelCount = bitmap.dibs_header.imageSizeInBytes / bytesPerPixel;
 
 	if ((sizeof(Color) * spritePixelCount) > spriteMemory.sizeInBytes) return -2;
@@ -80,20 +79,21 @@ int InitializeSpriteCFromBitmap(
 	// SpriteC origin is top left
 	// Bitmap origin is bottom left
 	int bottomLeftSpritePixelIndex =  spritePixelCount - sprite.width;
+	int bitmapPixelIndex = 0;
 	for (int startRowPixelIndex = bottomLeftSpritePixelIndex; startRowPixelIndex >= 0; startRowPixelIndex -= sprite.width)
 	{
 		for (int columnIndex = 0; columnIndex < sprite.width; columnIndex += 1)
 		{
-			RGB24Bit bitmapPixel = *twentyFourBitContent;
-			twentyFourBitContent++;
+			RGB24Bit bitmapPixel = *((RGB24Bit*)bitmap.content + bitmapPixelIndex);
+			bitmapPixelIndex += 1;
 
 			Color spriteColor;
 			spriteColor.r = (float)bitmapPixel.r / 255.0f;
 			spriteColor.g = (float)bitmapPixel.g / 255.0f;
 			spriteColor.b = (float)bitmapPixel.b / 255.0f;
 
-			int pixelIndex = startRowPixelIndex + columnIndex;
-			sprite.content[pixelIndex] = spriteColor;
+			int spritePixelIndex = startRowPixelIndex + columnIndex;
+			sprite.content[spritePixelIndex] = spriteColor;
 		}
 	}
 
