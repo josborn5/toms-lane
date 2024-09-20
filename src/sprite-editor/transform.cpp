@@ -94,12 +94,38 @@ static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIn
 	return spriteColor;
 }
 
+static Color GetColorFrom1BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIndex)
+{
+	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
+	Color spriteColor;
+
+	const int byteSize = 8;
+	const float white = 1.0f;
+	const float black = 0.0f;
+	int byteOffset = bitmapPixelIndex / byteSize;
+	int bitOffset = bitmapPixelIndex  % byteSize;
+	int bitShiftOffset = byteSize - bitOffset - 1;
+
+	uint8_t* byteFromBitmap = eightBitContent + byteOffset;
+
+	// 1.shift the bit of interest over to the right most bit
+	// 2. AND with a mask to evaluate the right most bit as true/false
+	// 3. true --> white, false --> black
+	float floatColor =  ((*byteFromBitmap  >> bitShiftOffset) & 0b00000001) ? white : black;
+	spriteColor.r = floatColor;
+	spriteColor.g = floatColor;
+	spriteColor.b = floatColor;
+	return spriteColor;
+}
+
 static BitmapToColor* ResolveBitmapToColorTransformer(int bitsPerPixel)
 {
 	switch (bitsPerPixel)
 	{
 		case 24:
 			return &GetColorFrom24BitBitmap;
+		case 1:
+			return &GetColorFrom1BitBitmap;
 	}
 
 	return nullptr;
@@ -115,8 +141,7 @@ int InitializeSpriteCFromBitmap(
 	if (bitmapToColorTransformer  == nullptr) return -1;
 
 	sprite.bitsPerPixel = bitmap.dibs_header.bitsPerPixel;
-	int bytesPerPixel = bitmap.dibs_header.bitsPerPixel / 8;
-	int spritePixelCount = bitmap.dibs_header.imageSizeInBytes / bytesPerPixel;
+	int spritePixelCount = bitmap.dibs_header.width * bitmap.dibs_header.height;
 
 	if ((sizeof(Color) * spritePixelCount) > spriteMemory.sizeInBytes) return -2;
 

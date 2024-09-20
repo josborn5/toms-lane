@@ -375,13 +375,13 @@ static bool CommandHas(char* compare, int& cursor)
 
 static bool CommandStartsWith(char* prefix)
 {
-	int cursor;
+	int cursor = 0;
 	return CommandHas(prefix, cursor) & (commands.get(cursor) != '\0');
 }
 
 static bool CommandIs(char* command)
 {
-	int cursor;
+	int cursor = 0;
 	return CommandHas(command, cursor) & (commands.get(cursor) == '\0');
 }
 
