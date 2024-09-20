@@ -163,10 +163,10 @@ static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int contentOffset)
 	const uint32_t white = 0xFFFFFF;
 	const uint32_t black = 0x000000;
 
-	const int byteSize = 8;
-	int byteOffset = contentOffset / byteSize;
-	int bitOffset = contentOffset % byteSize;
-	int bitShiftOffset = byteSize - bitOffset - 1;
+	int byteSizeInBits = 8;
+	int byteOffset = contentOffset / byteSizeInBits;
+	int bitOffset = contentOffset % byteSizeInBits;
+	int bitShiftOffset = byteSizeInBits - bitOffset - 1;
 
 	uint8_t* byteFromBitmap = eightBitContent + byteOffset;
 
