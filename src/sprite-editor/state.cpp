@@ -293,7 +293,18 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 
 	// Load file
 	int fileReadResult = tl::file_interface_read(filePath, fileReadMemory);
-	if (fileReadResult != tl::Success)
+	int spriteLoadedResult = -1;
+
+	if (fileReadResult == tl::Success)
+	{
+		tl::bitmap_interface_initialize(currentBitmap, fileReadMemory);
+		spriteLoadedResult = InitializeSpriteCFromBitmap(
+			currentSprite,
+			currentBitmap,
+			spriteMemory);
+	}
+
+	if (spriteLoadedResult != 0)
 	{
 		LoadSpriteC("2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0", tempMemory, currentSprite);
 
@@ -303,17 +314,19 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 			case tl::FileDoesNotExist:
 				WriteStringToCommandBuffer("File not found");
 				break;
+			case tl::Success:
+				if (spriteLoadedResult == -1)
+				{
+					WriteStringToCommandBuffer("Unsupported bitmap bits per pixel!");
+				}
+				else
+				{
+					WriteStringToCommandBuffer("Bitmap size is too big!");
+				}
+				break;
 			default:
 				WriteStringToCommandBuffer("BAD FILE READ");
 		}
-	}
-	else
-	{
-		tl::bitmap_interface_initialize(currentBitmap, fileReadMemory);
-		InitializeSpriteCFromBitmap(
-			currentSprite,
-			currentBitmap,
-			spriteMemory);
 	}
 
 	SizeGrid(state.pixels);
