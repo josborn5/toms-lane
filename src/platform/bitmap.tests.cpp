@@ -242,6 +242,25 @@ static void RunLargeBitmapRenderTest(const tl::bitmap& largeBitmap)
 	assert(*(sixAcrossFourUpFromBottomLeft + 2) == white);
 }
 
+static void RunSmallMonochromeBitmapTest()
+{
+	tl::bitmap monoBitmap;
+	int fileReadResult = tl::file_interface_read("../src/platform/player-m.bmp", bitmapReadMemory);
+	assert(fileReadResult == 0);
+
+	int bitmapLoadResult = tl::bitmap_interface_initialize(monoBitmap, bitmapReadMemory);
+
+	assert(bitmapLoadResult == 0);
+
+	tl::ClearScreen(renderBuffer, red);
+	tl::bitmap_interface_render(renderBuffer, monoBitmap, tl::Vec2<int>{ 0, 0 });
+
+	uint32_t* bottomLeftPixel = renderBuffer.pixels;
+	uint32_t* rightOfBottomLeftPixel = renderBuffer.pixels + 1;
+	assert(*bottomLeftPixel == black);
+	assert(*rightOfBottomLeftPixel == black);
+}
+
 static void RunLargeBitmapTest()
 {
 	tl::bitmap largeBitmap;
@@ -256,5 +275,7 @@ void RunBitmapTests()
 	RunSmallBitmapTest();
 
 	RunLargeBitmapTest();
+
+	RunSmallMonochromeBitmapTest();
 }
 
