@@ -159,6 +159,7 @@ static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int pixelOffset)
 
 static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int contentOffset)
 {
+	// rows have a byte size that is a multiple of 4 bytes!!!
 	int pixelsPerByte = (bitmap.dibs_header.width * bitmap.dibs_header.height) / bitmap.dibs_header.imageSizeInBytes;
 
 	uint8_t* eightBitContent = (uint8_t*)bitmap.content;

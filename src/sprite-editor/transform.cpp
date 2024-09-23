@@ -96,15 +96,15 @@ static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIn
 
 static Color GetColorFrom1BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIndex)
 {
+	int pixelsPerByte = (bitmap.dibs_header.width * bitmap.dibs_header.height) / bitmap.dibs_header.imageSizeInBytes;
 	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
 	Color spriteColor;
 
-	const int byteSize = 8;
 	const float white = 1.0f;
 	const float black = 0.0f;
-	int byteOffset = bitmapPixelIndex / byteSize;
-	int bitOffset = bitmapPixelIndex  % byteSize;
-	int bitShiftOffset = byteSize - bitOffset - 1;
+	int byteOffset = bitmapPixelIndex / pixelsPerByte;
+	int bitOffset = bitmapPixelIndex  % pixelsPerByte;
+	int bitShiftOffset = 8 - bitOffset - 1;
 
 	uint8_t* byteFromBitmap = eightBitContent + byteOffset;
 
