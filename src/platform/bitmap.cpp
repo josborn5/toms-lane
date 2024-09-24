@@ -146,10 +146,11 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	return 0;
 }
 
-typedef uint32_t GetColorFromBitmap(const bitmap& bitmap, int pixelIndex);
+typedef uint32_t GetColorFromBitmap(const bitmap& bitmap, int bitmapX, int bitmapY);
 
-static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int pixelOffset)
+static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
 {
+	int pixelOffset = (bitmapY * bitmap.dibs_header.width) + bitmapX;
 	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
 	RGB24Bit* bitmapPixel = twentyFourBitContent + pixelOffset;
 
@@ -157,20 +158,27 @@ static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int pixelOffset)
 	return colorRGB;
 }
 
-static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int contentOffset)
+static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
 {
-	// rows have a byte size that is a multiple of 4 bytes!!!
-	int pixelsPerByte = (bitmap.dibs_header.width * bitmap.dibs_header.height) / bitmap.dibs_header.imageSizeInBytes;
+	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
+	int rawBitsPerRow = bitmap.dibs_header.bitsPerPixel * bitmap.dibs_header.width;
+	int thirtyTwoBitMod = rawBitsPerRow % 32;
+	int bytesPerRow = (thirtyTwoBitMod == 0)
+		? rawBitsPerRow / 8
+		: (rawBitsPerRow + 32 - thirtyTwoBitMod) / 8;
+
+	const int pixelsPerByte = 8;
+
+	int contentOffsetInBytes = (bitmapY * bytesPerRow) + (bitmapX / 8);
 
 	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
 	const uint32_t white = 0xFFFFFF;
 	const uint32_t black = 0x000000;
 
-	int byteOffset = contentOffset / pixelsPerByte;
-	int bitOffset = contentOffset % pixelsPerByte;
-	int bitShiftOffset = 8 - bitOffset - 1;
+	int bitOffset = bitmapX % 8;
+	int bitShiftOffset = pixelsPerByte - bitOffset - 1;
 
-	uint8_t* byteFromBitmap = eightBitContent + byteOffset;
+	uint8_t* byteFromBitmap = eightBitContent + contentOffsetInBytes;
 
 	// 1.shift the bit of interest over to the right most bit
 	// 2. AND with a mask to evaluate the right most bit as true/false
@@ -231,8 +239,7 @@ int bitmap_interface_render(
 		int bitmapX = 0;
 		for (int i = start.x; i < end.x; i += 1)
 		{
-			int pixelOffset = (bitmapY * bitmap.dibs_header.width) + bitmapX;
-			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, pixelOffset);
+			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, bitmapX, bitmapY);
 			*pixel = pixelColor;
 			pixel++;
 			bitmapX += 1;
@@ -275,8 +282,7 @@ int bitmap_interface_render(
 		float bitmapX = 0.0f;
 		for (int i = start.x; i < end.x; i += 1)
 		{
-			int pixelOffset = ((int)bitmapY * bitmap.dibs_header.width) + (int)bitmapX;
-			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, pixelOffset);
+			uint32_t pixelColor = (*colorResolutionFunction)(bitmap, (int)bitmapX, (int)bitmapY);
 			*pixel = pixelColor;
 			pixel++;
 			bitmapX += bitmapIncrement.x;

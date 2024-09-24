@@ -227,9 +227,8 @@ static void RunLargeBitmapRenderTest(const tl::bitmap& largeBitmap)
 	tl::bitmap_interface_render(renderBuffer, largeBitmap, tl::Vec2<int>{ 0, 0 });
 
 	uint32_t* bottomLeftPixel = renderBuffer.pixels;
-	uint32_t* rightOfBottomLeftPixel = renderBuffer.pixels + 1;
 	assert(*bottomLeftPixel == white);
-	assert(*rightOfBottomLeftPixel == black);
+	assert(*(bottomLeftPixel + 1) == black);
 
 	tl::ClearScreen(renderBuffer, red);
 	tl::bitmap_interface_render(renderBuffer, largeBitmap, tl::Vec2<int>{ 6, 4 });
@@ -263,6 +262,8 @@ static void RunSmallMonochromeBitmapTest()
 
 	uint32_t* fourthRowLeft = bottomLeftPixel + (monoBitmap.dibs_header.width * 4);
 	assert(*fourthRowLeft == white);
+	assert(*(fourthRowLeft + 1) == white);
+
 }
 
 static void RunLargeBitmapTest()
