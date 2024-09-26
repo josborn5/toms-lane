@@ -266,6 +266,18 @@ static void RunSmallMonochromeBitmapTest()
 
 }
 
+static void AssertMonochromeBitmapSide(uint32_t* bottomLeftPixel, int length, int step)
+{
+	bool expectBlack = true;
+	for (int i = 0; i < length; i += step)
+	{
+		uint32_t expectedColor = (expectBlack) ? black : white;
+		assert(*(bottomLeftPixel + i) == expectedColor);
+		expectBlack = !expectBlack;
+	}
+
+}
+
 static void RunSmallMonochromeBitmapTest2()
 {
 	tl::bitmap monoBitmap;
@@ -281,14 +293,9 @@ static void RunSmallMonochromeBitmapTest2()
 
 	assert(monoBitmap.dibs_header.imageSizeInBytes == 32);
 
-	bool expectBlack = true;
 	uint32_t* bottomLeftPixel = renderBuffer.pixels;
-	for (int i = 0; i < 8; i += 1)
-	{
-		uint32_t expectedColor = (expectBlack) ? black : white;
-		assert(*(bottomLeftPixel + i) == expectedColor);
-		expectBlack = !expectBlack;
-	}
+	AssertMonochromeBitmapSide(8, 1);
+	AssertMonochromeBitmapSide(8, 8);
 }
 
 static void RunLargeBitmapTest()
