@@ -160,23 +160,25 @@ static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int bitmapX, int b
 
 static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
 {
+	const int bitsPerByte = 8;
+	constexpr int minimumBitsMultiplePerRow = 4 * bitsPerByte;
+
 	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
 	int rawBitsPerRow = bitmap.dibs_header.bitsPerPixel * bitmap.dibs_header.width;
-	int thirtyTwoBitMod = rawBitsPerRow % 32;
-	int bytesPerRow = (thirtyTwoBitMod == 0)
-		? rawBitsPerRow / 8
-		: (rawBitsPerRow + 32 - thirtyTwoBitMod) / 8;
+	int thirtyTwoBitMod = rawBitsPerRow % minimumBitsMultiplePerRow;
+	int bitsPerRow = (thirtyTwoBitMod == 0)
+		? rawBitsPerRow
+		: (rawBitsPerRow + minimumBitsMultiplePerRow - thirtyTwoBitMod);
+	int bytesPerRow = bitsPerRow / bitsPerByte;
 
-	const int pixelsPerByte = 8;
-
-	int contentOffsetInBytes = (bitmapY * bytesPerRow) + (bitmapX / 8);
+	int contentOffsetInBytes = (bitmapY * bytesPerRow) + (bitmapX / bitsPerByte);
 
 	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
 	const uint32_t white = 0xFFFFFF;
 	const uint32_t black = 0x000000;
 
-	int bitOffset = bitmapX % 8;
-	int bitShiftOffset = pixelsPerByte - bitOffset - 1;
+	int bitOffset = bitmapX % bitsPerByte;
+	int bitShiftOffset = bitsPerByte - bitOffset - 1;
 
 	uint8_t* byteFromBitmap = eightBitContent + contentOffsetInBytes;
 
