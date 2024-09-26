@@ -266,6 +266,31 @@ static void RunSmallMonochromeBitmapTest()
 
 }
 
+static void RunSmallMonochromeBitmapTest2()
+{
+	tl::bitmap monoBitmap;
+	int fileReadResult = tl::file_interface_read("../src/platform/8x8-1bit.bmp", bitmapReadMemory);
+	assert(fileReadResult == 0);
+
+	int bitmapLoadResult = tl::bitmap_interface_initialize(monoBitmap, bitmapReadMemory);
+
+	assert(bitmapLoadResult == 0);
+
+	tl::ClearScreen(renderBuffer, red);
+	tl::bitmap_interface_render(renderBuffer, monoBitmap, tl::Vec2<int>{ 0, 0 });
+
+	assert(monoBitmap.dibs_header.imageSizeInBytes == 32);
+
+	bool expectBlack = true;
+	uint32_t* bottomLeftPixel = renderBuffer.pixels;
+	for (int i = 0; i < 8; i += 1)
+	{
+		uint32_t expectedColor = (expectBlack) ? black : white;
+		assert(*(bottomLeftPixel + i) == expectedColor);
+		expectBlack = !expectBlack;
+	}
+}
+
 static void RunLargeBitmapTest()
 {
 	tl::bitmap largeBitmap;
@@ -281,6 +306,7 @@ void RunBitmapTests()
 
 	RunLargeBitmapTest();
 
+	RunSmallMonochromeBitmapTest2();
 	RunSmallMonochromeBitmapTest();
 }
 
