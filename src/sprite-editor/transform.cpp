@@ -96,22 +96,36 @@ static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIn
 
 static Color GetColorFrom1BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIndex)
 {
-	int pixelsPerByte = (bitmap.dibs_header.width * bitmap.dibs_header.height) / bitmap.dibs_header.imageSizeInBytes;
+	const int bitsPerByte = 8;
+	constexpr int minimumBitsMultiplePerRow = 4 * bitsPerByte;
+
+	int bitmapX = bitmapPixelIndex % bitmap.dibs_header.width;
+	int bitmapY = bitmapPixelIndex / bitmap.dibs_header.height;
+
+	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
+	int rawBitsPerRow = bitmap.dibs_header.bitsPerPixel * bitmap.dibs_header.width;
+	int thirtyTwoBitMod = rawBitsPerRow % minimumBitsMultiplePerRow;
+	int bitsPerRow = (thirtyTwoBitMod == 0)
+		? rawBitsPerRow
+		: (rawBitsPerRow + minimumBitsMultiplePerRow - thirtyTwoBitMod);
+	int bytesPerRow = bitsPerRow / bitsPerByte;
+
+	int contentOffsetInBytes = (bitmapY * bytesPerRow) + (bitmapX / bitsPerByte);
 	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
-	Color spriteColor;
 
 	const float white = 1.0f;
 	const float black = 0.0f;
-	int byteOffset = bitmapPixelIndex / pixelsPerByte;
-	int bitOffset = bitmapPixelIndex  % pixelsPerByte;
-	int bitShiftOffset = 8 - bitOffset - 1;
 
-	uint8_t* byteFromBitmap = eightBitContent + byteOffset;
+	int bitOffset = bitmapX % bitsPerByte;
+	int bitShiftOffset = bitsPerByte - bitOffset - 1;
+
+	uint8_t* byteFromBitmap = eightBitContent + contentOffsetInBytes;
 
 	// 1.shift the bit of interest over to the right most bit
 	// 2. AND with a mask to evaluate the right most bit as true/false
 	// 3. true --> white, false --> black
 	float floatColor =  ((*byteFromBitmap  >> bitShiftOffset) & 0b00000001) ? white : black;
+	Color spriteColor;
 	spriteColor.r = floatColor;
 	spriteColor.g = floatColor;
 	spriteColor.b = floatColor;
