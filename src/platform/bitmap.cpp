@@ -160,16 +160,9 @@ static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int bitmapX, int b
 
 static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
 {
-	const int bitsPerByte = 8;
-	constexpr int minimumBitsMultiplePerRow = 4 * bitsPerByte;
-
 	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
-	int rawBitsPerRow = bitmap.dibs_header.bitsPerPixel * bitmap.dibs_header.width;
-	int thirtyTwoBitMod = rawBitsPerRow % minimumBitsMultiplePerRow;
-	int bitsPerRow = (thirtyTwoBitMod == 0)
-		? rawBitsPerRow
-		: (rawBitsPerRow + minimumBitsMultiplePerRow - thirtyTwoBitMod);
-	int bytesPerRow = bitsPerRow / bitsPerByte;
+	const int bitsPerByte = 8;
+	int bytesPerRow = bitmap.dibs_header.imageSizeInBytes /bitmap.dibs_header.height;
 
 	int contentOffsetInBytes = (bitmapY * bytesPerRow) + (bitmapX / bitsPerByte);
 
