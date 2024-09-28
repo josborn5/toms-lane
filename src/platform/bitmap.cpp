@@ -162,7 +162,7 @@ static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int bitmapX, int bi
 {
 	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
 	const int bitsPerByte = 8;
-	int bytesPerRow = bitmap.dibs_header.imageSizeInBytes /bitmap.dibs_header.height;
+	int bytesPerRow = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
 
 	int contentOffsetInBytes = (bitmapY * bytesPerRow) + (bitmapX / bitsPerByte);
 
