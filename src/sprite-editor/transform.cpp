@@ -97,18 +97,18 @@ static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIn
 static Color GetColorFrom1BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIndex)
 {
 	const int bitsPerByte = 8;
-	constexpr int minimumBitsMultiplePerRow = 4 * bitsPerByte;
+//	constexpr int minimumBitsMultiplePerRow = 4 * bitsPerByte;
 
 	int bitmapX = bitmapPixelIndex % bitmap.dibs_header.width;
 	int bitmapY = bitmapPixelIndex / bitmap.dibs_header.height;
 
 	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
-	int rawBitsPerRow = bitmap.dibs_header.bitsPerPixel * bitmap.dibs_header.width;
-	int thirtyTwoBitMod = rawBitsPerRow % minimumBitsMultiplePerRow;
-	int bitsPerRow = (thirtyTwoBitMod == 0)
-		? rawBitsPerRow
-		: (rawBitsPerRow + minimumBitsMultiplePerRow - thirtyTwoBitMod);
-	int bytesPerRow = bitsPerRow / bitsPerByte;
+//	int rawBitsPerRow = bitmap.dibs_header.bitsPerPixel * bitmap.dibs_header.width;
+//	int thirtyTwoBitMod = rawBitsPerRow % minimumBitsMultiplePerRow;
+//	int bitsPerRow = (thirtyTwoBitMod == 0)
+//		? rawBitsPerRow
+//		: (rawBitsPerRow + minimumBitsMultiplePerRow - thirtyTwoBitMod);
+	int bytesPerRow = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
 
 	int contentOffsetInBytes = (bitmapY * bytesPerRow) + (bitmapX / bitsPerByte);
 	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
