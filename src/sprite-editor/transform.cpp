@@ -39,8 +39,16 @@ int InitializeBitmapFromSpriteC(
 	ColorToBitmap* colorToBitmapTransformer = ResolveColorToBitmapTransformer(sprite.bitsPerPixel);
 	if (colorToBitmapTransformer == nullptr) return -2;
 
-	uint16_t bitsPerPixel = sprite.bitsPerPixel;
-	uint32_t imageSizeInBytes = bitsPerPixel * sprite.height * sprite.width / 8;
+	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
+	const int bitsPerByte = 8;
+	constexpr int minimumBitsMultiplePerRow = bitsPerByte * 4;
+	int rawBitsPerRow = sprite.bitsPerPixel * sprite.width;
+	int thirtyTwoBitMod = rawBitsPerRow % minimumBitsMultiplePerRow;
+	int bitsPerRow = (thirtyTwoBitMod == 0)
+		? rawBitsPerRow
+		: (rawBitsPerRow + minimumBitsMultiplePerRow - thirtyTwoBitMod);
+
+	uint32_t imageSizeInBytes = bitsPerRow * sprite.height / bitsPerByte;
 
 	bitmap.file_header.fileType = 0x4d42;
 	bitmap.file_header.reserved1 = 0;
@@ -51,7 +59,7 @@ int InitializeBitmapFromSpriteC(
 	bitmap.dibs_header.width = sprite.width;
 	bitmap.dibs_header.height = sprite.height;
 	bitmap.dibs_header.numberOfColorPlanes = 1;
-	bitmap.dibs_header.bitsPerPixel = bitsPerPixel;
+	bitmap.dibs_header.bitsPerPixel = sprite.bitsPerPixel;
 	bitmap.dibs_header.compressionMethod = 0;
 	bitmap.dibs_header.imageSizeInBytes = imageSizeInBytes;
 
@@ -94,14 +102,6 @@ static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapX, int 
 static Color GetColorFrom1BitBitmap(const tl::bitmap& bitmap, int bitmapX, int bitmapY)
 {
 	const int bitsPerByte = 8;
-//	constexpr int minimumBitsMultiplePerRow = 4 * bitsPerByte;
-
-	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
-//	int rawBitsPerRow = bitmap.dibs_header.bitsPerPixel * bitmap.dibs_header.width;
-//	int thirtyTwoBitMod = rawBitsPerRow % minimumBitsMultiplePerRow;
-//	int bitsPerRow = (thirtyTwoBitMod == 0)
-//		? rawBitsPerRow
-//		: (rawBitsPerRow + minimumBitsMultiplePerRow - thirtyTwoBitMod);
 	int bytesPerRow = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
 
 	int contentOffsetInBytes = (bitmapY * bytesPerRow) + (bitmapX / bitsPerByte);
