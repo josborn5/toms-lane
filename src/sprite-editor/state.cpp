@@ -9,7 +9,8 @@
 static const int commandBufferSize = 256;
 static const int filePathBufferSize = 256;
 static const int modeBufferSize = 2;
-
+static const int skipModifierKey = tl::KEY_CTRL;
+static const int cameraModifierKey = tl::KEY_SHIFT;
 
 static bool hasCopied = false;
 static tl::MemorySpace fontMemory;
@@ -120,7 +121,7 @@ static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
 {
 	int maxPixelIndex = (grid.sprite->width * grid.sprite->height) - 1;
 	int currentRowIndex = GetRowIndex(grid, prevIndex);
-	if (input.buttons[tl::KEY_CTRL].isDown)
+	if (input.buttons[skipModifierKey].isDown)
 	{
 		if (input.buttons[tl::KEY_HOME].keyDown) return 0;
 
@@ -177,7 +178,7 @@ static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
 
 static bool ApplyCursorMovementToState(const tl::Input& input)
 {
-	if (input.buttons[tl::KEY_CTRL].isDown) return false;
+	if (input.buttons[cameraModifierKey].isDown) return false;
 
 	Grid& activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
 	int newCursorIndex = GetCursorIndex(input, activeGrid, activeGrid.selectedIndex);
@@ -191,7 +192,7 @@ static bool ApplyCursorMovementToState(const tl::Input& input)
 
 static bool ApplyCameraMovementToState(const tl::Input& input)
 {
-	if (state.activeControl != SpriteGrid || !input.buttons[tl::KEY_CTRL].isDown)
+	if (state.activeControl != SpriteGrid || !input.buttons[cameraModifierKey].isDown)
 	{
 		return false;
 	}
