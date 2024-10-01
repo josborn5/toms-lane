@@ -88,7 +88,7 @@ static void RenderSpriteAsGrid(
 	float pixelDimension = pixelDimensionWithBorder - (2.0f * pixelBorderWidth);
 	tl::Vec2<float> pixelHalfSize = { 0.5F * pixelDimension, 0.5f * pixelDimension };
 
-	float yOriginalPosition = boundingRect.position.y + boundingRect.halfSize.y - (0.5f * pixelDimensionWithBorder);
+	float yOriginalPosition = boundingRect.position.y - boundingRect.halfSize.y + (0.5f * pixelDimensionWithBorder);
 
 	int selectedColIndex = GetColumnIndex(grid, grid.selectedIndex);
 	int rangeColIndex = GetColumnIndex(grid, grid.selectedRangeIndex);
@@ -117,7 +117,7 @@ static void RenderSpriteAsGrid(
 
 	for (int j = 0; j < sprite.height; j += 1)
 	{
-		float yPosition = yOriginalPosition - (j * pixelDimensionWithBorder);
+		float yPosition = yOriginalPosition + (j * pixelDimensionWithBorder);
 		bool yIsInSelectedRange = (j >= startRowIndex && j <= endRowIndex);
 		for (int i = 0; i < sprite.width; i += 1)
 		{

@@ -60,20 +60,16 @@ int InitializeBitmapFromSpriteC(
 	if (bitmap.file_header.fileSizeInBytes > tempMemory.sizeInBytes) return -1;
 
 	bitmap.content = (uint8_t*)tempMemory.content;
-	int bitmapPixelIndex = 0;
-	int spritePixelCount = sprite.width * sprite.height;
 
-	// SpriteC origin is top left
-	// Bitmap origin is bottom left
-	int bottomLeftSpritePixelIndex =  spritePixelCount - sprite.width;
-	for (int startRowPixelIndex = bottomLeftSpritePixelIndex; startRowPixelIndex >= 0; startRowPixelIndex -= sprite.width)
+	// Bitmap & SpriteC origins are both bottom left
+	int pixelIndex = 0;
+	for (int pixelY = 0; pixelY < sprite.height; pixelY += 1)
 	{
-		for (int columnIndex = 0; columnIndex < sprite.width; columnIndex += 1)
+		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
-			int spritePixelIndex = startRowPixelIndex + columnIndex;
-			Color spriteColor = sprite.content[spritePixelIndex];
-			(*colorToBitmapTransformer)(spriteColor, bitmapPixelIndex, bitmap);
-			bitmapPixelIndex += 1;
+			Color spriteColor = sprite.content[pixelIndex];
+			(*colorToBitmapTransformer)(spriteColor, pixelIndex, bitmap);
+			pixelIndex += 1;
 		}
 	}
 
@@ -162,17 +158,14 @@ int InitializeSpriteCFromBitmap(
 	sprite.width = bitmap.dibs_header.width;
 	sprite.height = bitmap.dibs_header.height;
 
-	// SpriteC origin is top left
-	// Bitmap origin is bottom left
-	int bottomLeftSpritePixelIndex =  spritePixelCount - sprite.width;
-	int bitmapPixelIndex = 0;
-	for (int startRowPixelIndex = bottomLeftSpritePixelIndex; startRowPixelIndex >= 0; startRowPixelIndex -= sprite.width)
+	// Bitmap & SpriteC origins are both bottom left
+	int pixelIndex = 0;
+	for (int pixelY = 0; pixelY < sprite.height; pixelY += 1)
 	{
-		for (int columnIndex = 0; columnIndex < sprite.width; columnIndex += 1)
+		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
-			int spritePixelIndex = startRowPixelIndex + columnIndex;
-			sprite.content[spritePixelIndex] = (*bitmapToColorTransformer)(bitmap, bitmapPixelIndex);
-			bitmapPixelIndex += 1;
+			sprite.content[pixelIndex] = (*bitmapToColorTransformer)(bitmap, pixelIndex);
+			pixelIndex += 1;
 		}
 	}
 
