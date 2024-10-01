@@ -9,15 +9,16 @@ struct RGB24Bit
 	uint8_t r;
 };
 
-typedef void ColorToBitmap (const Color& spriteColor, int bitmapPixelIndex, tl::bitmap& bitmap);
+typedef void ColorToBitmap (const Color& spriteColor, int bitmapX, int bitmapY, tl::bitmap& bitmap);
 
-static void WriteColorTo24BitBitmap(const Color& spriteColor, int bitmapPixelIndex, tl::bitmap& bitmap)
+static void WriteColorTo24BitBitmap(const Color& spriteColor, int bitmapX, int bitmapY, tl::bitmap& bitmap)
 {
+	int pixelOffset = (bitmapY * bitmap.dibs_header.width) + bitmapX;
 	RGB24Bit bitmapPixel;
 	bitmapPixel.r = (uint8_t)(255.0f * spriteColor.r);
 	bitmapPixel.g = (uint8_t)(255.0f * spriteColor.g);
 	bitmapPixel.b = (uint8_t)(255.0f * spriteColor.b);
-	*((RGB24Bit*)bitmap.content + bitmapPixelIndex) = bitmapPixel;
+	*((RGB24Bit*)bitmap.content + pixelOffset) = bitmapPixel;
 }
 
 static ColorToBitmap* ResolveColorToBitmapTransformer(int bitsPerPixel)
@@ -76,7 +77,7 @@ int InitializeBitmapFromSpriteC(
 		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
 			Color spriteColor = sprite.content[pixelIndex];
-			(*colorToBitmapTransformer)(spriteColor, pixelIndex, bitmap);
+			(*colorToBitmapTransformer)(spriteColor, pixelX, pixelY, bitmap);
 			pixelIndex += 1;
 		}
 	}
