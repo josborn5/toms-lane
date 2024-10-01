@@ -76,11 +76,12 @@ int InitializeBitmapFromSpriteC(
 	return 0;
 }
 
-typedef Color BitmapToColor (const tl::bitmap& bitmap, int bitmapPixelIndex);
+typedef Color BitmapToColor (const tl::bitmap& bitmap, int bitmapX, int bitmapY);
 
-static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIndex)
+static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapX, int bitmapY)
 {
-	RGB24Bit bitmapPixel = *((RGB24Bit*)bitmap.content + bitmapPixelIndex);
+	int pixelOffset = (bitmapY * bitmap.dibs_header.width) + bitmapX;
+	RGB24Bit bitmapPixel = *((RGB24Bit*)bitmap.content + pixelOffset);
 
 	Color spriteColor;
 	spriteColor.r = (float)bitmapPixel.r / 255.0f;
@@ -90,13 +91,10 @@ static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIn
 	return spriteColor;
 }
 
-static Color GetColorFrom1BitBitmap(const tl::bitmap& bitmap, int bitmapPixelIndex)
+static Color GetColorFrom1BitBitmap(const tl::bitmap& bitmap, int bitmapX, int bitmapY)
 {
 	const int bitsPerByte = 8;
 //	constexpr int minimumBitsMultiplePerRow = 4 * bitsPerByte;
-
-	int bitmapX = bitmapPixelIndex % bitmap.dibs_header.width;
-	int bitmapY = bitmapPixelIndex / bitmap.dibs_header.height;
 
 	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
 //	int rawBitsPerRow = bitmap.dibs_header.bitsPerPixel * bitmap.dibs_header.width;
@@ -164,7 +162,7 @@ int InitializeSpriteCFromBitmap(
 	{
 		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
-			sprite.content[pixelIndex] = (*bitmapToColorTransformer)(bitmap, pixelIndex);
+			sprite.content[pixelIndex] = (*bitmapToColorTransformer)(bitmap, pixelX, pixelY);
 			pixelIndex += 1;
 		}
 	}
