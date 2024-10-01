@@ -64,6 +64,7 @@ bool win32_input_interface_process_message(const MSG& message, Input& input)
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_TAB, KEY_TAB);
 
 				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_CONTROL, KEY_CTRL);
+				Win32_ProcessKeyboardMessage(input.buttons, isDown, wasDown, vKCode, VK_SHIFT, KEY_SHIFT);
 			}
 
 			return true;

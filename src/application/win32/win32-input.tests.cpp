@@ -62,5 +62,6 @@ void RunInputTests()
 	RunTestForButton('C', KEY_C);
 	RunTestForButton('5', KEY_5);
 	RunTestForButton(VK_LEFT, KEY_LEFT);
+	RunTestForButton(VK_SHIFT, KEY_SHIFT);
 }
 
