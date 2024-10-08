@@ -293,6 +293,8 @@ static void RunSmallMonochromeBitmapTests()
 	assert(*fourthRowLeft == white);
 	assert(*(fourthRowLeft + 1) == white);
 
+	RunBitmapWriteTest(monoBitmap);
+
 	RunSmallMonochromeBitmapTestForFile("../src/platform/9x9-1bit.bmp", 9);
 	RunSmallMonochromeBitmapTestForFile("../src/platform/8x8-1bit.bmp", 8);
 	RunSmallMonochromeBitmapTestForFile("../src/platform/7x7-1bit.bmp", 7);
