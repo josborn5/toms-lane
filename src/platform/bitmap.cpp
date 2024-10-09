@@ -25,7 +25,7 @@ static T read_int32_from_little_endian(uint8_t* data)
 }
 
 template<typename T>
-static uint8_t* write_four_byte_value_to_little_endian(T four_byte_value, uint8_t* data)
+static uint8_t* write_four_byte_value_to_little_endian(T four_byte_value, uint8_t* data, int32_t& byteCounter)
 {
 	const int bufferSize = 4;
 	uint8_t charBuffer[bufferSize];
@@ -38,6 +38,7 @@ static uint8_t* write_four_byte_value_to_little_endian(T four_byte_value, uint8_
 	{
 		*data = charBuffer[i];
 		data++;
+		byteCounter += 1;
 	}
 
 	return data;
@@ -54,7 +55,7 @@ static uint16_t read_uint16_t_from_little_endian(uint8_t* data)
 	return intValue;
 }
 
-static uint8_t* write_uint16_t_value_to_little_endian(uint16_t two_byte_value, uint8_t* data)
+static uint8_t* write_uint16_t_value_to_little_endian(uint16_t two_byte_value, uint8_t* data, int32_t& byteCounter)
 {
 	const int bufferSize = 2;
 	uint8_t charBuffer[bufferSize];
@@ -65,6 +66,7 @@ static uint8_t* write_uint16_t_value_to_little_endian(uint16_t two_byte_value, u
 	{
 		*data = charBuffer[i];
 		data++;
+		byteCounter += 1;
 	}
 
 	return data;
@@ -300,25 +302,35 @@ int bitmap_interface_write(
 
 	uint8_t* writeTargetAsBytes = (uint8_t*)memory.content;
 
+
+	int32_t byteCounter = 0;
 	// write the file header
-	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.fileType, writeTargetAsBytes);
-	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.file_header.fileSizeInBytes, writeTargetAsBytes);
-	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.reserved1, writeTargetAsBytes);
-	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.reserved2, writeTargetAsBytes);
-	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.file_header.offsetToPixelDataInBytes, writeTargetAsBytes);
+	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.fileType, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.file_header.fileSizeInBytes, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.reserved1, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.file_header.reserved2, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.file_header.offsetToPixelDataInBytes, writeTargetAsBytes, byteCounter);
 
 	// write the dibs header
-	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.headerSizeInBytes, writeTargetAsBytes);
-	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.width, writeTargetAsBytes);
-	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.height, writeTargetAsBytes);
-	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.dibs_header.numberOfColorPlanes, writeTargetAsBytes);
-	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.dibs_header.bitsPerPixel, writeTargetAsBytes);
-	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.compressionMethod, writeTargetAsBytes);
-	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.imageSizeInBytes, writeTargetAsBytes);
-	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.horizontalPixelsPerMeter, writeTargetAsBytes);
-	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.verticalPixelsPerMeter, writeTargetAsBytes);
-	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.numberOfColorsInPalette, writeTargetAsBytes);
-	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.numberOfImportantColors, writeTargetAsBytes);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.headerSizeInBytes, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.width, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.height, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.dibs_header.numberOfColorPlanes, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_uint16_t_value_to_little_endian(bitmap.dibs_header.bitsPerPixel, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.compressionMethod, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.imageSizeInBytes, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.horizontalPixelsPerMeter, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<int32_t>(bitmap.dibs_header.verticalPixelsPerMeter, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.numberOfColorsInPalette, writeTargetAsBytes, byteCounter);
+	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.numberOfImportantColors, writeTargetAsBytes, byteCounter);
+
+	// fill up any remaining space before the pixel data
+	while (byteCounter < bitmap.file_header.offsetToPixelDataInBytes)
+	{
+		*writeTargetAsBytes = (uint8_t)0;
+		writeTargetAsBytes++;
+		byteCounter += 1;
+	}
 
 	// write the content
 	uint8_t* readContent = bitmap.content;
@@ -327,6 +339,7 @@ int bitmap_interface_write(
 		*writeTargetAsBytes = *readContent;
 		writeTargetAsBytes++;
 		readContent++;
+		byteCounter += 1;
 	}
 	return bitmap_write_success;
 }

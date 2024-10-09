@@ -131,9 +131,15 @@ static void RunBitmapWriteTest(const bitmap& bitmap)
 	uint8_t* readMemory = (uint8_t*)bitmapReadMemory.content;
 	uint8_t* writeMemory = (uint8_t*)bitmapWriteMemory.content;
 
+	const int fileHeaderSizeInBytes = 14;
+	int minPaddingIndex = fileHeaderSizeInBytes + bitmap.dibs_header.headerSizeInBytes;
+	int maxPaddingIndex = bitmap.file_header.offsetToPixelDataInBytes;
 	for (int i = 0; i < bitmap.file_header.fileSizeInBytes; i += 1)
 	{
-		assert(*readMemory == *writeMemory);
+		if (i < minPaddingIndex || i > maxPaddingIndex) // don't care about padding memory content
+		{
+			assert(*readMemory == *writeMemory);
+		}
 		readMemory++;
 		writeMemory++;
 	}
