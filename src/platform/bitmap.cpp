@@ -144,13 +144,17 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	bitmapDataAsBytes += sizeof(uint32_t);
 
 	bitmap.dibs_header.numberOfImportantColors = read_int32_from_little_endian<uint32_t>(bitmapDataAsBytes);
+	bitmapDataAsBytes += sizeof(uint32_t);
 
-	if (bitmap.file_header.offsetToPixelDataInBytes > 54 && bitmap.dibs_header.bitsPerPixel <= 8) // 14 bytes for file header + 40 bytes for dibs header
+	// Check for a color table
+	if (bitmap.file_header.offsetToPixelDataInBytes > 54 && bitmap.dibs_header.bitsPerPixel == 1) // 14 bytes for file header + 40 bytes for dibs header
 	{
 		bitmap.color_table.size = 2;
-		for (int i = 1; i < bitmap.dibs_header.bitsPerPixel; i += 1)
+
+		for (int i = 0; i < bitmap.color_table.size; i += 1)
 		{
-			bitmap.color_table.size *= 2;
+			bitmap.color_table.content[i] = read_int32_from_little_endian<uint32_t>(bitmapDataAsBytes);
+			bitmapDataAsBytes += sizeof(uint32_t);
 		}
 	}
 
