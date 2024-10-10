@@ -31,6 +31,12 @@ namespace tl
 		int32_t offsetToPixelDataInBytes;
 	};
 
+	struct bitmap_color_table
+	{
+		uint32_t* content;
+		int32_t size;
+	};
+
 	struct bitmap_dibs_header
 	{
 		uint32_t headerSizeInBytes;
@@ -55,6 +61,7 @@ namespace tl
 	{
 		bitmap_file_header file_header = {0};
 		bitmap_dibs_header dibs_header = {0};
+		bitmap_color_table color_table = {0};
 		uint8_t* content = nullptr; // number of bits per pixel can vary
 	};
 
