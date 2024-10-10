@@ -252,6 +252,7 @@ static void RunSmallMonochromeBitmapTestForFile(char* filepath, int side)
 
 	assert(bitmapLoadResult == 0);
 	assert(monoBitmap.file_header.offsetToPixelDataInBytes == 62);
+	assert(monoBitmap.color_table.size == 2);
 
 	tl::ClearScreen(renderBuffer, red);
 	tl::bitmap_interface_render(renderBuffer, monoBitmap, tl::Vec2<int>{ 0, 0 });
