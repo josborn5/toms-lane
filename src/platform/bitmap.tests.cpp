@@ -132,7 +132,7 @@ static void RunBitmapWriteTest(const bitmap& bitmap)
 	uint8_t* writeMemory = (uint8_t*)bitmapWriteMemory.content;
 
 	const int fileHeaderSizeInBytes = 14;
-	int minPaddingIndex = fileHeaderSizeInBytes + bitmap.dibs_header.headerSizeInBytes;
+	int minPaddingIndex = fileHeaderSizeInBytes + bitmap.dibs_header.headerSizeInBytes + (bitmap.color_table.size * 4);
 	int maxPaddingIndex = bitmap.file_header.offsetToPixelDataInBytes;
 	for (int i = 0; i < bitmap.file_header.fileSizeInBytes; i += 1)
 	{

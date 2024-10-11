@@ -337,6 +337,12 @@ int bitmap_interface_write(
 	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.numberOfColorsInPalette, writeTargetAsBytes, byteCounter);
 	writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.dibs_header.numberOfImportantColors, writeTargetAsBytes, byteCounter);
 
+	// color table
+	for (int i = 0; i < bitmap.color_table.size; i += 1)
+	{
+		writeTargetAsBytes = write_four_byte_value_to_little_endian<uint32_t>(bitmap.color_table.content[i], writeTargetAsBytes, byteCounter);
+	}
+
 	// fill up any remaining space before the pixel data
 	while (byteCounter < bitmap.file_header.offsetToPixelDataInBytes)
 	{
