@@ -3,7 +3,8 @@
 #include "./render.hpp"
 #include "./state.hpp"
 
-#define PALETTE_COUNT 4
+static const int PALETTE_COUNT = 5;
+static int availablePaletteCount = 0;
 
 static uint64_t GetSpriteSpaceInBytes(const SpriteC& sprite)
 {
@@ -75,11 +76,19 @@ char* fantasyConsolePaletteContent = "\
 115 201 235 255\n\
 202 175 245 255";
 
+char* defaultPaletteContent = "\
+1\n\
+2\n\
+  0   0   0 255\n\
+255 255 255 255";
+
+
 char* paletteContents[PALETTE_COUNT] = {
 	rgrPaletteContent,
 	pollenPaletteContent,
 	sunsetCloudsPaletteContent,
-	fantasyConsolePaletteContent
+	fantasyConsolePaletteContent,
+	defaultPaletteContent
 };
 
 static SpriteC palettes[PALETTE_COUNT];
@@ -95,12 +104,20 @@ static void SelectPalette(EditorState& state)
 
 void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMemory, EditorState& state)
 {
+	int maxColorsPerPalette = state.pixels.sprite->bitsPerPixel != 1 ? -1 : 2;
+
 	for (int i = 0; i < PALETTE_COUNT; i += 1)
 	{
 		palettes[i].content = (Color*)paletteMemory.content;
 		LoadSpriteC(paletteContents[i], tempMemory, palettes[i]);
 		uint64_t paletteSize = GetSpriteSpaceInBytes(palettes[i]);
 		tl::CarveMemorySpace(paletteSize, paletteMemory);
+
+		int palettePixelCount = palettes[i].width * palettes[i].height;
+		if (palettePixelCount <= maxColorsPerPalette)
+		{
+			availablePaletteCount += 1;
+		}
 	}
 	SelectPalette(state);
 }
