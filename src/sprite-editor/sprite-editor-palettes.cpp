@@ -4,7 +4,6 @@
 #include "./state.hpp"
 
 static const int PALETTE_COUNT = 5;
-static int availablePaletteCount = 0;
 
 static uint64_t GetSpriteSpaceInBytes(const SpriteC& sprite)
 {
@@ -92,6 +91,8 @@ char* paletteContents[PALETTE_COUNT] = {
 };
 
 static SpriteC palettes[PALETTE_COUNT];
+static SpriteC* available_palettes_memory[PALETTE_COUNT];
+static tl::array<SpriteC*> available_palettes = tl::array<SpriteC*>(available_palettes_memory, PALETTE_COUNT);
 static SpriteC rgrPalette;
 static int selectedPaletteIndex = 0;
 
@@ -105,6 +106,7 @@ static void SelectPalette(EditorState& state)
 void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMemory, EditorState& state)
 {
 	int maxColorsPerPalette = state.pixels.sprite->bitsPerPixel != 1 ? -1 : 2;
+	available_palettes.clear();
 
 	for (int i = 0; i < PALETTE_COUNT; i += 1)
 	{
@@ -116,7 +118,7 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 		int palettePixelCount = palettes[i].width * palettes[i].height;
 		if (palettePixelCount <= maxColorsPerPalette)
 		{
-			availablePaletteCount += 1;
+			available_palettes.append(&palettes[i]);
 		}
 	}
 	SelectPalette(state);
@@ -125,6 +127,6 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 void SwitchPalette(EditorState& state)
 {
 	int nextPaletteIndex = selectedPaletteIndex += 1;
-	selectedPaletteIndex = (nextPaletteIndex >= PALETTE_COUNT) ? 0 : nextPaletteIndex;
+	selectedPaletteIndex = (nextPaletteIndex >= available_palettes.length()) ? 0 : nextPaletteIndex;
 	SelectPalette(state);
 }
