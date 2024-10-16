@@ -116,6 +116,57 @@ namespace tl
 			}
 	};
 
+	template<typename T, int N>
+	struct stack_array
+	{
+		private:
+			int _length = 0;
+			int _capacity = N;
+			size_t _itemSizeInBytes = sizeof(T);
+			T _content[N];
+
+		public :
+			stack_array()
+			{
+			}
+
+			T& access(int index)
+			{
+				return _content[index];
+			}
+
+			T& get(int index) const
+			{
+				return _content[index]; // TODO: bounds check and return monad value
+			}
+
+			int capacity() const
+			{
+				return _capacity;
+			}
+
+			int length() const
+			{
+				return _length;
+			}
+
+			int append(const T item)
+			{
+				if (_length < _capacity)
+				{
+					_content[_length] = item;
+					_length += 1;
+					return 1;
+				}
+				return 0;
+			}
+
+			void clear()
+			{
+				_length = 0;
+			}
+	};
+
 	template<typename T>
 	struct queue
 	{
