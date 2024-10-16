@@ -4,6 +4,8 @@
 #include "./render.hpp"
 #include "./state.hpp"
 
+tl::GameMemory appMemory;
+
 int updateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
 	EditorState latestState = GetLatestState(input);
@@ -34,7 +36,13 @@ int tl::main(char* commandLine)
 		return windowOpenResult;
 	}
 
-	InitializeState(commandLine, clientX, clientY);
+	tl::InitializeMemory(
+		4,
+		1,
+		appMemory
+	);
+
+	InitializeState(appMemory, commandLine, clientX, clientY);
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }

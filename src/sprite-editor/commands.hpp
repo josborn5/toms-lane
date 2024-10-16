@@ -6,7 +6,7 @@
 #include "./editor.hpp"
 
 int SaveBitmap(
-	const tl::GameMemory& gameMemory,
+	const tl::MemorySpace& tempMemory,
 	const SpriteC& sprite,
 	char* filePath
 );

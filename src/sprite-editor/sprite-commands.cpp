@@ -6,15 +6,13 @@
 
 
 int SaveBitmap(
-	const tl::GameMemory& gameMemory,
+	const tl::MemorySpace& tempMemory,
 	const SpriteC& sprite,
 	char* filePath
 )
 {
 	tl::bitmap blankBitmap;
-	tl::MemorySpace remainder;
-	remainder.content = gameMemory.transient.content;
-	remainder.sizeInBytes = gameMemory.transient.sizeInBytes;
+	tl::MemorySpace remainder = tempMemory;
 	int bitmapWriteResult = InitializeBitmapFromSpriteC(sprite, blankBitmap, remainder);
 	if (bitmapWriteResult != 0) return -1;
 

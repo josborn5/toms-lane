@@ -17,12 +17,11 @@ static tl::MemorySpace fontMemory;
 static tl::MemorySpace spriteMemory;
 static tl::MemorySpace fileReadMemory;
 static tl::MemorySpace paletteMemory;
+static tl::MemorySpace tempMemory;
 static Color currentColor;
 static Color copiedColor;
 static SpriteC currentSprite;
 static tl::bitmap currentBitmap;
-
-tl::GameMemory appMemory;
 
 EditorState state;
 static char commandBuffer[commandBufferSize];
@@ -265,26 +264,25 @@ static void WriteStringToCommandBuffer(char* character)
 	}
 }
 
-static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY)
+static void CopyString(char* source, char* target)
 {
+	while (*source)
+	{
+		*target = *source;
+		target++;
+		source++;
+	}
+}
+
+static int Initialize(char* commandLine)
+{
+	if (*commandLine)
+	{
+		CopyString(commandLine, filePath);
+	}
+
 	state.mode = View;
 	state.commandBuffer = &commandBuffer[0];
-	state.windowWidth = clientX;
-	state.windowHeight = clientY;
-
-	// Define memory slices
-	tl::MemorySpace perm = gameMemory.permanent;
-	const uint64_t oneKiloByteInBytes = 1024;
-	const uint64_t oneMegaByteInBytes = oneKiloByteInBytes * 1024;
-
-	tl::MemorySpace working;
-	tl::font_interface_initialize_from_file("font-mono.tlsf", perm, working);
-
-	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
-	spriteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
-	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
-	tl::MemorySpace temp = gameMemory.transient;
-	tl::MemorySpace tempMemory = tl::CarveMemorySpace(oneMegaByteInBytes, temp);
 
 	currentSprite.content = (Color*)spriteMemory.content;
 	state.pixels.sprite = &currentSprite;
@@ -336,30 +334,25 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 	return 0;
 }
 
-static void CopyString(char* source, char* target)
+int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int clientX, int clientY)
 {
-	while (*source)
-	{
-		*target = *source;
-		target++;
-		source++;
-	}
-}
+	state.windowWidth = clientX;
+	state.windowHeight = clientY;
 
-int InitializeState(char* commandLine, int clientX, int clientY)
-{
-	if (*commandLine)
-	{
-		CopyString(commandLine, filePath);
-	}
+	// Define memory slices
+	tl::MemorySpace perm = gameMemory.permanent;
+	const uint64_t oneKiloByteInBytes = 1024;
+	const uint64_t oneMegaByteInBytes = oneKiloByteInBytes * 1024;
 
-	tl::InitializeMemory(
-		4,
-		1,
-		appMemory
-	);
+	tl::MemorySpace working;
+	tl::font_interface_initialize_from_file("font-mono.tlsf", perm, working);
 
-	return Initialize(appMemory, clientX, clientY);
+	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
+	spriteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
+	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
+	tempMemory = gameMemory.transient;
+
+	return Initialize(commandLine);
 }
 
 static bool CommandHas(char* compare, int& cursor)
@@ -455,7 +448,7 @@ static void ExecuteCurrentCommand()
 	{
 		char* targetFilePath = CommandIs("W") ? filePath : &commands.access(3);
 
-		int saveResult = SaveBitmap(appMemory, *state.pixels.sprite, targetFilePath);
+		int saveResult = SaveBitmap(tempMemory, *state.pixels.sprite, targetFilePath);
 		if (saveResult == tl::Success)
 		{
 			WriteStringToCommandBuffer("Saved");
@@ -468,14 +461,13 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandStartsWith("EDIT ")) // edit new file
 	{
-		InitializeState(&commands.access(6), state.windowWidth, state.windowHeight);
+		Initialize(&commands.access(6));
 		return;
 	}
 	else if (CommandStartsWith("E ")) // edit selected pixel
 	{
 		char* pointer = tl::GetNextNumberChar(&commands.access(1));
-		tl::MemorySpace transient = appMemory.transient;
-		ParseColorFromCharArray(pointer, transient, state.pixels.sprite->content[state.pixels.selectedIndex]);
+		ParseColorFromCharArray(pointer, tempMemory, state.pixels.sprite->content[state.pixels.selectedIndex]);
 		ClearCommandBuffer();
 		return;
 	}
