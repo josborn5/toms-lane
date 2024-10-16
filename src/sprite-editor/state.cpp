@@ -26,7 +26,7 @@ static tl::bitmap currentBitmap;
 EditorState state;
 static char commandBuffer[commandBufferSize];
 static char filePathBuffer[filePathBufferSize] = {0};
-static char* filePath = &filePathBuffer[0];
+static constexpr char* filePath = &filePathBuffer[0];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
 
 static char* ParseColorFromCharArray(char* content, tl::MemorySpace& space, Color& color)
@@ -264,12 +264,17 @@ static void WriteStringToCommandBuffer(char* character)
 	}
 }
 
-static void CopyString(char* source, char* target)
+static void update_filepath(char* source)
 {
+	for (int i = 0; i < filePathBufferSize; i += 1)
+	{
+		filePathBuffer[i] = '\0';
+	}
+	int counter = 0;
 	while (*source)
 	{
-		*target = *source;
-		target++;
+		filePathBuffer[counter] = *source;
+		counter++;
 		source++;
 	}
 }
@@ -278,7 +283,7 @@ static int Initialize(char* commandLine)
 {
 	if (*commandLine)
 	{
-		CopyString(commandLine, filePath);
+		update_filepath(commandLine);
 	}
 
 	state.mode = View;
