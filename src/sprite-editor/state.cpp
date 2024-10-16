@@ -271,7 +271,7 @@ static void update_filepath(char* source)
 		filePathBuffer[i] = '\0';
 	}
 	int counter = 0;
-	while (*source)
+	while (*source && counter < filePathBufferSize)
 	{
 		filePathBuffer[counter] = *source;
 		counter++;
