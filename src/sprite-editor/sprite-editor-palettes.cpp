@@ -91,21 +91,22 @@ char* paletteContents[PALETTE_COUNT] = {
 };
 
 static SpriteC palettes[PALETTE_COUNT];
-static SpriteC* available_palettes_memory[PALETTE_COUNT];
-static tl::array<SpriteC*> available_palettes = tl::array<SpriteC*>(available_palettes_memory, PALETTE_COUNT);
+static tl::stack_array<SpriteC*, PALETTE_COUNT> available_palettes;
 static SpriteC rgrPalette;
 static int selectedPaletteIndex = 0;
 
 static void SelectPalette(EditorState& state)
 {
-	state.palette_.sprite = &palettes[selectedPaletteIndex];
+	state.palette_.sprite = available_palettes.get_copy(selectedPaletteIndex);
 	state.palette_.selectedIndex = 0;
 	SizeGrid(state.palette_);
 }
 
 void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMemory, EditorState& state)
 {
-	int maxColorsPerPalette = state.pixels.sprite->bitsPerPixel != 1 ? -1 : 2;
+	selectedPaletteIndex = 0;
+	bool paletteSizeLimit = (state.pixels.sprite->bitsPerPixel == 1);
+	int maxColorsPerPalette = 2;
 	available_palettes.clear();
 
 	for (int i = 0; i < PALETTE_COUNT; i += 1)
@@ -116,7 +117,7 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 		tl::CarveMemorySpace(paletteSize, paletteMemory);
 
 		int palettePixelCount = palettes[i].width * palettes[i].height;
-		if (palettePixelCount <= maxColorsPerPalette)
+		if (!paletteSizeLimit || palettePixelCount <= maxColorsPerPalette)
 		{
 			available_palettes.append(&palettes[i]);
 		}

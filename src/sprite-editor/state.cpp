@@ -82,6 +82,7 @@ void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
 
 	sprite.width = width;
 	sprite.height = height;
+	sprite.bitsPerPixel = 24;
 
 	for (int i = 0; i < contentCount && *workingPointer; i += 1)
 	{
@@ -290,7 +291,6 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 
 	ClearCommandBuffer();
 	InitializeLayout(state);
-	InitializePalettes(paletteMemory, tempMemory, state);
 
 	// Load file
 	int fileReadResult = tl::file_interface_read(filePath, fileReadMemory);
@@ -331,6 +331,7 @@ static int Initialize(const tl::GameMemory& gameMemory, int clientX, int clientY
 	}
 
 	SizeGrid(state.pixels);
+	InitializePalettes(paletteMemory, tempMemory, state);
 
 	return 0;
 }
