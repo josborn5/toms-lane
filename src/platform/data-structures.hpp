@@ -130,19 +130,9 @@ namespace tl
 			{
 			}
 
-			T& access(int index)
-			{
-				return _content[index];
-			}
-
-			T& get(int index) const
+			T get_copy(int index)
 			{
 				return _content[index]; // TODO: bounds check and return monad value
-			}
-
-			int capacity() const
-			{
-				return _capacity;
 			}
 
 			int length() const
