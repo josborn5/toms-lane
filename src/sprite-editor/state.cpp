@@ -417,8 +417,9 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandStartsWith("E ")) // edit selected pixel
 	{
-		char* pointer = tl::GetNextNumberChar(&commands.access(1));
-		ParseColorFromCharArray(pointer, tempMemory, state.pixels.sprite->content[state.pixels.selectedIndex]);
+		char* pointerToNumberChar = tl::GetNextNumberChar(&commands.access(1));
+		Grid activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
+		ParseColorFromCharArray(pointerToNumberChar, tempMemory, activeGrid.sprite->content[activeGrid.selectedIndex]);
 		ClearCommandBuffer();
 		return;
 	}
