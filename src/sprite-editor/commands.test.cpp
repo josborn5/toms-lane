@@ -28,6 +28,20 @@ tl::MemorySpace tl::CarveMemorySpace(uint64_t carveSizeInBytes, tl::MemorySpace&
 	return toCarve;
 }
 
+int tl::CharStringToInt(char* string)
+{
+	return 0;
+}
+
+char* tl::CopyToEndOfNumberChar(char* one, char* two)
+{
+	return "";
+}
+
+char* tl::GetNextNumberChar(char* string)
+{
+	return "";
+}
 
 
 const int pixelCount = 32;

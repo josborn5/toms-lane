@@ -1,7 +1,7 @@
 #include "../tl-library.hpp"
 #include "./editor.hpp"
+#include "./utilities.hpp"
 #include "./render.hpp"
-#include "./state.hpp"
 
 static const int PALETTE_COUNT = 5;
 
@@ -94,6 +94,43 @@ static SpriteC palettes[PALETTE_COUNT];
 static tl::stack_array<SpriteC*, PALETTE_COUNT> available_palettes;
 static SpriteC rgrPalette;
 static int selectedPaletteIndex = 0;
+
+/*
+* Assumed char* format is:
+* width<int>\n
+* height<int>\n
+* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // 1st pixel
+* :
+* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // Nth pixel
+*/
+static void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
+{
+	char* buffer = (char*)space.content;
+	// Width
+	char* workingPointer = tl::GetNextNumberChar(content);
+	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
+	int width = tl::CharStringToInt(buffer);
+
+	// Height
+	workingPointer = tl::GetNextNumberChar(workingPointer);
+	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
+	int height = tl::CharStringToInt(buffer);
+
+	// Content
+	int contentCount = height * width;
+
+	sprite.width = width;
+	sprite.height = height;
+	sprite.bitsPerPixel = 24;
+
+	for (int i = 0; i < contentCount && *workingPointer; i += 1)
+	{
+		workingPointer = ParseColorFromCharArray(workingPointer, space, sprite.content[i]);
+	}
+}
+
+
+
 
 static void SelectPalette(EditorState& state)
 {

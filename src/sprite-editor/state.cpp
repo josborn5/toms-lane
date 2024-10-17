@@ -29,67 +29,6 @@ static char filePathBuffer[filePathBufferSize] = {0};
 static constexpr char* filePath = &filePathBuffer[0];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
 
-static char* ParseColorFromCharArray(char* content, tl::MemorySpace& space, Color& color)
-{
-	char* buffer = (char*)space.content;
-	char* workingPointer = content;
-
-	/// RBGA values
-	int rgbaContent[4] = { 0, 0, 0, 255 }; // Default alpha to 100%
-
-	for (int i = 0; i < 4 && *workingPointer; i += 1)
-	{
-		workingPointer = tl::GetNextNumberChar(workingPointer);
-		if (*workingPointer)
-		{
-			workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
-			rgbaContent[i] = tl::CharStringToInt(buffer);
-		}
-	}
-
-	color.r = (float)rgbaContent[0] / 255.0f;
-	color.g = (float)rgbaContent[1] / 255.0f;
-	color.b = (float)rgbaContent[2] / 255.0f;
-	color.a = (float)rgbaContent[3] / 255.0f;
-
-	return workingPointer;
-}
-
-/*
-* Assumed char* format is:
-* width<int>\n
-* height<int>\n
-* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // 1st pixel
-* :
-* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // Nth pixel
-*/
-void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
-{
-	char* buffer = (char*)space.content;
-	// Width
-	char* workingPointer = tl::GetNextNumberChar(content);
-	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
-	int width = tl::CharStringToInt(buffer);
-
-	// Height
-	workingPointer = tl::GetNextNumberChar(workingPointer);
-	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
-	int height = tl::CharStringToInt(buffer);
-
-	// Content
-	int contentCount = height * width;
-
-	sprite.width = width;
-	sprite.height = height;
-	sprite.bitsPerPixel = 24;
-
-	for (int i = 0; i < contentCount && *workingPointer; i += 1)
-	{
-		workingPointer = ParseColorFromCharArray(workingPointer, space, sprite.content[i]);
-	}
-}
-
-
 static int CompareColor(const Color& color1, const Color& color2)
 {
 	if (color1.r == color2.r &&
@@ -310,7 +249,14 @@ static int Initialize(char* commandLine)
 
 	if (spriteLoadedResult != 0)
 	{
-		LoadSpriteC("2\n2\n0 0 0 0\n0 0 0 0\n0 0 0 0\n0 0 0 0", tempMemory, currentSprite);
+		const int default_dim = 2;
+		currentSprite.width = default_dim;
+		currentSprite.height = default_dim;
+		currentSprite.bitsPerPixel = 24;
+		for (int i = 0; i < default_dim * default_dim; i += 1)
+		{
+			currentSprite.content[i] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		}
 
 		switch (fileReadResult)
 		{
