@@ -15,6 +15,7 @@ static const int cameraModifierKey = tl::KEY_SHIFT;
 static bool hasCopied = false;
 static tl::MemorySpace fontMemory;
 static tl::MemorySpace spriteMemory;
+static tl::MemorySpace spritePixelMemory;
 static tl::MemorySpace fileReadMemory;
 static tl::MemorySpace paletteMemory;
 static tl::MemorySpace tempMemory;
@@ -229,6 +230,7 @@ static int Initialize(char* commandLine)
 	state.commandBuffer = &commandBuffer[0];
 
 	currentSprite.content = (Color*)spriteMemory.content;
+	currentSprite.pixels = (uint32_t*)spritePixelMemory.content;
 	state.pixels.sprite = &currentSprite;
 
 	ClearCommandBuffer();
@@ -256,6 +258,7 @@ static int Initialize(char* commandLine)
 		for (int i = 0; i < default_dim * default_dim; i += 1)
 		{
 			currentSprite.content[i] = { 0.0f, 0.0f, 0.0f, 1.0f };
+			currentSprite.pixels = 0x000000;
 		}
 
 		switch (fileReadResult)
@@ -300,6 +303,7 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 
 	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
 	spriteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
+	spritePixelMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
 	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
 	tempMemory = gameMemory.transient;
 

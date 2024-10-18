@@ -17,6 +17,7 @@ struct SpriteC
 	int width;
 	int height;
 	Color* content;
+	uint32_t* pixels;
 	uint16_t bitsPerPixel = 24;
 };
 
