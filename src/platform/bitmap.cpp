@@ -224,6 +224,16 @@ static void resolve_bitmap_render_bounds(
 	resolvedEnd.y = (renderEnd.y > buffer.height) ? buffer.height : renderEnd.y;
 }
 
+uint32_t bitmap_interface_get_color(
+	const bitmap& bitmap,
+	int x,
+	int y)
+{
+	GetColorFromBitmap* color_function = resolve_color_resolution_function(bitmap.dibs_header);
+	if (color_function == nullptr) return 0x000000;
+
+	return color_function(bitmap, x, y);
+}
 
 int bitmap_interface_render(
 	const RenderBuffer& buffer,
