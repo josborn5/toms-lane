@@ -153,6 +153,7 @@ int InitializeSpriteCFromBitmap(
 	int spritePixelCount = bitmap.dibs_header.width * bitmap.dibs_header.height;
 
 	if ((sizeof(Color) * spritePixelCount) > spriteMemory.sizeInBytes) return -2;
+	if ((sizeof(uint32_t) * spritePixelCount) > sprite.pixel_memory.sizeInBytes) return -1;
 
 	sprite.width = bitmap.dibs_header.width;
 	sprite.height = bitmap.dibs_header.height;

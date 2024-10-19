@@ -230,6 +230,7 @@ static int Initialize(char* commandLine)
 	state.commandBuffer = &commandBuffer[0];
 
 	currentSprite.content = (Color*)spriteMemory.content;
+	currentSprite.pixel_memory = spritePixelMemory;
 	currentSprite.pixels = (uint32_t*)spritePixelMemory.content;
 	state.pixels.sprite = &currentSprite;
 

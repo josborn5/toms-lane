@@ -43,6 +43,16 @@ char* tl::GetNextNumberChar(char* string)
 	return "";
 }
 
+int tl::bitmap_interface_get_color(const tl::bitmap& bitmap,
+		int x,
+		int y,
+		uint32_t& output_color)
+{
+	output_color = 0x000000;
+	return 0;
+}
+
+
 
 const int pixelCount = 32;
 static Color spriteContent[pixelCount];
