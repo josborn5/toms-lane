@@ -54,6 +54,21 @@ struct Grid
 	{
 		return row_index(selectedIndex);
 	}
+
+	int column_index(int index) const
+	{
+		if (sprite->width == 1)
+		{
+			return 0;
+		}
+
+		return index % sprite->width;
+	}
+
+	int selected_column_index() const
+	{
+		return column_index(selectedIndex);
+	}
 };
 
 enum Mode

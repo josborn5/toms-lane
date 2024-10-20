@@ -91,8 +91,8 @@ static void RenderSpriteAsGrid(
 
 	float yOriginalPosition = boundingRect.position.y - boundingRect.halfSize.y + (0.5f * pixelDimensionWithBorder);
 
-	int selectedColIndex = GetColumnIndex(grid, grid.selectedIndex);
-	int rangeColIndex = GetColumnIndex(grid, grid.selectedRangeIndex);
+	int selectedColIndex = grid.selected_column_index();
+	int rangeColIndex = grid.column_index(grid.selectedRangeIndex);
 	int selectedRowIndex = grid.selected_row_index();
 	int rangeRowIndex = grid.row_index(grid.selectedRangeIndex);
 

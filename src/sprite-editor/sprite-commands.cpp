@@ -166,7 +166,7 @@ static int AppendColumnToSpriteC(SpriteC& sprite, tl::MemorySpace spriteMemory, 
 
 int InsertColumn(Grid& grid, tl::MemorySpace spriteMemory)
 {
-	int selectedColumnIndex = GetSelectedColumnIndex(grid);
+	int selectedColumnIndex = grid.selected_column_index();
 	int selectedRowIndex = grid.selected_row_index();
 	grid.selectedIndex += (1 + selectedRowIndex);
 

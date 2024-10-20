@@ -1,26 +1,5 @@
 #include "./editor.hpp"
 
-int GetColumnIndex(const Grid& grid, int index)
-{
-	if (grid.sprite->width == 1)
-	{
-		return 0;
-	}
-
-	if (grid.sprite->height == 1)
-	{
-		return index;
-	}
-
-	return index % grid.sprite->width;
-
-}
-
-int GetSelectedColumnIndex(Grid& grid)
-{
-	return GetColumnIndex(grid, grid.selectedIndex);
-}
-
 char* ParseColorFromCharArray(char* content, tl::MemorySpace& space, uint32_t& color)
 {
 	char* buffer = (char*)space.content;
