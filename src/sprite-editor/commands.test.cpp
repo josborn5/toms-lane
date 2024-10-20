@@ -55,66 +55,53 @@ int tl::bitmap_interface_get_color(const tl::bitmap& bitmap,
 
 
 const int pixelCount = 32;
-static Color spriteContent[pixelCount];
+static uint32_t spriteContent[pixelCount];
 static SpriteC sprite;
 tl::MemorySpace memory;
 static Grid grid = {0};
 
+static const int EMPTY_COLOR = 0x000000;
+static const int SET_COLOR = 0xFFDDEE;
 
 static void ResetState()
 {
 	grid = {0};
 	grid.sprite = &sprite;
-	sprite.content = spriteContent;
 	memory.content = spriteContent;
-	memory.sizeInBytes = sizeof(Color) * pixelCount;
+	memory.sizeInBytes = sizeof(uint32_t) * pixelCount;
+
+	sprite.pixel_memory = memory;
 
 	for (int i = 0; i < pixelCount; i += 1)
 	{
-		spriteContent[i].r = 0.0f;
-		spriteContent[i].g = 0.0f;
-		spriteContent[i].b = 0.0f;
-		spriteContent[i].a = 0.0f;
+		spriteContent[i] = EMPTY_COLOR;
 	}
 }
 
-static void SetColor(Color& color)
-{
-	color.r = 255.0f;
-	color.g = 254.0f;
-	color.b = 253.0f;
-	color.a = 252.0f;
-}
 
 static void FillSprite()
 {
 	int count = sprite.width * sprite.height;
 	for (int i = 0; i < count; i += 1)
 	{
-		SetColor(spriteContent[i]);
+		spriteContent[i] = SET_COLOR;
 	}
 }
 
 static void AssertSetColorForPixel(int pixelIndex)
 {
-	Color pixel = sprite.content[pixelIndex];
+	uint32_t pixel = sprite.pixels()[pixelIndex];
 	printf("checking pixel %d is set\n", pixelIndex);
 
-	assert(pixel.r == 255.0f);
-	assert(pixel.g == 254.0f);
-	assert(pixel.b == 253.0f);
-	assert(pixel.a == 252.0f);
+	assert(pixel == SET_COLOR);
 }
 
 static void AssertEmptyColorForPixel(int pixelIndex)
 {
-	Color pixel = sprite.content[pixelIndex];
+	uint32_t pixel = sprite.pixels()[pixelIndex];
 	printf("checking pixel %d is empty\n", pixelIndex);
 
-	assert(pixel.r == 0.0f);
-	assert(pixel.g == 0.0f);
-	assert(pixel.b == 0.0f);
-	assert(pixel.a == 0.0f);
+	assert(pixel == EMPTY_COLOR);
 }
 
 static void InsertRowTests()
