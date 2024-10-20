@@ -162,9 +162,7 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 		sprite_from_string_read_dimensions(paletteContents[i], tempMemory, palettes[i]);
 		int palette_pixel_count = palettes[i].height * palettes[i].width;
 		uint64_t pixel_size_in_bytes = sizeof(uint32_t) * palette_pixel_count;
-		uint64_t color_size_in_bytes = sizeof(Color) * palette_pixel_count;
-		uint64_t palette_size_in_bytes = pixel_size_in_bytes + color_size_in_bytes;
-		tl::MemorySpace palette_allocation = tl::CarveMemorySpace(palette_size_in_bytes, paletteMemory);
+		tl::MemorySpace palette_allocation = tl::CarveMemorySpace(pixel_size_in_bytes , paletteMemory);
 
 		palettes[i].pixel_memory = palette_allocation;
 

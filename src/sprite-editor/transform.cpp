@@ -110,75 +110,20 @@ int InitializeBitmapFromSpriteC(
 	return 0;
 }
 
-typedef Color BitmapToColor (const tl::bitmap& bitmap, int bitmapX, int bitmapY);
-
-static Color GetColorFrom24BitBitmap(const tl::bitmap& bitmap, int bitmapX, int bitmapY)
-{
-	int pixelOffset = (bitmapY * bitmap.dibs_header.width) + bitmapX;
-	RGB24Bit bitmapPixel = *((RGB24Bit*)bitmap.content + pixelOffset);
-
-	Color spriteColor;
-	spriteColor.r = (float)bitmapPixel.r / 255.0f;
-	spriteColor.g = (float)bitmapPixel.g / 255.0f;
-	spriteColor.b = (float)bitmapPixel.b / 255.0f;
-
-	return spriteColor;
-}
-
-static Color GetColorFrom1BitBitmap(const tl::bitmap& bitmap, int bitmapX, int bitmapY)
-{
-	const int bitsPerByte = 8;
-	int bytesPerRow = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
-
-	int contentOffsetInBytes = (bitmapY * bytesPerRow) + (bitmapX / bitsPerByte);
-	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
-
-	const float white = 1.0f;
-	const float black = 0.0f;
-
-	int bitOffset = bitmapX % bitsPerByte;
-	int bitShiftOffset = bitsPerByte - bitOffset - 1;
-
-	uint8_t* byteFromBitmap = eightBitContent + contentOffsetInBytes;
-
-	// 1.shift the bit of interest over to the right most bit
-	// 2. AND with a mask to evaluate the right most bit as true/false
-	// 3. true --> white, false --> black
-	float floatColor =  ((*byteFromBitmap  >> bitShiftOffset) & 0b00000001) ? white : black;
-	Color spriteColor;
-	spriteColor.r = floatColor;
-	spriteColor.g = floatColor;
-	spriteColor.b = floatColor;
-	return spriteColor;
-}
-
-static BitmapToColor* ResolveBitmapToColorTransformer(int bitsPerPixel)
-{
-	switch (bitsPerPixel)
-	{
-		case 24:
-			return &GetColorFrom24BitBitmap;
-		case 1:
-			return &GetColorFrom1BitBitmap;
-	}
-
-	return nullptr;
-}
-
 int InitializeSpriteCFromBitmap(
 	SpriteC& sprite,
 	const tl::bitmap& bitmap,
 	const tl::MemorySpace spriteMemory
 )
 {
-	BitmapToColor* bitmapToColorTransformer = ResolveBitmapToColorTransformer(bitmap.dibs_header.bitsPerPixel);
-	if (bitmapToColorTransformer  == nullptr) return -1;
+	uint32_t garbage;
+	int get_color_result = tl::bitmap_interface_get_color(bitmap, 0, 0, garbage);
+	if (get_color_result != 0) return -1;
 
 	sprite.bitsPerPixel = bitmap.dibs_header.bitsPerPixel;
 	int spritePixelCount = bitmap.dibs_header.width * bitmap.dibs_header.height;
 
-	if ((sizeof(Color) * spritePixelCount) > spriteMemory.sizeInBytes) return -2;
-	if ((sizeof(uint32_t) * spritePixelCount) > sprite.pixel_memory.sizeInBytes) return -1;
+	if ((sizeof(uint32_t) * spritePixelCount) > sprite.pixel_memory.sizeInBytes) return -2;
 
 	sprite.width = bitmap.dibs_header.width;
 	sprite.height = bitmap.dibs_header.height;
