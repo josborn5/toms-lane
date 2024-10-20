@@ -30,28 +30,16 @@ static char filePathBuffer[filePathBufferSize] = {0};
 static constexpr char* filePath = &filePathBuffer[0];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
 
-static int CompareColor(const Color& color1, const Color& color2)
-{
-	if (color1.r == color2.r &&
-		color1.g == color2.g &&
-		color1.b == color2.b &&
-		color1.a == color2.a)
-	{
-		return 0;
-	}
-	return -1;
-}
-
 static int GetCursorIndexForNextColor(Grid& grid, int step, int inclusiveMinPixelIndex, int inclusiveMaxPixelIndex, int prevIndex)
 {
-	Color activeColor = grid.sprite->content[grid.selectedIndex];
+	uint32_t active_color = grid.selected_color();
 	int pixelIndex = prevIndex;
 	int provisionalIndex = pixelIndex + step;
 	bool sameColor = true;
 	while (provisionalIndex >= inclusiveMinPixelIndex && provisionalIndex <= inclusiveMaxPixelIndex && sameColor)
 	{
 		pixelIndex = provisionalIndex;
-		sameColor = (CompareColor(activeColor, grid.sprite->content[pixelIndex]) == 0);
+		sameColor = (active_color == grid.sprite->pixels()[pixelIndex]);
 		provisionalIndex += step;
 	}
 	return pixelIndex;
