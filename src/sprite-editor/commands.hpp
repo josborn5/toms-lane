@@ -11,7 +11,7 @@ int SaveBitmap(
 	char* filePath
 );
 int InsertRow(Grid& grid);
-int InsertColumn(Grid& grid, tl::MemorySpace spriteMemory);
+int InsertColumn(Grid& grid);
 
 #endif
 

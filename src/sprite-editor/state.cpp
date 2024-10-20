@@ -339,7 +339,7 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandIs("C")) // append column
 	{
-		InsertColumn(state.pixels, spriteMemory);
+		InsertColumn(state.pixels);
 		SizeGrid(state.pixels);
 		ClearCommandBuffer();
 		return;

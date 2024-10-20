@@ -256,13 +256,13 @@ static void InsertColumnTests()
 	AssertSetColorForPixel(0);
 	AssertEmptyColorForPixel(1);
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -274,11 +274,11 @@ static void InsertColumnTests()
 	sprite.width = 1;
 	sprite.height = 1;
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 1);
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 2);
 
@@ -294,14 +294,14 @@ static void InsertColumnTests()
 	AssertEmptyColorForPixel(2);
 	AssertEmptyColorForPixel(3);
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 	AssertSetColorForPixel(3);
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -316,11 +316,11 @@ static void InsertColumnTests()
 	sprite.height = 2;
 	grid.selectedIndex = 1; // select first column in bottom row
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 3); // second column in bottom row is now selected
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 5); // third column on bottom row is now selected
 
@@ -334,13 +334,13 @@ static void InsertColumnTests()
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertSetColorForPixel(2);
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -353,11 +353,11 @@ static void InsertColumnTests()
 	sprite.height = 1;
 	grid.selectedIndex = 1;
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 2);
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 3);
 
@@ -373,7 +373,7 @@ static void InsertColumnTests()
 	AssertSetColorForPixel(3);
 	AssertEmptyColorForPixel(4);
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(sprite.width == 3);
 	assert(sprite.height == 2);
@@ -384,7 +384,7 @@ static void InsertColumnTests()
 	AssertSetColorForPixel(4);
 	AssertSetColorForPixel(5);
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(sprite.width == 4);
 	assert(sprite.height == 2);
@@ -403,11 +403,11 @@ static void InsertColumnTests()
 	sprite.height = 2;
 	grid.selectedIndex = 2; // first column of second row is selected
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 4); // second column of second row is selected
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 6); // third column of second for is selected
 
@@ -417,11 +417,11 @@ static void InsertColumnTests()
 	sprite.height = 2;
 	grid.selectedIndex = 8; // select the first pixel in the second row
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 10); // selected pixel is now the second pixel on the second row
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 12); // selected pixel is now the third pixel on the second row
 
@@ -431,11 +431,11 @@ static void InsertColumnTests()
 	sprite.height = 8;
 	grid.selectedIndex = 15; // select the last pixel in the last row
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 23); // selected pixel is now the last pixel on the last row
 
-	InsertColumn(grid, memory);
+	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 31); // selected pixel is now the last pixel on the last row
 }
