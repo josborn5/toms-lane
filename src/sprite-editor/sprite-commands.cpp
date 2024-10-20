@@ -26,7 +26,7 @@ int SaveBitmap(
 	return tl::file_interface_write(filePath, fileData);
 }
 
-static int AppendRowToSpriteC(SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)
+static int AppendRowToSpriteC(SpriteC& sprite, int insertAtIndex)
 {
 	/*
 		Current: 3x2 grid of pixels
@@ -57,7 +57,7 @@ static int AppendRowToSpriteC(SpriteC& sprite, tl::MemorySpace spriteMemory, int
 	int currentPixelCount = sprite.width * sprite.height;
 	uint64_t currentPixelSpace = currentPixelCount * sizeof(uint32_t);
 	uint64_t newPixelSpace = sprite.width * sizeof(uint32_t);
-	uint64_t availableSpace = spriteMemory.sizeInBytes - currentPixelSpace;
+	uint64_t availableSpace = sprite.pixel_memory.sizeInBytes - currentPixelSpace;
 
 	if (availableSpace < newPixelSpace)
 	{
@@ -86,13 +86,13 @@ static int AppendRowToSpriteC(SpriteC& sprite, tl::MemorySpace spriteMemory, int
 	return 0;
 }
 
-int InsertRow(Grid& grid, tl::MemorySpace spriteMemory)
+int InsertRow(Grid& grid)
 {
 	int selectedRowIndex = grid.selected_row_index();
 
 	grid.selectedIndex += grid.sprite->width;
 
-	return AppendRowToSpriteC(*grid.sprite, spriteMemory, selectedRowIndex);
+	return AppendRowToSpriteC(*grid.sprite, selectedRowIndex);
 }
 
 static int AppendColumnToSpriteC(SpriteC& sprite, tl::MemorySpace spriteMemory, int insertAtIndex)

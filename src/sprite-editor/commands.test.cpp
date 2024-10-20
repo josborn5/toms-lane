@@ -121,13 +121,13 @@ static void InsertRowTests()
 	AssertSetColorForPixel(0);
 	AssertEmptyColorForPixel(1);
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -140,11 +140,11 @@ static void InsertRowTests()
 	sprite.height = 1;
 	grid.selectedIndex = 0;
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	assert(grid.selectedIndex == 1);
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	assert(grid.selectedIndex == 2);
 
@@ -158,7 +158,7 @@ static void InsertRowTests()
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -171,11 +171,11 @@ static void InsertRowTests()
 	sprite.height = 1;
 	grid.selectedIndex = 1; // last column in first row
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	assert(grid.selectedIndex == 3); // last column in second row
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	assert(grid.selectedIndex == 5); // last colun in third row
 
@@ -192,7 +192,7 @@ static void InsertRowTests()
 	AssertSetColorForPixel(3);
 	AssertEmptyColorForPixel(4);
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	AssertSetColorForPixel(0);
 	AssertSetColorForPixel(1);
@@ -207,11 +207,11 @@ static void InsertRowTests()
 	sprite.height = 2;
 	grid.selectedIndex = 2; // select the first pixel in the second row
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	assert(grid.selectedIndex == 4); // selected pixel is now the first pixel on the third row
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	assert(grid.selectedIndex == 6); // selected pixel is now the first pixel on the fourth row
 
@@ -221,11 +221,11 @@ static void InsertRowTests()
 	sprite.height = 2;
 	grid.selectedIndex = 8; // select the first pixel in the second row
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	assert(grid.selectedIndex == 16); // selected pixel is now the first pixel on the third row
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	assert(grid.selectedIndex == 24); // selected pixel is now the first pixel on the fourth row
 
@@ -235,11 +235,11 @@ static void InsertRowTests()
 	sprite.height = 8;
 	grid.selectedIndex = 3; // select the last pixel in the second row
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	assert(grid.selectedIndex == 5); // selected pixel is now the last pixel on the third row
 
-	InsertRow(grid, memory);
+	InsertRow(grid);
 
 	assert(grid.selectedIndex == 7); // selected pixel is now the last pixel on the fourth row
 }

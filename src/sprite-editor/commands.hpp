@@ -10,7 +10,7 @@ int SaveBitmap(
 	const SpriteC& sprite,
 	char* filePath
 );
-int InsertRow(Grid& grid, tl::MemorySpace spriteMemory);
+int InsertRow(Grid& grid);
 int InsertColumn(Grid& grid, tl::MemorySpace spriteMemory);
 
 #endif

@@ -17,8 +17,8 @@ static void GetDisplayStringForGrid(const Grid& grid, char* writeTo)
 {
 	uint32_t selected_pixel_color = grid.selected_color();
 
-	int r_color = selected_pixel_color >> 16 & 0x0000FF;
-	int g_color = selected_pixel_color >> 8 & 0x0000FF;
+	int r_color = (selected_pixel_color >> 16) & 0x0000FF;
+	int g_color = (selected_pixel_color >> 8) & 0x0000FF;
 	int b_color = selected_pixel_color & 0x0000FF;
 
 	char* cursor = writeTo;

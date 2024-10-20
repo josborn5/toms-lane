@@ -135,10 +135,8 @@ int InitializeSpriteCFromBitmap(
 		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
 			uint32_t pixel_color;
-			if (tl::bitmap_interface_get_color(bitmap, pixelX, pixelY, pixel_color) == 0)
-			{
-				sprite.pixels()[pixelIndex] = pixel_color;
-			}
+			tl::bitmap_interface_get_color(bitmap, pixelX, pixelY, pixel_color);
+			sprite.pixels()[pixelIndex] = pixel_color;
 			pixelIndex += 1;
 		}
 	}

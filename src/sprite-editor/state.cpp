@@ -332,7 +332,7 @@ static void ExecuteCurrentCommand()
 
 	if (CommandIs("R")) // append row
 	{
-		InsertRow(state.pixels, spriteMemory);
+		InsertRow(state.pixels);
 		SizeGrid(state.pixels);
 		ClearCommandBuffer();
 		return;
