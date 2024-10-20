@@ -20,7 +20,7 @@ struct SpriteC
 	tl::MemorySpace pixel_memory = {0};
 	uint16_t bitsPerPixel = 24;
 
-	uint32_t* pixels()
+	uint32_t* pixels() const
 	{
 		return (uint32_t*)pixel_memory.content;
 	}
@@ -42,6 +42,11 @@ struct Grid
 	tl::Rect<float> camera;
 	int selectedIndex = 0;
 	int selectedRangeIndex = 0;
+
+	uint32_t selected_color() const
+	{
+		return sprite->pixels()[selectedIndex];
+	}
 };
 
 enum Mode

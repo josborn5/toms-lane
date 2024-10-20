@@ -15,25 +15,26 @@ static float cursorTime = 0.0f;
 
 static void GetDisplayStringForGrid(const Grid& grid, char* writeTo)
 {
-	Color selectedColor = grid.sprite->content[grid.selectedIndex];
+	uint32_t selected_pixel_color = grid.selected_color();
 
-	int color = (int)(selectedColor.r * 255.0f);
+	int r_color = selected_pixel_color >> 16 & 0x0000FF;
+	int g_color = selected_pixel_color >> 8 & 0x0000FF;
+	int b_color = selected_pixel_color & 0x0000FF;
+
 	char* cursor = writeTo;
-	tl::IntToCharString(color, cursor);
+	tl::IntToCharString(r_color, cursor);
 
 	while (*cursor) cursor++;
 	*cursor = ' ';
 	cursor++;
 
-	color = (int)(selectedColor.g * 255.0f);
-	tl::IntToCharString(color, cursor);
+	tl::IntToCharString(g_color, cursor);
 
 	while (*cursor) cursor++;
 	*cursor = ' ';
 	cursor++;
 
-	color = (int)(selectedColor.b * 255.0f);
-	tl::IntToCharString(color, cursor);
+	tl::IntToCharString(b_color, cursor);
 }
 
 static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& sprite, const tl::Rect<float>& containerRect)
