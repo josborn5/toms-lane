@@ -14,7 +14,6 @@ static const int cameraModifierKey = tl::KEY_SHIFT;
 
 static bool hasCopied = false;
 static tl::MemorySpace fontMemory;
-static tl::MemorySpace spriteMemory;
 static tl::MemorySpace spritePixelMemory;
 static tl::MemorySpace fileReadMemory;
 static tl::MemorySpace paletteMemory;
@@ -232,8 +231,7 @@ static int Initialize(char* commandLine)
 		tl::bitmap_interface_initialize(currentBitmap, fileReadMemory);
 		spriteLoadedResult = InitializeSpriteCFromBitmap(
 			currentSprite,
-			currentBitmap,
-			spriteMemory);
+			currentBitmap);
 	}
 
 	if (spriteLoadedResult != 0)
@@ -288,9 +286,9 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 	tl::font_interface_initialize_from_file("font-mono.tlsf", perm, working);
 
 	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
-	spriteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
-	spritePixelMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
 	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
+	spritePixelMemory = working; // left over memory goes to main sprite
+
 	tempMemory = gameMemory.transient;
 
 	return Initialize(commandLine);

@@ -9,6 +9,5 @@ int InitializeBitmapFromSpriteC(
 
 int InitializeSpriteCFromBitmap(
 	SpriteC& sprite,
-	const tl::bitmap& bitmap,
-	const tl::MemorySpace tempMemory);
+	const tl::bitmap& bitmap);
 

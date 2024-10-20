@@ -112,8 +112,7 @@ int InitializeBitmapFromSpriteC(
 
 int InitializeSpriteCFromBitmap(
 	SpriteC& sprite,
-	const tl::bitmap& bitmap,
-	const tl::MemorySpace spriteMemory
+	const tl::bitmap& bitmap
 )
 {
 	uint32_t garbage;
