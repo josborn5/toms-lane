@@ -39,6 +39,21 @@ struct Grid
 	{
 		return sprite->pixels()[selectedIndex];
 	}
+
+	int row_index(int index) const
+	{
+		if (sprite->height == 1)
+		{
+			return 0;
+		}
+
+		return index / sprite->width;
+	}
+
+	int selected_row_index() const
+	{
+		return row_index(selectedIndex);
+	}
 };
 
 enum Mode

@@ -48,7 +48,7 @@ static int GetCursorIndexForNextColor(Grid& grid, int step, int inclusiveMinPixe
 static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
 {
 	int maxPixelIndex = (grid.sprite->width * grid.sprite->height) - 1;
-	int currentRowIndex = GetRowIndex(grid, prevIndex);
+	int currentRowIndex = grid.row_index(prevIndex);
 	if (input.buttons[skipModifierKey].isDown)
 	{
 		if (input.buttons[tl::KEY_HOME].keyDown) return 0;
