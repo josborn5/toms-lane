@@ -5,12 +5,6 @@
 
 static const int PALETTE_COUNT = 5;
 
-static uint64_t GetSpriteSpaceInBytes(const SpriteC& sprite)
-{
-	int pixelCount = sprite.width * sprite.height;
-	return sizeof(Color) * pixelCount;
-}
-
 char* rgrPaletteContent = "\
 2\n\
 8\n\
@@ -103,6 +97,23 @@ static int selectedPaletteIndex = 0;
 * :
 * RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // Nth pixel
 */
+static void sprite_from_string_read_dimensions(char* content, tl::MemorySpace& space, SpriteC& sprite)
+{
+	char* buffer = (char*)space.content;
+	// Width
+	char* workingPointer = tl::GetNextNumberChar(content);
+	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
+	int width = tl::CharStringToInt(buffer);
+
+	// Height
+	workingPointer = tl::GetNextNumberChar(workingPointer);
+	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
+	int height = tl::CharStringToInt(buffer);
+
+	sprite.width = width;
+	sprite.height = height;
+}
+
 static void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
 {
 	char* buffer = (char*)space.content;
@@ -125,7 +136,16 @@ static void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
 
 	for (int i = 0; i < contentCount && *workingPointer; i += 1)
 	{
-		workingPointer = ParseColorFromCharArray(workingPointer, space, sprite.content[i]);
+		Color blockColor;
+		workingPointer = ParseColorFromCharArray(workingPointer, space, blockColor);
+		uint32_t color = tl::GetColorFromRGB(
+			(int)(255.0f * blockColor.r),
+			(int)(255.0f * blockColor.g),
+			(int)(255.0f * blockColor.b)
+		);
+
+		sprite.content[i] = blockColor;
+		sprite.pixels[i] = color;
 	}
 }
 
@@ -148,13 +168,20 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 
 	for (int i = 0; i < PALETTE_COUNT; i += 1)
 	{
-		palettes[i].content = (Color*)paletteMemory.content;
-		LoadSpriteC(paletteContents[i], tempMemory, palettes[i]);
-		uint64_t paletteSize = GetSpriteSpaceInBytes(palettes[i]);
-		tl::CarveMemorySpace(paletteSize, paletteMemory);
+		sprite_from_string_read_dimensions(paletteContents[i], tempMemory, palettes[i]);
+		int palette_pixel_count = palettes[i].height * palettes[i].width;
+		uint64_t pixel_size_in_bytes = sizeof(uint32_t) * palette_pixel_count;
+		uint64_t color_size_in_bytes = sizeof(Color) * palette_pixel_count;
+		uint64_t palette_size_in_bytes = pixel_size_in_bytes + color_size_in_bytes;
+		tl::MemorySpace palette_allocation = tl::CarveMemorySpace(palette_size_in_bytes, paletteMemory);
 
-		int palettePixelCount = palettes[i].width * palettes[i].height;
-		if (!paletteSizeLimit || palettePixelCount <= maxColorsPerPalette)
+		palettes[i].pixel_memory = palette_allocation;
+		palettes[i].pixels = (uint32_t*)palette_allocation.content;
+
+		palettes[i].content = (Color*)((uint8_t*)palette_allocation.content + pixel_size_in_bytes);
+		LoadSpriteC(paletteContents[i], tempMemory, palettes[i]);
+
+		if (!paletteSizeLimit || palette_pixel_count <= maxColorsPerPalette)
 		{
 			available_palettes.append(&palettes[i]);
 		}
