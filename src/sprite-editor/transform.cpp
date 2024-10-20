@@ -9,16 +9,39 @@ struct RGB24Bit
 	uint8_t r;
 };
 
-typedef void ColorToBitmap (const Color& spriteColor, int bitmapX, int bitmapY, tl::bitmap& bitmap);
+typedef void ColorToBitmap (uint32_t spriteColor, int bitmapX, int bitmapY, tl::bitmap& bitmap);
 
-static void WriteColorTo24BitBitmap(const Color& spriteColor, int bitmapX, int bitmapY, tl::bitmap& bitmap)
+static void WriteColorTo24BitBitmap(uint32_t spriteColor, int bitmapX, int bitmapY, tl::bitmap& bitmap)
 {
 	int pixelOffset = (bitmapY * bitmap.dibs_header.width) + bitmapX;
 	RGB24Bit bitmapPixel;
-	bitmapPixel.r = (uint8_t)(255.0f * spriteColor.r);
-	bitmapPixel.g = (uint8_t)(255.0f * spriteColor.g);
-	bitmapPixel.b = (uint8_t)(255.0f * spriteColor.b);
+	bitmapPixel.r = (uint8_t)(spriteColor >> 16 & 0x0000FF);
+	bitmapPixel.g = (uint8_t)(spriteColor >> 8 & 0x0000FF);
+	bitmapPixel.b = (uint8_t)(spriteColor & 0x0000FF);
 	*((RGB24Bit*)bitmap.content + pixelOffset) = bitmapPixel;
+}
+
+static void WriteColorTo1BitBitmap(uint32_t spriteColor, int bitmapX, int bitmapY, tl::bitmap& bitmap)
+{
+	const int bitsPerByte = 8;
+	int bytesPerRow = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
+
+	int contentOffsetInBytes = (bitmapY * bytesPerRow) + (bitmapX / bitsPerByte);
+	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
+
+	int bitOffset = bitmapX % bitsPerByte;
+	int bitShiftOffset = bitsPerByte - bitOffset - 1;
+
+	uint8_t* byteFromBitmap = eightBitContent + contentOffsetInBytes;
+
+	bool isBlack = spriteColor == 0x0000FF;
+	uint8_t pixelColor = (isBlack) ? 0b00000000 : 0b00000001;
+
+	// 1.shift the bit of interest over to the right most bit
+	// 2. OR with a mask to persist preceeding bits and set the right most bit as true/false according to the pixel color
+	uint8_t workingByte = ((*byteFromBitmap >> bitShiftOffset) | pixelColor);
+	// 3. Shift back and store the byte
+	*byteFromBitmap = (workingByte << bitShiftOffset);
 }
 
 static ColorToBitmap* ResolveColorToBitmapTransformer(int bitsPerPixel)
@@ -27,6 +50,8 @@ static ColorToBitmap* ResolveColorToBitmapTransformer(int bitsPerPixel)
 	{
 		case 24:
 			return &WriteColorTo24BitBitmap;
+		case 1:
+			return &WriteColorTo1BitBitmap;
 	}
 
 	return nullptr;
@@ -76,7 +101,7 @@ int InitializeBitmapFromSpriteC(
 	{
 		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
-			Color spriteColor = sprite.content[pixelIndex];
+			uint32_t spriteColor = sprite.pixels()[pixelIndex];
 			(*colorToBitmapTransformer)(spriteColor, pixelX, pixelY, bitmap);
 			pixelIndex += 1;
 		}
@@ -164,7 +189,6 @@ int InitializeSpriteCFromBitmap(
 	{
 		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
-			sprite.content[pixelIndex] = (*bitmapToColorTransformer)(bitmap, pixelX, pixelY);
 			uint32_t pixel_color;
 			if (tl::bitmap_interface_get_color(bitmap, pixelX, pixelY, pixel_color) == 0)
 			{

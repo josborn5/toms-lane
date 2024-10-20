@@ -3,6 +3,11 @@
 #include "./commands.hpp"
 
 // mock implementations of libraries used
+uint32_t tl::GetColorFromRGB(int r, int g, int b)
+{
+	return 0x000000;
+}
+
 int tl::file_interface_write(
 	char* fileName,
 	const tl::MemorySpace& writeBuffer

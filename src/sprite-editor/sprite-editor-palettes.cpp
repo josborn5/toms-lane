@@ -8,72 +8,72 @@ static const int PALETTE_COUNT = 5;
 char* rgrPaletteContent = "\
 2\n\
 8\n\
-255 249 179 255\n\
-185 197 204 255\n\
-71 116 179 255\n\
-20 75 102 255\n\
-143 179 71 255\n\
-46 153 78 255\n\
-242 144 102 255\n\
-230 80 80 255\n\
-112 125 124 255\n\
-41 60 64 255\n\
-23 11 26 255\n\
-10 1 13 255\n\
-87 9 50 255\n\
-135 30 46 355\n\
-255 191 64 255\n\
-204 20 36 255";
+255 249 179\n\
+185 197 204\n\
+ 71 116 179\n\
+ 20  75 102\n\
+143 179  71\n\
+ 46 153  78\n\
+242 144 102\n\
+230  80  80\n\
+112 125 124\n\
+ 41  60  64\n\
+ 23  11  26\n\
+ 10   1  13\n\
+ 87   9  50\n\
+135  30  46\n\
+255 191  64\n\
+204  20  36";
 
 char* pollenPaletteContent = "\
 1\n\
 8\n\
-115 70 76 255\n\
-171 86 117 255\n\
-238 106 124 255\n\
-255 167 165 255\n\
-255 224 126 255\n\
-255 231 214 255\n\
-114 220 187 255\n\
-52 172 186 255";
+115  70  76\n\
+171  86 117\n\
+238 106 124\n\
+255 167 165\n\
+255 224 126\n\
+255 231 214\n\
+114 220 187\n\
+ 52 172 186";
 
 char* sunsetCloudsPaletteContent = "\
 1\n\
 8\n\
-252 176 140 255\n\
-239 157 127 255\n\
-214 147 138 255\n\
-180 141 146 255\n\
-165 151 161 255\n\
-143 169 191 255\n\
-154 171 201 255\n\
-165 183 212 255";
+252 176 140\n\
+239 157 127\n\
+214 147 138\n\
+180 141 146\n\
+165 151 161\n\
+143 169 191\n\
+154 171 201\n\
+165 183 212";
 
 char* fantasyConsolePaletteContent = "\
 2\n\
 8\n\
-  0   0   0 255\n\
-255 252 255 255\n\
-230 255 242 255\n\
-178 183 225 255\n\
- 89  91 125 255\n\
-123 138 198 255\n\
-255 217 244 255\n\
-225 173 195 255\n\
-173 128 166 255\n\
-251 162 215 255\n\
-250 224 199 255\n\
-240 171 171 255\n\
-151 196 170 255\n\
-191 237 245 255\n\
-115 201 235 255\n\
-202 175 245 255";
+  0   0   0\n\
+255 252 255\n\
+230 255 242\n\
+178 183 225\n\
+ 89  91 125\n\
+123 138 198\n\
+255 217 244\n\
+225 173 195\n\
+173 128 166\n\
+251 162 215\n\
+250 224 199\n\
+240 171 171\n\
+151 196 170\n\
+191 237 245\n\
+115 201 235\n\
+202 175 245";
 
 char* defaultPaletteContent = "\
 1\n\
 2\n\
-  0   0   0 255\n\
-255 255 255 255";
+  0   0   0\n\
+255 255 255";
 
 
 char* paletteContents[PALETTE_COUNT] = {
@@ -93,9 +93,9 @@ static int selectedPaletteIndex = 0;
 * Assumed char* format is:
 * width<int>\n
 * height<int>\n
-* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // 1st pixel
+* RValue<char> GValue<char> BValue<char>\n // 1st pixel
 * :
-* RValue<char>, GValue<char>, BValue<char>, AValue<char>\n // Nth pixel
+* RValue<char> GValue<char> BValue<char>\n // Nth pixel
 */
 static void sprite_from_string_read_dimensions(char* content, tl::MemorySpace& space, SpriteC& sprite)
 {
@@ -136,16 +136,7 @@ static void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
 
 	for (int i = 0; i < contentCount && *workingPointer; i += 1)
 	{
-		Color blockColor;
-		workingPointer = ParseColorFromCharArray(workingPointer, space, blockColor);
-		uint32_t color = tl::GetColorFromRGB(
-			(int)(255.0f * blockColor.r),
-			(int)(255.0f * blockColor.g),
-			(int)(255.0f * blockColor.b)
-		);
-
-		sprite.content[i] = blockColor;
-		sprite.pixels()[i] = color;
+		workingPointer = ParseColorFromCharArray(workingPointer, space, sprite.pixels()[i]);
 	}
 }
 
@@ -177,7 +168,6 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 
 		palettes[i].pixel_memory = palette_allocation;
 
-		palettes[i].content = (Color*)((uint8_t*)palette_allocation.content + pixel_size_in_bytes);
 		LoadSpriteC(paletteContents[i], tempMemory, palettes[i]);
 
 		if (!paletteSizeLimit || palette_pixel_count <= maxColorsPerPalette)

@@ -16,7 +16,6 @@ struct SpriteC
 {
 	int width;
 	int height;
-	Color* content;
 	tl::MemorySpace pixel_memory = {0};
 	uint16_t bitsPerPixel = 24;
 

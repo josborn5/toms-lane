@@ -19,8 +19,8 @@ static tl::MemorySpace spritePixelMemory;
 static tl::MemorySpace fileReadMemory;
 static tl::MemorySpace paletteMemory;
 static tl::MemorySpace tempMemory;
-static Color currentColor;
-static Color copiedColor;
+static uint32_t currentColor;
+static uint32_t copiedColor;
 static SpriteC currentSprite;
 static tl::bitmap currentBitmap;
 
@@ -113,7 +113,7 @@ static bool ApplyCursorMovementToState(const tl::Input& input)
 	bool handledInput = activeGrid.selectedIndex != newCursorIndex;
 	activeGrid.selectedIndex = newCursorIndex;
 
-	currentColor = state.palette_.sprite->content[state.palette_.selectedIndex];
+	currentColor = state.palette_.selected_color();
 
 	return handledInput;
 }
@@ -217,7 +217,6 @@ static int Initialize(char* commandLine)
 	state.mode = View;
 	state.commandBuffer = &commandBuffer[0];
 
-	currentSprite.content = (Color*)spriteMemory.content;
 	currentSprite.pixel_memory = spritePixelMemory;
 	state.pixels.sprite = &currentSprite;
 
@@ -245,7 +244,6 @@ static int Initialize(char* commandLine)
 		currentSprite.bitsPerPixel = 24;
 		for (int i = 0; i < default_dim * default_dim; i += 1)
 		{
-			currentSprite.content[i] = { 0.0f, 0.0f, 0.0f, 1.0f };
 			currentSprite.pixels()[i] = 0x000000;
 		}
 
@@ -361,7 +359,7 @@ static void ExecuteCurrentCommand()
 		unsigned int spriteLength = state.pixels.sprite->width * state.pixels.sprite->height;
 
 		// Call tl::DeleteFromArray with the sprite content
-		tl::DeleteFromArray(state.pixels.sprite->content, startDeleteIndex, endDeleteIndex, spriteLength);
+		tl::DeleteFromArray(state.pixels.sprite->pixels(), startDeleteIndex, endDeleteIndex, spriteLength);
 
 		// Subtract 1 from the sprite height
 		state.pixels.sprite->height -= 1;
@@ -378,7 +376,7 @@ static void ExecuteCurrentCommand()
 		for (int i = state.pixels.sprite->height - 1; i >= 0; i -= 1)
 		{
 			unsigned int deleteIndex = (i * state.pixels.sprite->width) + columnIndex;
-			tl::DeleteFromArray(state.pixels.sprite->content, deleteIndex, deleteIndex, spriteLength);
+			tl::DeleteFromArray(state.pixels.sprite->pixels(), deleteIndex, deleteIndex, spriteLength);
 			spriteLength -= 1;
 		}
 		state.pixels.sprite->width -= 1;
@@ -411,7 +409,7 @@ static void ExecuteCurrentCommand()
 	{
 		char* pointerToNumberChar = tl::GetNextNumberChar(&commands.access(1));
 		Grid activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
-		ParseColorFromCharArray(pointerToNumberChar, tempMemory, activeGrid.sprite->content[activeGrid.selectedIndex]);
+		ParseColorFromCharArray(pointerToNumberChar, tempMemory, activeGrid.sprite->pixels()[activeGrid.selectedIndex]);
 		ClearCommandBuffer();
 		return;
 	}
@@ -439,7 +437,7 @@ static bool CheckForCopy(const tl::Input& input)
 	if (input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_C].keyDown && state.activeControl == SpriteGrid)
 	{
 		hasCopied = true;
-		copiedColor = state.pixels.sprite->content[state.pixels.selectedIndex];
+		copiedColor = state.pixels.selected_color();
 		return true;
 	}
 	return false;
@@ -449,7 +447,7 @@ static bool CheckForPaste(const tl::Input& input)
 {
 	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.activeControl == SpriteGrid)
 	{
-		state.pixels.sprite->content[state.pixels.selectedIndex] = copiedColor;
+		state.pixels.sprite->pixels()[state.pixels.selectedIndex] = copiedColor;
 		return true;
 	}
 	return false;
@@ -516,7 +514,7 @@ static void ApplyInsertModeInputToState(const tl::Input& input)
 	if (ApplyCursorMovementToState(input)) return;
 	if (input.buttons[tl::KEY_ENTER].keyDown && state.activeControl == SpriteGrid)
 	{
-		state.pixels.sprite->content[state.pixels.selectedIndex] = currentColor;
+		state.pixels.sprite->pixels()[state.pixels.selectedIndex] = currentColor;
 		return;
 	}
 }
