@@ -17,9 +17,13 @@ struct SpriteC
 	int width;
 	int height;
 	Color* content;
-	uint32_t* pixels;
 	tl::MemorySpace pixel_memory = {0};
 	uint16_t bitsPerPixel = 24;
+
+	uint32_t* pixels()
+	{
+		return (uint32_t*)pixel_memory.content;
+	}
 };
 
 enum EditorControl

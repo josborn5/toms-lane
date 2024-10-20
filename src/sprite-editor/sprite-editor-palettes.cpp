@@ -145,7 +145,7 @@ static void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
 		);
 
 		sprite.content[i] = blockColor;
-		sprite.pixels[i] = color;
+		sprite.pixels()[i] = color;
 	}
 }
 
@@ -176,7 +176,6 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 		tl::MemorySpace palette_allocation = tl::CarveMemorySpace(palette_size_in_bytes, paletteMemory);
 
 		palettes[i].pixel_memory = palette_allocation;
-		palettes[i].pixels = (uint32_t*)palette_allocation.content;
 
 		palettes[i].content = (Color*)((uint8_t*)palette_allocation.content + pixel_size_in_bytes);
 		LoadSpriteC(paletteContents[i], tempMemory, palettes[i]);

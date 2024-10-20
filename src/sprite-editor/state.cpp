@@ -231,7 +231,6 @@ static int Initialize(char* commandLine)
 
 	currentSprite.content = (Color*)spriteMemory.content;
 	currentSprite.pixel_memory = spritePixelMemory;
-	currentSprite.pixels = (uint32_t*)spritePixelMemory.content;
 	state.pixels.sprite = &currentSprite;
 
 	ClearCommandBuffer();
@@ -259,7 +258,7 @@ static int Initialize(char* commandLine)
 		for (int i = 0; i < default_dim * default_dim; i += 1)
 		{
 			currentSprite.content[i] = { 0.0f, 0.0f, 0.0f, 1.0f };
-			currentSprite.pixels[i] = 0x000000;
+			currentSprite.pixels()[i] = 0x000000;
 		}
 
 		switch (fileReadResult)
