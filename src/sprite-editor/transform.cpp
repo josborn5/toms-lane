@@ -127,6 +127,12 @@ int InitializeSpriteCFromBitmap(
 	sprite.width = bitmap.dibs_header.width;
 	sprite.height = bitmap.dibs_header.height;
 
+	sprite.color_table.clear();
+	for (int i = 0; i < bitmap.color_table.size; i += 1)
+	{
+		sprite.color_table.append(bitmap.color_table.content[i]);
+	}
+
 	// Bitmap & SpriteC origins are both bottom left
 	int pixelIndex = 0;
 	for (int pixelY = 0; pixelY < sprite.height; pixelY += 1)

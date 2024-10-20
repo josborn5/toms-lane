@@ -11,6 +11,7 @@ struct SpriteC
 	int height;
 	tl::MemorySpace pixel_memory = {0};
 	uint16_t bitsPerPixel = 24;
+	tl::stack_array<uint32_t, 2> color_table;
 
 	uint32_t* pixels() const
 	{

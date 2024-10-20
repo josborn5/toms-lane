@@ -6,6 +6,7 @@ static tl::Rect<float> commandTextRect;
 static tl::Rect<float> commandCharFootprint;
 
 static const float textAreaHalfHeight = 10.0f;
+static tl::Vec2<float> color_table_halfsize = { 0, 20.0f };
 static const tl::Vec2<float> textCharFootprintHalfsize = {
 	4.0f * textAreaHalfHeight / 7.0f,
 	textAreaHalfHeight
@@ -58,6 +59,12 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& 
 		containerRect.position.x,
 		containerRect.position.y + textCharFootprintHalfsize.y
 	};
+
+	if (sprite.color_table.length() > 0)
+	{
+		sizeRect.halfSize.y -= color_table_halfsize.y;
+		sizeRect.position.y += color_table_halfsize.y;
+	}
 
 	return sizeRect;
 }
