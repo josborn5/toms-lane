@@ -274,7 +274,7 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state, floa
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, state.pixels.container);
 	tl::DrawRect(renderBuffer, paletteBackgroundColor, state.palette_.container);
 
-	int displaySelectedPixelIndex = (state.activeControl == SpriteGrid && state.mode != Command)
+	int displaySelectedPixelIndex = (state.activeControl == &state.pixels && state.mode != Command)
 		? state.pixels.selectedIndex
 		: -1;
 	RenderSpriteAsGrid(

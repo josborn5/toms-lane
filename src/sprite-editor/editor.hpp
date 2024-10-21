@@ -19,14 +19,6 @@ struct SpriteC
 	}
 };
 
-enum EditorControl
-{
-	SpriteGrid,
-	PaletteGrid,
-
-	EditorControlCount
-};
-
 struct Grid
 {
 	SpriteC* sprite;
@@ -84,8 +76,9 @@ struct EditorState
 {
 	Grid pixels;
 	Grid palette_;
+	Grid color_table;
 	char* commandBuffer;
-	EditorControl activeControl = SpriteGrid;
+	Grid* activeControl = &pixels;
 	int windowWidth;
 	int windowHeight;
 	Mode mode;

@@ -107,7 +107,7 @@ static bool ApplyCursorMovementToState(const tl::Input& input)
 {
 	if (input.buttons[cameraModifierKey].isDown) return false;
 
-	Grid& activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
+	Grid& activeGrid = *state.activeControl;
 	int newCursorIndex = GetCursorIndex(input, activeGrid, activeGrid.selectedIndex);
 	bool handledInput = activeGrid.selectedIndex != newCursorIndex;
 	activeGrid.selectedIndex = newCursorIndex;
@@ -119,7 +119,7 @@ static bool ApplyCursorMovementToState(const tl::Input& input)
 
 static bool ApplyCameraMovementToState(const tl::Input& input)
 {
-	if (state.activeControl != SpriteGrid || !input.buttons[cameraModifierKey].isDown)
+	if (state.activeControl != &state.pixels || !input.buttons[cameraModifierKey].isDown)
 	{
 		return false;
 	}
@@ -162,7 +162,7 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 
 static bool ApplySelectedRangeMovementToState(const tl::Input& input)
 {
-	Grid& activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
+	Grid& activeGrid = *state.activeControl;
 	int newCursorIndex = GetCursorIndex(input, activeGrid, activeGrid.selectedRangeIndex);
 	bool handledInput = activeGrid.selectedRangeIndex != newCursorIndex;
 	activeGrid.selectedRangeIndex = newCursorIndex;
@@ -406,7 +406,7 @@ static void ExecuteCurrentCommand()
 	else if (CommandStartsWith("E ")) // edit selected pixel
 	{
 		char* pointerToNumberChar = tl::GetNextNumberChar(&commands.access(1));
-		Grid activeGrid = (state.activeControl == SpriteGrid) ? state.pixels : state.palette_;
+		Grid& activeGrid = *state.activeControl;
 		ParseColorFromCharArray(pointerToNumberChar, tempMemory, activeGrid.sprite->pixels()[activeGrid.selectedIndex]);
 		ClearCommandBuffer();
 		return;
@@ -432,7 +432,7 @@ static void ExecuteCurrentCommand()
 
 static bool CheckForCopy(const tl::Input& input)
 {
-	if (input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_C].keyDown && state.activeControl == SpriteGrid)
+	if (input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_C].keyDown && state.activeControl == &state.pixels)
 	{
 		hasCopied = true;
 		copiedColor = state.pixels.selected_color();
@@ -443,7 +443,7 @@ static bool CheckForCopy(const tl::Input& input)
 
 static bool CheckForPaste(const tl::Input& input)
 {
-	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.activeControl == SpriteGrid)
+	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.activeControl == &state.pixels)
 	{
 		state.pixels.sprite->pixels()[state.pixels.selectedIndex] = copiedColor;
 		return true;
@@ -510,7 +510,7 @@ static void ApplyViewModeInputToState(const tl::Input& input)
 static void ApplyInsertModeInputToState(const tl::Input& input)
 {
 	if (ApplyCursorMovementToState(input)) return;
-	if (input.buttons[tl::KEY_ENTER].keyDown && state.activeControl == SpriteGrid)
+	if (input.buttons[tl::KEY_ENTER].keyDown && state.activeControl == &state.pixels)
 	{
 		state.pixels.sprite->pixels()[state.pixels.selectedIndex] = currentColor;
 		return;
@@ -539,8 +539,9 @@ const EditorState& GetLatestState(const tl::Input& input)
 
 	if (input.buttons[tl::KEY_TAB].keyDown)
 	{
-		int nextActiveControlIndex = state.activeControl + 1;
-		state.activeControl = (nextActiveControlIndex < EditorControlCount) ? (EditorControl)nextActiveControlIndex : SpriteGrid;
+		state.activeControl = (state.activeControl == &state.pixels)
+			? &state.palette_
+			: &state.pixels;
 		return state;
 	}
 
