@@ -182,8 +182,6 @@ static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int bitmapX, int bi
 	int contentOffsetInBytes = (bitmapY * bytesPerRow) + (bitmapX / bitsPerByte);
 
 	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
-	const uint32_t white = 0xFFFFFF;
-	const uint32_t black = 0x000000;
 
 	int bitOffset = bitmapX % bitsPerByte;
 	int bitShiftOffset = bitsPerByte - bitOffset - 1;
@@ -193,7 +191,9 @@ static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int bitmapX, int bi
 	// 1.shift the bit of interest over to the right most bit
 	// 2. AND with a mask to evaluate the right most bit as true/false
 	// 3. true --> white, false --> black
-	uint32_t color = ((*byteFromBitmap  >> bitShiftOffset) & 0b00000001) ? white : black;
+	uint32_t color = ((*byteFromBitmap  >> bitShiftOffset) & 0b00000001)
+		? bitmap.color_table.content[1]
+		: bitmap.color_table.content[0];
 	return color;
 }
 
