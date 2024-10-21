@@ -119,7 +119,7 @@ static bool ApplyCursorMovementToState(const tl::Input& input)
 
 static bool ApplyCameraMovementToState(const tl::Input& input)
 {
-	if (state.activeControl != &state.pixels || !input.buttons[cameraModifierKey].isDown)
+	if (!state.pixels_are_selected() || !input.buttons[cameraModifierKey].isDown)
 	{
 		return false;
 	}
@@ -432,7 +432,7 @@ static void ExecuteCurrentCommand()
 
 static bool CheckForCopy(const tl::Input& input)
 {
-	if (input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_C].keyDown && state.activeControl == &state.pixels)
+	if (input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_C].keyDown && state.pixels_are_selected())
 	{
 		hasCopied = true;
 		copiedColor = state.pixels.selected_color();
@@ -443,7 +443,7 @@ static bool CheckForCopy(const tl::Input& input)
 
 static bool CheckForPaste(const tl::Input& input)
 {
-	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.activeControl == &state.pixels)
+	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.pixels_are_selected())
 	{
 		state.pixels.sprite->pixels()[state.pixels.selectedIndex] = copiedColor;
 		return true;
@@ -510,7 +510,7 @@ static void ApplyViewModeInputToState(const tl::Input& input)
 static void ApplyInsertModeInputToState(const tl::Input& input)
 {
 	if (ApplyCursorMovementToState(input)) return;
-	if (input.buttons[tl::KEY_ENTER].keyDown && state.activeControl == &state.pixels)
+	if (input.buttons[tl::KEY_ENTER].keyDown && state.pixels_are_selected())
 	{
 		state.pixels.sprite->pixels()[state.pixels.selectedIndex] = currentColor;
 		return;
@@ -539,7 +539,7 @@ const EditorState& GetLatestState(const tl::Input& input)
 
 	if (input.buttons[tl::KEY_TAB].keyDown)
 	{
-		state.activeControl = (state.activeControl == &state.pixels)
+		state.activeControl = state.pixels_are_selected()
 			? &state.palette_
 			: &state.pixels;
 		return state;

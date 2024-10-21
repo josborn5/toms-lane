@@ -82,6 +82,11 @@ struct EditorState
 	int windowWidth;
 	int windowHeight;
 	Mode mode;
+
+	bool pixels_are_selected() const
+	{
+		return activeControl == &pixels;
+	}
 };
 
 #endif
