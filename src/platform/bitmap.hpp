@@ -34,7 +34,7 @@ namespace tl
 	struct bitmap_color_table
 	{
 		uint32_t content[2];
-		int32_t size;
+		int32_t size = 0;
 	};
 
 	struct bitmap_dibs_header

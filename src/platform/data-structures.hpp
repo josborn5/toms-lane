@@ -130,7 +130,7 @@ namespace tl
 			{
 			}
 
-			T get_copy(int index)
+			T get_copy(int index) const
 			{
 				return _content[index]; // TODO: bounds check and return monad value
 			}
