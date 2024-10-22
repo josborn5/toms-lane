@@ -35,11 +35,11 @@ static void WriteColorTo1BitBitmap(uint32_t spriteColor, int bitmapX, int bitmap
 	uint8_t* byteFromBitmap = eightBitContent + contentOffsetInBytes;
 
 	bool isBlack = spriteColor == 0x0000FF;
-	uint8_t pixelColor = (isBlack) ? 0b00000000 : 0b00000001;
+	uint8_t pixel_data = (isBlack) ? 0b00000000 : 0b00000001;
 
 	// 1.shift the bit of interest over to the right most bit
 	// 2. OR with a mask to persist preceeding bits and set the right most bit as true/false according to the pixel color
-	uint8_t workingByte = ((*byteFromBitmap >> bitShiftOffset) | pixelColor);
+	uint8_t workingByte = ((*byteFromBitmap >> bitShiftOffset) | pixel_data);
 	// 3. Shift back and store the byte
 	*byteFromBitmap = (workingByte << bitShiftOffset);
 }
@@ -79,9 +79,17 @@ int InitializeBitmapFromSpriteC(
 	bitmap.file_header.fileType = 0x4d42;
 	bitmap.file_header.reserved1 = 0;
 	bitmap.file_header.reserved2 = 0;
-	bitmap.file_header.offsetToPixelDataInBytes = 54;
 
-	bitmap.dibs_header.headerSizeInBytes = 40;
+	// work out header space requirements
+	const int file_header_size_in_bytes = 14;
+	const int dibs_header_size_in_bytes = 40;
+	int color_table_size_in_bytes = (sprite.color_table.length() > 0)
+		? sizeof(uint32_t[2])
+		: 0;
+
+	bitmap.file_header.offsetToPixelDataInBytes = file_header_size_in_bytes + dibs_header_size_in_bytes + color_table_size_in_bytes;
+
+	bitmap.dibs_header.headerSizeInBytes = dibs_header_size_in_bytes ;
 	bitmap.dibs_header.width = sprite.width;
 	bitmap.dibs_header.height = sprite.height;
 	bitmap.dibs_header.numberOfColorPlanes = 1;
@@ -93,6 +101,12 @@ int InitializeBitmapFromSpriteC(
 
 	if (bitmap.file_header.fileSizeInBytes > tempMemory.sizeInBytes) return -1;
 
+	bitmap.color_table.size = sprite.color_table.length();
+	for (int i = 0; i < sprite.color_table.length(); i += 1)
+	{
+		bitmap.color_table.content[i] = sprite.color_table.get_copy(i);
+	}
+
 	bitmap.content = (uint8_t*)tempMemory.content;
 
 	// Bitmap & SpriteC origins are both bottom left
@@ -101,8 +115,8 @@ int InitializeBitmapFromSpriteC(
 	{
 		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
-			uint32_t spriteColor = sprite.pixels()[pixelIndex];
-			(*colorToBitmapTransformer)(spriteColor, pixelX, pixelY, bitmap);
+			uint32_t pixel_data = sprite.pixels()[pixelIndex];
+			(*colorToBitmapTransformer)(pixel_data, pixelX, pixelY, bitmap);
 			pixelIndex += 1;
 		}
 	}
