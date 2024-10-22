@@ -69,11 +69,11 @@ namespace tl
 		bitmap& bitmap,
 		const MemorySpace& memory);
 
-	int bitmap_interface_get_color(
+	int bitmap_interface_get_pixel_data(
 		const bitmap& bitmap,
 		int x,
 		int y,
-		uint32_t& output_color);
+		uint32_t& pixel_data);
 
 	int bitmap_interface_render(
 		const RenderBuffer& buffer,

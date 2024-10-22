@@ -77,7 +77,7 @@ void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 
 	assert(*bottomLeftPixel == green);
 	uint32_t bottomLeftPixelColorTest;
-	assert(bitmap_interface_get_color(testBitmap, 0, 0, bottomLeftPixelColorTest) == 0);
+	assert(bitmap_interface_get_pixel_data(testBitmap, 0, 0, bottomLeftPixelColorTest) == 0);
 	assert(bottomLeftPixelColorTest == green);
 
 	assert(*(bottomLeftPixel + 1) == white);
@@ -223,9 +223,9 @@ static void RunLargeBitmapRenderTest(const tl::bitmap& largeBitmap)
 	uint32_t* bottomLeftPixel = renderBuffer.pixels;
 	assert(*bottomLeftPixel == white);
 
-	uint32_t bottomLeftPixelColorTest;
-	assert(bitmap_interface_get_color(largeBitmap, 0, 0, bottomLeftPixelColorTest) == 0);
-	assert(bottomLeftPixelColorTest == white);
+	uint32_t bottomLeftPixelDataTest;
+	assert(bitmap_interface_get_pixel_data(largeBitmap, 0, 0, bottomLeftPixelDataTest) == 0);
+	assert(bottomLeftPixelDataTest == 1);
 
 	assert(*(bottomLeftPixel + 1) == black);
 

@@ -162,8 +162,9 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 }
 
 typedef uint32_t GetColorFromBitmap(const bitmap& bitmap, int bitmapX, int bitmapY);
+typedef uint32_t get_pixel_data_from_bitmap(const bitmap& bitmap, int bitmapX, int bitmapY);
 
-static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
+static uint32_t get_pixel_data_24_bit(const bitmap& bitmap, int bitmapX, int bitmapY)
 {
 	int pixelOffset = (bitmapY * bitmap.dibs_header.width) + bitmapX;
 	RGB24Bit* twentyFourBitContent = (RGB24Bit*)bitmap.content;
@@ -173,7 +174,7 @@ static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int bitmapX, int b
 	return colorRGB;
 }
 
-static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
+static uint32_t get_pixel_data_1_bit(const bitmap& bitmap, int bitmapX, int bitmapY)
 {
 	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
 	const int bitsPerByte = 8;
@@ -191,10 +192,19 @@ static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int bitmapX, int bi
 	// 1.shift the bit of interest over to the right most bit
 	// 2. AND with a mask to evaluate the right most bit as true/false
 	// 3. true --> white, false --> black
-	uint32_t color = ((*byteFromBitmap  >> bitShiftOffset) & 0b00000001)
-		? bitmap.color_table.content[1]
-		: bitmap.color_table.content[0];
-	return color;
+	uint32_t pixelDataAsInt = ((*byteFromBitmap  >> bitShiftOffset) & 0b00000001) ? 1 : 0;
+	return pixelDataAsInt;
+}
+
+static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
+{
+	return get_pixel_data_24_bit(bitmap, bitmapX, bitmapY);
+}
+
+static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
+{
+	int pixel_index = get_pixel_data_1_bit(bitmap, bitmapX, bitmapY);
+	return bitmap.color_table.content[pixel_index];
 }
 
 static GetColorFromBitmap* resolve_color_resolution_function(const bitmap_dibs_header& dibs_header)
@@ -224,16 +234,26 @@ static void resolve_bitmap_render_bounds(
 	resolvedEnd.y = (renderEnd.y > buffer.height) ? buffer.height : renderEnd.y;
 }
 
-int bitmap_interface_get_color(
+int bitmap_interface_get_pixel_data(
 	const bitmap& bitmap,
 	int x,
 	int y,
-	uint32_t& output_color)
+	uint32_t& pixel_data)
 {
-	GetColorFromBitmap* color_function = resolve_color_resolution_function(bitmap.dibs_header);
-	if (color_function == nullptr) return -1;
+	get_pixel_data_from_bitmap* data_function = nullptr;
+	switch (bitmap.dibs_header.bitsPerPixel)
+	{
+		case 24:
+			data_function = &get_pixel_data_24_bit;
+			break;
+		case 1:
+			data_function = &get_pixel_data_1_bit;
+			break;
+		default:
+			return -1;
+	}
 
-	output_color = color_function(bitmap, x, y);
+	pixel_data = data_function(bitmap, x, y);
 	return 0;
 }
 
