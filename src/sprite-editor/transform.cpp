@@ -116,8 +116,8 @@ int InitializeSpriteCFromBitmap(
 )
 {
 	uint32_t garbage;
-	int get_color_result = tl::bitmap_interface_get_color(bitmap, 0, 0, garbage);
-	if (get_color_result != 0) return -1;
+	int get_data_result = tl::bitmap_interface_get_pixel_data(bitmap, 0, 0, garbage);
+	if (get_data_result != 0) return -1;
 
 	sprite.bitsPerPixel = bitmap.dibs_header.bitsPerPixel;
 	int spritePixelCount = bitmap.dibs_header.width * bitmap.dibs_header.height;
@@ -139,9 +139,9 @@ int InitializeSpriteCFromBitmap(
 	{
 		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
-			uint32_t pixel_color;
-			tl::bitmap_interface_get_color(bitmap, pixelX, pixelY, pixel_color);
-			sprite.pixels()[pixelIndex] = pixel_color;
+			uint32_t pixel_data;
+			tl::bitmap_interface_get_pixel_data(bitmap, pixelX, pixelY, pixel_data);
+			sprite.pixels()[pixelIndex] = pixel_data;
 			pixelIndex += 1;
 		}
 	}

@@ -48,12 +48,12 @@ char* tl::GetNextNumberChar(char* string)
 	return "";
 }
 
-int tl::bitmap_interface_get_color(const tl::bitmap& bitmap,
+int tl::bitmap_interface_get_pixel_data(const tl::bitmap& bitmap,
 		int x,
 		int y,
-		uint32_t& output_color)
+		uint32_t& pixel_data)
 {
-	output_color = 0x000000;
+	pixel_data = 0x000000;
 	return 0;
 }
 
