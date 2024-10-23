@@ -62,6 +62,8 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 	assert(testBitmap.dibs_header.verticalPixelsPerMeter == 0);
 	assert(testBitmap.dibs_header.numberOfColorsInPalette == 0);
 	assert(testBitmap.dibs_header.numberOfImportantColors == 0);
+
+	assert(testBitmap.color_table.size == 0);
 }
 
 void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
@@ -213,6 +215,10 @@ static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)
 	assert(largeBitmap.dibs_header.verticalPixelsPerMeter == 0);
 	assert(largeBitmap.dibs_header.numberOfColorsInPalette == 0);
 	assert(largeBitmap.dibs_header.numberOfImportantColors == 0);
+
+	assert(largeBitmap.color_table.size == 2);
+	assert(largeBitmap.color_table.content[0] == black);
+	assert(largeBitmap.color_table.content[1] == white);
 }
 
 static void RunLargeBitmapRenderTest(const tl::bitmap& largeBitmap)
@@ -314,6 +320,14 @@ static void RunLargeBitmapTest()
 	RunLargeBitmapRenderTest(largeBitmap);
 }
 
+static void RunBitmapReinitializeTest()
+{
+	// TODO: maybe this is a sign of a bad interface... just return a new bitmap value and deal with the copy overhead.
+	tl::bitmap bitmap;
+	RunInitializeLargeBitmapTest(bitmap);
+	RunInitializeSmallBitmapTest(bitmap);
+}
+
 void RunBitmapTests()
 {
 	InitializeMemory();
@@ -323,5 +337,7 @@ void RunBitmapTests()
 	RunLargeBitmapTest();
 
 	RunSmallMonochromeBitmapTests();
+
+	RunBitmapReinitializeTest();
 }
 

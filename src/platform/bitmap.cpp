@@ -157,6 +157,10 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 			bitmapDataAsBytes += sizeof(uint32_t);
 		}
 	}
+	else
+	{
+		bitmap.color_table.size = 0;
+	}
 
 	return 0;
 }
