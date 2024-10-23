@@ -217,6 +217,7 @@ static int Initialize(char* commandLine)
 	state.commandBuffer = &commandBuffer[0];
 
 	currentSprite.pixel_memory = spritePixelMemory;
+	currentSprite.color_table.clear();
 	state.pixels.sprite = &currentSprite;
 
 	ClearCommandBuffer();

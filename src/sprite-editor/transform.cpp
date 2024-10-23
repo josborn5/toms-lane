@@ -125,7 +125,7 @@ int InitializeBitmapFromSpriteC(
 	bitmap.color_table.size = sprite.color_table.length();
 	for (int i = 0; i < sprite.color_table.length(); i += 1)
 	{
-		bitmap.color_table.content[i] = sprite.color_table.get_copy(i);
+		bitmap.color_table.content[i] = sprite.color_table.get_copy(i).value;
 	}
 
 	bitmap.content = (uint8_t*)tempMemory.content;
