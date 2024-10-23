@@ -21,7 +21,7 @@ static void WriteColorTo24BitBitmap(uint32_t spriteColor, int bitmapX, int bitma
 	*((RGB24Bit*)bitmap.content + pixelOffset) = bitmapPixel;
 }
 
-static void WriteColorTo1BitBitmap(uint32_t spriteColor, int bitmapX, int bitmapY, tl::bitmap& bitmap)
+static void WriteColorTo1BitBitmap(uint32_t pixel_data, int bitmapX, int bitmapY, tl::bitmap& bitmap)
 {
 	const int bitsPerByte = 8;
 	int bytesPerRow = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
@@ -30,18 +30,39 @@ static void WriteColorTo1BitBitmap(uint32_t spriteColor, int bitmapX, int bitmap
 	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
 
 	int bitOffset = bitmapX % bitsPerByte;
-	int bitShiftOffset = bitsPerByte - bitOffset - 1;
 
 	uint8_t* byteFromBitmap = eightBitContent + contentOffsetInBytes;
 
-	bool isBlack = spriteColor == 0x0000FF;
-	uint8_t pixel_data = (isBlack) ? 0b00000000 : 0b00000001;
+	uint8_t or_on_bit_masks[8] = {
+		0b10000000,
+		0b01000000,
+		0b00100000,
+		0b00010000,
+		0b00001000,
+		0b00000100,
+		0b00000010,
+		0b00000001
+	};
 
-	// 1.shift the bit of interest over to the right most bit
-	// 2. OR with a mask to persist preceeding bits and set the right most bit as true/false according to the pixel color
-	uint8_t workingByte = ((*byteFromBitmap >> bitShiftOffset) | pixel_data);
-	// 3. Shift back and store the byte
-	*byteFromBitmap = (workingByte << bitShiftOffset);
+	uint8_t and_off_bit_masks[8] = {
+		0b01111111,
+		0b10111111,
+		0b11011111,
+		0b11101111,
+		0b11110111,
+		0b11111011,
+		0b11111101,
+		0b11111110
+	};
+
+	if (pixel_data == 0)
+	{
+		*byteFromBitmap = *byteFromBitmap & and_off_bit_masks[bitOffset];
+	}
+	else
+	{
+		*byteFromBitmap = *byteFromBitmap | or_on_bit_masks[bitOffset];
+	}
 }
 
 static ColorToBitmap* ResolveColorToBitmapTransformer(int bitsPerPixel)
