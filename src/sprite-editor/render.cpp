@@ -6,7 +6,7 @@ static tl::Rect<float> commandTextRect;
 static tl::Rect<float> commandCharFootprint;
 
 static const float textAreaHalfHeight = 10.0f;
-static tl::Vec2<float> color_table_halfsize = { 0, 20.0f };
+static const float color_table_halfsize_y = 10.0f;
 static const tl::Vec2<float> textCharFootprintHalfsize = {
 	4.0f * textAreaHalfHeight / 7.0f,
 	textAreaHalfHeight
@@ -62,8 +62,8 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& 
 
 	if (sprite.color_table.length() > 0)
 	{
-		sizeRect.halfSize.y -= color_table_halfsize.y;
-		sizeRect.position.y += color_table_halfsize.y;
+		sizeRect.halfSize.y -= color_table_halfsize_y;
+		sizeRect.position.y += color_table_halfsize_y;
 	}
 
 	return sizeRect;
@@ -78,6 +78,31 @@ static void GetSelectedRangeFootprint(
 		selectedPixelFootprint.halfSize.x + 1,
 		selectedPixelFootprint.halfSize.y + 1
 	};
+}
+
+static void render_color_table(
+	const Grid& grid,
+	const tl::RenderBuffer& renderBuffer
+)
+{
+	if (grid.sprite->color_table.length() == 0)
+	{
+		return;
+	}
+
+	tl::Rect<float> color_table_footprint;
+	color_table_footprint.halfSize = {
+		grid.footprint.halfSize.x,
+		color_table_halfsize_y
+	};
+	color_table_footprint.position = {
+		grid.footprint.position.x,
+		grid.container.position.y - grid.container.halfSize.y + (2.0f * textCharFootprintHalfsize.y) + color_table_halfsize_y
+	};
+
+
+	tl::DrawRect(renderBuffer, 0xFF0000, color_table_footprint);
+
 }
 
 static void RenderSpriteAsGrid(
@@ -165,6 +190,8 @@ static void RenderSpriteAsGrid(
 		grid.container.position.x - grid.container.halfSize.x + textCharFootprintHalfsize.x,
 		grid.container.position.y - grid.container.halfSize.y + textCharFootprintHalfsize.y
 	};
+
+	render_color_table(grid, renderBuffer);
 
 	const uint32_t displayTextColor = 0xFFFF00;
 	const int displayBufferSize = 16;
