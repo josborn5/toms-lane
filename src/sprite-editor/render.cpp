@@ -42,30 +42,36 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& 
 {
 	tl::Rect<float> sizeRect;
 	float spriteAspectRatio = (float)sprite.height / (float)sprite.width;
-	float backgroundAspectRatio = (containerRect.halfSize.y - textCharFootprintHalfsize.y) / containerRect.halfSize.x;
+
+	tl::Rect<float> background_rect;
+	background_rect.halfSize = {
+		containerRect.halfSize.x,
+		containerRect.halfSize.y - textCharFootprintHalfsize.y
+	};
+	if (sprite.color_table.length() > 0)
+	{
+		background_rect.halfSize.y -= color_table_halfsize_y;
+	}
+	background_rect.position = {
+		containerRect.position.x,
+		containerRect.position.y + containerRect.halfSize.y - background_rect.halfSize.y
+	};
+
+
+	float backgroundAspectRatio = background_rect.halfSize.y / background_rect.halfSize.x;
 	float relativeAspectRatio = spriteAspectRatio / backgroundAspectRatio;
 	if (relativeAspectRatio >= 1.0f)
 	{
-		sizeRect.halfSize.y = containerRect.halfSize.y - textCharFootprintHalfsize.y;
+		sizeRect.halfSize.y = background_rect.halfSize.y;
 		sizeRect.halfSize.x = sizeRect.halfSize.y / spriteAspectRatio;
 	}
 	else
 	{
-		sizeRect.halfSize.x = containerRect.halfSize.x;
-		sizeRect.halfSize.y = (sizeRect.halfSize.x * spriteAspectRatio) - textCharFootprintHalfsize.y;
+		sizeRect.halfSize.x = background_rect.halfSize.x;
+		sizeRect.halfSize.y = sizeRect.halfSize.x * spriteAspectRatio;
 	}
 
-	sizeRect.position = {
-		containerRect.position.x,
-		containerRect.position.y + textCharFootprintHalfsize.y
-	};
-
-	if (sprite.color_table.length() > 0)
-	{
-		sizeRect.halfSize.y -= color_table_halfsize_y;
-		sizeRect.position.y += color_table_halfsize_y;
-	}
-
+	sizeRect.position = background_rect.position;
 	return sizeRect;
 }
 
