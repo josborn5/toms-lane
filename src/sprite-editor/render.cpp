@@ -163,7 +163,7 @@ static void RenderSpriteAsGrid(
 		pixelHalfSize
 	);
 
-	float yOriginalPosition = boundingRect.position.y - boundingRect.halfSize.y + (0.5f * pixelDimensionWithBorder);
+	float yOriginalPosition = boundingRect.y_bottom() + (0.5f * pixelDimensionWithBorder);
 
 	int selectedColIndex = grid.selected_column_index();
 	int rangeColIndex = grid.column_index(grid.selectedRangeIndex);
@@ -196,7 +196,7 @@ static void RenderSpriteAsGrid(
 		bool yIsInSelectedRange = (j >= startRowIndex && j <= endRowIndex);
 		for (int i = 0; i < sprite.width; i += 1)
 		{
-			float xPosition = boundingRect.position.x - boundingRect.halfSize.x + (0.5f * pixelDimensionWithBorder) + (i * pixelDimensionWithBorder);
+			float xPosition = boundingRect.x_left() + (0.5f * pixelDimensionWithBorder) + (i * pixelDimensionWithBorder);
 
 			tl::Vec2<float> pixelPosition = { xPosition, yPosition };
 			tl::Rect<float> pixelFootPrint;
@@ -229,8 +229,8 @@ static void RenderSpriteAsGrid(
 	tl::Rect<float> charFootprint;
 	charFootprint.halfSize = textCharFootprintHalfsize;
 	charFootprint.position = {
-		grid.container.position.x - grid.container.halfSize.x + textCharFootprintHalfsize.x,
-		grid.container.position.y - grid.container.halfSize.y + textCharFootprintHalfsize.y
+		grid.container.x_left() + textCharFootprintHalfsize.x,
+		grid.container.y_bottom() + textCharFootprintHalfsize.y
 	};
 
 	render_color_table(grid, renderBuffer);
@@ -265,7 +265,7 @@ static void PlaceRectToRightOfRect(const tl::Rect<float>& rect, tl::Rect<float>&
 static void PlaceRectInLeftSideOfContainer(const tl::Rect<float>& container, tl::Rect<float>& toPlace)
 {
 	toPlace.position = {
-		container.position.x - container.halfSize.x + toPlace.halfSize.x,
+		container.x_left() + toPlace.halfSize.x,
 		toPlace.halfSize.y
 	};
 }
