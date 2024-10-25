@@ -9,9 +9,19 @@ namespace tl
 	template<typename T>
 	struct Rect
 	{
-		Vec2<T> position;
-		Vec2<T> halfSize;
-		Vec2<T> velocity;
+		Vec2<T> position = {0};
+		Vec2<T> halfSize = {0};
+		Vec2<T> velocity = {0};
+
+		int x_left() const
+		{
+			return position.x - halfSize.x;
+		}
+
+		int y_bottom() const
+		{
+			return position.y - halfSize.x;
+		}
 	};
 
 	Rect<float> CopyRect(const Rect<float>& original);
