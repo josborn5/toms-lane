@@ -57,7 +57,6 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& 
 		containerRect.position.y + containerRect.halfSize.y - background_rect.halfSize.y
 	};
 
-
 	float backgroundAspectRatio = background_rect.halfSize.y / background_rect.halfSize.x;
 	float relativeAspectRatio = spriteAspectRatio / backgroundAspectRatio;
 	if (relativeAspectRatio >= 1.0f)
@@ -86,12 +85,26 @@ static void GetSelectedRangeFootprint(
 	};
 }
 
+static void pixel_footprint_get(
+	float containing_length,
+	int pixel_count,
+	float& pixel_with_border_length,
+	tl::Vec2<float>& pixel_footprint
+)
+{
+	const float pixelBorderWidth = 2.0f;
+	pixel_with_border_length = containing_length / pixel_count;
+	float pixel_dimension = pixel_with_border_length - (2.0f * pixelBorderWidth);
+	pixel_footprint = { 0.5F * pixel_dimension, 0.5f * pixel_dimension };
+}
+
 static void render_color_table(
 	const Grid& grid,
 	const tl::RenderBuffer& renderBuffer
 )
 {
-	if (grid.sprite->color_table.length() == 0)
+	int color_table_length = grid.sprite->color_table.length();
+	if (color_table_length == 0)
 	{
 		return;
 	}
@@ -103,12 +116,31 @@ static void render_color_table(
 	};
 	color_table_footprint.position = {
 		grid.footprint.position.x,
-		grid.container.position.y - grid.container.halfSize.y + (2.0f * textCharFootprintHalfsize.y) + color_table_halfsize_y
+		grid.footprint.y_bottom() - color_table_halfsize_y
 	};
 
+	float pixel_border_length;
+	tl::Vec2<float> pixel_half_size;
+	pixel_footprint_get(
+		(2.0f * color_table_footprint.halfSize.y),
+		1,
+		pixel_border_length,
+		pixel_half_size
+	);
 
-	tl::DrawRect(renderBuffer, 0xFF0000, color_table_footprint);
+	tl::Rect<float> pixel_footprint;
+	pixel_footprint.halfSize = pixel_half_size;
+	pixel_footprint.position = {
+		color_table_footprint.x_left() + 0.5f * pixel_border_length,
+		color_table_footprint.y_bottom() + 0.5f * pixel_border_length
+	};
 
+	for (int i = 0; i < color_table_length; i += 1)
+	{
+		uint32_t color = grid.sprite->color_table.get_copy(i).value;
+		tl::DrawRect(renderBuffer, color, pixel_footprint);
+		pixel_footprint.position.x += pixel_border_length;
+	}
 }
 
 static void RenderSpriteAsGrid(
@@ -120,12 +152,16 @@ static void RenderSpriteAsGrid(
 	SpriteC& sprite = *grid.sprite;
 	const tl::Rect<float>& boundingRect = grid.footprint;
 
-	const float pixelBorderWidth = 2.0f;
 	const uint32_t selectedPixelColor = 0xFFFF00;
 
-	float pixelDimensionWithBorder = (2.0f * boundingRect.halfSize.x) / sprite.width;
-	float pixelDimension = pixelDimensionWithBorder - (2.0f * pixelBorderWidth);
-	tl::Vec2<float> pixelHalfSize = { 0.5F * pixelDimension, 0.5f * pixelDimension };
+	float pixelDimensionWithBorder;
+	tl::Vec2<float> pixelHalfSize;
+	pixel_footprint_get(
+		(2.0f * boundingRect.halfSize.x),
+		sprite.width,
+		pixelDimensionWithBorder,
+		pixelHalfSize
+	);
 
 	float yOriginalPosition = boundingRect.position.y - boundingRect.halfSize.y + (0.5f * pixelDimensionWithBorder);
 
