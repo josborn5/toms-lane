@@ -13,14 +13,14 @@ namespace tl
 		Vec2<T> halfSize = {0};
 		Vec2<T> velocity = {0};
 
-		int x_left() const
+		T x_left() const
 		{
 			return position.x - halfSize.x;
 		}
 
-		int y_bottom() const
+		T y_bottom() const
 		{
-			return position.y - halfSize.x;
+			return position.y - halfSize.y;
 		}
 	};
 
