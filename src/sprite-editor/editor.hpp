@@ -6,27 +6,28 @@
 
 struct base_sprite
 {
-	int width;
-	int height;
+	int width = 0;
+	int height = 0;
 	uint16_t bitsPerPixel = 24;
+
+	tl::MemorySpace pixel_memory = {0};
 
 	int pixel_count() const
 	{
 		return width * height;
 	}
-};
-
-struct SpriteC : base_sprite
-{
-	tl::MemorySpace pixel_memory = {0};
-	tl::stack_array<uint32_t, 2> color_table;
-
-	base_sprite color_table_;
 
 	uint32_t* pixels() const
 	{
 		return (uint32_t*)pixel_memory.content;
 	}
+};
+
+struct SpriteC : base_sprite
+{
+	tl::stack_array<uint32_t, 2> color_table;
+
+	base_sprite color_table_;
 };
 
 struct Grid
