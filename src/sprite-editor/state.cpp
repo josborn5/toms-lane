@@ -15,6 +15,7 @@ static const int cameraModifierKey = tl::KEY_SHIFT;
 static bool hasCopied = false;
 static tl::MemorySpace fontMemory;
 static tl::MemorySpace spritePixelMemory;
+static tl::MemorySpace sprite_color_table_memory;
 static tl::MemorySpace fileReadMemory;
 static tl::MemorySpace paletteMemory;
 static tl::MemorySpace tempMemory;
@@ -214,11 +215,8 @@ static int Initialize(char* commandLine)
 	}
 
 	state.mode = View;
-	state.commandBuffer = &commandBuffer[0];
 
-	currentSprite.pixel_memory = spritePixelMemory;
 	currentSprite.color_table.clear();
-	state.pixels.sprite = &currentSprite;
 
 	ClearCommandBuffer();
 	InitializeLayout(state);
@@ -282,15 +280,21 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 	tl::MemorySpace perm = gameMemory.permanent;
 	const uint64_t oneKiloByteInBytes = 1024;
 	const uint64_t oneMegaByteInBytes = oneKiloByteInBytes * 1024;
+	constexpr uint64_t color_table_size_in_bytes = sizeof(uint32_t) * 8;
 
 	tl::MemorySpace working;
 	tl::font_interface_initialize_from_file("font-mono.tlsf", perm, working);
 
 	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
 	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
+	sprite_color_table_memory = tl::CarveMemorySpace(color_table_size_in_bytes, working);
 	spritePixelMemory = working; // left over memory goes to main sprite
-
 	tempMemory = gameMemory.transient;
+
+	currentSprite.pixel_memory = spritePixelMemory;
+	currentSprite.color_table_.pixel_memory = sprite_color_table_memory;
+	state.commandBuffer = &commandBuffer[0];
+	state.pixels.sprite = &currentSprite;
 
 	return Initialize(commandLine);
 }
