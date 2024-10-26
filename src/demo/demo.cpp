@@ -27,16 +27,16 @@ bool isStarted = false;
 tl::Matrix2x3<float> GenerateProjectionMatrix(const tl::Rect<float> &from, const tl::Rect<float> &to)
 {
 	float toMaxY = to.position.y + to.halfSize.y;
-	float toMinY = to.position.y - to.halfSize.y;
+	float toMinY = to.y_min();
 
-	float toMaxX = to.position.x + to.halfSize.x;
-	float toMinX = to.position.x - to.halfSize.x;
+	float toMaxX = to.x_max();
+	float toMinX = to.x_min();
 
 	float fromMaxY = from.position.y + from.halfSize.y;
-	float fromMinY = from.position.y - from.halfSize.y;
+	float fromMinY = from.y_min();
 
-	float fromMaxX = from.position.x + from.halfSize.x;
-	float fromMinX = from.position.x - from.halfSize.x;
+	float fromMaxX = from.x_max();
+	float fromMinX = from.x_min();
 
 	float toYGrad = (toMinY - toMaxY) / (fromMinY - fromMaxY);
 	float toYOffset = toMaxY - (toYGrad * fromMaxY);

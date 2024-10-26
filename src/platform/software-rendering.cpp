@@ -302,9 +302,9 @@ namespace tl
 
 	void DrawRect(const RenderBuffer &renderBuffer, uint32_t color, const Rect<float> &rect)
 	{
-		int x0 = ConvertFloatToInt(rect.position.x - rect.halfSize.x);
-		int x1 = ConvertFloatToInt(rect.position.x + rect.halfSize.x);
-		int y0 = ConvertFloatToInt(rect.position.y - rect.halfSize.y);
+		int x0 = ConvertFloatToInt(rect.x_min());
+		int x1 = ConvertFloatToInt(rect.x_max());
+		int y0 = ConvertFloatToInt(rect.y_min());
 		int y1 = ConvertFloatToInt(rect.position.y + rect.halfSize.y);
 
 		DrawRectInPixels(renderBuffer, color, x0, y0, x1, y1);

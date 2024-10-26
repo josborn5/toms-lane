@@ -18,6 +18,11 @@ namespace tl
 			return position.x - halfSize.x;
 		}
 
+		T x_max() const
+		{
+			return position.x + halfSize.x;
+		}
+
 		T y_min() const
 		{
 			return position.y - halfSize.y;

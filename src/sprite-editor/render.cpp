@@ -257,7 +257,7 @@ void SizeGrid(Grid& grid)
 static void PlaceRectToRightOfRect(const tl::Rect<float>& rect, tl::Rect<float>& toPlace)
 {
 	toPlace.position = {
-		rect.position.x + rect.halfSize.x + toPlace.halfSize.x,
+		rect.x_max() + toPlace.halfSize.x,
 		rect.position.y
 	};
 }

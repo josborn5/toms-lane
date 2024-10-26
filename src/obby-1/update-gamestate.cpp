@@ -285,7 +285,7 @@ int PopulateBlocksForLevelString_(
 	gamestate.world.position = gamestate.world.halfSize;
 
 	minPlayerX = 0.0f + gamestate.player.halfSize.x;
-	maxPlayerX = gamestate.world.position.x + gamestate.world.halfSize.x - gamestate.player.halfSize.x;
+	maxPlayerX = gamestate.world.x_max() - gamestate.player.halfSize.x;
 	minPlayerY = 0.0f + gamestate.player.halfSize.y;
 
 	bool endOfContent = false;

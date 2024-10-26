@@ -315,7 +315,7 @@ int bitmap_interface_render(
 		(int)footprint.y_min()
 	};
 	Vec2<int> bitmapEnd = {
-		(int)(footprint.position.x + footprint.halfSize.x),
+		(int)footprint.x_max(),
 		(int)(footprint.position.y + footprint.halfSize.y)
 	};
 	Vec2<int> start, end;

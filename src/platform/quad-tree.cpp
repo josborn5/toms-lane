@@ -10,7 +10,7 @@ namespace tl
 		float& maxY
 	) {
 		minX = rect.x_min();
-		maxX = rect.position.x + rect.halfSize.x;
+		maxX = rect.x_max();
 		minY = rect.y_min();
 		maxY = rect.position.y + rect.halfSize.y;
 	}
