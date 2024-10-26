@@ -116,7 +116,7 @@ static void render_color_table(
 	};
 	color_table_footprint.position = {
 		grid.footprint.position.x,
-		grid.footprint.y_bottom() - color_table_halfsize_y
+		grid.footprint.y_min() - color_table_halfsize_y
 	};
 
 	float pixel_border_length;
@@ -132,7 +132,7 @@ static void render_color_table(
 	pixel_footprint.halfSize = pixel_half_size;
 	pixel_footprint.position = {
 		color_table_footprint.x_min() + 0.5f * pixel_border_length,
-		color_table_footprint.y_bottom() + 0.5f * pixel_border_length
+		color_table_footprint.y_min() + 0.5f * pixel_border_length
 	};
 
 	for (int i = 0; i < color_table_length; i += 1)
@@ -163,7 +163,7 @@ static void RenderSpriteAsGrid(
 		pixelHalfSize
 	);
 
-	float yOriginalPosition = boundingRect.y_bottom() + (0.5f * pixelDimensionWithBorder);
+	float yOriginalPosition = boundingRect.y_min() + (0.5f * pixelDimensionWithBorder);
 
 	int selectedColIndex = grid.selected_column_index();
 	int rangeColIndex = grid.column_index(grid.selectedRangeIndex);
@@ -230,7 +230,7 @@ static void RenderSpriteAsGrid(
 	charFootprint.halfSize = textCharFootprintHalfsize;
 	charFootprint.position = {
 		grid.container.x_min() + textCharFootprintHalfsize.x,
-		grid.container.y_bottom() + textCharFootprintHalfsize.y
+		grid.container.y_min() + textCharFootprintHalfsize.y
 	};
 
 	render_color_table(grid, renderBuffer);

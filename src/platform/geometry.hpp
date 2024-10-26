@@ -18,7 +18,7 @@ namespace tl
 			return position.x - halfSize.x;
 		}
 
-		T y_bottom() const
+		T y_min() const
 		{
 			return position.y - halfSize.y;
 		}

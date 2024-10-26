@@ -11,7 +11,7 @@ namespace tl
 	) {
 		minX = rect.x_min();
 		maxX = rect.position.x + rect.halfSize.x;
-		minY = rect.y_bottom();
+		minY = rect.y_min();
 		maxY = rect.position.y + rect.halfSize.y;
 	}
 
