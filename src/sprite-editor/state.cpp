@@ -214,13 +214,6 @@ static int Initialize(char* commandLine)
 		update_filepath(commandLine);
 	}
 
-	state.mode = View;
-
-	currentSprite.color_table.clear();
-
-	ClearCommandBuffer();
-	InitializeLayout(state);
-
 	// Load file
 	int fileReadResult = tl::file_interface_read(filePath, fileReadMemory);
 	int spriteLoadedResult = -1;
@@ -239,6 +232,8 @@ static int Initialize(char* commandLine)
 		currentSprite.width = default_dim;
 		currentSprite.height = default_dim;
 		currentSprite.bitsPerPixel = 24;
+		currentSprite.color_table_.width = 1;
+		currentSprite.color_table_.height = 0;
 		for (int i = 0; i < default_dim * default_dim; i += 1)
 		{
 			currentSprite.pixels()[i] = 0x000000;
@@ -264,6 +259,11 @@ static int Initialize(char* commandLine)
 				WriteStringToCommandBuffer("BAD FILE READ");
 		}
 	}
+
+	state.mode = View;
+
+	ClearCommandBuffer();
+	InitializeLayout(state);
 
 	SizeGrid(state.pixels);
 	InitializePalettes(paletteMemory, tempMemory, state);
