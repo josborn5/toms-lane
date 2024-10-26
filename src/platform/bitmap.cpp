@@ -311,7 +311,7 @@ int bitmap_interface_render(
 		0.5f * (float)bitmap.dibs_header.height / footprint.halfSize.y
 	};
 	Vec2<int> bitmapStart = {
-		(int)footprint.x_left(),
+		(int)footprint.x_min(),
 		(int)footprint.y_bottom()
 	};
 	Vec2<int> bitmapEnd = {

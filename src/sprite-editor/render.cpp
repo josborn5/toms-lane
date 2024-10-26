@@ -131,7 +131,7 @@ static void render_color_table(
 	tl::Rect<float> pixel_footprint;
 	pixel_footprint.halfSize = pixel_half_size;
 	pixel_footprint.position = {
-		color_table_footprint.x_left() + 0.5f * pixel_border_length,
+		color_table_footprint.x_min() + 0.5f * pixel_border_length,
 		color_table_footprint.y_bottom() + 0.5f * pixel_border_length
 	};
 
@@ -196,7 +196,7 @@ static void RenderSpriteAsGrid(
 		bool yIsInSelectedRange = (j >= startRowIndex && j <= endRowIndex);
 		for (int i = 0; i < sprite.width; i += 1)
 		{
-			float xPosition = boundingRect.x_left() + (0.5f * pixelDimensionWithBorder) + (i * pixelDimensionWithBorder);
+			float xPosition = boundingRect.x_min() + (0.5f * pixelDimensionWithBorder) + (i * pixelDimensionWithBorder);
 
 			tl::Vec2<float> pixelPosition = { xPosition, yPosition };
 			tl::Rect<float> pixelFootPrint;
@@ -229,7 +229,7 @@ static void RenderSpriteAsGrid(
 	tl::Rect<float> charFootprint;
 	charFootprint.halfSize = textCharFootprintHalfsize;
 	charFootprint.position = {
-		grid.container.x_left() + textCharFootprintHalfsize.x,
+		grid.container.x_min() + textCharFootprintHalfsize.x,
 		grid.container.y_bottom() + textCharFootprintHalfsize.y
 	};
 
@@ -265,7 +265,7 @@ static void PlaceRectToRightOfRect(const tl::Rect<float>& rect, tl::Rect<float>&
 static void PlaceRectInLeftSideOfContainer(const tl::Rect<float>& container, tl::Rect<float>& toPlace)
 {
 	toPlace.position = {
-		container.x_left() + toPlace.halfSize.x,
+		container.x_min() + toPlace.halfSize.x,
 		toPlace.halfSize.y
 	};
 }

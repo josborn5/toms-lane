@@ -13,7 +13,7 @@ namespace tl
 		Vec2<T> halfSize = {0};
 		Vec2<T> velocity = {0};
 
-		T x_left() const
+		T x_min() const
 		{
 			return position.x - halfSize.x;
 		}
