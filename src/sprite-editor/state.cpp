@@ -21,7 +21,6 @@ static tl::MemorySpace paletteMemory;
 static tl::MemorySpace tempMemory;
 static uint32_t currentColor;
 static uint32_t copiedColor;
-static SpriteC currentSprite;
 static tl::bitmap currentBitmap;
 
 EditorState state;
@@ -222,21 +221,21 @@ static int Initialize(char* commandLine)
 	{
 		tl::bitmap_interface_initialize(currentBitmap, fileReadMemory);
 		spriteLoadedResult = InitializeSpriteCFromBitmap(
-			currentSprite,
+			state.canvas,
 			currentBitmap);
 	}
 
 	if (spriteLoadedResult != 0)
 	{
 		const int default_dim = 2;
-		currentSprite.width = default_dim;
-		currentSprite.height = default_dim;
-		currentSprite.bitsPerPixel = 24;
-		currentSprite.color_table_.width = 1;
-		currentSprite.color_table_.height = 0;
+		state.canvas.width = default_dim;
+		state.canvas.height = default_dim;
+		state.canvas.bitsPerPixel = 24;
+		state.canvas.color_table_.width = 1;
+		state.canvas.color_table_.height = 0;
 		for (int i = 0; i < default_dim * default_dim; i += 1)
 		{
-			currentSprite.pixels()[i] = 0x000000;
+			state.canvas.pixels()[i] = 0x000000;
 		}
 
 		switch (fileReadResult)
@@ -290,10 +289,10 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 	spritePixelMemory = working; // left over memory goes to main sprite
 	tempMemory = gameMemory.transient;
 
-	currentSprite.pixel_memory = spritePixelMemory;
-	currentSprite.color_table_.pixel_memory = sprite_color_table_memory;
+	state.canvas.pixel_memory = spritePixelMemory;
+	state.canvas.color_table_.pixel_memory = sprite_color_table_memory;
 	state.commandBuffer = &commandBuffer[0];
-	state.pixels.sprite = &currentSprite;
+	state.pixels.sprite = &state.canvas;
 
 	return Initialize(commandLine);
 }

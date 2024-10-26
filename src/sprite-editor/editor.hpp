@@ -99,6 +99,8 @@ struct EditorState
 	int windowHeight;
 	Mode mode;
 
+	SpriteC canvas;
+
 	bool pixels_are_selected() const
 	{
 		return activeControl == &pixels;
