@@ -28,6 +28,11 @@ struct SpriteC : base_sprite
 	tl::stack_array<uint32_t, 2> color_table;
 
 	base_sprite color_table_;
+
+	bool has_color_table() const
+	{
+		return color_table_.pixel_count() != 0;
+	}
 };
 
 struct Grid

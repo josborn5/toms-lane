@@ -289,13 +289,14 @@ void InitializeLayout(EditorState& state)
 	PlaceRectInLeftSideOfContainer(commandTextRect, commandCharFootprint);
 
 	float paletteHalfWidthPercent = 0.2f;
+	float color_table_width_percent = state.pixels.sprite->has_color_table() ? 0.1f : 0.0f;;
 	float visualYHalfSize = ((float)state.windowHeight * 0.5f) - commandTextRect.halfSize.y;
 	state.pixels.container.halfSize = {
-		windowHalfWidth * (1.0f - paletteHalfWidthPercent),
+		windowHalfWidth * (1.0f - paletteHalfWidthPercent - color_table_width_percent),
 		visualYHalfSize
 	};
 
-	float visualYPosition = state.pixels.container.halfSize.y + commandTextRect.y_max();
+	float visualYPosition =  commandTextRect.y_max() + state.pixels.container.halfSize.y;
 	state.pixels.container.position = {
 		state.pixels.container.halfSize.x,
 		visualYPosition
@@ -305,8 +306,13 @@ void InitializeLayout(EditorState& state)
 		windowHalfWidth * paletteHalfWidthPercent,
 		visualYHalfSize
 	};
+	state.color_table.container.halfSize = {
+		windowHalfWidth * color_table_width_percent,
+		visualYHalfSize
+	};
 
-	PlaceRectToRightOfRect(state.pixels.container, state.palette_.container);
+	PlaceRectToRightOfRect(state.pixels.container, state.color_table.container);
+	PlaceRectToRightOfRect(state.color_table.container, state.palette_.container);
 }
 
 static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const EditorState& state, float dt)

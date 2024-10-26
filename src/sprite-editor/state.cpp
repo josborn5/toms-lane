@@ -264,7 +264,6 @@ static int Initialize(char* commandLine)
 
 	ClearCommandBuffer();
 	InitializeLayout(state);
-
 	SizeGrid(state.pixels);
 	InitializePalettes(paletteMemory, tempMemory, state);
 
