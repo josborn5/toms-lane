@@ -163,9 +163,13 @@ int InitializeSpriteCFromBitmap(
 	sprite.height = bitmap.dibs_header.height;
 
 	sprite.color_table.clear();
+	sprite.color_table_.width = 1;
+	sprite.color_table_.height = bitmap.color_table.size;
+	sprite.color_table_.bitsPerPixel = 32;
 	for (int i = 0; i < bitmap.color_table.size; i += 1)
 	{
 		sprite.color_table.append(bitmap.color_table.content[i]);
+		sprite.color_table_.pixels()[i] = bitmap.color_table.content[i];
 	}
 
 	// Bitmap & SpriteC origins are both bottom left
