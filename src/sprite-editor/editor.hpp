@@ -4,14 +4,24 @@
 #include "../tl-application.hpp"
 #include "../tl-library.hpp"
 
-
-struct SpriteC
+struct base_sprite
 {
 	int width;
 	int height;
-	tl::MemorySpace pixel_memory = {0};
 	uint16_t bitsPerPixel = 24;
+
+	int pixel_count() const
+	{
+		return width * height;
+	}
+};
+
+struct SpriteC : base_sprite
+{
+	tl::MemorySpace pixel_memory = {0};
 	tl::stack_array<uint32_t, 2> color_table;
+
+	base_sprite color_table_;
 
 	uint32_t* pixels() const
 	{
