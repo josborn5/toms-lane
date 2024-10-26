@@ -27,6 +27,11 @@ namespace tl
 		{
 			return position.y - halfSize.y;
 		}
+
+		T y_max() const
+		{
+			return position.y + halfSize.y;
+		}
 	};
 
 	Rect<float> CopyRect(const Rect<float>& original);

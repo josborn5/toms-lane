@@ -12,7 +12,7 @@ namespace tl
 		minX = rect.x_min();
 		maxX = rect.x_max();
 		minY = rect.y_min();
-		maxY = rect.position.y + rect.halfSize.y;
+		maxY = rect.y_max();
 	}
 
 	static bool get_rects_overlap(

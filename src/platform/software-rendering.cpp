@@ -305,7 +305,7 @@ namespace tl
 		int x0 = ConvertFloatToInt(rect.x_min());
 		int x1 = ConvertFloatToInt(rect.x_max());
 		int y0 = ConvertFloatToInt(rect.y_min());
-		int y1 = ConvertFloatToInt(rect.position.y + rect.halfSize.y);
+		int y1 = ConvertFloatToInt(rect.y_max());
 
 		DrawRectInPixels(renderBuffer, color, x0, y0, x1, y1);
 	}

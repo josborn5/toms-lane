@@ -54,7 +54,7 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& 
 	}
 	background_rect.position = {
 		containerRect.position.x,
-		containerRect.position.y + containerRect.halfSize.y - background_rect.halfSize.y
+		containerRect.y_max() - background_rect.halfSize.y
 	};
 
 	float backgroundAspectRatio = background_rect.halfSize.y / background_rect.halfSize.x;
@@ -295,7 +295,7 @@ void InitializeLayout(EditorState& state)
 		visualYHalfSize
 	};
 
-	float visualYPosition = state.pixels.container.halfSize.y + commandTextRect.position.y + commandTextRect.halfSize.y;
+	float visualYPosition = state.pixels.container.halfSize.y + commandTextRect.y_max();
 	state.pixels.container.position = {
 		state.pixels.container.halfSize.x,
 		visualYPosition

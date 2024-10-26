@@ -73,8 +73,8 @@ namespace tl
 		// so apply an offset for the block size
 		Vec2<float> pCopy = Vec2<float>
 		{
-			footprint.position.x - footprint.halfSize.x + blockHalf.x,
-			footprint.position.y + footprint.halfSize.y - blockHalf.y
+			footprint.x_min() + blockHalf.x,
+			footprint.y_max() - blockHalf.y
 		};
 
 		// iterate through the sprite content and fill blocks in the render buffer

@@ -292,7 +292,7 @@ int PopulateBlocksForLevelString_(
 	float originalX = -blockHalfSize.x;
 	tl::Vec2<float> blockPosition = {
 		originalX,
-		(float)gamestate.world.position.y + gamestate.world.halfSize.y - blockHalfSize.y
+		(float)(gamestate.world.y_max() - blockHalfSize.y)
 	};
 	for (int i = 0; i < gameState.blockCapacity; i += 1)
 	{
