@@ -147,7 +147,6 @@ static void render_color_table(
 static void RenderSpriteAsGrid(
 	const Grid& grid,
 	const tl::RenderBuffer& renderBuffer,
-	int selectedBlockIndex,
 	Mode mode
 ) {
 	SpriteC& sprite = *grid.sprite;
@@ -354,13 +353,9 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state, floa
 	tl::DrawRect(renderBuffer, spriteBackgroundColor, state.pixels.container);
 	tl::DrawRect(renderBuffer, paletteBackgroundColor, state.palette_.container);
 
-	int displaySelectedPixelIndex = (state.pixels_are_selected() && state.mode != Command)
-		? state.pixels.selectedIndex
-		: -1;
 	RenderSpriteAsGrid(
 		state.pixels,
 		renderBuffer,
-		displaySelectedPixelIndex,
 		state.mode
 	);
 
@@ -369,7 +364,15 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state, floa
 	RenderSpriteAsGrid(
 		state.palette_,
 		renderBuffer,
-		state.palette_.selectedIndex,
 		state.mode
 	);
+
+	if (state.canvas.has_color_table())
+	{
+		RenderSpriteAsGrid(
+			state.color_table,
+			renderBuffer,
+			state.mode
+		);
+	}
 }

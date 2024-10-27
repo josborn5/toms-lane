@@ -4,13 +4,15 @@
 #include "../tl-application.hpp"
 #include "../tl-library.hpp"
 
-struct base_sprite
+struct SpriteC
 {
 	int width = 0;
 	int height = 0;
 	uint16_t bitsPerPixel = 24;
 
 	tl::MemorySpace pixel_memory = {0};
+
+	SpriteC* p_color_table = nullptr;
 
 	int pixel_count() const
 	{
@@ -21,11 +23,6 @@ struct base_sprite
 	{
 		return (uint32_t*)pixel_memory.content;
 	}
-};
-
-struct SpriteC : base_sprite
-{
-	base_sprite* p_color_table = nullptr;
 
 	int color_table_length() const
 	{
@@ -103,7 +100,7 @@ struct EditorState
 	Mode mode;
 
 	SpriteC canvas;
-	base_sprite canvas_color_table;
+	SpriteC canvas_color_table;
 
 	bool pixels_are_selected() const
 	{

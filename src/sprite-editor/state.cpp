@@ -264,6 +264,7 @@ static int Initialize(char* commandLine)
 	ClearCommandBuffer();
 	InitializeLayout(state);
 	SizeGrid(state.pixels);
+	SizeGrid(state.color_table);
 	InitializePalettes(paletteMemory, tempMemory, state);
 
 	return 0;
@@ -294,6 +295,7 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 	state.canvas_color_table.pixel_memory = sprite_color_table_memory;
 	state.commandBuffer = &commandBuffer[0];
 	state.pixels.sprite = &state.canvas;
+	state.color_table.sprite = &state.canvas_color_table;
 
 	return Initialize(commandLine);
 }
