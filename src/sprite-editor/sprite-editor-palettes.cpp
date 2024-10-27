@@ -3,7 +3,7 @@
 #include "./utilities.hpp"
 #include "./render.hpp"
 
-static const int PALETTE_COUNT = 5;
+static const int PALETTE_COUNT = 4;
 
 char* rgrPaletteContent = "\
 2\n\
@@ -69,24 +69,14 @@ char* fantasyConsolePaletteContent = "\
 115 201 235\n\
 202 175 245";
 
-char* defaultPaletteContent = "\
-1\n\
-2\n\
-  0   0   0\n\
-255 255 255";
-
-
 char* paletteContents[PALETTE_COUNT] = {
 	rgrPaletteContent,
 	pollenPaletteContent,
 	sunsetCloudsPaletteContent,
-	fantasyConsolePaletteContent,
-	defaultPaletteContent
+	fantasyConsolePaletteContent
 };
 
-static SpriteC palettes[PALETTE_COUNT];
-static tl::stack_array<SpriteC*, PALETTE_COUNT> available_palettes;
-static SpriteC rgrPalette;
+static tl::stack_array<SpriteC, PALETTE_COUNT> palettes;
 static int selectedPaletteIndex = 0;
 
 /*
@@ -141,11 +131,9 @@ static void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
 }
 
 
-
-
 static void SelectPalette(EditorState& state)
 {
-	state.palette_.sprite = available_palettes.get_copy(selectedPaletteIndex).value;
+	state.palette_.sprite = palettes.get_pointer(selectedPaletteIndex).value;
 	state.palette_.selectedIndex = 0;
 	SizeGrid(state.palette_);
 }
@@ -153,32 +141,27 @@ static void SelectPalette(EditorState& state)
 void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMemory, EditorState& state)
 {
 	selectedPaletteIndex = 0;
-	bool paletteSizeLimit = (state.pixels.sprite->bitsPerPixel == 1);
-	int maxColorsPerPalette = 2;
-	available_palettes.clear();
 
 	for (int i = 0; i < PALETTE_COUNT; i += 1)
 	{
-		sprite_from_string_read_dimensions(paletteContents[i], tempMemory, palettes[i]);
-		int palette_pixel_count = palettes[i].pixel_count();
+		SpriteC palette;
+		sprite_from_string_read_dimensions(paletteContents[i], tempMemory, palette);
+		int palette_pixel_count = palette.pixel_count();
 		uint64_t pixel_size_in_bytes = sizeof(uint32_t) * palette_pixel_count;
-		tl::MemorySpace palette_allocation = tl::CarveMemorySpace(pixel_size_in_bytes , paletteMemory);
+		tl::MemorySpace palette_allocation = tl::CarveMemorySpace(pixel_size_in_bytes, paletteMemory);
 
-		palettes[i].pixel_memory = palette_allocation;
+		palette.pixel_memory = palette_allocation;
 
-		LoadSpriteC(paletteContents[i], tempMemory, palettes[i]);
-
-		if (!paletteSizeLimit || palette_pixel_count <= maxColorsPerPalette)
-		{
-			available_palettes.append(&palettes[i]);
-		}
+		LoadSpriteC(paletteContents[i], tempMemory, palette);
+		palettes.append(palette);
 	}
+
 	SelectPalette(state);
 }
 
 void SwitchPalette(EditorState& state)
 {
 	int nextPaletteIndex = selectedPaletteIndex += 1;
-	selectedPaletteIndex = (nextPaletteIndex >= available_palettes.length()) ? 0 : nextPaletteIndex;
+	selectedPaletteIndex = (nextPaletteIndex >= palettes.length()) ? 0 : nextPaletteIndex;
 	SelectPalette(state);
 }

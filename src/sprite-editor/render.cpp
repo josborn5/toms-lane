@@ -6,7 +6,6 @@ static tl::Rect<float> commandTextRect;
 static tl::Rect<float> commandCharFootprint;
 
 static const float textAreaHalfHeight = 10.0f;
-static const float color_table_halfsize_y = 10.0f;
 static const tl::Vec2<float> textCharFootprintHalfsize = {
 	4.0f * textAreaHalfHeight / 7.0f,
 	textAreaHalfHeight
@@ -48,10 +47,7 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& 
 		containerRect.halfSize.x,
 		containerRect.halfSize.y - textCharFootprintHalfsize.y
 	};
-	if (sprite.has_color_table())
-	{
-		background_rect.halfSize.y -= color_table_halfsize_y;
-	}
+
 	background_rect.position = {
 		containerRect.position.x,
 		containerRect.y_max() - background_rect.halfSize.y
@@ -96,52 +92,6 @@ static void pixel_footprint_get(
 	pixel_with_border_length = containing_length / pixel_count;
 	float pixel_dimension = pixel_with_border_length - (2.0f * pixelBorderWidth);
 	pixel_footprint = { 0.5F * pixel_dimension, 0.5f * pixel_dimension };
-}
-
-static void render_color_table(
-	const Grid& grid,
-	const tl::RenderBuffer& renderBuffer
-)
-{
-
-	int color_table_length = grid.sprite->color_table_length();
-	if (color_table_length < 1)
-	{
-		return;
-	}
-
-	tl::Rect<float> color_table_footprint;
-	color_table_footprint.halfSize = {
-		grid.footprint.halfSize.x,
-		color_table_halfsize_y
-	};
-	color_table_footprint.position = {
-		grid.footprint.position.x,
-		grid.footprint.y_min() - color_table_halfsize_y
-	};
-
-	float pixel_border_length;
-	tl::Vec2<float> pixel_half_size;
-	pixel_footprint_get(
-		(2.0f * color_table_footprint.halfSize.y),
-		1,
-		pixel_border_length,
-		pixel_half_size
-	);
-
-	tl::Rect<float> pixel_footprint;
-	pixel_footprint.halfSize = pixel_half_size;
-	pixel_footprint.position = {
-		color_table_footprint.x_min() + 0.5f * pixel_border_length,
-		color_table_footprint.y_min() + 0.5f * pixel_border_length
-	};
-
-	for (int i = 0; i < color_table_length; i += 1)
-	{
-		uint32_t color = grid.sprite->p_color_table->pixels()[i];
-		tl::DrawRect(renderBuffer, color, pixel_footprint);
-		pixel_footprint.position.x += pixel_border_length;
-	}
 }
 
 static void RenderSpriteAsGrid(
@@ -232,8 +182,6 @@ static void RenderSpriteAsGrid(
 		grid.container.x_min() + textCharFootprintHalfsize.x,
 		grid.container.y_min() + textCharFootprintHalfsize.y
 	};
-
-	render_color_table(grid, renderBuffer);
 
 	const uint32_t displayTextColor = 0xFFFF00;
 	const int displayBufferSize = 16;
