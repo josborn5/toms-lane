@@ -104,7 +104,7 @@ int InitializeBitmapFromSpriteC(
 	// work out header space requirements
 	const int file_header_size_in_bytes = 14;
 	const int dibs_header_size_in_bytes = 40;
-	int color_table_size_in_bytes = (sprite.color_table.length() > 0)
+	int color_table_size_in_bytes = (sprite.p_color_table->pixel_count())
 		? sizeof(uint32_t[2])
 		: 0;
 
@@ -122,10 +122,10 @@ int InitializeBitmapFromSpriteC(
 
 	if (bitmap.file_header.fileSizeInBytes > tempMemory.sizeInBytes) return -1;
 
-	bitmap.color_table.size = sprite.color_table.length();
-	for (int i = 0; i < sprite.color_table.length(); i += 1)
+	bitmap.color_table.size = sprite.color_table_length();
+	for (int i = 0; i < sprite.color_table_length(); i += 1)
 	{
-		bitmap.color_table.content[i] = sprite.color_table.get_copy(i).value;
+		bitmap.color_table.content[i] = sprite.p_color_table->pixels()[i];
 	}
 
 	bitmap.content = (uint8_t*)tempMemory.content;
@@ -162,14 +162,13 @@ int InitializeSpriteCFromBitmap(
 	sprite.width = bitmap.dibs_header.width;
 	sprite.height = bitmap.dibs_header.height;
 
-	sprite.color_table.clear();
-	sprite.color_table_.width = 1;
-	sprite.color_table_.height = bitmap.color_table.size;
-	sprite.color_table_.bitsPerPixel = 32;
+	sprite.p_color_table->width = 1;
+	sprite.p_color_table->height = bitmap.color_table.size;
+	sprite.p_color_table->bitsPerPixel = 32;
 	for (int i = 0; i < bitmap.color_table.size; i += 1)
 	{
-		sprite.color_table.append(bitmap.color_table.content[i]);
-		sprite.color_table_.pixels()[i] = bitmap.color_table.content[i];
+		// TODO: check pixel memory on color table
+		sprite.p_color_table->pixels()[i] = bitmap.color_table.content[i];
 	}
 
 	// Bitmap & SpriteC origins are both bottom left

@@ -48,7 +48,7 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& 
 		containerRect.halfSize.x,
 		containerRect.halfSize.y - textCharFootprintHalfsize.y
 	};
-	if (sprite.color_table.length() > 0)
+	if (sprite.has_color_table())
 	{
 		background_rect.halfSize.y -= color_table_halfsize_y;
 	}
@@ -103,8 +103,9 @@ static void render_color_table(
 	const tl::RenderBuffer& renderBuffer
 )
 {
-	int color_table_length = grid.sprite->color_table.length();
-	if (color_table_length == 0)
+
+	int color_table_length = grid.sprite->color_table_length();
+	if (color_table_length < 1)
 	{
 		return;
 	}
@@ -137,7 +138,7 @@ static void render_color_table(
 
 	for (int i = 0; i < color_table_length; i += 1)
 	{
-		uint32_t color = grid.sprite->color_table.get_copy(i).value;
+		uint32_t color = grid.sprite->p_color_table->pixels()[i];
 		tl::DrawRect(renderBuffer, color, pixel_footprint);
 		pixel_footprint.position.x += pixel_border_length;
 	}
@@ -220,7 +221,7 @@ static void RenderSpriteAsGrid(
 			uint32_t pixelData = sprite.pixels()[pixelIndex];
 			if (sprite.has_color_table())
 			{
-				pixelData = sprite.color_table_.pixels()[pixelData];
+				pixelData = sprite.p_color_table->pixels()[pixelData];
 			}
 			tl::DrawRect(renderBuffer, pixelData, pixelRenderFootprint);
 		}

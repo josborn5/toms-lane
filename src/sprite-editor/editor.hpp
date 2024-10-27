@@ -25,13 +25,16 @@ struct base_sprite
 
 struct SpriteC : base_sprite
 {
-	tl::stack_array<uint32_t, 2> color_table;
+	base_sprite* p_color_table = nullptr;
 
-	base_sprite color_table_;
+	int color_table_length() const
+	{
+		return (p_color_table == nullptr) ? 0 : p_color_table->pixel_count();
+	}
 
 	bool has_color_table() const
 	{
-		return color_table_.pixel_count() != 0;
+		return color_table_length() > 0;
 	}
 };
 
@@ -100,6 +103,7 @@ struct EditorState
 	Mode mode;
 
 	SpriteC canvas;
+	base_sprite canvas_color_table;
 
 	bool pixels_are_selected() const
 	{

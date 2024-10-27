@@ -231,8 +231,8 @@ static int Initialize(char* commandLine)
 		state.canvas.width = default_dim;
 		state.canvas.height = default_dim;
 		state.canvas.bitsPerPixel = 24;
-		state.canvas.color_table_.width = 1;
-		state.canvas.color_table_.height = 0;
+		state.canvas_color_table.width = 1;
+		state.canvas_color_table.height = 0;
 		for (int i = 0; i < default_dim * default_dim; i += 1)
 		{
 			state.canvas.pixels()[i] = 0x000000;
@@ -290,7 +290,8 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 	tempMemory = gameMemory.transient;
 
 	state.canvas.pixel_memory = spritePixelMemory;
-	state.canvas.color_table_.pixel_memory = sprite_color_table_memory;
+	state.canvas.p_color_table = &state.canvas_color_table;
+	state.canvas_color_table.pixel_memory = sprite_color_table_memory;
 	state.commandBuffer = &commandBuffer[0];
 	state.pixels.sprite = &state.canvas;
 
