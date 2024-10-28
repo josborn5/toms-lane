@@ -534,6 +534,25 @@ static void ApplyCommandModeInputToState(const tl::Input& input)
 	ProcessCommandInput(input);
 }
 
+static Grid* cycle_active_control()
+{
+	if (state.activeControl == &state.pixels)
+	{
+		if (state.pixels.sprite->has_color_table())
+		{
+			return &state.color_table;
+		}
+		return &state.palette_;
+	}
+
+	if (state.activeControl == &state.color_table)
+	{
+		return &state.palette_;
+	}
+
+	return &state.pixels;
+}
+
 const EditorState& GetLatestState(const tl::Input& input)
 {
 	if (input.buttons[tl::KEY_ESCAPE].keyDown)
@@ -545,9 +564,8 @@ const EditorState& GetLatestState(const tl::Input& input)
 
 	if (input.buttons[tl::KEY_TAB].keyDown)
 	{
-		state.activeControl = state.pixels_are_selected()
-			? &state.palette_
-			: &state.pixels;
+		Grid* next_control = cycle_active_control();
+		state.activeControl = next_control;
 		return state;
 	}
 
