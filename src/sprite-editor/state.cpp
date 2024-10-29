@@ -516,9 +516,13 @@ static void ApplyViewModeInputToState(const tl::Input& input)
 static void ApplyInsertModeInputToState(const tl::Input& input)
 {
 	if (ApplyCursorMovementToState(input)) return;
-	if (input.buttons[tl::KEY_ENTER].keyDown && state.pixels_are_selected())
+	if (input.buttons[tl::KEY_ENTER].keyDown)
 	{
-		state.pixels.sprite->pixels()[state.pixels.selectedIndex] = currentColor;
+		uint32_t pixel_data_to_set = (state.pixels_are_selected() && state.canvas.has_color_table())
+			? state.color_table.selectedIndex
+			: currentColor;
+		Grid& activeControl = *state.activeControl;
+		activeControl.sprite->pixels()[activeControl.selectedIndex] = pixel_data_to_set;
 		return;
 	}
 }
