@@ -411,6 +411,11 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandStartsWith("E ")) // edit selected pixel
 	{
+		if (state.pixels_are_selected() && state.canvas.has_color_table())
+		{
+			return;
+		}
+
 		char* pointerToNumberChar = tl::GetNextNumberChar(&commands.access(1));
 		Grid& activeGrid = *state.activeControl;
 		ParseColorFromCharArray(pointerToNumberChar, tempMemory, activeGrid.sprite->pixels()[activeGrid.selectedIndex]);
