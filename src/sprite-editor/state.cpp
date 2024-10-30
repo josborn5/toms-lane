@@ -191,6 +191,37 @@ static void WriteStringToCommandBuffer(char* character)
 	}
 }
 
+static void set_bits_per_pixel(int bits_per_pixel)
+{
+	if (bits_per_pixel == state.canvas.bitsPerPixel)
+	{
+		return;
+	}
+
+	if (bits_per_pixel != 1 && bits_per_pixel != 24)
+	{
+		WriteStringToCommandBuffer("Invalid bits per pixel");
+		return;
+	}
+
+	if (bits_per_pixel == 24)
+	{
+		for (int i = 0; i < state.canvas.pixel_count(); i += 1)
+		{
+			uint32_t color_table_index = state.canvas.pixels()[i];
+			uint32_t pixel_color = state.canvas.p_color_table->pixels()[color_table_index];
+			state.canvas.pixels()[i] = pixel_color;
+		}
+
+		state.canvas.p_color_table->height = 0;
+	}
+
+	state.canvas.bitsPerPixel = (uint16_t)bits_per_pixel;
+	InitializeLayout(state);
+	SizeGrid(state.pixels);
+	SizeGrid(state.color_table);
+};
+
 static void update_filepath(char* source)
 {
 	for (int i = 0; i < filePathBufferSize; i += 1)
@@ -424,16 +455,8 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandStartsWith("BPP ")) // set bits per pixel
 	{
-		int newBitValue = tl::CharStringToInt(&commands.access(5));
-		if (newBitValue == 24)
-		{
-			state.pixels.sprite->bitsPerPixel = (uint16_t)newBitValue;
-			ClearCommandBuffer();
-		}
-		else
-		{
-			WriteStringToCommandBuffer("Invalid bits per pixel");
-		}
+		int new_bits_per_pixel = tl::CharStringToInt(&commands.access(5));
+		set_bits_per_pixel(new_bits_per_pixel);
 		return;
 	}
 
