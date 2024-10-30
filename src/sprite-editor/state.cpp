@@ -215,6 +215,18 @@ static void set_bits_per_pixel(int bits_per_pixel)
 
 		state.canvas.p_color_table->height = 0;
 	}
+	else if (bits_per_pixel == 1)
+	{
+		state.canvas.p_color_table->height = 2;
+		state.canvas.p_color_table->pixels()[0] = 0x000000;
+		state.canvas.p_color_table->pixels()[1] = 0xFFFFFF;
+
+		for (int i = 0; i < state.canvas.pixel_count(); i += 1)
+		{
+			uint32_t pixel_color = state.canvas.pixels()[i];
+			state.canvas.pixels()[i] = (pixel_color > 0x000000) ? 1 : 0;
+		}
+	}
 
 	state.canvas.bitsPerPixel = (uint16_t)bits_per_pixel;
 	InitializeLayout(state);
