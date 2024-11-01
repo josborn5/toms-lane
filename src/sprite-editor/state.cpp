@@ -210,7 +210,7 @@ static void set_bits_per_pixel(int bits_per_pixel)
 		{
 			uint32_t color_table_index = state.canvas.get_pixel_data(i);
 			uint32_t pixel_color = state.canvas.p_color_table->get_pixel_data(color_table_index);
-			state.canvas.pixels()[i] = pixel_color;
+			state.canvas.set_pixel_data(i, pixel_color);
 		}
 
 		state.canvas.p_color_table->height = 0;
@@ -218,13 +218,14 @@ static void set_bits_per_pixel(int bits_per_pixel)
 	else if (bits_per_pixel == 1)
 	{
 		state.canvas.p_color_table->height = 2;
-		state.canvas.p_color_table->pixels()[0] = 0x000000;
-		state.canvas.p_color_table->pixels()[1] = 0xFFFFFF;
+		state.canvas.p_color_table->set_pixel_data(0, 0x000000);
+		state.canvas.p_color_table->set_pixel_data(1, 0xFFFFFF);
 
 		for (int i = 0; i < state.canvas.pixel_count(); i += 1)
 		{
 			uint32_t pixel_color = state.canvas.get_pixel_data(i);
-			state.canvas.pixels()[i] = (pixel_color > 0x000000) ? 1 : 0;
+			uint32_t pixel_data = (pixel_color > 0x000000) ? 1 : 0;
+			state.canvas.set_pixel_data(i, pixel_data);
 		}
 	}
 
@@ -278,7 +279,7 @@ static int Initialize(char* commandLine)
 		state.canvas_color_table.height = 0;
 		for (int i = 0; i < default_dim * default_dim; i += 1)
 		{
-			state.canvas.pixels()[i] = 0x000000;
+			state.canvas.set_pixel_data(i, 0x000000);
 		}
 
 		switch (fileReadResult)
@@ -461,7 +462,9 @@ static void ExecuteCurrentCommand()
 
 		char* pointerToNumberChar = tl::GetNextNumberChar(&commands.access(1));
 		Grid& activeGrid = *state.activeControl;
-		ParseColorFromCharArray(pointerToNumberChar, tempMemory, activeGrid.sprite->pixels()[activeGrid.selectedIndex]);
+		uint32_t parsed_color;
+		ParseColorFromCharArray(pointerToNumberChar, tempMemory, parsed_color);
+		activeGrid.sprite->set_pixel_data(activeGrid.selectedIndex, parsed_color);
 		ClearCommandBuffer();
 		return;
 	}
@@ -491,7 +494,7 @@ static bool CheckForPaste(const tl::Input& input)
 {
 	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.pixels_are_selected())
 	{
-		state.pixels.sprite->pixels()[state.pixels.selectedIndex] = copiedColor;
+		state.pixels.sprite->set_pixel_data(state.pixels.selectedIndex, copiedColor);
 		return true;
 	}
 	return false;
@@ -562,7 +565,7 @@ static void ApplyInsertModeInputToState(const tl::Input& input)
 			? state.color_table.selectedIndex
 			: currentColor;
 		Grid& activeControl = *state.activeControl;
-		activeControl.sprite->pixels()[activeControl.selectedIndex] = pixel_data_to_set;
+		activeControl.sprite->set_pixel_data(activeControl.selectedIndex, pixel_data_to_set);
 		return;
 	}
 }

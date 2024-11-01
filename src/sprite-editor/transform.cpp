@@ -168,7 +168,7 @@ int InitializeSpriteCFromBitmap(
 	for (int i = 0; i < bitmap.color_table.size; i += 1)
 	{
 		// TODO: check pixel memory on color table
-		sprite.p_color_table->pixels()[i] = bitmap.color_table.content[i];
+		sprite.p_color_table->set_pixel_data(i, bitmap.color_table.content[i]);
 	}
 
 	// Bitmap & SpriteC origins are both bottom left
@@ -179,7 +179,7 @@ int InitializeSpriteCFromBitmap(
 		{
 			uint32_t pixel_data;
 			tl::bitmap_interface_get_pixel_data(bitmap, pixelX, pixelY, pixel_data);
-			sprite.pixels()[pixelIndex] = pixel_data;
+			sprite.set_pixel_data(pixelIndex, pixel_data);
 			pixelIndex += 1;
 		}
 	}

@@ -126,7 +126,9 @@ static void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
 
 	for (int i = 0; i < contentCount && *workingPointer; i += 1)
 	{
-		workingPointer = ParseColorFromCharArray(workingPointer, space, sprite.pixels()[i]);
+		uint32_t parsed_color;
+		workingPointer = ParseColorFromCharArray(workingPointer, space, parsed_color);
+		sprite.set_pixel_data(i, parsed_color);
 	}
 }
 

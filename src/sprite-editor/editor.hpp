@@ -39,7 +39,7 @@ struct SpriteC
 		return pixels()[index];
 	}
 
-	void set_pixel_data(uint32_t data, int index)
+	void set_pixel_data(int index, uint32_t data)
 	{
 		pixels()[index] = data;
 	}
