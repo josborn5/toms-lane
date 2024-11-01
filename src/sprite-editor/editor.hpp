@@ -33,6 +33,11 @@ struct SpriteC
 	{
 		return color_table_length() > 0;
 	}
+
+	uint32_t get_pixel_data(int index) const
+	{
+		return pixels()[index];
+	}
 };
 
 struct Grid

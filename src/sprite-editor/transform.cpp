@@ -125,7 +125,7 @@ int InitializeBitmapFromSpriteC(
 	bitmap.color_table.size = sprite.color_table_length();
 	for (int i = 0; i < sprite.color_table_length(); i += 1)
 	{
-		bitmap.color_table.content[i] = sprite.p_color_table->pixels()[i];
+		bitmap.color_table.content[i] = sprite.p_color_table->get_pixel_data(i);
 	}
 
 	bitmap.content = (uint8_t*)tempMemory.content;
@@ -136,7 +136,7 @@ int InitializeBitmapFromSpriteC(
 	{
 		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
-			uint32_t pixel_data = sprite.pixels()[pixelIndex];
+			uint32_t pixel_data = sprite.get_pixel_data(pixelIndex);
 			(*colorToBitmapTransformer)(pixel_data, pixelX, pixelY, bitmap);
 			pixelIndex += 1;
 		}
