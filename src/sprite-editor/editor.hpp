@@ -45,12 +45,19 @@ struct SpriteC
 	}
 };
 
+struct sprite_camera
+{
+	int zoom = 0;
+	tl::Vec2<int> displacement = {0};
+};
+
 struct Grid
 {
 	SpriteC* sprite;
 	tl::Rect<float> footprint;
 	tl::Rect<float> container;
 	tl::Rect<float> camera;
+	sprite_camera camera_;
 	int selectedIndex = 0;
 	int selectedRangeIndex = 0;
 
