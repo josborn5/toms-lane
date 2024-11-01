@@ -70,7 +70,8 @@ static int AppendRowToSpriteC(SpriteC& sprite, int insertAtIndex)
 	for (int sourceIndex = lastPixelIndex; sourceIndex >= firstMovePixelIndex; sourceIndex -= 1)
 	{
 		int targetIndex = sourceIndex + sprite.width;
-		sprite.pixels()[targetIndex] = sprite.get_pixel_data(sourceIndex);
+		uint32_t to_move = sprite.get_pixel_data(sourceIndex);
+		sprite.set_pixel_data(to_move, targetIndex);
 	}
 
 	// Clear out pixels in the new row
@@ -78,7 +79,7 @@ static int AppendRowToSpriteC(SpriteC& sprite, int insertAtIndex)
 	int firstMovedPixelIndex = firstNewPixelIndex + sprite.width;
 	for (int i = firstNewPixelIndex; i < firstMovedPixelIndex; i += 1)
 	{
-		sprite.pixels()[i] = 0x000000;
+		sprite.set_pixel_data(0x000000, i);
 	}
 
 	sprite.height += 1;
@@ -150,7 +151,8 @@ static int AppendColumnToSpriteC(SpriteC& sprite, int insertAtIndex)
 		int offsetForColumn = (pixelIsAfterNewColumnInRow) ? 1 : 0;
 		int offset = currentRowIndex + offsetForColumn;
 		int targetIndex = sourceIndex + offset;
-		sprite.pixels()[targetIndex] = sprite.get_pixel_data(sourceIndex);
+		uint32_t to_move = sprite.get_pixel_data(sourceIndex);
+		sprite.set_pixel_data(to_move, targetIndex);
 	}
 
 	sprite.width += 1;
@@ -158,7 +160,7 @@ static int AppendColumnToSpriteC(SpriteC& sprite, int insertAtIndex)
 	// clear pixels in the new column
 	for (int i = insertAtIndex; i < newPixelCount; i += sprite.width)
 	{
-		sprite.pixels()[i] = 0x000000;
+		sprite.set_pixel_data(0x000000, i);
 	}
 
 	return 0;

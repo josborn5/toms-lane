@@ -38,6 +38,11 @@ struct SpriteC
 	{
 		return pixels()[index];
 	}
+
+	void set_pixel_data(uint32_t data, int index)
+	{
+		pixels()[index] = data;
+	}
 };
 
 struct Grid

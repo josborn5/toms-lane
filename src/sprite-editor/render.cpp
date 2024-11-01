@@ -167,10 +167,10 @@ static void RenderSpriteAsGrid(
 			}
 
 			int pixelIndex = (j * sprite.width) + i;
-			uint32_t pixelData = sprite.pixels()[pixelIndex];
+			uint32_t pixelData = sprite.get_pixel_data(pixelIndex);
 			if (sprite.has_color_table())
 			{
-				pixelData = sprite.p_color_table->pixels()[pixelData];
+				pixelData = sprite.p_color_table->get_pixel_data(pixelData);
 			}
 			tl::DrawRect(renderBuffer, pixelData, pixelRenderFootprint);
 		}
