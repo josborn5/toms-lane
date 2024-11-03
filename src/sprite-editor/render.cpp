@@ -96,11 +96,11 @@ static void pixel_footprint_get(
 
 static void set_camera_rect(const Grid& grid, tl::Rect<float>& camera_rect)
 {
-	camera_rect.halfSize.x = grid.footprint.halfSize.x * grid.camera_.zoom;
-	camera_rect.halfSize.y = grid.footprint.halfSize.y * grid.camera_.zoom;;
+	camera_rect.halfSize.x = grid.footprint.halfSize.x * grid.camera.zoom;
+	camera_rect.halfSize.y = grid.footprint.halfSize.y * grid.camera.zoom;;
 
-	camera_rect.position.x = grid.footprint.position.x + (grid.footprint.halfSize.x * grid.camera_.displacement.x);
-	camera_rect.position.y = grid.footprint.position.y + (grid.footprint.halfSize.y * grid.camera_.displacement.y);
+	camera_rect.position.x = grid.footprint.position.x + (grid.footprint.halfSize.x * grid.camera.displacement.x);
+	camera_rect.position.y = grid.footprint.position.y + (grid.footprint.halfSize.y * grid.camera.displacement.y);
 }
 
 static void RenderSpriteAsGrid(
@@ -211,7 +211,8 @@ static void RenderSpriteAsGrid(
 void SizeGrid(Grid& grid)
 {
 	grid.footprint = SizeBoundingRectForSpriteInContainingRect(*grid.sprite, grid.container);
-	grid.camera = grid.footprint;
+	grid.camera.zoom = 1.0f;
+	grid.camera.displacement = { 0.0f, 0.0f };
 }
 
 static void PlaceRectToRightOfRect(const tl::Rect<float>& rect, tl::Rect<float>& toPlace)

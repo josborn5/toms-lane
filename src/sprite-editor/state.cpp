@@ -126,42 +126,34 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 
 	if (input.buttons[tl::KEY_I].keyDown)
 	{
-		state.pixels.camera_.zoom *= 0.75f;
-		state.pixels.camera.halfSize.x *= 0.75f;
-		state.pixels.camera.halfSize.y *= 0.75f;
+		state.pixels.camera.zoom *= 0.75f;
 		return true;
 	}
 	else if (input.buttons[tl::KEY_U].keyDown)
 	{
-		state.pixels.camera_.zoom /= 0.75f;
-		state.pixels.camera.halfSize.x /= 0.75f;
-		state.pixels.camera.halfSize.y /= 0.75f;
+		state.pixels.camera.zoom /= 0.75f;
 		return true;
 	}
 
-	float delta = (state.pixels.camera_.zoom * 0.2f);
+	float delta = (state.pixels.camera.zoom * 0.2f);
 	if (input.buttons[tl::KEY_UP].keyDown)
 	{
-		state.pixels.camera_.displacement.y += delta;
-		state.pixels.camera.position.y += (state.pixels.camera.halfSize.y * 0.2f);
+		state.pixels.camera.displacement.y += delta;
 		return true;
 	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
-		state.pixels.camera_.displacement.y -= delta;
-		state.pixels.camera.position.y -= (state.pixels.camera.halfSize.y * 0.2f);
+		state.pixels.camera.displacement.y -= delta;
 		return true;
 	}
 	else if (input.buttons[tl::KEY_LEFT].keyDown)
 	{
-		state.pixels.camera_.displacement.x -= delta;
-		state.pixels.camera.position.x -= (state.pixels.camera.halfSize.x * 0.2f);
+		state.pixels.camera.displacement.x -= delta;
 		return true;
 	}
 	else if (input.buttons[tl::KEY_RIGHT].keyDown)
 	{
-		state.pixels.camera_.displacement.x += delta;
-		state.pixels.camera.position.x += (state.pixels.camera.halfSize.x * 0.2f);
+		state.pixels.camera.displacement.x += delta;
 		return true;
 	}
 
