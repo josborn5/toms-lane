@@ -94,6 +94,15 @@ static void pixel_footprint_get(
 	pixel_footprint = { 0.5F * pixel_dimension, 0.5f * pixel_dimension };
 }
 
+static void set_camera_rect(const Grid& grid, tl::Rect<float>& camera_rect)
+{
+	camera_rect.halfSize.x = grid.footprint.halfSize.x * grid.camera_.zoom;
+	camera_rect.halfSize.y = grid.footprint.halfSize.y * grid.camera_.zoom;;
+
+	camera_rect.position.x = grid.footprint.position.x + (grid.footprint.halfSize.x * grid.camera_.displacement.x);
+	camera_rect.position.y = grid.footprint.position.y + (grid.footprint.halfSize.y * grid.camera_.displacement.y);
+}
+
 static void RenderSpriteAsGrid(
 	const Grid& grid,
 	const tl::RenderBuffer& renderBuffer,
@@ -133,9 +142,12 @@ static void RenderSpriteAsGrid(
 		? selectedRowIndex
 		: rangeRowIndex;
 
+	tl::Rect<float> camera_rect;
+	set_camera_rect(grid, camera_rect);
+
 	tl::Matrix2x3<float> gridToRenderProjection;
 	tl::transform_interface_create_2d_projection_matrix(
-		grid.camera,
+		camera_rect,
 		grid.footprint,
 		gridToRenderProjection
 	);

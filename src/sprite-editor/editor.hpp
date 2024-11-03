@@ -47,8 +47,8 @@ struct SpriteC
 
 struct sprite_camera
 {
-	int zoom = 0;
-	tl::Vec2<int> displacement = {0};
+	float zoom = 1.0f;
+	tl::Vec2<float> displacement = {0};
 };
 
 struct Grid
