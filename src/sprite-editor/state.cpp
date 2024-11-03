@@ -231,6 +231,8 @@ static void set_bits_per_pixel(int bits_per_pixel)
 
 	state.canvas.bitsPerPixel = (uint16_t)bits_per_pixel;
 	InitializeLayout(state);
+	state.pixels.size();
+	state.color_table.size();
 	SizeGrid(state.pixels);
 	SizeGrid(state.color_table);
 };
@@ -307,6 +309,8 @@ static int Initialize(char* commandLine)
 
 	ClearCommandBuffer();
 	InitializeLayout(state);
+	state.pixels.size();
+	state.color_table.size();
 	SizeGrid(state.pixels);
 	SizeGrid(state.color_table);
 	InitializePalettes(paletteMemory, tempMemory, state);
@@ -381,6 +385,7 @@ static void ExecuteCurrentCommand()
 	if (CommandIs("R")) // append row
 	{
 		InsertRow(state.pixels);
+		state.pixels.size();
 		SizeGrid(state.pixels);
 		ClearCommandBuffer();
 		return;
@@ -388,6 +393,7 @@ static void ExecuteCurrentCommand()
 	else if (CommandIs("C")) // append column
 	{
 		InsertColumn(state.pixels);
+		state.pixels.size();
 		SizeGrid(state.pixels);
 		ClearCommandBuffer();
 		return;
@@ -412,6 +418,7 @@ static void ExecuteCurrentCommand()
 		// Subtract 1 from the sprite height
 		state.pixels.sprite->height -= 1;
 
+		state.pixels.size();
 		SizeGrid(state.pixels);
 		ClearCommandBuffer();
 		return;
@@ -429,6 +436,7 @@ static void ExecuteCurrentCommand()
 		}
 		state.pixels.sprite->width -= 1;
 
+		state.pixels.size();
 		SizeGrid(state.pixels);
 		ClearCommandBuffer();
 		return;

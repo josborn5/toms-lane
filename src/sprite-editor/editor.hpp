@@ -51,6 +51,8 @@ struct sprite_camera
 	tl::Vec2<float> displacement = {0};
 };
 
+typedef void grid_size_change_callback();
+
 struct Grid
 {
 	SpriteC* sprite;
@@ -59,6 +61,8 @@ struct Grid
 	sprite_camera camera;
 	int selectedIndex = 0;
 	int selectedRangeIndex = 0;
+
+	grid_size_change_callback* size_change_callback;
 
 	uint32_t selected_color() const
 	{
@@ -93,6 +97,14 @@ struct Grid
 	int selected_column_index() const
 	{
 		return column_index(selectedIndex);
+	}
+
+	void size()
+	{
+		if (size_change_callback != nullptr)
+		{
+			size_change_callback();
+		}
 	}
 };
 
