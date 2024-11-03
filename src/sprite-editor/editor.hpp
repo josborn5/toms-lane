@@ -56,8 +56,6 @@ typedef void grid_size_change_callback();
 struct Grid
 {
 	SpriteC* sprite;
-	tl::Rect<float> footprint;
-	tl::Rect<float> container;
 	sprite_camera camera;
 	int selectedIndex = 0;
 	int selectedRangeIndex = 0;

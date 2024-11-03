@@ -233,8 +233,6 @@ static void set_bits_per_pixel(int bits_per_pixel)
 	InitializeLayout(state);
 	state.pixels.size();
 	state.color_table.size();
-	SizeGrid(state.pixels);
-	SizeGrid(state.color_table);
 };
 
 static void update_filepath(char* source)
@@ -305,14 +303,17 @@ static int Initialize(char* commandLine)
 		}
 	}
 
+	state.pixels.camera.zoom = 1.0f;
+	state.pixels.camera.displacement = { 0.0f, 0.0f };
+	state.pixels.selectedIndex = 0;
+	state.pixels.selectedRangeIndex = 0;
+
 	state.mode = View;
 
 	ClearCommandBuffer();
 	InitializeLayout(state);
 	state.pixels.size();
 	state.color_table.size();
-	SizeGrid(state.pixels);
-	SizeGrid(state.color_table);
 	InitializePalettes(paletteMemory, tempMemory, state);
 
 	return 0;
@@ -386,7 +387,6 @@ static void ExecuteCurrentCommand()
 	{
 		InsertRow(state.pixels);
 		state.pixels.size();
-		SizeGrid(state.pixels);
 		ClearCommandBuffer();
 		return;
 	}
@@ -394,7 +394,6 @@ static void ExecuteCurrentCommand()
 	{
 		InsertColumn(state.pixels);
 		state.pixels.size();
-		SizeGrid(state.pixels);
 		ClearCommandBuffer();
 		return;
 	}
@@ -419,7 +418,6 @@ static void ExecuteCurrentCommand()
 		state.pixels.sprite->height -= 1;
 
 		state.pixels.size();
-		SizeGrid(state.pixels);
 		ClearCommandBuffer();
 		return;
 	}
@@ -437,7 +435,6 @@ static void ExecuteCurrentCommand()
 		state.pixels.sprite->width -= 1;
 
 		state.pixels.size();
-		SizeGrid(state.pixels);
 		ClearCommandBuffer();
 		return;
 	}

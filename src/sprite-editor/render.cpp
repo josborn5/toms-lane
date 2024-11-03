@@ -110,22 +110,23 @@ static void pixel_footprint_get(
 	pixel_footprint = { 0.5F * pixel_dimension, 0.5f * pixel_dimension };
 }
 
-static void set_camera_rect(const Grid& grid, tl::Rect<float>& camera_rect)
+static void set_camera_rect(const sprite_control_view& view, tl::Rect<float>& camera_rect)
 {
-	camera_rect.halfSize.x = grid.footprint.halfSize.x * grid.camera.zoom;
-	camera_rect.halfSize.y = grid.footprint.halfSize.y * grid.camera.zoom;;
+	camera_rect.halfSize.x = view.footprint.halfSize.x * view.sprite_control->camera.zoom;
+	camera_rect.halfSize.y = view.footprint.halfSize.y * view.sprite_control->camera.zoom;;
 
-	camera_rect.position.x = grid.footprint.position.x + (grid.footprint.halfSize.x * grid.camera.displacement.x);
-	camera_rect.position.y = grid.footprint.position.y + (grid.footprint.halfSize.y * grid.camera.displacement.y);
+	camera_rect.position.x = view.footprint.position.x + (view.footprint.halfSize.x * view.sprite_control->camera.displacement.x);
+	camera_rect.position.y = view.footprint.position.y + (view.footprint.halfSize.y * view.sprite_control->camera.displacement.y);
 }
 
 static void RenderSpriteAsGrid(
-	const Grid& grid,
+	const sprite_control_view& view,
 	const tl::RenderBuffer& renderBuffer,
 	Mode mode
 ) {
+	Grid& grid = *view.sprite_control;
 	SpriteC& sprite = *grid.sprite;
-	const tl::Rect<float>& boundingRect = grid.footprint;
+	const tl::Rect<float>& boundingRect = view.footprint;
 
 	const uint32_t selectedPixelColor = 0xFFFF00;
 
@@ -159,12 +160,12 @@ static void RenderSpriteAsGrid(
 		: rangeRowIndex;
 
 	tl::Rect<float> camera_rect;
-	set_camera_rect(grid, camera_rect);
+	set_camera_rect(view, camera_rect);
 
 	tl::Matrix2x3<float> gridToRenderProjection;
 	tl::transform_interface_create_2d_projection_matrix(
 		camera_rect,
-		grid.footprint,
+		view.footprint,
 		gridToRenderProjection
 	);
 
@@ -207,8 +208,8 @@ static void RenderSpriteAsGrid(
 	tl::Rect<float> charFootprint;
 	charFootprint.halfSize = textCharFootprintHalfsize;
 	charFootprint.position = {
-		grid.container.x_min() + textCharFootprintHalfsize.x,
-		grid.container.y_min() + textCharFootprintHalfsize.y
+		view.container.x_min() + textCharFootprintHalfsize.x,
+		view.container.y_min() + textCharFootprintHalfsize.y
 	};
 
 	const uint32_t displayTextColor = 0xFFFF00;
@@ -224,11 +225,24 @@ static void RenderSpriteAsGrid(
 	);
 }
 
-void SizeGrid(Grid& grid)
+void size_control_view(sprite_control_view& view)
 {
-	grid.footprint = SizeBoundingRectForSpriteInContainingRect(*grid.sprite, grid.container);
-	grid.camera.zoom = 1.0f;
-	grid.camera.displacement = { 0.0f, 0.0f };
+	view.footprint = SizeBoundingRectForSpriteInContainingRect(*(view.sprite_control->sprite), view.container);
+}
+
+void size_canvas()
+{
+	size_control_view(main_view.canvas);
+}
+
+void size_color_table()
+{
+	size_control_view(main_view.color_table);
+}
+
+void size_palette()
+{
+	size_control_view(main_view.palette);
 }
 
 static void PlaceRectToRightOfRect(const tl::Rect<float>& rect, tl::Rect<float>& toPlace)
@@ -273,47 +287,28 @@ void InitializeLayout(EditorState& state)
 		windowHalfWidth * (1.0f - paletteHalfWidthPercent - color_table_width_percent),
 		visualYHalfSize
 	};
-	state.pixels.container.halfSize = {
-		windowHalfWidth * (1.0f - paletteHalfWidthPercent - color_table_width_percent),
-		visualYHalfSize
-	};
-
-	float visualYPosition =  commandTextRect.y_max() + state.pixels.container.halfSize.y;
+	float visualYPosition =  commandTextRect.y_max() + main_view.canvas.container.halfSize.y;
 	main_view.canvas.container.position = {
 		main_view.canvas.container.halfSize.x,
 		visualYPosition
 	};
-	state.pixels.container.position = {
-		state.pixels.container.halfSize.x,
-		visualYPosition
-	};
-
 	main_view.palette.container.halfSize = {
 		windowHalfWidth * paletteHalfWidthPercent,
 		visualYHalfSize
 	};
-	state.palette_.container.halfSize = {
-		windowHalfWidth * paletteHalfWidthPercent,
-		visualYHalfSize
-	};
-
 	main_view.color_table.container.halfSize = {
 		windowHalfWidth * color_table_width_percent,
 		visualYHalfSize
 	};
-	state.color_table.container.halfSize = {
-		windowHalfWidth * color_table_width_percent,
-		visualYHalfSize
-	};
-
-	PlaceRectToRightOfRect(state.pixels.container, state.color_table.container);
 	PlaceRectToRightOfRect(main_view.canvas.container, main_view.color_table.container);
 	PlaceRectToRightOfRect(main_view.color_table.container, main_view.palette.container);
-	PlaceRectToRightOfRect(state.color_table.container, state.palette_.container);
 
 	main_view.canvas.sprite_control = &state.pixels;
+	state.pixels.size_change_callback = &size_canvas;
 	main_view.color_table.sprite_control = &state.color_table;
+	state.color_table.size_change_callback = &size_color_table;
 	main_view.palette.sprite_control = &state.palette_;
+	state.palette_.size_change_callback = &size_palette;
 }
 
 static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const EditorState& state, float dt)
@@ -351,11 +346,11 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state, floa
 	const uint32_t spriteBackgroundColor = 0x333333;
 	const uint32_t paletteBackgroundColor = 0x444444;
 	tl::ClearScreen(renderBuffer, 0x000000);
-	tl::DrawRect(renderBuffer, spriteBackgroundColor, state.pixels.container);
-	tl::DrawRect(renderBuffer, paletteBackgroundColor, state.palette_.container);
+	tl::DrawRect(renderBuffer, spriteBackgroundColor, main_view.canvas.container);
+	tl::DrawRect(renderBuffer, paletteBackgroundColor, main_view.palette.container);
 
 	RenderSpriteAsGrid(
-		state.pixels,
+		main_view.canvas,
 		renderBuffer,
 		state.mode
 	);
@@ -363,7 +358,7 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state, floa
 	RenderCommandBuffer(renderBuffer, state, dt);
 
 	RenderSpriteAsGrid(
-		state.palette_,
+		main_view.palette,
 		renderBuffer,
 		state.mode
 	);
@@ -371,7 +366,7 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state, floa
 	if (state.canvas.has_color_table())
 	{
 		RenderSpriteAsGrid(
-			state.color_table,
+			main_view.color_table,
 			renderBuffer,
 			state.mode
 		);
