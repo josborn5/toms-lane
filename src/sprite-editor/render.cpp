@@ -2,6 +2,22 @@
 #include "./editor.hpp"
 #include "./utilities.hpp"
 
+struct sprite_control_view
+{
+	tl::Rect<float> container;
+	tl::Rect<float> footprint;
+	Grid* sprite_control;
+};
+
+struct window_view
+{
+	sprite_control_view canvas;
+	sprite_control_view color_table;
+	sprite_control_view palette;
+};
+
+window_view main_view;
+
 static tl::Rect<float> commandTextRect;
 static tl::Rect<float> commandCharFootprint;
 
@@ -252,19 +268,37 @@ void InitializeLayout(EditorState& state)
 	float paletteHalfWidthPercent = 0.2f;
 	float color_table_width_percent = state.pixels.sprite->has_color_table() ? 0.1f : 0.0f;;
 	float visualYHalfSize = ((float)state.windowHeight * 0.5f) - commandTextRect.halfSize.y;
+
+	main_view.canvas.container.halfSize = {
+		windowHalfWidth * (1.0f - paletteHalfWidthPercent - color_table_width_percent),
+		visualYHalfSize
+	};
 	state.pixels.container.halfSize = {
 		windowHalfWidth * (1.0f - paletteHalfWidthPercent - color_table_width_percent),
 		visualYHalfSize
 	};
 
 	float visualYPosition =  commandTextRect.y_max() + state.pixels.container.halfSize.y;
+	main_view.canvas.container.position = {
+		main_view.canvas.container.halfSize.x,
+		visualYPosition
+	};
 	state.pixels.container.position = {
 		state.pixels.container.halfSize.x,
 		visualYPosition
 	};
 
+	main_view.palette.container.halfSize = {
+		windowHalfWidth * paletteHalfWidthPercent,
+		visualYHalfSize
+	};
 	state.palette_.container.halfSize = {
 		windowHalfWidth * paletteHalfWidthPercent,
+		visualYHalfSize
+	};
+
+	main_view.color_table.container.halfSize = {
+		windowHalfWidth * color_table_width_percent,
 		visualYHalfSize
 	};
 	state.color_table.container.halfSize = {
@@ -273,7 +307,13 @@ void InitializeLayout(EditorState& state)
 	};
 
 	PlaceRectToRightOfRect(state.pixels.container, state.color_table.container);
+	PlaceRectToRightOfRect(main_view.canvas.container, main_view.color_table.container);
+	PlaceRectToRightOfRect(main_view.color_table.container, main_view.palette.container);
 	PlaceRectToRightOfRect(state.color_table.container, state.palette_.container);
+
+	main_view.canvas.sprite_control = &state.pixels;
+	main_view.color_table.sprite_control = &state.color_table;
+	main_view.palette.sprite_control = &state.palette_;
 }
 
 static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const EditorState& state, float dt)
