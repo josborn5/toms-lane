@@ -86,17 +86,6 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& 
 	return sizeRect;
 }
 
-static void GetSelectedRangeFootprint(
-	const tl::Rect<float>& selectedPixelFootprint,
-	tl::Rect<float>& rangeFootprint)
-{
-	rangeFootprint.position = selectedPixelFootprint.position;
-	rangeFootprint.halfSize = {
-		selectedPixelFootprint.halfSize.x + 1,
-		selectedPixelFootprint.halfSize.y + 1
-	};
-}
-
 static void pixel_footprint_get(
 	float containing_length,
 	int pixel_count,
@@ -104,7 +93,7 @@ static void pixel_footprint_get(
 	tl::Vec2<float>& pixel_footprint
 )
 {
-	const float pixelBorderWidth = 2.0f;
+	const float pixelBorderWidth = 1.0f;
 	pixel_with_border_length = containing_length / pixel_count;
 	float pixel_dimension = pixel_with_border_length - (2.0f * pixelBorderWidth);
 	pixel_footprint = { 0.5F * pixel_dimension, 0.5f * pixel_dimension };
@@ -190,9 +179,7 @@ static void RenderSpriteAsGrid(
 
 			if (yIsInSelectedRange && i >= startColIndex && i <= endColIndex)
 			{
-				tl::Rect<float> selectedFootprint;
-				GetSelectedRangeFootprint(pixelRenderFootprint, selectedFootprint);
-				tl::DrawRect(renderBuffer, selectedPixelColor, selectedFootprint);
+				tl::DrawRect(renderBuffer, selectedPixelColor, pixelRenderFootprint);
 			}
 
 			int pixelIndex = (j * sprite.width) + i;
@@ -201,6 +188,8 @@ static void RenderSpriteAsGrid(
 			{
 				pixelData = sprite.p_color_table->get_pixel_data(pixelData);
 			}
+			pixelRenderFootprint.halfSize.x -= 1;
+			pixelRenderFootprint.halfSize.y -= 1;
 			tl::DrawRect(renderBuffer, pixelData, pixelRenderFootprint);
 		}
 	}
