@@ -87,15 +87,11 @@ static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& 
 }
 
 static void pixel_footprint_get(
-	float containing_length,
-	int pixel_count,
-	float& pixel_with_border_length,
+	const sprite_control_view& view,
 	tl::Vec2<float>& pixel_footprint
 )
 {
-	const float pixelBorderWidth = 1.0f;
-	pixel_with_border_length = containing_length / pixel_count;
-	float pixel_dimension = pixel_with_border_length - (2.0f * pixelBorderWidth);
+	float pixel_dimension = (2.0f * view.footprint.halfSize.x) / (float)view.sprite_control->sprite->width;
 	pixel_footprint = { 0.5F * pixel_dimension, 0.5f * pixel_dimension };
 }
 
@@ -115,20 +111,17 @@ static void RenderSpriteAsGrid(
 ) {
 	Grid& grid = *view.sprite_control;
 	SpriteC& sprite = *grid.sprite;
-	const tl::Rect<float>& boundingRect = view.footprint;
 
 	const uint32_t selectedPixelColor = 0xFFFF00;
 
-	float pixelDimensionWithBorder;
 	tl::Vec2<float> pixelHalfSize;
 	pixel_footprint_get(
-		(2.0f * boundingRect.halfSize.x),
-		sprite.width,
-		pixelDimensionWithBorder,
+		view,
 		pixelHalfSize
 	);
 
-	float yOriginalPosition = boundingRect.y_min() + (0.5f * pixelDimensionWithBorder);
+	float yOriginalPosition = view.footprint.y_min() + pixelHalfSize.y;
+	float xOriginalPosition = view.footprint.x_min() + pixelHalfSize.x;
 
 	int selectedColIndex = grid.selected_column_index();
 	int rangeColIndex = grid.column_index(grid.selectedRangeIndex);
@@ -160,11 +153,11 @@ static void RenderSpriteAsGrid(
 
 	for (int j = 0; j < sprite.height; j += 1)
 	{
-		float yPosition = yOriginalPosition + (j * pixelDimensionWithBorder);
+		float yPosition = yOriginalPosition + (j * pixelHalfSize.y * 2.0f);
 		bool yIsInSelectedRange = (j >= startRowIndex && j <= endRowIndex);
 		for (int i = 0; i < sprite.width; i += 1)
 		{
-			float xPosition = boundingRect.x_min() + (0.5f * pixelDimensionWithBorder) + (i * pixelDimensionWithBorder);
+			float xPosition = xOriginalPosition + (i * pixelHalfSize.x * 2.0f);
 
 			tl::Vec2<float> pixelPosition = { xPosition, yPosition };
 			tl::Rect<float> pixelFootPrint;
