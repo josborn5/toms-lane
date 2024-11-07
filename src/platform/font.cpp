@@ -1,4 +1,5 @@
 #include "../tl-application.hpp"
+#include "./font.hpp"
 #include "./geometry.hpp"
 #include "./utilities.hpp"
 #include "./software-rendering.hpp"
@@ -6,11 +7,12 @@
 
 namespace tl
 {
-static Sprite ascii_chars[94];
+static const int sprite_count = 94;
+static Sprite ascii_chars[sprite_count];
 
 static bool initialized = false;
 
-static void load_sprites(Sprite* target, int count, char* source)
+static void load_sprites(char* source)
 {
 	char* readCursor = source;
 
@@ -22,14 +24,14 @@ static void load_sprites(Sprite* target, int count, char* source)
 	int width = parsedWidth - '0';
 	int height = parsedHeight - '0';
 
-	for (int i = 0; i < count; i += 1)
+	for (int i = 0; i < sprite_count; i += 1)
 	{
-		target[i].width = width;
-		target[i].height = height;
-		target[i].content = readCursor;
+		ascii_chars[i].width = width;
+		ascii_chars[i].height = height;
+		ascii_chars[i].content = readCursor;
 
 		int rowCounter = 0;
-		while (*readCursor && (rowCounter < target[i].height))
+		while (*readCursor && (rowCounter < ascii_chars[i].height))
 		{
 			if (*readCursor == '\n')
 			{
@@ -38,6 +40,14 @@ static void load_sprites(Sprite* target, int count, char* source)
 			readCursor++;
 		}
 	}
+}
+
+int font_interface_initialize_from_sprite(const sprite_font& sprite)
+{
+	load_sprites(sprite.content);
+	initialized = true;
+
+	return 0;
 }
 
 int font_interface_initialize_from_file(char* file_name, MemorySpace& target, MemorySpace& remainder)
@@ -52,7 +62,7 @@ int font_interface_initialize_from_file(char* file_name, MemorySpace& target, Me
 		return file_read_result;
 	}
 
-	load_sprites(ascii_chars, 94, (char*)target.content);
+	load_sprites((char*)target.content);
 	initialized = true;
 
 	target = CarveMemorySpace(font_file_size, remainder);
