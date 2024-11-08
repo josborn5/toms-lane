@@ -1,5 +1,6 @@
 #include "../tl-application.hpp"
 #include "./font.hpp"
+#include "./font-file.hpp"
 #include "./geometry.hpp"
 #include "./utilities.hpp"
 #include "./software-rendering.hpp"
@@ -42,12 +43,18 @@ static void load_sprites(char* source)
 	}
 }
 
-int font_interface_initialize_from_sprite(const sprite_font& sprite)
+static int font_interface_initialize_from_sprite(const sprite_font& sprite)
 {
-	load_sprites(sprite.content);
+	load_sprites((char*)sprite.content);
 	initialized = true;
 
 	return 0;
+}
+
+int font_interface_initualize()
+{
+	sprite_font loaded_font = font_file_interface_get_sprite_font();
+	return font_interface_initialize_from_sprite(loaded_font);
 }
 
 int font_interface_initialize_from_file(char* file_name, MemorySpace& target, MemorySpace& remainder)

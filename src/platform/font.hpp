@@ -7,19 +7,13 @@
 namespace tl
 {
 
-struct sprite_font
-{
-	char* content;
-	int char_count;
-};
-
-int font_interface_initialize_from_sprite(const sprite_font& sprite);
-
 int font_interface_initialize_from_file(
 	char* file_name,
 	MemorySpace& target,
 	MemorySpace& remainder
 );
+
+int font_interface_initialize();
 
 float font_interface_render_chars(
 	const RenderBuffer& buffer,
