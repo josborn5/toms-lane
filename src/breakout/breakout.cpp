@@ -45,13 +45,8 @@ int tl::main(char* commandLine)
 	settings.width = 1280;
 	settings.height = 720;
 
-	tl::MemorySpace font_memory;
-	tl::MemorySpace garbage;
-	tl::file_interface_size_get("font-mono.tlsf", font_memory.sizeInBytes);
-	tl::memory_interface_initialize(font_memory);
-
 	tl::console_interface_open();
-	tl::font_interface_initialize_from_file("font-mono.tlsf", font_memory, garbage);
+	tl::font_interface_initialize();
 
 	int clientX, clientY;
 	int windowOpenResult = tl::OpenWindow(settings, clientX, clientY);
