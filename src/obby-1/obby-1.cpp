@@ -56,8 +56,7 @@ int tl::main(char* commandLine)
 		appMemory
 	);
 
-	font_memory = appMemory.permanent;
-	tl::font_interface_initialize_from_file("font-mono.tlsf", font_memory, appMemory.permanent);
+	tl::font_interface_initialize();
 	Initialize(appMemory);
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
