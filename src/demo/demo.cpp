@@ -66,10 +66,9 @@ static int Initialize(const tl::GameMemory& gameMemory)
 {
 	tl::MemorySpace transientMemory = gameMemory.transient;
 	tl::MemorySpace permanentMemory = gameMemory.permanent;
-	tl::MemorySpace working;
-	tl::font_interface_initialize_from_file("font-mono.tlsf", permanentMemory, working);
+	tl::font_interface_initialize();
 
-	meshArray.initialize(working);
+	meshArray.initialize(permanentMemory);
 
 	// EXE must be run as admin in order to have read permission for the file. need to figure out how to fix this.
 	if (!tl::ReadObjFileToArray4("./teapot.obj", meshArray, transientMemory))

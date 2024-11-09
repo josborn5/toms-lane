@@ -8,7 +8,6 @@ call .\build-scripts\link.bat %APP_DIR% %NAME%^
  "%~dp0\bin-tl-win32\tl-win32.lib"
 
 xcopy "%~dp0\src\demo\teapot.obj" "%APP_DIR%\"
-xcopy "%~dp0\bin-tl-platform\font-mono.tlsf" "%APP_DIR%\"
 
 pushd "%APP_DIR%\"
 call .\demo.exe
