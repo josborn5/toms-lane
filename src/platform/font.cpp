@@ -51,7 +51,7 @@ static int font_interface_initialize_from_sprite(const sprite_font& sprite)
 	return 0;
 }
 
-int font_interface_initualize()
+int font_interface_initialize()
 {
 	sprite_font loaded_font = font_file_interface_get_sprite_font();
 	return font_interface_initialize_from_sprite(loaded_font);
