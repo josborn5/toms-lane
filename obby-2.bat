@@ -9,7 +9,6 @@ call .\build-scripts\link.bat %APP_DIR% %NAME%^
 
 xcopy "%~dp0\src\obby-2\background.bmp" "%APP_DIR%\"
 xcopy "%~dp0\src\obby-2\obby2-player.bmp" "%APP_DIR%\"
-xcopy "%~dp0\bin-tl-platform\font-mono.tlsf" "%APP_DIR%\"
 
 pushd "%APP_DIR%\"
 call .\obby-2.exe %1
