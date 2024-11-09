@@ -325,13 +325,12 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 	state.windowHeight = clientY;
 
 	// Define memory slices
-	tl::MemorySpace perm = gameMemory.permanent;
 	const uint64_t oneKiloByteInBytes = 1024;
 	const uint64_t oneMegaByteInBytes = oneKiloByteInBytes * 1024;
 	constexpr uint64_t color_table_size_in_bytes = sizeof(uint32_t) * 8;
 
-	tl::MemorySpace working;
-	tl::font_interface_initialize_from_file("font-mono.tlsf", perm, working);
+	tl::MemorySpace working = gameMemory.permanent;
+	tl::font_interface_initialize();
 
 	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
 	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
