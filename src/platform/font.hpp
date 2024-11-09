@@ -7,12 +7,6 @@
 namespace tl
 {
 
-int font_interface_initialize_from_file(
-	char* file_name,
-	MemorySpace& target,
-	MemorySpace& remainder
-);
-
 int font_interface_initialize();
 
 float font_interface_render_chars(

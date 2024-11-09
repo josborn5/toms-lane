@@ -57,26 +57,6 @@ int font_interface_initialize()
 	return font_interface_initialize_from_sprite(loaded_font);
 }
 
-int font_interface_initialize_from_file(char* file_name, MemorySpace& target, MemorySpace& remainder)
-{
-	uint64_t font_file_size;
-	tl::file_interface_size_get(file_name, font_file_size);
-
-	remainder = target;
-	int file_read_result = file_interface_read(file_name, target);
-	if (file_read_result != 0)
-	{
-		return file_read_result;
-	}
-
-	load_sprites((char*)target.content);
-	initialized = true;
-
-	target = CarveMemorySpace(font_file_size, remainder);
-
-	return 0;
-}
-
 float font_interface_render_chars(
 	const RenderBuffer& buffer,
 	char* text,
