@@ -1,10 +1,10 @@
 #include "../tl-application.hpp"
 #include "./font.hpp"
-#include "./font-file.hpp"
 #include "./geometry.hpp"
 #include "./utilities.hpp"
 #include "./software-rendering.hpp"
 #include "./software-rendering.sprite.hpp"
+#include "./font-mono.cpp"
 
 namespace tl
 {
@@ -13,39 +13,38 @@ static Sprite ascii_chars[sprite_count];
 
 static bool initialized = false;
 
-static void load_sprites(char* source)
+static void load_sprites(unsigned char source[], int size)
 {
-	char* readCursor = source;
+	int char_cursor = 0;
+	unsigned char parsed_width = source[char_cursor];
+	char_cursor += 2; // increment past the newline
+	unsigned char parsed_height = source[char_cursor];
+	char_cursor += 2; // increment past the newline
 
-	char parsedWidth = *readCursor;
-	readCursor += 2; // increment past the new line
-	char parsedHeight = *readCursor;
-	readCursor += 2; // increment past the new line
-
-	int width = parsedWidth - '0';
-	int height = parsedHeight - '0';
+	int width = parsed_width - '0';
+	int height = parsed_height - '0';
 
 	for (int i = 0; i < sprite_count; i += 1)
 	{
 		ascii_chars[i].width = width;
 		ascii_chars[i].height = height;
-		ascii_chars[i].content = readCursor;
+		ascii_chars[i].content = (char*)&(source[char_cursor]);
 
-		int rowCounter = 0;
-		while (*readCursor && (rowCounter < ascii_chars[i].height))
+		int row_index = 0;
+		while ((char_cursor < size) && (row_index < ascii_chars[i].height))
 		{
-			if (*readCursor == '\n')
+			if (source[char_cursor] == '\n')
 			{
-				rowCounter += 1;
+				row_index += 1;
 			}
-			readCursor++;
+			char_cursor += 1;
 		}
 	}
 }
 
-static int font_interface_initialize_from_sprite(const sprite_font& sprite)
+static int font_interface_initialize_from_sprite()
 {
-	load_sprites((char*)sprite.content);
+	load_sprites(font_mono_tlsf, font_mono_tlsf_len);
 	initialized = true;
 
 	return 0;
@@ -53,8 +52,7 @@ static int font_interface_initialize_from_sprite(const sprite_font& sprite)
 
 int font_interface_initialize()
 {
-	sprite_font loaded_font = font_file_interface_get_sprite_font();
-	return font_interface_initialize_from_sprite(loaded_font);
+	return font_interface_initialize_from_sprite();
 }
 
 float font_interface_render_chars(
