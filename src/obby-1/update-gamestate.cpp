@@ -1,6 +1,8 @@
 #include "./game.hpp"
 #include "../tl-library.hpp"
 
+#include "./brick.cpp"
+
 GameState gamestate = {};
 
 bool initialized = false;
@@ -228,15 +230,27 @@ int LoadBitmapFromFile(
 	return 0;
 }
 
+int load_bitmap_from_embed(unsigned char data[], unsigned int data_size, tl::bitmap& bitmap)
+{
+	tl::MemorySpace embed_memory;
+	embed_memory.content = &data[0];
+	embed_memory.sizeInBytes = data_size;
+
+	return tl::bitmap_interface_initialize(
+		bitmap,
+		embed_memory
+	);
+}
+
 int LoadSprites(const tl::GameMemory& gameMemory)
 {
 	tl::MemorySpace permanent = gameMemory.permanent;
 	tl::MemorySpace transient = gameMemory.transient;
 
-	LoadBitmapFromFile(
-		"brick.bmp",
-		gamestate.regularBlockBitmap,
-		permanent
+	load_bitmap_from_embed(
+		brick_bmp,
+		brick_bmp_len,
+		gamestate.regularBlockBitmap
 	);
 
 	LoadBitmapFromFile(

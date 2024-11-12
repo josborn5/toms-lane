@@ -5,5 +5,7 @@ bin-*
 *.exe
 *.swp
 
-font-mono.cpp
+src/platform/font-mono.cpp
+
+src/obby-1/brick.cpp
 
