@@ -3,6 +3,7 @@
 
 #include "./brick.cpp"
 #include "./checkpoint.cpp"
+#include "./player.cpp"
 
 GameState gamestate = {};
 
@@ -211,27 +212,7 @@ tl::Vec2<float> GetPlayerStartPosition(Block* block, int arraySize)
 	return tl::Vec2<float> { 0.0f, 0.0f };
 }
 
-int LoadBitmapFromFile(
-	char* fileName,
-	tl::bitmap& bitmap,
-	tl::MemorySpace& permanent
-) {
-	int fileReadResult = tl::file_interface_read(
-		fileName,
-		permanent
-	);
-	if (fileReadResult != tl::Success) return 1;
-
-	tl::bitmap_interface_initialize(
-		bitmap,
-		permanent
-	);
-	tl::CarveMemorySpace(bitmap.file_header.fileSizeInBytes, permanent);
-
-	return 0;
-}
-
-int load_bitmap_from_embed(unsigned char data[], unsigned int data_size, tl::bitmap& bitmap)
+static int load_bitmap_from_embed(unsigned char data[], unsigned int data_size, tl::bitmap& bitmap)
 {
 	tl::MemorySpace embed_memory;
 	embed_memory.content = &data[0];
@@ -245,9 +226,6 @@ int load_bitmap_from_embed(unsigned char data[], unsigned int data_size, tl::bit
 
 int LoadSprites(const tl::GameMemory& gameMemory)
 {
-	tl::MemorySpace permanent = gameMemory.permanent;
-	tl::MemorySpace transient = gameMemory.transient;
-
 	load_bitmap_from_embed(
 		brick_bmp,
 		brick_bmp_len,
@@ -260,17 +238,12 @@ int LoadSprites(const tl::GameMemory& gameMemory)
 		gamestate.checkpointBitmap
 	);
 
-	LoadBitmapFromFile(
-		"checkpoint.bmp",
-		gamestate.checkpointBitmap,
-		permanent
+	load_bitmap_from_embed(
+		player_bmp,
+		player_bmp_len,
+		gamestate.player.bitmap
 	);
 
-	LoadBitmapFromFile(
-		"player.bmp",
-		gamestate.player.bitmap,
-		permanent
-	);
 	return 0;
 }
 
