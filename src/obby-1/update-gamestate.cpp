@@ -2,6 +2,7 @@
 #include "../tl-library.hpp"
 
 #include "./brick.cpp"
+#include "./checkpoint.cpp"
 
 GameState gamestate = {};
 
@@ -251,6 +252,12 @@ int LoadSprites(const tl::GameMemory& gameMemory)
 		brick_bmp,
 		brick_bmp_len,
 		gamestate.regularBlockBitmap
+	);
+
+	load_bitmap_from_embed(
+		checkpoint_bmp,
+		checkpoint_bmp_len,
+		gamestate.checkpointBitmap
 	);
 
 	LoadBitmapFromFile(
