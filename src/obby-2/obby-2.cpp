@@ -11,6 +11,9 @@ tl::bitmap playerBitmaps;
 #include "./render-gamestate.cpp"
 #include "./update-gamestate.cpp"
 
+#include "./background-asset.cpp"
+#include "./player-asset.cpp"
+
 /*
 
 * checkpoint
@@ -26,20 +29,16 @@ bool isPaused = false;
 
 int Initialize(const tl::GameMemory& gameMemory)
 {
-	tl::MemorySpace permanent = gameMemory.permanent;
-	tl::MemorySpace transient = gameMemory.transient;
-
-	// Read spritec files
-	LoadBitmapFromFile(
-		"background.bmp",
-		backgroundBitmap,
-		permanent
+	load_bitmap_from_embed(
+		background_bmp,
+		background_bmp_len,
+		backgroundBitmap
 	);
 
-	LoadBitmapFromFile(
-		"obby2-player.bmp",
-		playerBitmaps,
-		permanent
+	load_bitmap_from_embed(
+		obby2_player_bmp,
+		obby2_player_bmp_len,
+		playerBitmaps
 	);
 
 	return 0;
