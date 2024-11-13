@@ -121,6 +121,7 @@ static void InsertRowTests()
 	AssertSetColorForPixel(0);
 	AssertEmptyColorForPixel(1);
 
+	grid.selectedIndex = 0;
 	InsertRow(grid);
 
 	AssertEmptyColorForPixel(0);
@@ -274,6 +275,7 @@ static void InsertColumnTests()
 	sprite.width = 1;
 	sprite.height = 1;
 
+	grid.selectedIndex = 0;
 	InsertColumn(grid);
 
 	assert(grid.selectedIndex == 1);

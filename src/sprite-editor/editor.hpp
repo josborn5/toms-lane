@@ -74,6 +74,11 @@ struct Grid
 			return 0;
 		}
 
+		if (sprite->width == 0)
+		{
+			return -1;
+		}
+
 		return index / sprite->width;
 	}
 
@@ -95,6 +100,13 @@ struct Grid
 	int selected_column_index() const
 	{
 		return column_index(selectedIndex);
+	}
+
+	int max_row_index(int index)
+	{
+		int current_row_index = row_index(index);
+		int max_row_index = (sprite->width * (current_row_index + 1)) - 1;
+		return max_row_index;
 	}
 
 	void size()
