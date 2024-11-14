@@ -442,12 +442,11 @@ static void InsertColumnTests()
 	assert(grid.selectedIndex == 31); // selected pixel is now the last pixel on the last row
 }
 
-int main()
+int RunCommandTests()
 {
-
+	printf("Running command tests");
 	InsertRowTests();
 	InsertColumnTests();
-
-	printf("All tests complete!!!\n");
+	printf("Command tests complete!");
 	return 0;
 }

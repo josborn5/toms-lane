@@ -1,13 +1,14 @@
 #include "./editor.hpp"
+#include <stdio.h>
 
 void TwoByTwoGridTests()
 {
-	SpriteC sprite;
-	sprite.height = 2;
-	sprite.width = 2;
+	SpriteC editor_sprite;
+	editor_sprite.height = 2;
+	editor_sprite.width = 2;
 
-	Grid grid;
-	grid.sprite = &sprite;
+	Grid editor_grid;
+	editor_grid.sprite = &editor_sprite;
 }
 
 void RunEditorTests()
