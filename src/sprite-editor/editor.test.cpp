@@ -1,5 +1,6 @@
 #include "./editor.hpp"
 #include <stdio.h>
+#include <assert.h>
 
 void TwoByTwoGridTests()
 {
@@ -9,9 +10,29 @@ void TwoByTwoGridTests()
 
 	Grid editor_grid;
 	editor_grid.sprite = &editor_sprite;
+
+	// bottom left
+	editor_grid.selectedIndex = 0;
+	assert(editor_grid.selected_row_index() == 0);
+	assert(editor_grid.selected_column_index() == 0);
+	assert(editor_grid.selected_end_column_index() == 2);
+
+	// bottom right
+	editor_grid.selectedIndex = 1;
+	assert(editor_grid.selected_row_index() == 0);
+	assert(editor_grid.selected_column_index() == 1);
+	assert(editor_grid.selected_end_column_index() == 3);
+
+	// top left
+	editor_grid.selectedIndex = 2;
+	assert(editor_grid.selected_row_index() == 1);
+	assert(editor_grid.selected_column_index() == 0);
+	assert(editor_grid.selected_end_column_index() == 2);
 }
 
 void RunEditorTests()
 {
 	TwoByTwoGridTests();
+
+	printf("Editor tests complete!\n");
 }

@@ -102,11 +102,10 @@ struct Grid
 		return column_index(selectedIndex);
 	}
 
-	int max_row_index(int index)
+	int selected_end_column_index()
 	{
-		int current_row_index = row_index(index);
-		int max_row_index = (sprite->width * (current_row_index + 1)) - 1;
-		return max_row_index;
+		int top_left_index = sprite->pixel_count() - sprite->width;
+		return top_left_index + selected_column_index();
 	}
 
 	void size()
