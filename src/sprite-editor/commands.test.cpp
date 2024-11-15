@@ -71,7 +71,7 @@ static const int SET_COLOR = 0xFFDDEE;
 static void ResetState()
 {
 	grid = {0};
-	grid.sprite = &sprite;
+	grid.initialize(&sprite);
 	memory.content = spriteContent;
 	memory.sizeInBytes = sizeof(uint32_t) * pixelCount;
 

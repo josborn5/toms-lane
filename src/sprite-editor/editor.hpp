@@ -53,6 +53,50 @@ struct sprite_camera
 
 typedef void grid_size_change_callback();
 
+struct item_in_grid
+{
+	void initialize(const SpriteC* sprite, const int* index)
+	{
+		_sprite = sprite;
+		_index = index;
+	}
+
+	int row_index() const
+	{
+		if (_sprite->height == 1)
+		{
+			return 0;
+		}
+
+		if (_sprite->width == 0)
+		{
+			return -1;
+		}
+
+		return *_index / _sprite->width;
+	}
+
+	int column_index() const
+	{
+		if (_sprite->width == 1)
+		{
+			return 0;
+		}
+
+		return *_index % _sprite->width;
+	}
+
+	int selected_end_column_index()
+	{
+		int top_left_index = _sprite->pixel_count() - _sprite->width;
+		return top_left_index + column_index();
+	}
+
+	private:
+		const SpriteC* _sprite;
+		const int* _index;
+};
+
 struct Grid
 {
 	SpriteC* sprite;
@@ -60,7 +104,15 @@ struct Grid
 	int selectedIndex = 0;
 	int selectedRangeIndex = 0;
 
+	item_in_grid cursor;
+
 	grid_size_change_callback* size_change_callback;
+
+	void initialize(SpriteC* sprite_data)
+	{
+		sprite = sprite_data;
+		cursor.initialize(sprite_data, &selectedIndex);
+	}
 
 	uint32_t selected_color() const
 	{
@@ -80,11 +132,6 @@ struct Grid
 		}
 
 		return index / sprite->width;
-	}
-
-	int selected_row_index() const
-	{
-		return row_index(selectedIndex);
 	}
 
 	int column_index(int index) const

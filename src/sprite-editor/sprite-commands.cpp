@@ -89,7 +89,7 @@ static int AppendRowToSpriteC(SpriteC& sprite, int insertAtIndex)
 
 int InsertRow(Grid& grid)
 {
-	int selectedRowIndex = grid.selected_row_index();
+	int selectedRowIndex = grid.cursor.row_index();
 
 	grid.selectedIndex += grid.sprite->width;
 
@@ -169,7 +169,7 @@ static int AppendColumnToSpriteC(SpriteC& sprite, int insertAtIndex)
 int InsertColumn(Grid& grid)
 {
 	int selectedColumnIndex = grid.selected_column_index();
-	int selectedRowIndex = grid.selected_row_index();
+	int selectedRowIndex = grid.cursor.row_index();
 	grid.selectedIndex += (1 + selectedRowIndex);
 
 	return AppendColumnToSpriteC(*grid.sprite, selectedColumnIndex);
