@@ -82,13 +82,13 @@ static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
 
 	if (input.buttons[tl::KEY_RIGHT].keyDown)
 	{
-		int maxIndexForRow = (grid.sprite->width * (currentRowIndex + 1)) - 1;
-		if (prevIndex < maxIndexForRow) return prevIndex + 1;
+		grid.cursor.move_right();
+		return grid.selectedIndex;
 	}
 	else if (input.buttons[tl::KEY_LEFT].keyDown)
 	{
-		int minIndexForRow = grid.sprite->width * currentRowIndex;
-		if (prevIndex > minIndexForRow) return prevIndex - 1;
+		grid.cursor.move_left();
+		return grid.selectedIndex;
 	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
