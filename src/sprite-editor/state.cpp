@@ -92,13 +92,13 @@ static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
 	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
-		int provisionalSelectedPixelIndex = prevIndex - grid.sprite->width;
-		if (provisionalSelectedPixelIndex >= 0) return provisionalSelectedPixelIndex;
+		grid.cursor.move_down();
+		return grid.selectedIndex;
 	}
 	else if (input.buttons[tl::KEY_UP].keyDown)
 	{
-		int provisionalSelectedPixelIndex = prevIndex + grid.sprite->width;
-		if (provisionalSelectedPixelIndex <= maxPixelIndex) return provisionalSelectedPixelIndex;
+		grid.cursor.move_up();
+		return grid.selectedIndex;
 	}
 	return prevIndex;
 }
