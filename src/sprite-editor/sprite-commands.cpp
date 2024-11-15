@@ -168,7 +168,7 @@ static int AppendColumnToSpriteC(SpriteC& sprite, int insertAtIndex)
 
 int InsertColumn(Grid& grid)
 {
-	int selectedColumnIndex = grid.selected_column_index();
+	int selectedColumnIndex = grid.cursor.column_index();
 	int selectedRowIndex = grid.cursor.row_index();
 	grid.selectedIndex += (1 + selectedRowIndex);
 

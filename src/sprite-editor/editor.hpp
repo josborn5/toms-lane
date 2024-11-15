@@ -144,15 +144,10 @@ struct Grid
 		return index % sprite->width;
 	}
 
-	int selected_column_index() const
-	{
-		return column_index(selectedIndex);
-	}
-
 	int selected_end_column_index()
 	{
 		int top_left_index = sprite->pixel_count() - sprite->width;
-		return top_left_index + selected_column_index();
+		return top_left_index + cursor.column_index();
 	}
 
 	void size()
