@@ -112,6 +112,16 @@ struct item_in_grid
 		}
 	}
 
+	void move_up()
+	{
+		int max_index = _sprite->pixel_count() - 1;
+		int next_index = *_index + _sprite->width;
+		if (next_index <= max_index)
+		{
+			*_index = next_index;
+		}
+	}
+
 	private:
 		const SpriteC* _sprite;
 		int* _index;
