@@ -105,6 +105,7 @@ struct Grid
 	int selectedRangeIndex = 0;
 
 	item_in_grid cursor;
+	item_in_grid range;
 
 	grid_size_change_callback* size_change_callback;
 
@@ -112,6 +113,7 @@ struct Grid
 	{
 		sprite = sprite_data;
 		cursor.initialize(sprite_data, &selectedIndex);
+		range.initialize(sprite_data, &selectedRangeIndex);
 	}
 
 	uint32_t selected_color() const
