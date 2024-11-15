@@ -122,6 +122,15 @@ struct item_in_grid
 		}
 	}
 
+	void move_down()
+	{
+		int next_index = *_index - _sprite->width;
+		if (next_index >= 0)
+		{
+			*_index = next_index;
+		}
+	}
+
 	private:
 		const SpriteC* _sprite;
 		int* _index;
