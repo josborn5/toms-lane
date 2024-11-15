@@ -92,6 +92,16 @@ struct item_in_grid
 		return top_left_index + column_index();
 	}
 
+	void move_left()
+	{
+		int min_row_index = _sprite->width * row_index();
+		int next_index = *_index - 1;
+		if (next_index >= min_row_index)
+		{
+			*_index = next_index;
+		}
+	}
+
 	void move_right()
 	{
 		int max_row_index = (_sprite->width * (row_index() + 1)) - 1;
