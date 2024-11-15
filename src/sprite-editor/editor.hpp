@@ -55,7 +55,7 @@ typedef void grid_size_change_callback();
 
 struct item_in_grid
 {
-	void initialize(const SpriteC* sprite, const int* index)
+	void initialize(const SpriteC* sprite, int* index)
 	{
 		_sprite = sprite;
 		_index = index;
@@ -92,9 +92,19 @@ struct item_in_grid
 		return top_left_index + column_index();
 	}
 
+	void move_right()
+	{
+		int max_row_index = (_sprite->width * (row_index() + 1)) - 1;
+		int next_index = *_index + 1;
+		if (next_index <= max_row_index)
+		{
+			*_index = next_index;
+		}
+	}
+
 	private:
 		const SpriteC* _sprite;
-		const int* _index;
+		int* _index;
 };
 
 struct Grid
