@@ -50,9 +50,17 @@ static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
 	int currentRowIndex = grid.row_index(prevIndex);
 	if (input.buttons[skipModifierKey].isDown)
 	{
-		if (input.buttons[tl::KEY_HOME].keyDown) return 0;
+		if (input.buttons[tl::KEY_HOME].keyDown)
+		{
+			grid.cursor.move_start();
+			return 0;
+		}
 
-		if (input.buttons[tl::KEY_END].keyDown) return maxPixelIndex;
+		if (input.buttons[tl::KEY_END].keyDown)
+		{
+			grid.cursor.move_end();
+			return grid.selectedIndex;
+		}
 
 		if (input.buttons[tl::KEY_LEFT].keyDown)
 		{

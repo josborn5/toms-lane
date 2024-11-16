@@ -61,6 +61,11 @@ struct item_in_grid
 		_index = index;
 	}
 
+	uint32_t color() const
+	{
+		return _sprite->pixels()[*_index];
+	}
+
 	int row_index() const
 	{
 		if (_sprite->height == 1)
@@ -86,7 +91,7 @@ struct item_in_grid
 		return *_index % _sprite->width;
 	}
 
-	int column_end_index()
+	int column_end_index() const
 	{
 		int top_left_index = _sprite->pixel_count() - _sprite->width;
 		return top_left_index + column_index();
@@ -114,9 +119,9 @@ struct item_in_grid
 
 	void move_up()
 	{
-		int max_index = _sprite->pixel_count() - 1;
+		int max = max_index();
 		int next_index = *_index + _sprite->width;
-		if (next_index <= max_index)
+		if (next_index <= max)
 		{
 			*_index = next_index;
 		}
@@ -138,12 +143,54 @@ struct item_in_grid
 
 	void move_end()
 	{
-		*_index = _sprite->pixel_count() - 1;
+		*_index = max_index();
+	}
+
+	void color_jump_left()
+	{
+		int min_row_index = _sprite->width * row_index();
+		jump_to_next_color(-1, min_row_index, max_index());
+	}
+
+	void color_jump_right()
+	{
+		int max_row_index = (_sprite->width * (row_index() + 1)) - 1;
+		jump_to_next_color(-1, 0, max_row_index);
+	}
+
+	void color_jump_up()
+	{
+		jump_to_next_color(_sprite->width, 0, max_index());
+	}
+
+	void color_jump_down()
+	{
+		jump_to_next_color(-_sprite->width, 0, max_index());
 	}
 
 	private:
 		const SpriteC* _sprite;
 		int* _index;
+
+		void jump_to_next_color(int step, int inclusiveMinPixelIndex, int inclusiveMaxPixelIndex)
+		{
+			uint32_t active_color = color();
+			int cursor = *_index;
+			int next_index = *_index + step;
+			bool sameColor = true;
+			while (next_index >= inclusiveMinPixelIndex && next_index <= inclusiveMaxPixelIndex && sameColor)
+			{
+				cursor = next_index;
+				sameColor = (active_color == _sprite->pixels()[cursor]);
+				next_index += step;
+			}
+			*_index = cursor;
+		}
+
+		int max_index()
+		{
+			return _sprite->pixel_count() - 1;
+		}
 };
 
 struct Grid
@@ -167,7 +214,7 @@ struct Grid
 
 	uint32_t selected_color() const
 	{
-		return sprite->pixels()[selectedIndex];
+		return cursor.color();
 	}
 
 	int row_index(int index) const

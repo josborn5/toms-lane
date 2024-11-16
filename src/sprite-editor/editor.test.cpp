@@ -12,7 +12,7 @@ void TwoByTwoGridTests()
 	editor_grid.initialize(&editor_sprite);
 
 	// bottom left
-	editor_grid.cursor.move_home();
+	editor_grid.cursor.move_start();
 	assert(editor_grid.cursor.row_index() == 0);
 	assert(editor_grid.cursor.column_index() == 0);
 	assert(editor_grid.cursor.column_end_index() == 2);
