@@ -131,6 +131,16 @@ struct item_in_grid
 		}
 	}
 
+	void move_start()
+	{
+		*_index = 0;
+	}
+
+	void move_end()
+	{
+		*_index = _sprite->pixel_count() - 1;
+	}
+
 	private:
 		const SpriteC* _sprite;
 		int* _index;

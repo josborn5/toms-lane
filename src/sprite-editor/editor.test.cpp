@@ -12,9 +12,7 @@ void TwoByTwoGridTests()
 	editor_grid.initialize(&editor_sprite);
 
 	// bottom left
-	editor_grid.selectedIndex = 1;
-	editor_grid.cursor.move_left();
-	editor_grid.cursor.move_left();
+	editor_grid.cursor.move_home();
 	assert(editor_grid.cursor.row_index() == 0);
 	assert(editor_grid.cursor.column_index() == 0);
 	assert(editor_grid.cursor.column_end_index() == 2);
@@ -27,6 +25,7 @@ void TwoByTwoGridTests()
 	assert(editor_grid.cursor.column_end_index() == 3);
 
 	// top left
+	editor_grid.cursor.move_left();
 	editor_grid.cursor.move_left();
 	editor_grid.cursor.move_up();
 	editor_grid.cursor.move_up();
@@ -46,6 +45,12 @@ void TwoByTwoGridTests()
 	assert(editor_grid.cursor.row_index() == 0);
 	assert(editor_grid.cursor.column_index() == 1);
 	assert(editor_grid.cursor.column_end_index() == 3);
+
+	// top left
+	editor_grid.cursor.move_end();
+	assert(editor_grid.cursor.row_index() == 1);
+	assert(editor_grid.cursor.column_index() == 0);
+	assert(editor_grid.cursor.column_end_index() == 2);
 }
 
 void RunEditorTests()
