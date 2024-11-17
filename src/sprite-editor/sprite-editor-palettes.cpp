@@ -136,7 +136,8 @@ static void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
 static void SelectPalette(EditorState& state)
 {
 	state.palette_.initialize(palettes.get_pointer(selectedPaletteIndex).value);
-	state.palette_.selectedIndex = 0;
+	state.palette_.cursor.move_start();
+	state.palette_.range.move_start();
 	state.palette_.size();
 }
 

@@ -61,6 +61,11 @@ struct item_in_grid
 		_index = index;
 	}
 
+	int index() const
+	{
+		return *_index;
+	}
+
 	uint32_t color() const
 	{
 		return _sprite->pixels()[*_index];

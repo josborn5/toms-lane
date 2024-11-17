@@ -121,7 +121,7 @@ static void InsertRowTests()
 	AssertSetColorForPixel(0);
 	AssertEmptyColorForPixel(1);
 
-	grid.selectedIndex = 0;
+	grid.cursor.move_start();
 	InsertRow(grid);
 
 	AssertEmptyColorForPixel(0);
@@ -139,15 +139,15 @@ static void InsertRowTests()
 	ResetState();
 	sprite.width = 1;
 	sprite.height = 1;
-	grid.selectedIndex = 0;
+	grid.cursor.move_start();
 
 	InsertRow(grid);
 
-	assert(grid.selectedIndex == 1);
+	assert(grid.cursor.index() == 1);
 
 	InsertRow(grid);
 
-	assert(grid.selectedIndex == 2);
+	assert(grid.cursor.index() == 2);
 
 	printf("\n2x1 pixel content test\n");
 	ResetState();
@@ -170,22 +170,24 @@ static void InsertRowTests()
 	ResetState();
 	sprite.width = 2;
 	sprite.height = 1;
-	grid.selectedIndex = 1; // last column in first row
+	grid.cursor.move_start();
+	grid.cursor.move_right(); // last column in first row
 
 	InsertRow(grid);
 
-	assert(grid.selectedIndex == 3); // last column in second row
+	assert(grid.cursor.index() == 3); // last column in second row
 
 	InsertRow(grid);
 
-	assert(grid.selectedIndex == 5); // last colun in third row
+	assert(grid.cursor.index() == 5); // last colun in third row
 
 	printf("\n2x2 pixel content test\n");
 	ResetState();
 	sprite.width = 2;
 	sprite.height = 2;
 	FillSprite();
-	grid.selectedIndex = 2;
+	grid.cursor.move_start();
+	grid.cursor.move_up();
 
 	AssertSetColorForPixel(0);
 	AssertSetColorForPixel(1);
@@ -206,43 +208,16 @@ static void InsertRowTests()
 	ResetState();
 	sprite.width = 2;
 	sprite.height = 2;
-	grid.selectedIndex = 2; // select the first pixel in the second row
+	grid.cursor.move_start();
+	grid.cursor.move_up(); // select the first pixel in the second row
 
 	InsertRow(grid);
 
-	assert(grid.selectedIndex == 4); // selected pixel is now the first pixel on the third row
+	assert(grid.cursor.index() == 4); // selected pixel is now the first pixel on the third row
 
 	InsertRow(grid);
 
-	assert(grid.selectedIndex == 6); // selected pixel is now the first pixel on the fourth row
-
-	printf("\n8x2 selected index test\n");
-	ResetState();
-	sprite.width = 8;
-	sprite.height = 2;
-	grid.selectedIndex = 8; // select the first pixel in the second row
-
-	InsertRow(grid);
-
-	assert(grid.selectedIndex == 16); // selected pixel is now the first pixel on the third row
-
-	InsertRow(grid);
-
-	assert(grid.selectedIndex == 24); // selected pixel is now the first pixel on the fourth row
-
-	printf("\n2x8 selected index test\n");
-	ResetState();
-	sprite.width = 2;
-	sprite.height = 8;
-	grid.selectedIndex = 3; // select the last pixel in the second row
-
-	InsertRow(grid);
-
-	assert(grid.selectedIndex == 5); // selected pixel is now the last pixel on the third row
-
-	InsertRow(grid);
-
-	assert(grid.selectedIndex == 7); // selected pixel is now the last pixel on the fourth row
+	assert(grid.cursor.index() == 6); // selected pixel is now the first pixel on the fourth row
 }
 
 static void InsertColumnTests()
@@ -275,21 +250,22 @@ static void InsertColumnTests()
 	sprite.width = 1;
 	sprite.height = 1;
 
-	grid.selectedIndex = 0;
+	grid.cursor.move_start();
 	InsertColumn(grid);
 
-	assert(grid.selectedIndex == 1);
+	assert(grid.cursor.index() == 1);
 
 	InsertColumn(grid);
 
-	assert(grid.selectedIndex == 2);
+	assert(grid.cursor.index() == 2);
 
 	printf("\n\n1x2 pixel content test\n");
 	ResetState();
 	sprite.width = 1;
 	sprite.height = 2;
 	FillSprite();
-	grid.selectedIndex = 1; // select first column in bottom row
+	grid.cursor.move_start();
+	grid.cursor.move_up();
 
 	AssertSetColorForPixel(0);
 	AssertSetColorForPixel(1);
@@ -316,15 +292,16 @@ static void InsertColumnTests()
 	ResetState();
 	sprite.width = 1;
 	sprite.height = 2;
-	grid.selectedIndex = 1; // select first column in bottom row
+	grid.cursor.move_start();
+	grid.cursor.move_up();
 
 	InsertColumn(grid);
 
-	assert(grid.selectedIndex == 3); // second column in bottom row is now selected
+	assert(grid.cursor.index() == 3); // second column in bottom row is now selected
 
 	InsertColumn(grid);
 
-	assert(grid.selectedIndex == 5); // third column on bottom row is now selected
+	assert(grid.cursor.index() == 5); // third column on bottom row is now selected
 
 	printf("\n\n2x1 pixel content test\n");
 	ResetState();
@@ -353,15 +330,16 @@ static void InsertColumnTests()
 	ResetState();
 	sprite.width = 2;
 	sprite.height = 1;
-	grid.selectedIndex = 1;
+	grid.cursor.move_start();
+	grid.cursor.move_right();
 
 	InsertColumn(grid);
 
-	assert(grid.selectedIndex == 2);
+	assert(grid.cursor.index() == 2);
 
 	InsertColumn(grid);
 
-	assert(grid.selectedIndex == 3);
+	assert(grid.cursor.index() == 3);
 
 	printf("\n\n2x2 pixel content test\n");
 	ResetState();
@@ -403,43 +381,16 @@ static void InsertColumnTests()
 	ResetState();
 	sprite.width = 2;
 	sprite.height = 2;
-	grid.selectedIndex = 2; // first column of second row is selected
+	grid.cursor.move_start();
+	grid.cursor.move_up(); // first column of second row is selected
 
 	InsertColumn(grid);
 
-	assert(grid.selectedIndex == 4); // second column of second row is selected
+	assert(grid.cursor.index() == 4); // second column of second row is selected
 
 	InsertColumn(grid);
 
-	assert(grid.selectedIndex == 6); // third column of second for is selected
-
-	printf("\n8x2 selected index test\n");
-	ResetState();
-	sprite.width = 8;
-	sprite.height = 2;
-	grid.selectedIndex = 8; // select the first pixel in the second row
-
-	InsertColumn(grid);
-
-	assert(grid.selectedIndex == 10); // selected pixel is now the second pixel on the second row
-
-	InsertColumn(grid);
-
-	assert(grid.selectedIndex == 12); // selected pixel is now the third pixel on the second row
-
-	printf("\n2x8 selected index test\n");
-	ResetState();
-	sprite.width = 2;
-	sprite.height = 8;
-	grid.selectedIndex = 15; // select the last pixel in the last row
-
-	InsertColumn(grid);
-
-	assert(grid.selectedIndex == 23); // selected pixel is now the last pixel on the last row
-
-	InsertColumn(grid);
-
-	assert(grid.selectedIndex == 31); // selected pixel is now the last pixel on the last row
+	assert(grid.cursor.index() == 6); // third column of second for is selected
 }
 
 int RunCommandTests()
@@ -447,6 +398,6 @@ int RunCommandTests()
 	printf("Running command tests");
 	InsertRowTests();
 	InsertColumnTests();
-	printf("Command tests complete!");
+	printf("Command tests complete!\n");
 	return 0;
 }

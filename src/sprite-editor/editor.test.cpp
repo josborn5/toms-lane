@@ -48,6 +48,7 @@ void TwoByTwoGridTests()
 
 	// top left
 	editor_grid.cursor.move_end();
+	editor_grid.cursor.move_left();
 	assert(editor_grid.cursor.row_index() == 1);
 	assert(editor_grid.cursor.column_index() == 0);
 	assert(editor_grid.cursor.column_end_index() == 2);
