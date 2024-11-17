@@ -388,7 +388,7 @@ static void ExecuteCurrentCommand()
 	else if (CommandIs("DR") && state.pixels.sprite->height > 1) // delete row
 	{
 		// Get start and end index of row
-		int rowIndex = (int)(state.pixels.selectedIndex / state.pixels.sprite->width);
+		int rowIndex = (int)(state.pixels.cursor.index() / state.pixels.sprite->width);
 		unsigned int startDeleteIndex = rowIndex * state.pixels.sprite->width;
 		unsigned int endDeleteIndex = rowIndex + state.pixels.sprite->width - 1;
 		unsigned int spriteLength = state.pixels.sprite->width * state.pixels.sprite->height;
@@ -406,7 +406,7 @@ static void ExecuteCurrentCommand()
 	else if (CommandIs("DC") && state.pixels.sprite->width > 1) // delete column
 	{
 		// get the column index
-		unsigned int columnIndex = state.pixels.selectedIndex % state.pixels.sprite->width;
+		unsigned int columnIndex = state.pixels.cursor.index() % state.pixels.sprite->width;
 		unsigned int spriteLength = state.pixels.sprite->width * state.pixels.sprite->height;
 		for (int i = state.pixels.sprite->height - 1; i >= 0; i -= 1)
 		{
@@ -451,7 +451,7 @@ static void ExecuteCurrentCommand()
 		Grid& activeGrid = *state.activeControl;
 		uint32_t parsed_color;
 		ParseColorFromCharArray(pointerToNumberChar, tempMemory, parsed_color);
-		activeGrid.sprite->set_pixel_data(activeGrid.selectedIndex, parsed_color);
+		activeGrid.sprite->set_pixel_data(activeGrid.cursor.index(), parsed_color);
 		ClearCommandBuffer();
 		return;
 	}
@@ -481,7 +481,7 @@ static bool CheckForPaste(const tl::Input& input)
 {
 	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.pixels_are_selected())
 	{
-		state.pixels.sprite->set_pixel_data(state.pixels.selectedIndex, copiedColor);
+		state.pixels.sprite->set_pixel_data(state.pixels.cursor.index(), copiedColor);
 		return true;
 	}
 	return false;
@@ -523,7 +523,7 @@ static void ApplyViewModeInputToState(const tl::Input& input)
 	if (input.buttons[tl::KEY_V].keyDown)
 	{
 		state.mode = Visual;
-		state.pixels.selectedRangeIndex = state.pixels.selectedIndex;
+		state.pixels.selectedRangeIndex = state.pixels.cursor.index();
 		WriteStringToCommandBuffer("VISUAL");
 		return;
 	}
@@ -549,10 +549,10 @@ static void ApplyInsertModeInputToState(const tl::Input& input)
 	if (input.buttons[tl::KEY_ENTER].keyDown)
 	{
 		uint32_t pixel_data_to_set = (state.pixels_are_selected() && state.canvas.has_color_table())
-			? state.color_table.selectedIndex
+			? state.color_table.cursor.index()
 			: currentColor;
 		Grid& activeControl = *state.activeControl;
-		activeControl.sprite->set_pixel_data(activeControl.selectedIndex, pixel_data_to_set);
+		activeControl.sprite->set_pixel_data(activeControl.cursor.index(), pixel_data_to_set);
 		return;
 	}
 }
