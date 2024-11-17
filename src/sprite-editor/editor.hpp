@@ -103,9 +103,8 @@ struct item_in_grid
 
 	void move_left()
 	{
-		int min_row_index = _sprite->width * row_index();
 		int next_index = _index - 1;
-		if (next_index >= min_row_index)
+		if (next_index >= min_row_index())
 		{
 			_index = next_index;
 		}
@@ -113,12 +112,21 @@ struct item_in_grid
 
 	void move_right()
 	{
-		int max_row_index = (_sprite->width * (row_index() + 1)) - 1;
 		int next_index = _index + 1;
-		if (next_index <= max_row_index)
+		if (next_index <= max_row_index())
 		{
 			_index = next_index;
 		}
+	}
+
+	void move_row_start()
+	{
+		_index = min_row_index();
+	}
+
+	void move_row_end()
+	{
+		_index = max_row_index();
 	}
 
 	void move_up()
@@ -152,14 +160,13 @@ struct item_in_grid
 
 	void color_jump_left()
 	{
-		int min_row_index = _sprite->width * row_index();
-		jump_to_next_color(-1, min_row_index, max_index());
+		jump_to_next_color(-1, min_row_index(), max_index());
 	}
 
 	void color_jump_right()
 	{
-		int max_row_index = (_sprite->width * (row_index() + 1)) - 1;
-		jump_to_next_color(1, 0, max_row_index);
+		int max_row = max_row_index();
+		jump_to_next_color(1, 0, max_row);
 	}
 
 	void color_jump_up()
@@ -200,6 +207,16 @@ struct item_in_grid
 		int max_index()
 		{
 			return _sprite->pixel_count() - 1;
+		}
+
+		int max_row_index()
+		{
+			return (_sprite->width * (row_index() + 1)) - 1;
+		}
+
+		int min_row_index()
+		{
+			return _sprite->width * row_index();
 		}
 };
 

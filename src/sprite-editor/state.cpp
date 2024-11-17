@@ -71,22 +71,32 @@ static bool apply_movement_to_item_in_grid(const tl::Input &input, item_in_grid&
 		return false;
 	}
 
+	if (input.buttons[tl::KEY_HOME].keyDown)
+	{
+		grid.move_row_start();
+		return true;
+	}
+	if (input.buttons[tl::KEY_END].keyDown)
+	{
+		grid.move_row_end();
+		return true;
+	}
 	if (input.buttons[tl::KEY_RIGHT].keyDown)
 	{
 		grid.move_right();
 		return true;
 	}
-	else if (input.buttons[tl::KEY_LEFT].keyDown)
+	if (input.buttons[tl::KEY_LEFT].keyDown)
 	{
 		grid.move_left();
 		return true;
 	}
-	else if (input.buttons[tl::KEY_DOWN].keyDown)
+	if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
 		grid.move_down();
 		return true;
 	}
-	else if (input.buttons[tl::KEY_UP].keyDown)
+	if (input.buttons[tl::KEY_UP].keyDown)
 	{
 		grid.move_up();
 		return true;
