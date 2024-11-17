@@ -29,86 +29,69 @@ static char filePathBuffer[filePathBufferSize] = {0};
 static constexpr char* filePath = &filePathBuffer[0];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
 
-static int GetCursorIndexForNextColor(Grid& grid, int step, int inclusiveMinPixelIndex, int inclusiveMaxPixelIndex, int prevIndex)
+static bool apply_movement_to_item_in_grid(const tl::Input &input, item_in_grid& grid)
 {
-	uint32_t active_color = grid.selected_color();
-	int pixelIndex = prevIndex;
-	int provisionalIndex = pixelIndex + step;
-	bool sameColor = true;
-	while (provisionalIndex >= inclusiveMinPixelIndex && provisionalIndex <= inclusiveMaxPixelIndex && sameColor)
-	{
-		pixelIndex = provisionalIndex;
-		sameColor = (active_color == grid.sprite->get_pixel_data(pixelIndex));
-		provisionalIndex += step;
-	}
-	return pixelIndex;
-}
-
-static int GetCursorIndex(const tl::Input &input, Grid& grid, int prevIndex)
-{
-	int maxPixelIndex = (grid.sprite->width * grid.sprite->height) - 1;
-	int currentRowIndex = grid.row_index(prevIndex);
 	if (input.buttons[skipModifierKey].isDown)
 	{
 		if (input.buttons[tl::KEY_HOME].keyDown)
 		{
-			grid.cursor.move_start();
-			return 0;
+			grid.move_start();
+			return true;
 		}
 
 		if (input.buttons[tl::KEY_END].keyDown)
 		{
-			grid.cursor.move_end();
-			return grid.selectedIndex;
+			grid.move_end();
+			return true;
 		}
 
 		if (input.buttons[tl::KEY_LEFT].keyDown)
 		{
-			int minIndexForRow = grid.sprite->width * currentRowIndex;
-			int newSelectedIndex = GetCursorIndexForNextColor(grid, -1, minIndexForRow , maxPixelIndex, prevIndex);
-			return newSelectedIndex;
+			grid.color_jump_left();
+			return true;
 		}
 
 		if (input.buttons[tl::KEY_RIGHT].keyDown)
 		{
-			int maxIndexForRow = (grid.sprite->width * (currentRowIndex + 1)) - 1;
-			int newSelectedIndex = GetCursorIndexForNextColor(grid, 1, 0, maxIndexForRow, prevIndex);
-			return newSelectedIndex;
+			grid.color_jump_right();
+			return true;
 		}
 
 		if (input.buttons[tl::KEY_UP].keyDown)
 		{
-			return GetCursorIndexForNextColor(grid, grid.sprite->width, 0, maxPixelIndex, prevIndex);
+			grid.color_jump_up();
+			return true;
 		}
 
 		if (input.buttons[tl::KEY_DOWN].keyDown)
 		{
-			return GetCursorIndexForNextColor(grid, -grid.sprite->width, 0, maxPixelIndex, prevIndex);
+			grid.color_jump_down();
+			return true;
 		}
-		return prevIndex;
+		return false;
 	}
 
 	if (input.buttons[tl::KEY_RIGHT].keyDown)
 	{
-		grid.cursor.move_right();
-		return grid.selectedIndex;
+		grid.move_right();
+		return true;
 	}
 	else if (input.buttons[tl::KEY_LEFT].keyDown)
 	{
-		grid.cursor.move_left();
-		return grid.selectedIndex;
+		grid.move_left();
+		return true;
 	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
-		grid.cursor.move_down();
-		return grid.selectedIndex;
+		grid.move_down();
+		return true;
 	}
 	else if (input.buttons[tl::KEY_UP].keyDown)
 	{
-		grid.cursor.move_up();
-		return grid.selectedIndex;
+		grid.move_up();
+		return true;
 	}
-	return prevIndex;
+	return false;
 }
 
 static bool ApplyCursorMovementToState(const tl::Input& input)
@@ -116,12 +99,8 @@ static bool ApplyCursorMovementToState(const tl::Input& input)
 	if (input.buttons[cameraModifierKey].isDown) return false;
 
 	Grid& activeGrid = *state.activeControl;
-	int newCursorIndex = GetCursorIndex(input, activeGrid, activeGrid.selectedIndex);
-	bool handledInput = activeGrid.selectedIndex != newCursorIndex;
-	activeGrid.selectedIndex = newCursorIndex;
-
+	bool handledInput = apply_movement_to_item_in_grid(input, activeGrid.cursor);
 	currentColor = state.palette_.selected_color();
-
 	return handledInput;
 }
 
@@ -171,11 +150,7 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 static bool ApplySelectedRangeMovementToState(const tl::Input& input)
 {
 	Grid& activeGrid = *state.activeControl;
-	int newCursorIndex = GetCursorIndex(input, activeGrid, activeGrid.selectedRangeIndex);
-	bool handledInput = activeGrid.selectedRangeIndex != newCursorIndex;
-	activeGrid.selectedRangeIndex = newCursorIndex;
-
-	return handledInput;
+	return apply_movement_to_item_in_grid(input, activeGrid.range);
 }
 
 static void ClearCommandBuffer()

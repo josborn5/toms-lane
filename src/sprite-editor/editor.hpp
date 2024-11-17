@@ -155,7 +155,7 @@ struct item_in_grid
 	void color_jump_right()
 	{
 		int max_row_index = (_sprite->width * (row_index() + 1)) - 1;
-		jump_to_next_color(-1, 0, max_row_index);
+		jump_to_next_color(1, 0, max_row_index);
 	}
 
 	void color_jump_up()
