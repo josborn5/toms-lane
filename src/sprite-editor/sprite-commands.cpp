@@ -89,11 +89,9 @@ static int AppendRowToSpriteC(SpriteC& sprite, int insertAtIndex)
 
 int InsertRow(Grid& grid)
 {
-	int selectedRowIndex = grid.cursor.row_index();
-
-	grid.selectedIndex += grid.sprite->width;
-
-	return AppendRowToSpriteC(*grid.sprite, selectedRowIndex);
+	int append_result = AppendRowToSpriteC(*grid.sprite, grid.cursor.row_index());
+	grid.cursor.move_up();
+	return append_result;
 }
 
 static int AppendColumnToSpriteC(SpriteC& sprite, int insertAtIndex)
@@ -170,8 +168,10 @@ int InsertColumn(Grid& grid)
 {
 	int selectedColumnIndex = grid.cursor.column_index();
 	int selectedRowIndex = grid.cursor.row_index();
-	grid.selectedIndex += (1 + selectedRowIndex);
-
-	return AppendColumnToSpriteC(*grid.sprite, selectedColumnIndex);
+	int append_result = AppendColumnToSpriteC(*grid.sprite, selectedColumnIndex);
+	grid.cursor.move_start();
+	for (int i = 0; i < selectedRowIndex; i += 1) grid.cursor.move_up();
+	for (int i = 0; i < selectedColumnIndex + 1; i += 1) grid.cursor.move_right();
+	return append_result;
 }
 
