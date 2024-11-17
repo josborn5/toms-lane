@@ -225,31 +225,6 @@ struct Grid
 		return cursor.color();
 	}
 
-	int row_index(int index) const
-	{
-		if (sprite->height == 1)
-		{
-			return 0;
-		}
-
-		if (sprite->width == 0)
-		{
-			return -1;
-		}
-
-		return index / sprite->width;
-	}
-
-	int column_index(int index) const
-	{
-		if (sprite->width == 1)
-		{
-			return 0;
-		}
-
-		return index % sprite->width;
-	}
-
 	void size()
 	{
 		if (size_change_callback != nullptr)
