@@ -55,20 +55,19 @@ typedef void grid_size_change_callback();
 
 struct item_in_grid
 {
-	void initialize(const SpriteC* sprite, int* index)
+	void initialize(const SpriteC* sprite)
 	{
 		_sprite = sprite;
-		_index = index;
 	}
 
 	int index() const
 	{
-		return *_index;
+		return _index;
 	}
 
 	uint32_t color() const
 	{
-		return _sprite->pixels()[*_index];
+		return _sprite->pixels()[_index];
 	}
 
 	int row_index() const
@@ -83,7 +82,7 @@ struct item_in_grid
 			return -1;
 		}
 
-		return *_index / _sprite->width;
+		return _index / _sprite->width;
 	}
 
 	int column_index() const
@@ -93,7 +92,7 @@ struct item_in_grid
 			return 0;
 		}
 
-		return *_index % _sprite->width;
+		return _index % _sprite->width;
 	}
 
 	int column_end_index() const
@@ -105,50 +104,50 @@ struct item_in_grid
 	void move_left()
 	{
 		int min_row_index = _sprite->width * row_index();
-		int next_index = *_index - 1;
+		int next_index = _index - 1;
 		if (next_index >= min_row_index)
 		{
-			*_index = next_index;
+			_index = next_index;
 		}
 	}
 
 	void move_right()
 	{
 		int max_row_index = (_sprite->width * (row_index() + 1)) - 1;
-		int next_index = *_index + 1;
+		int next_index = _index + 1;
 		if (next_index <= max_row_index)
 		{
-			*_index = next_index;
+			_index = next_index;
 		}
 	}
 
 	void move_up()
 	{
 		int max = max_index();
-		int next_index = *_index + _sprite->width;
+		int next_index = _index + _sprite->width;
 		if (next_index <= max)
 		{
-			*_index = next_index;
+			_index = next_index;
 		}
 	}
 
 	void move_down()
 	{
-		int next_index = *_index - _sprite->width;
+		int next_index = _index - _sprite->width;
 		if (next_index >= 0)
 		{
-			*_index = next_index;
+			_index = next_index;
 		}
 	}
 
 	void move_start()
 	{
-		*_index = 0;
+		_index = 0;
 	}
 
 	void move_end()
 	{
-		*_index = max_index();
+		_index = max_index();
 	}
 
 	void color_jump_left()
@@ -176,18 +175,18 @@ struct item_in_grid
 	void set_index(int index)
 	{
 		if (index < 0 || index > max_index()) return;
-		*_index = index;
+		_index = index;
 	}
 
 	private:
-		const SpriteC* _sprite;
-		int* _index;
+		const SpriteC* _sprite = nullptr;
+		int _index = 0;
 
 		void jump_to_next_color(int step, int inclusiveMinPixelIndex, int inclusiveMaxPixelIndex)
 		{
 			uint32_t active_color = color();
-			int cursor = *_index;
-			int next_index = *_index + step;
+			int cursor = _index;
+			int next_index = _index + step;
 			bool sameColor = true;
 			while (next_index >= inclusiveMinPixelIndex && next_index <= inclusiveMaxPixelIndex && sameColor)
 			{
@@ -195,7 +194,7 @@ struct item_in_grid
 				sameColor = (active_color == _sprite->pixels()[cursor]);
 				next_index += step;
 			}
-			*_index = cursor;
+			_index = cursor;
 		}
 
 		int max_index()
@@ -208,8 +207,6 @@ struct Grid
 {
 	SpriteC* sprite;
 	sprite_camera camera;
-	int selectedIndex = 0;
-	int selectedRangeIndex = 0;
 
 	item_in_grid cursor;
 	item_in_grid range;
@@ -219,8 +216,8 @@ struct Grid
 	void initialize(SpriteC* sprite_data)
 	{
 		sprite = sprite_data;
-		cursor.initialize(sprite_data, &selectedIndex);
-		range.initialize(sprite_data, &selectedRangeIndex);
+		cursor.initialize(sprite_data);
+		range.initialize(sprite_data);
 	}
 
 	uint32_t selected_color() const
