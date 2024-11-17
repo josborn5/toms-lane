@@ -169,9 +169,8 @@ int InsertColumn(Grid& grid)
 	int selectedColumnIndex = grid.cursor.column_index();
 	int selectedRowIndex = grid.cursor.row_index();
 	int append_result = AppendColumnToSpriteC(*grid.sprite, selectedColumnIndex);
-	grid.cursor.move_start();
-	for (int i = 0; i < selectedRowIndex; i += 1) grid.cursor.move_up();
-	for (int i = 0; i < selectedColumnIndex + 1; i += 1) grid.cursor.move_right();
+	int new_cursor_index = grid.cursor.index() + 1 + selectedRowIndex;
+	grid.cursor.set_index(new_cursor_index);
 	return append_result;
 }
 

@@ -124,7 +124,7 @@ static void RenderSpriteAsGrid(
 	float xOriginalPosition = view.footprint.x_min() + pixelHalfSize.x;
 
 	int selectedColIndex = grid.cursor.column_index();
-	int rangeColIndex = grid.column_index(grid.selectedRangeIndex);
+	int rangeColIndex = grid.range.column_index();
 	int selectedRowIndex = grid.cursor.row_index();
 	int rangeRowIndex = grid.range.row_index();
 

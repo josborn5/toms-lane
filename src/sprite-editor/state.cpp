@@ -523,7 +523,7 @@ static void ApplyViewModeInputToState(const tl::Input& input)
 	if (input.buttons[tl::KEY_V].keyDown)
 	{
 		state.mode = Visual;
-		state.pixels.selectedRangeIndex = state.pixels.cursor.index();
+		state.pixels.range.set_index(state.pixels.cursor.index());
 		WriteStringToCommandBuffer("VISUAL");
 		return;
 	}

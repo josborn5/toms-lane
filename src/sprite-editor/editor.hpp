@@ -173,6 +173,12 @@ struct item_in_grid
 		jump_to_next_color(-_sprite->width, 0, max_index());
 	}
 
+	void set_index(int index)
+	{
+		if (index < 0 || index > max_index()) return;
+		*_index = index;
+	}
+
 	private:
 		const SpriteC* _sprite;
 		int* _index;
