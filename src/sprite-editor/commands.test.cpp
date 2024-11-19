@@ -393,11 +393,32 @@ static void InsertColumnTests()
 	assert(grid.cursor.index() == 6); // third column of second for is selected
 }
 
+void RunCopyTests()
+{
+	printf("\nRunning copy tests\n");
+
+	ResetState();
+	sprite.width = 3;
+	sprite.height = 3;
+
+	for (int i = 0; i < sprite.width; i += 1)
+	{
+		spriteContent[i] = SET_COLOR;
+	}
+
+	// select first row
+	grid.cursor.move_start();
+	grid.range.set_index(2);
+
+	printf("\nCopy tests complete\n");
+}
+
 int RunCommandTests()
 {
-	printf("Running command tests");
+	printf("\nRunning command tests\n");
 	InsertRowTests();
 	InsertColumnTests();
-	printf("Command tests complete!\n");
+	RunCopyTests();
+	printf("\nCommand tests complete!\n");
 	return 0;
 }
