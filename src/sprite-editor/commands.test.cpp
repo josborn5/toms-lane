@@ -413,6 +413,9 @@ void RunCopyTests()
 
 	arrange_3x3_for_copy_test();
 
+	// <-|-:
+	// R G B
+	// 0 1 2
 	grid.cursor.set_index(0);
 	copy_pixels(grid, 1, 2);
 
@@ -422,12 +425,27 @@ void RunCopyTests()
 
 	arrange_3x3_for_copy_test();
 
+	// |-:->
+	// R G B
+	// 0 1 2
 	grid.cursor.set_index(1);
 	copy_pixels(grid, 0, 1);
 
 	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
 	assert(grid.sprite->get_pixel_data(1) == 0xFF0000);
 	assert(grid.sprite->get_pixel_data(2) == 0x00FF00);
+
+	arrange_3x3_for_copy_test();
+
+	// <-:-|
+	// R G B
+	// 0 1 2
+	grid.cursor.set_index(0);
+	copy_pixels(grid, 2, 1);
+
+	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(1) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
 
 	printf("\nCopy tests complete\n");
 }
