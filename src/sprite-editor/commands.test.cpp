@@ -393,22 +393,25 @@ static void InsertColumnTests()
 	assert(grid.cursor.index() == 6); // third column of second for is selected
 }
 
-void RunCopyTests()
+static void arrange_3x3_for_copy_test()
 {
-	printf("\nRunning copy tests\n");
-
 	ResetState();
 	sprite.width = 3;
 	sprite.height = 3;
 
-	spriteContent[0] = 0xFF0000;
-	
 	for (int i = 0; i < sprite.height; i += sprite.width)
 	{
 		spriteContent[i + 0] = 0xFF0000;
 		spriteContent[i + 1] = 0x00FF00;
 		spriteContent[i + 2] = 0x0000FF;
 	}
+}
+
+void RunCopyTests()
+{
+	printf("\nRunning copy tests\n");
+
+	arrange_3x3_for_copy_test();
 
 	grid.cursor.set_index(0);
 	copy_pixels(grid, 1, 2);
@@ -416,6 +419,15 @@ void RunCopyTests()
 	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
 	assert(grid.sprite->get_pixel_data(1) == 0x0000FF);
 	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
+
+	arrange_3x3_for_copy_test();
+
+	grid.cursor.set_index(1);
+	copy_pixels(grid, 0, 1);
+
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(1) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(2) == 0x00FF00);
 
 	printf("\nCopy tests complete\n");
 }
