@@ -174,3 +174,14 @@ int InsertColumn(Grid& grid)
 	return append_result;
 }
 
+void copy_pixels(Grid& grid, int source_index, int source_range)
+{
+	int target_index = grid.cursor.index();
+	int target_index_offset = 0;
+	for (int i = source_index; i <= source_range; i += 1)
+	{
+		uint32_t to_copy = grid.sprite->get_pixel_data(i);
+		grid.sprite->set_pixel_data(target_index + target_index_offset, to_copy);
+		target_index_offset += 1;
+	}
+}

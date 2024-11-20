@@ -13,5 +13,7 @@ int SaveBitmap(
 int InsertRow(Grid& grid);
 int InsertColumn(Grid& grid);
 
+void copy_pixels(Grid& grid, int source_index, int source_range);
+
 #endif
 

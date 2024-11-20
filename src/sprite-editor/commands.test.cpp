@@ -401,14 +401,21 @@ void RunCopyTests()
 	sprite.width = 3;
 	sprite.height = 3;
 
-	for (int i = 0; i < sprite.width; i += 1)
+	spriteContent[0] = 0xFF0000;
+	
+	for (int i = 0; i < sprite.height; i += sprite.width)
 	{
-		spriteContent[i] = SET_COLOR;
+		spriteContent[i + 0] = 0xFF0000;
+		spriteContent[i + 1] = 0x00FF00;
+		spriteContent[i + 2] = 0x0000FF;
 	}
 
-	// select first row
-	grid.cursor.move_start();
-	grid.range.set_index(2);
+	grid.cursor.set_index(0);
+	copy_pixels(grid, 1, 2);
+
+	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(1) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
 
 	printf("\nCopy tests complete\n");
 }
