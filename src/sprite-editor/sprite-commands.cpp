@@ -182,22 +182,26 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	int target_start_index = grid.cursor.index();
 
 	int source_to_target = target_start_index - source_start_index;
+	int source_index;
 
 	if (target_start_index < source_start_index)
 	{
-		for (int i = source_start_index; i <= source_end_index; i += 1)
+		source_index = source_start_index;
+		while (source_index <= source_end_index)
 		{
-			uint32_t to_copy = grid.sprite->get_pixel_data(i);
-			grid.sprite->set_pixel_data(i + source_to_target, to_copy);
+			uint32_t to_copy = grid.sprite->get_pixel_data(source_index);
+			grid.sprite->set_pixel_data(source_index + source_to_target, to_copy);
+			source_index += 1;
 		}
 	}
 	else
 	{
-		target_start_index += (source_end_index - source_start_index);
-		for (int i = source_end_index; i >= source_start_index; i -= 1)
+		source_index = source_end_index;
+		while (source_index >= source_start_index)
 		{
-			uint32_t to_copy = grid.sprite->get_pixel_data(i);
-			grid.sprite->set_pixel_data(i + source_to_target, to_copy);
+			uint32_t to_copy = grid.sprite->get_pixel_data(source_index);
+			grid.sprite->set_pixel_data(source_index + source_to_target, to_copy);
+			source_index -= 1;
 		}
 	}
 }
