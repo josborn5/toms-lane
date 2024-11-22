@@ -179,26 +179,25 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	bool start_at_cursor = (source_cursor_index < source_range_index);
 	int source_start_index = (start_at_cursor) ? source_cursor_index : source_range_index;
 	int source_end_index = (start_at_cursor) ? source_range_index : source_cursor_index;
-	int target_index = grid.cursor.index();
-	int target_index_offset = 0;
+	int target_start_index = grid.cursor.index();
 
-	if (target_index < source_start_index)
+	int source_to_target = target_start_index - source_start_index;
+
+	if (target_start_index < source_start_index)
 	{
 		for (int i = source_start_index; i <= source_end_index; i += 1)
 		{
 			uint32_t to_copy = grid.sprite->get_pixel_data(i);
-			grid.sprite->set_pixel_data(target_index + target_index_offset, to_copy);
-			target_index_offset += 1;
+			grid.sprite->set_pixel_data(i + source_to_target, to_copy);
 		}
 	}
 	else
 	{
-		target_index += (source_end_index - source_start_index);
+		target_start_index += (source_end_index - source_start_index);
 		for (int i = source_end_index; i >= source_start_index; i -= 1)
 		{
 			uint32_t to_copy = grid.sprite->get_pixel_data(i);
-			grid.sprite->set_pixel_data(target_index + target_index_offset, to_copy);
-			target_index_offset -= 1;
+			grid.sprite->set_pixel_data(i + source_to_target, to_copy);
 		}
 	}
 }
