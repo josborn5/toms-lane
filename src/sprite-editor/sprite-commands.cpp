@@ -189,7 +189,7 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	int source_start_col_index = (cursor_left_of_range) ? source_cursor_col_index : source_range_col_index;
 	int source_end_col_index = (cursor_left_of_range) ? source_range_col_index : source_cursor_col_index;
 	int row_stride = source_end_col_index - source_start_col_index;
-
+	int row_hop = source_start_col_index + grid.sprite->width - source_end_col_index;
 
 	int source_index;
 	int row_stride_counter = 0;
@@ -199,16 +199,18 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 		while (source_index <= source_end_index)
 		{
 			uint32_t to_copy = grid.sprite->get_pixel_data(source_index);
-			grid.sprite->set_pixel_data(source_index + source_to_target, to_copy);
+			int target_index = source_index + source_to_target;
+			grid.sprite->set_pixel_data(target_index, to_copy);
 			if (row_stride_counter < row_stride)
 			{
 				source_index += 1;
+				row_stride_counter += 1;
 			}
 			else
 			{
-				source_index += 10;
+				source_index += row_hop;
+				row_stride_counter = 0;
 			}
-			row_stride_counter += 1;
 		}
 	}
 	else
@@ -217,14 +219,15 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 		while (source_index >= source_start_index)
 		{
 			uint32_t to_copy = grid.sprite->get_pixel_data(source_index);
-			grid.sprite->set_pixel_data(source_index + source_to_target, to_copy);
+			int target_index = source_index + source_to_target;
+			grid.sprite->set_pixel_data(target_index, to_copy);
 			if (row_stride_counter < row_stride)
 			{
 				source_index -= 1;
 			}
 			else
 			{
-				source_index -= 10;
+				source_index -= row_hop;
 			}
 			row_stride_counter += 1;
 		}
