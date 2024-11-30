@@ -224,12 +224,13 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 			if (row_stride_counter < row_stride)
 			{
 				source_index -= 1;
+				row_stride_counter += 1;
 			}
 			else
 			{
 				source_index -= row_hop;
+				row_stride_counter = 0;
 			}
-			row_stride_counter += 1;
 		}
 	}
 }

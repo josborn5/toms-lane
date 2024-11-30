@@ -455,17 +455,29 @@ void RunCopyTests()
 	assert(grid.sprite->get_pixel_data(4) == 0x00FF00);
 	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
 
-	// copying a square
+	// copying a square from high index to low index
 	arrange_3x3_for_copy_test();
 	grid.cursor.set_index(0);
 	copy_pixels(grid, 1, 5);
 
-	assert(grid.sprite->get_pixel_data(3) == 0x00FF00);
-	assert(grid.sprite->get_pixel_data(4) == 0x0000FF);
-	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
 	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
 	assert(grid.sprite->get_pixel_data(1) == 0x0000FF);
 	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(3) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(4) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
+
+	// copying a square from low index to high index
+	arrange_3x3_for_copy_test();
+	grid.cursor.set_index(1);
+	copy_pixels(grid, 0, 4);
+
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(1) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(2) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(3) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(4) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(5) == 0x00FF00);
 
 	printf("\nCopy tests complete\n");
 }
