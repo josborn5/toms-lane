@@ -188,6 +188,19 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	bool cursor_left_of_range = (source_cursor_col_index < source_range_col_index);
 	int source_start_col_index = (cursor_left_of_range) ? source_cursor_col_index : source_range_col_index;
 	int source_end_col_index = (cursor_left_of_range) ? source_range_col_index : source_cursor_col_index;
+
+	int target_start_col_index = grid.cursor.column_index();
+	int target_end_col_index = target_start_col_index - source_start_col_index + source_end_col_index;
+	int max_col_index = grid.sprite->width - 1;
+
+	if (target_end_col_index > max_col_index)
+	{
+		int extension_out_of_bounds = target_end_col_index - max_col_index;
+		source_end_col_index -= extension_out_of_bounds;
+
+		source_end_index -= extension_out_of_bounds; // TODO: fix for when copying across rows
+	}
+
 	int row_stride = source_end_col_index - source_start_col_index;
 	int row_hop = source_start_col_index + grid.sprite->width - source_end_col_index;
 

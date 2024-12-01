@@ -479,6 +479,18 @@ void RunCopyTests()
 	assert(grid.sprite->get_pixel_data(4) == 0xFF0000);
 	assert(grid.sprite->get_pixel_data(5) == 0x00FF00);
 
+	// copying a square from low index to high index going out of bounds to the right
+	arrange_3x3_for_copy_test();
+	grid.cursor.set_index(2);
+	copy_pixels(grid, 0, 4);
+
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(1) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(2) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(3) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(4) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(5) == 0xFF0000);
+
 	printf("\nCopy tests complete\n");
 }
 
