@@ -198,7 +198,7 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 		int extension_out_of_bounds = target_end_col_index - max_col_index;
 		source_end_col_index -= extension_out_of_bounds;
 
-		source_end_index -= extension_out_of_bounds; // TODO: fix for when copying across rows
+		source_end_index -= extension_out_of_bounds;
 	}
 
 	int row_stride = source_end_col_index - source_start_col_index;

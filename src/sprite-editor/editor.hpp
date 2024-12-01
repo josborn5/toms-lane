@@ -68,6 +68,21 @@ struct SpriteC
 
 		return index % width;
 	}
+
+	int row_index(int index) const
+	{
+		if (height == 1)
+		{
+			return 0;
+		}
+
+		if (width == 0)
+		{
+			return -1;
+		}
+
+		return index / width;
+	}
 };
 
 struct sprite_camera
@@ -97,17 +112,7 @@ struct item_in_grid
 
 	int row_index() const
 	{
-		if (_sprite->height == 1)
-		{
-			return 0;
-		}
-
-		if (_sprite->width == 0)
-		{
-			return -1;
-		}
-
-		return _index / _sprite->width;
+		return _sprite->row_index(_index);
 	}
 
 	int column_index() const
