@@ -195,10 +195,17 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 
 	if (target_end_col_index > max_col_index)
 	{
-		int extension_out_of_bounds = target_end_col_index - max_col_index;
-		source_end_col_index -= extension_out_of_bounds;
+		int columns_out_of_bounds = target_end_col_index - max_col_index;
+		source_end_col_index -= columns_out_of_bounds;
+		source_end_index -= columns_out_of_bounds;
+	}
 
-		source_end_index -= extension_out_of_bounds;
+	int target_end_row_index = grid.sprite->row_index(source_to_target + source_end_index);
+	int max_row_index = grid.sprite->height - 1;
+	if (target_end_row_index > max_row_index)
+	{
+		int rows_out_of_bounds = target_end_row_index - max_row_index;
+		source_end_index -= (grid.sprite->width * rows_out_of_bounds);
 	}
 
 	int row_stride = source_end_col_index - source_start_col_index;
