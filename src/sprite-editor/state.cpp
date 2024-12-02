@@ -18,8 +18,9 @@ static tl::MemorySpace sprite_color_table_memory;
 static tl::MemorySpace fileReadMemory;
 static tl::MemorySpace paletteMemory;
 static tl::MemorySpace tempMemory;
-static uint32_t currentColor;
-static int copy_cursor_index;
+static uint32_t currentColor = 0;
+static int copy_cursor_index = 0;
+static int copy_range_index = 0;
 static tl::bitmap currentBitmap;
 
 EditorState state;
@@ -303,6 +304,7 @@ static int Initialize(char* commandLine)
 	state.mode = View;
 	hasCopied = false;
 	copy_cursor_index = 0;
+	copy_range_index = 0;
 
 	ClearCommandBuffer();
 	InitializeLayout(state);
@@ -483,6 +485,7 @@ static bool CheckForCopy(const tl::Input& input)
 	{
 		hasCopied = true;
 		copy_cursor_index = state.pixels.cursor.index();
+		copy_range_index = (state.mode == Visual) ? state.pixels.range.index() : copy_cursor_index;
 		return true;
 	}
 	return false;
@@ -492,7 +495,7 @@ static bool CheckForPaste(const tl::Input& input)
 {
 	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.pixels_are_selected())
 	{
-		copy_pixels(state.pixels, copy_cursor_index, copy_cursor_index);
+		copy_pixels(state.pixels, copy_cursor_index, copy_range_index);
 		return true;
 	}
 	return false;
