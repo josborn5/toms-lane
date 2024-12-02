@@ -481,7 +481,11 @@ static void ExecuteCurrentCommand()
 
 static bool CheckForCopy(const tl::Input& input)
 {
-	if (input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_C].keyDown && state.pixels_are_selected())
+	if ((
+			(input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_C].keyDown)
+			|| input.buttons[tl::KEY_Y].keyDown
+		)
+		&& state.pixels_are_selected())
 	{
 		hasCopied = true;
 		copy_cursor_index = state.pixels.cursor.index();
@@ -493,7 +497,14 @@ static bool CheckForCopy(const tl::Input& input)
 
 static bool CheckForPaste(const tl::Input& input)
 {
-	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.pixels_are_selected())
+	if (
+			hasCopied &&
+			(
+				(input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown)
+				|| input.buttons[tl::KEY_P].keyDown
+			)
+			&& state.pixels_are_selected()
+		)
 	{
 		copy_pixels(state.pixels, copy_cursor_index, copy_range_index);
 		return true;
