@@ -13,7 +13,6 @@ static const int skipModifierKey = tl::KEY_CTRL;
 static const int cameraModifierKey = tl::KEY_SHIFT;
 
 static bool hasCopied = false;
-static tl::MemorySpace fontMemory;
 static tl::MemorySpace spritePixelMemory;
 static tl::MemorySpace sprite_color_table_memory;
 static tl::MemorySpace fileReadMemory;
@@ -24,7 +23,7 @@ static int copy_cursor_index;
 static tl::bitmap currentBitmap;
 
 EditorState state;
-static char commandBuffer[commandBufferSize];
+static char commandBuffer[commandBufferSize] = {0};
 static char filePathBuffer[filePathBufferSize] = {0};
 static constexpr char* filePath = &filePathBuffer[0];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
@@ -493,8 +492,7 @@ static bool CheckForPaste(const tl::Input& input)
 {
 	if (hasCopied && input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown && state.pixels_are_selected())
 	{
-		uint32_t data_to_copy = state.pixels.sprite->get_pixel_data(copy_cursor_index);
-		state.pixels.sprite->set_pixel_data(state.pixels.cursor.index(), data_to_copy);
+		copy_pixels(state.pixels, copy_cursor_index, copy_cursor_index);
 		return true;
 	}
 	return false;
