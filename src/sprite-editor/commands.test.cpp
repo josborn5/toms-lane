@@ -555,12 +555,160 @@ void RunCopyTests()
 	printf("\nCopy tests complete\n");
 }
 
+void RunCutTests()
+{
+	printf("\nRunning cut tests\n");
+
+	// <-|-:
+	// R G B
+	// 0 1 2
+	arrange_3x3_for_copy_test();
+	grid.cursor.set_index(0);
+	cut_pixels(grid, 1, 2);
+
+	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(1) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(3) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(4) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(6) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(7) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(8) == 0x0000FF);
+	// check nothing is set outside the bounds of the sprite
+	assert(spriteContent[9] == EMPTY_COLOR);
+	assert(spriteContent[10] == EMPTY_COLOR);
+	assert(spriteContent[11] == EMPTY_COLOR);
+
+	// |-:->
+	// R G B
+	// 0 1 2
+	arrange_3x3_for_copy_test();
+	grid.cursor.set_index(1);
+	cut_pixels(grid, 0, 1);
+
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(1) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(2) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(3) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(4) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(6) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(7) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(8) == 0x0000FF);
+	// check nothing is set outside the bounds of the sprite
+	assert(spriteContent[9] == EMPTY_COLOR);
+	assert(spriteContent[10] == EMPTY_COLOR);
+	assert(spriteContent[11] == EMPTY_COLOR);
+
+	// <-:-|
+	// R G B
+	// 0 1 2
+	arrange_3x3_for_copy_test();
+	grid.cursor.set_index(0);
+	cut_pixels(grid, 2, 1);
+
+	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(1) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(3) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(4) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(6) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(7) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(8) == 0x0000FF);
+	// check nothing is set outside the bounds of the sprite
+	assert(spriteContent[9] == EMPTY_COLOR);
+	assert(spriteContent[10] == EMPTY_COLOR);
+	assert(spriteContent[11] == EMPTY_COLOR);
+
+
+	// copying a square from high index to low index
+	arrange_3x3_for_copy_test();
+	grid.cursor.set_index(0);
+	cut_pixels(grid, 1, 5);
+
+	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(1) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(3) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(4) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(6) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(7) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(8) == 0x0000FF);
+	// check nothing is set outside the bounds of the sprite
+	assert(spriteContent[9] == EMPTY_COLOR);
+	assert(spriteContent[10] == EMPTY_COLOR);
+	assert(spriteContent[11] == EMPTY_COLOR);
+
+	// copying a square from low index to high index
+	arrange_3x3_for_copy_test();
+	grid.cursor.set_index(1);
+	cut_pixels(grid, 0, 4);
+
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(1) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(2) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(3) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(4) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(5) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(6) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(7) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(8) == 0x0000FF);
+	// check nothing is set outside the bounds of the sprite
+	assert(spriteContent[9] == EMPTY_COLOR);
+	assert(spriteContent[10] == EMPTY_COLOR);
+	assert(spriteContent[11] == EMPTY_COLOR);
+
+	// copying a square from low index to high index going out of bounds to the right
+	arrange_3x3_for_copy_test();
+	grid.cursor.set_index(5);
+	cut_pixels(grid, 0, 4);
+
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(1) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(3) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(4) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(5) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(6) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(7) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(8) == 0xFF0000);
+	// check nothing is set outside the bounds of the sprite
+	assert(spriteContent[9] == EMPTY_COLOR);
+	assert(spriteContent[10] == EMPTY_COLOR);
+	assert(spriteContent[11] == EMPTY_COLOR);
+
+	// copying a square from low index to high index going out of bounds to the top
+	arrange_3x3_for_copy_test();
+	grid.cursor.set_index(7);
+	cut_pixels(grid, 0, 4);
+
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(1) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(3) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(4) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(6) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(7) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(8) == 0x00FF00);
+	// check nothing is set outside the bounds of the sprite
+	assert(spriteContent[9] == EMPTY_COLOR);
+	assert(spriteContent[10] == EMPTY_COLOR);
+	assert(spriteContent[11] == EMPTY_COLOR);
+
+	printf("\nCut tests complete\n");
+}
+
 int RunCommandTests()
 {
 	printf("\nRunning command tests\n");
 	InsertRowTests();
 	InsertColumnTests();
 	RunCopyTests();
+	RunCutTests();
 	printf("\nCommand tests complete!\n");
 	return 0;
 }

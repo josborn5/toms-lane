@@ -254,3 +254,8 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 		}
 	}
 }
+
+void cut_pixels(Grid& grid, int source_index, int source_range)
+{
+	copy_pixels(grid, source_index, source_range);
+}
