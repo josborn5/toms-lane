@@ -232,7 +232,7 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 		source_start_index,
 		source_end_index,
 		row_stride,
-		 row_hop
+		row_hop
 	);
 
 	int source_index;
@@ -290,7 +290,7 @@ void cut_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 		source_start_index,
 		source_end_index,
 		row_stride,
-		 row_hop
+		row_hop
 	);
 
 	int source_index;
