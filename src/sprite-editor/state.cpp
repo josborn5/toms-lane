@@ -13,6 +13,7 @@ static const int skipModifierKey = tl::KEY_CTRL;
 static const int cameraModifierKey = tl::KEY_SHIFT;
 
 static bool hasCopied = false;
+static bool has_cut = false;
 static tl::MemorySpace spritePixelMemory;
 static tl::MemorySpace sprite_color_table_memory;
 static tl::MemorySpace fileReadMemory;
@@ -303,6 +304,7 @@ static int Initialize(char* commandLine)
 
 	state.mode = View;
 	hasCopied = false;
+	has_cut = false;
 	copy_cursor_index = 0;
 	copy_range_index = 0;
 
@@ -475,7 +477,6 @@ static void ExecuteCurrentCommand()
 		return;
 	}
 
-	ClearCommandBuffer();
 	WriteStringToCommandBuffer("NOT A COMMAND");
 }
 
@@ -488,17 +489,33 @@ static bool CheckForCopy(const tl::Input& input)
 		&& state.pixels_are_selected())
 	{
 		hasCopied = true;
+		has_cut = false;
 		copy_cursor_index = state.pixels.cursor.index();
 		copy_range_index = (state.mode == Visual) ? state.pixels.range.index() : copy_cursor_index;
+		WriteStringToCommandBuffer("COPIED");
 		return true;
 	}
+
+	if ((
+			(input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_X].keyDown)
+			|| input.buttons[tl::KEY_D].keyDown
+		)
+		&& state.pixels_are_selected())
+	{
+		hasCopied = false;
+		has_cut = true;
+		copy_cursor_index = state.pixels.cursor.index();
+		copy_range_index = (state.mode == Visual) ? state.pixels.range.index() : copy_cursor_index;
+		WriteStringToCommandBuffer("CUT");
+		return true;
+	}
+
 	return false;
 }
 
 static bool CheckForPaste(const tl::Input& input)
 {
 	if (
-			hasCopied &&
 			(
 				(input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_V].keyDown)
 				|| input.buttons[tl::KEY_P].keyDown
@@ -506,8 +523,18 @@ static bool CheckForPaste(const tl::Input& input)
 			&& state.pixels_are_selected()
 		)
 	{
-		copy_pixels(state.pixels, copy_cursor_index, copy_range_index);
-		return true;
+		if (hasCopied)
+		{
+			copy_pixels(state.pixels, copy_cursor_index, copy_range_index);
+			return true;
+		}
+		else if (has_cut)
+		{
+			cut_pixels(state.pixels, copy_cursor_index, copy_range_index);
+			has_cut = false; // kinda wonky: one time operation to clear source pixels
+			return true;
+		}
+
 	}
 	return false;
 }
