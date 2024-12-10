@@ -665,7 +665,11 @@ const EditorState& GetLatestState(const tl::Input& input)
 			break;
 		case Visual:
 			if (ApplySelectedRangeMovementToState(input)) return state;
-			if (CheckForCopy(input)) return state;
+			if (CheckForCopy(input))
+			{
+				state.mode = View;
+				 return state;
+			}
 			if (CheckForPaste(input)) return state;
 			break;
 		case Command:
