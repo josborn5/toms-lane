@@ -7,24 +7,24 @@ struct set_pixel_data_operation
 {
 	set_pixel_data_operation(Grid* grid, uint32_t data_to_set)
 	{
-		_grid = grid;
+		_sprite = grid->sprite;
 		_set_at_index = grid->cursor.index();
 		_data_to_set = data_to_set;
 	}
 
 	void execute()
 	{
-		_original_data = _grid->sprite->get_pixel_data(_set_at_index);
-		_grid->sprite->set_pixel_data(_set_at_index, _data_to_set);
+		_original_data = _sprite->get_pixel_data(_set_at_index);
+		_sprite->set_pixel_data(_set_at_index, _data_to_set);
 	}
 
 	void undo()
 	{
-		_grid->sprite->set_pixel_data(_set_at_index, _original_data);
+		_sprite->set_pixel_data(_set_at_index, _original_data);
 	}
 
 	private:
-		Grid* _grid;
+		SpriteC* _sprite;
 		int _set_at_index;
 		uint32_t _data_to_set;
 		uint32_t _original_data;
