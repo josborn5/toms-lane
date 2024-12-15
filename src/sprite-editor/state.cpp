@@ -464,10 +464,12 @@ static void ExecuteCurrentCommand()
 		}
 
 		char* pointerToNumberChar = tl::GetNextNumberChar(&commands.access(1));
-		Grid& activeGrid = *state.activeControl;
 		uint32_t parsed_color;
 		ParseColorFromCharArray(pointerToNumberChar, tempMemory, parsed_color);
-		activeGrid.sprite->set_pixel_data(activeGrid.cursor.index(), parsed_color);
+
+		set_pixel_data_operation operation(state.activeControl, parsed_color);
+		operation.execute();
+
 		ClearCommandBuffer();
 		return;
 	}
