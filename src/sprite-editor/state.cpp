@@ -5,6 +5,7 @@
 #include "./commands.hpp"
 #include "./utilities.hpp"
 #include "./transform.hpp"
+#include "./operations.hpp"
 
 static const int commandBufferSize = 256;
 static const int filePathBufferSize = 256;
@@ -600,11 +601,11 @@ static void ApplyInsertModeInputToState(const tl::Input& input)
 	if (ApplyCursorMovementToState(input)) return;
 	if (input.buttons[tl::KEY_ENTER].keyDown)
 	{
-		uint32_t pixel_data_to_set = (state.pixels_are_selected() && state.canvas.has_color_table())
+		uint32_t data_to_set = (state.pixels_are_selected() && state.canvas.has_color_table())
 			? state.color_table.cursor.index()
 			: currentColor;
-		Grid& activeControl = *state.activeControl;
-		activeControl.sprite->set_pixel_data(activeControl.cursor.index(), pixel_data_to_set);
+		set_pixel_data_operation operation(state.activeControl, data_to_set);
+		operation.execute();
 		return;
 	}
 }
