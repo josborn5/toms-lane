@@ -6,12 +6,15 @@
 #include "./utilities.hpp"
 #include "./transform.hpp"
 #include "./operations.hpp"
+#include "./stack.hpp"
 
 static const int commandBufferSize = 256;
 static const int filePathBufferSize = 256;
 static const int modeBufferSize = 2;
 static const int skipModifierKey = tl::KEY_CTRL;
 static const int cameraModifierKey = tl::KEY_SHIFT;
+
+static stack_stack<set_pixel_data_operation, 8> operations;
 
 static bool hasCopied = false;
 static bool has_cut = false;
@@ -374,6 +377,16 @@ static bool CommandIs(char* command)
 	return has && (commands.get(cursor) == '\0');
 }
 
+static void add_operation(const set_pixel_data_operation& operation)
+{
+	operation_result add_result = operations.push(operation);
+	if (add_result == operation_fail)
+	{
+		operations.clear();
+		add_operation(operation);
+	}
+}
+
 static void ExecuteCurrentCommand()
 {
 	if (commands.get(0) != ':')
@@ -469,6 +482,7 @@ static void ExecuteCurrentCommand()
 
 		set_pixel_data_operation operation(state.activeControl, parsed_color);
 		operation.execute();
+		add_operation(operation);
 
 		ClearCommandBuffer();
 		return;
@@ -608,6 +622,7 @@ static void ApplyInsertModeInputToState(const tl::Input& input)
 			: currentColor;
 		set_pixel_data_operation operation(state.activeControl, data_to_set);
 		operation.execute();
+		add_operation(operation);
 		return;
 	}
 }
