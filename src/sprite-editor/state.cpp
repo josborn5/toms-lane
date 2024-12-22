@@ -582,6 +582,22 @@ static void ProcessCommandInput(const tl::Input& input)
 	}
 }
 
+static bool check_for_undo(const tl::Input& input)
+{
+	if (input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_Z].keyDown)
+	{
+		operation<set_pixel_data_operation> last_operation = operations.pop();
+		if (last_operation.result == operation_success)
+		{
+			last_operation.value.undo();
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 static void ApplyViewModeInputToState(const tl::Input& input)
 {
 	if (ApplyCursorMovementToState(input)) return;
@@ -610,6 +626,7 @@ static void ApplyViewModeInputToState(const tl::Input& input)
 		WriteStringToCommandBuffer(":");
 		return;
 	}
+	if (check_for_undo(input)) return;
 }
 
 static void ApplyInsertModeInputToState(const tl::Input& input)
@@ -625,6 +642,7 @@ static void ApplyInsertModeInputToState(const tl::Input& input)
 		add_operation(operation);
 		return;
 	}
+	if (check_for_undo(input)) return;
 }
 
 static void ApplyCommandModeInputToState(const tl::Input& input)

@@ -44,7 +44,7 @@ struct stack_stack
 
 		operation<T> pop()
 		{
-			operation<T> return_value = {0};
+			operation<T> return_value;
 
 			if (_length < 1)
 			{
@@ -52,8 +52,9 @@ struct stack_stack
 				return return_value;
 			}
 
-			return_value.value = _content[_length - 1];
-			return_value.result = opeartion_success;
+			_length -= 1;
+			return_value.value = _content[_length];
+			return_value.result = operation_success;
 			return return_value;
 		}
 };
