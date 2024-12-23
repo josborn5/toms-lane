@@ -20,7 +20,7 @@ struct stack_ring_buffer
 				_next_tail_index += 1;
 			}
 
-			if (_length < _capacity)
+			if (_length < CAPACITY)
 			{
 				_length += 1;
 			}
