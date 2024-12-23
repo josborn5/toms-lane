@@ -1,6 +1,6 @@
 #include "./stack.hpp"
 
-template<typename T, unsigned int N>
+template<typename T, unsigned int CAPACITY>
 struct stack_ring_buffer
 {
 	public:
@@ -26,12 +26,6 @@ struct stack_ring_buffer
 			}
 		}
 
-		void clear()
-		{
-			_head_index = 0;
-			_next_tail_index = 0;
-		}
-
 		operation<T> pop()
 		{
 			operation<T> result;
@@ -53,8 +47,7 @@ struct stack_ring_buffer
 	private:
 		unsigned int _length = 0;
 		unsigned int _next_tail_index = 0;
-		unsigned int _capacity = N;
-		T _content[N];
+		T _content[CAPACITY];
 
 		int tail_index()
 		{
@@ -63,6 +56,6 @@ struct stack_ring_buffer
 
 		unsigned int max_index()
 		{
-			return _capacity - 1;
+			return CAPACITY - 1;
 		}
 };

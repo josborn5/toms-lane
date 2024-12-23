@@ -22,5 +22,20 @@ void run_ring_buffer_tests()
 	pop = ring_buffer.pop();
 	assert(pop.result == operation_fail);
 
+	ring_buffer.push(1);
+	ring_buffer.push(2);
+	ring_buffer.push(3);
+
+	pop = ring_buffer.pop();
+	assert(pop.result == operation_success);
+	assert(pop.value == 3);
+
+	pop = ring_buffer.pop();
+	assert(pop.result == operation_success);
+	assert(pop.value == 2);
+
+	pop = ring_buffer.pop();
+	assert(pop.result == operation_fail);
+
 	printf("\nRing buffer tests complete.\n");
 }
