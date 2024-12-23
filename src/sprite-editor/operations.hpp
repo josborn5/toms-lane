@@ -35,16 +35,16 @@ struct set_pixel_data_operation
 		uint32_t _original_data = 0;
 };
 
-struct copy_pixel
+struct paste_pixel
 {
 	unsigned int index = 0;
 	uint32_t data_to_set = 0;
 	uint32_t original_data = 0;
 };
 
-struct copy_pixel_data_operation
+struct paste_pixel_data_operation
 {
-	copy_pixel_data_operation(SpriteC* sprite)
+	paste_pixel_data_operation(SpriteC* sprite)
 	{
 		_sprite = sprite;
 	}
@@ -53,7 +53,7 @@ struct copy_pixel_data_operation
 	{
 		for (unsigned int i = 0; i < _pixels.length(); i += 1)
 		{
-			copy_pixel* pixel = _pixels.get_pointer(i).value;
+			paste_pixel* pixel = _pixels.get_pointer(i).value;
 			pixel->original_data = _sprite->get_pixel_data(pixel->index);
 			_sprite->set_pixel_data(pixel->index, pixel->data_to_set);
 		}
@@ -61,7 +61,7 @@ struct copy_pixel_data_operation
 
 	int add_pixel(unsigned int pixel_index, uint32_t pixel_data)
 	{
-		copy_pixel pixel;
+		paste_pixel pixel;
 		pixel.index = pixel_index;
 		pixel.data_to_set = pixel_data;
 		return _pixels.append(pixel);
@@ -69,7 +69,7 @@ struct copy_pixel_data_operation
 
 	private:
 		SpriteC* _sprite;
-		tl::stack_array<copy_pixel, 256> _pixels;
+		tl::stack_array<paste_pixel, 256> _pixels;
 };
 
 #endif

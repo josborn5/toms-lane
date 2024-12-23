@@ -236,7 +236,7 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	);
 
 	int row_stride_counter = 0;
-	copy_pixel_data_operation operation = copy_pixel_data_operation(grid.sprite);
+	paste_pixel_data_operation operation = paste_pixel_data_operation(grid.sprite);
 	int source_index = source_start_index;
 	while (source_index <= source_end_index)
 	{
