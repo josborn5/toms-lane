@@ -116,12 +116,12 @@ namespace tl
 			}
 	};
 
-	template<typename T, int N>
+	template<typename T, unsigned int N>
 	struct stack_array
 	{
 		private:
-			int _length = 0;
-			int _capacity = N;
+			unsigned int _length = 0;
+			unsigned int _capacity = N;
 			size_t _itemSizeInBytes = sizeof(T);
 			T _content[N];
 
@@ -130,10 +130,10 @@ namespace tl
 			{
 			}
 
-			operation<T*> get_pointer(int index)
+			operation<T*> get_pointer(unsigned int index)
 			{
 				operation<T*> return_value = {0};
-				if (index < 0 || index >= _length)
+				if (index >= _length)
 				{
 					return_value.result = 1;
 				}
@@ -145,10 +145,10 @@ namespace tl
 				return return_value;
 			}
 
-			operation<T> get_copy(int index) const
+			operation<T> get_copy(unsigned int index) const
 			{
 				operation<T> return_value = {0};
-				if (index < 0 || index >= _length)
+				if (index >= _length)
 				{
 					return_value.result = 1;
 				}
@@ -160,7 +160,7 @@ namespace tl
 				return return_value;
 			}
 
-			int length() const
+			unsigned int length() const
 			{
 				return _length;
 			}
