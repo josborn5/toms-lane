@@ -35,4 +35,41 @@ struct set_pixel_data_operation
 		uint32_t _original_data = 0;
 };
 
+struct copy_pixel
+{
+	unsigned int index = 0;
+	uint32_t data_to_set = 0;
+	uint32_t original_data = 0;
+};
+
+struct copy_pixel_data_operation
+{
+	copy_pixel_data_operation(SpriteC* sprite)
+	{
+		_sprite = sprite;
+	}
+
+	void execute()
+	{
+		for (unsigned int i = 0; i < _pixels.length(); i += 1)
+		{
+			copy_pixel* pixel = _pixels.get_pointer(i).value;
+			pixel->original_data = _sprite->get_pixel_data(pixel->index);
+			_sprite->set_pixel_data(pixel->index, pixel->data_to_set);
+		}
+	}
+
+	int add_pixel(unsigned int pixel_index, uint32_t pixel_data)
+	{
+		copy_pixel pixel;
+		pixel.index = pixel_index;
+		pixel.data_to_set = pixel_data;
+		return _pixels.append(pixel);
+	}
+
+	private:
+		SpriteC* _sprite;
+		tl::stack_array<copy_pixel, 256> _pixels;
+};
+
 #endif

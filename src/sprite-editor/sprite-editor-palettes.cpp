@@ -164,7 +164,7 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 
 void SwitchPalette(EditorState& state)
 {
-	int nextPaletteIndex = selectedPaletteIndex + 1;
+	unsigned int nextPaletteIndex = selectedPaletteIndex + 1;
 	selectedPaletteIndex = (nextPaletteIndex >= palettes.length()) ? 0 : nextPaletteIndex;
 	SelectPalette(state);
 }

@@ -3,7 +3,7 @@
 #include "./editor.hpp"
 #include "./utilities.hpp"
 #include "./transform.hpp"
-
+#include "./operations.hpp"
 
 int SaveBitmap(
 	const tl::MemorySpace& tempMemory,
@@ -235,48 +235,29 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 		row_hop
 	);
 
-	int source_index;
 	int row_stride_counter = 0;
-	if (grid.cursor.index() < source_start_index)
+	copy_pixel_data_operation operation = copy_pixel_data_operation(grid.sprite);
+	int source_index = source_start_index;
+	while (source_index <= source_end_index)
 	{
-		source_index = source_start_index;
-		while (source_index <= source_end_index)
+		uint32_t to_copy = grid.sprite->get_pixel_data(source_index);
+		int target_index = source_index + source_to_target;
+
+		operation.add_pixel(target_index, to_copy);
+
+		if (row_stride_counter < row_stride)
 		{
-			uint32_t to_copy = grid.sprite->get_pixel_data(source_index);
-			int target_index = source_index + source_to_target;
-			grid.sprite->set_pixel_data(target_index, to_copy);
-			if (row_stride_counter < row_stride)
-			{
-				source_index += 1;
-				row_stride_counter += 1;
-			}
-			else
-			{
-				source_index += row_hop;
-				row_stride_counter = 0;
-			}
+			source_index += 1;
+			row_stride_counter += 1;
+		}
+		else
+		{
+			source_index += row_hop;
+			row_stride_counter = 0;
 		}
 	}
-	else
-	{
-		source_index = source_end_index;
-		while (source_index >= source_start_index)
-		{
-			uint32_t to_copy = grid.sprite->get_pixel_data(source_index);
-			int target_index = source_index + source_to_target;
-			grid.sprite->set_pixel_data(target_index, to_copy);
-			if (row_stride_counter < row_stride)
-			{
-				source_index -= 1;
-				row_stride_counter += 1;
-			}
-			else
-			{
-				source_index -= row_hop;
-				row_stride_counter = 0;
-			}
-		}
-	}
+
+	operation.execute();
 }
 
 void cut_pixels(Grid& grid, int source_cursor_index, int source_range_index)
