@@ -667,10 +667,10 @@ void RunCutTests()
 	cut_pixels(grid, 0, 4);
 
 	assert(grid.sprite->get_pixel_data(0) == 0);
-	assert(grid.sprite->get_pixel_data(1) == 0x00FF00); // TODO: fix this assertion
+	assert(grid.sprite->get_pixel_data(1) == 0);
 	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
 	assert(grid.sprite->get_pixel_data(3) == 0);
-	assert(grid.sprite->get_pixel_data(4) == 0x00FF00); // TODO: fix this assertion
+	assert(grid.sprite->get_pixel_data(4) == 0);
 	assert(grid.sprite->get_pixel_data(5) == 0xFF0000);
 	assert(grid.sprite->get_pixel_data(6) == 0xFF0000);
 	assert(grid.sprite->get_pixel_data(7) == 0x00FF00);
@@ -688,8 +688,8 @@ void RunCutTests()
 	assert(grid.sprite->get_pixel_data(0) == 0);
 	assert(grid.sprite->get_pixel_data(1) == 0);
 	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
-	assert(grid.sprite->get_pixel_data(3) == 0xFF0000); // TODO: fix this assertion
-	assert(grid.sprite->get_pixel_data(4) == 0x00FF00); // TODO: fix this assertion
+	assert(grid.sprite->get_pixel_data(3) == 0);
+	assert(grid.sprite->get_pixel_data(4) == 0);
 	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
 	assert(grid.sprite->get_pixel_data(6) == 0xFF0000);
 	assert(grid.sprite->get_pixel_data(7) == 0xFF0000);
