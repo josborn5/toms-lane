@@ -316,26 +316,28 @@ static int paste(Grid& grid)
 	);
 
 	// paste
-	int counter = 0;
+	int clipboard_index = 0;
 	int row_stride_counter = 0;
 	int target_index = target_start_index;
+	int clipboard_row_hop = 1 + the_clipboard.row_stride - row_stride;
 
 	paste_pixel_data_operation operation = paste_pixel_data_operation(grid.sprite);
 
 	while (target_index <= target_end_index)
 	{
-		uint32_t to_copy = the_clipboard.pixel_data.get_copy(counter).value;
+		uint32_t to_copy = the_clipboard.pixel_data.get_copy(clipboard_index).value;
 
 		operation.add_pixel(target_index, to_copy);
-		counter += 1;
 
 		if (row_stride_counter < row_stride)
 		{
+			clipboard_index += 1;
 			target_index += 1;
 			row_stride_counter += 1;
 		}
 		else
 		{
+			clipboard_index += clipboard_row_hop;
 			target_index += row_hop;
 			row_stride_counter = 0;
 		}
