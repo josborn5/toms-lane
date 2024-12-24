@@ -185,7 +185,7 @@ struct clipboard
 static clipboard the_clipboard;
 
 static void get_indexes_for_copy(
-	const Grid& grid,
+	const SpriteC* sprite,
 	int source_cursor_index,
 	int source_range_index,
 	clipboard& clipboard,
@@ -196,14 +196,14 @@ static void get_indexes_for_copy(
 	clipboard.start_index = (start_at_cursor) ? source_cursor_index : source_range_index;
 	clipboard.end_index = (start_at_cursor) ? source_range_index : source_cursor_index;
 
-	int source_cursor_col_index = grid.sprite->column_index(source_cursor_index);
-	int source_range_col_index = grid.sprite->column_index(source_range_index);
+	int source_cursor_col_index = sprite->column_index(source_cursor_index);
+	int source_range_col_index = sprite->column_index(source_range_index);
 	bool cursor_left_of_range = (source_cursor_col_index < source_range_col_index);
 	int source_start_col_index = (cursor_left_of_range) ? source_cursor_col_index : source_range_col_index;
 	int source_end_col_index = (cursor_left_of_range) ? source_range_col_index : source_cursor_col_index;
 
 	clipboard.row_stride = source_end_col_index - source_start_col_index;
-	row_hop = grid.sprite->width - clipboard.row_stride;
+	row_hop = sprite->width - clipboard.row_stride;
 }
 
 static void get_indexes_for_paste(
@@ -246,7 +246,7 @@ static int copy(const Grid& grid, int source_cursor_index, int source_range_inde
 {
 	int row_hop;
 	get_indexes_for_copy(
-		grid,
+		grid.sprite,
 		source_cursor_index,
 		source_range_index,
 		the_clipboard,
@@ -333,7 +333,7 @@ int cut(Grid& grid, int source_cursor_index, int source_range_index, paste_pixel
 {
 	int row_hop;
 	get_indexes_for_copy(
-		grid,
+		grid.sprite,
 		source_cursor_index,
 		source_range_index,
 		the_clipboard,
