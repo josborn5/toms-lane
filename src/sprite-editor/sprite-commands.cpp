@@ -321,7 +321,7 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	paste(grid, source_cursor_index, source_range_index);
 }
 
-int cut(Grid& grid, int source_cursor_index, int source_range_index)
+int cut(Grid& grid, int source_cursor_index, int source_range_index, paste_pixel_data_operation& clear_source_operation)
 {
 	int source_to_target, row_stride, row_hop;
 	get_indexes_for_copy(
@@ -337,7 +337,6 @@ int cut(Grid& grid, int source_cursor_index, int source_range_index)
 
 	int source_index;
 	int row_stride_counter = 0;
-	paste_pixel_data_operation clear_source_operation = paste_pixel_data_operation(grid.sprite);
 	source_index = the_clipboard.start_index;
 	while (source_index <= the_clipboard.end_index)
 	{
@@ -356,14 +355,15 @@ int cut(Grid& grid, int source_cursor_index, int source_range_index)
 			row_stride_counter = 0;
 		}
 	}
-	clear_source_operation.execute();
 
 	return 0;
 }
 
 void cut_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 {
-	cut(grid, source_cursor_index, source_range_index);
+	paste_pixel_data_operation operation = paste_pixel_data_operation(grid.sprite);
+	cut(grid, source_cursor_index, source_range_index, operation);
+	operation.execute();
 
 	paste(grid, source_cursor_index, source_range_index);
 }
