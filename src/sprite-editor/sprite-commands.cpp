@@ -225,7 +225,7 @@ static void get_indexes_for_copy(
 	}
 
 	clipboard.row_stride = source_end_col_index - source_start_col_index;
-	row_hop = source_start_col_index + grid.sprite->width - source_end_col_index;
+	row_hop = grid.sprite->width - clipboard.row_stride;
 }
 
 static void get_indexes_for_paste(
@@ -240,20 +240,16 @@ static void get_indexes_for_paste(
 	target_start_index = grid.cursor.index();
 	target_end_index = target_start_index - clipboard.start_index + clipboard.end_index;
 
-	int source_cursor_col_index = grid.sprite->column_index(clipboard.start_index);
-	int source_range_col_index = grid.sprite->column_index(clipboard.end_index);
-	bool cursor_left_of_range = (source_cursor_col_index < source_range_col_index);
-	int source_start_col_index = (cursor_left_of_range) ? source_cursor_col_index : source_range_col_index;
-	int source_end_col_index = (cursor_left_of_range) ? source_range_col_index : source_cursor_col_index;
-
 	int target_start_col_index = grid.cursor.column_index();
-	int target_end_col_index = target_start_col_index - source_start_col_index + source_end_col_index;
+	int target_end_col_index = target_start_col_index + clipboard.row_stride;
 	int max_col_index = grid.sprite->max_index_on_row(0);
+
+	row_stride = clipboard.row_stride;
 
 	if (target_end_col_index > max_col_index)
 	{
 		int columns_out_of_bounds = target_end_col_index - max_col_index;
-		source_end_col_index -= columns_out_of_bounds;
+		row_stride -= columns_out_of_bounds;
 		target_end_index -= columns_out_of_bounds;
 	}
 
@@ -265,8 +261,7 @@ static void get_indexes_for_paste(
 		target_end_index -= (grid.sprite->width * rows_out_of_bounds);
 	}
 
-	row_stride = source_end_col_index - source_start_col_index;
-	row_hop = source_start_col_index + grid.sprite->width - source_end_col_index;
+	row_hop = grid.sprite->width - row_stride;
 }
 
 static int copy(const Grid& grid, int source_cursor_index, int source_range_index)
