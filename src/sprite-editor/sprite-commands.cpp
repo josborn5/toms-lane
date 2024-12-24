@@ -230,7 +230,7 @@ struct clipboard
 
 static clipboard the_clipboard;
 
-void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
+static int copy(const Grid& grid, int source_cursor_index, int source_range_index)
 {
 	int source_to_target, row_stride, row_hop;
 	get_indexes_for_copy(
@@ -250,7 +250,7 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	while (source_index <= the_clipboard.end_index)
 	{
 		uint32_t to_copy = grid.sprite->get_pixel_data(source_index);
-		the_clipboard.pixel_data.append(to_copy);
+		the_clipboard.pixel_data.append(to_copy); // TODO: check append result
 
 		if (row_stride_counter < row_stride)
 		{
@@ -264,10 +264,27 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 		}
 	}
 
+	return 0;
+}
+
+static int paste(Grid& grid, int source_cursor_index, int source_range_index)
+{
+	int source_to_target, row_stride, row_hop;
+	get_indexes_for_copy(
+		grid,
+		source_cursor_index,
+		source_range_index,
+		source_to_target,
+		the_clipboard.start_index,
+		the_clipboard.end_index,
+		row_stride,
+		row_hop
+	);
+
 	// paste
 	int counter = 0;
-	row_stride_counter = 0;
-	source_index = the_clipboard.start_index;
+	int row_stride_counter = 0;
+	int source_index = the_clipboard.start_index;
 
 	paste_pixel_data_operation operation = paste_pixel_data_operation(grid.sprite);
 
@@ -293,6 +310,15 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	the_clipboard.pixel_data.clear();
 
 	operation.execute();
+
+	return 0;
+}
+
+void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
+{
+	copy(grid, source_cursor_index, source_range_index);
+
+	paste(grid, source_cursor_index, source_range_index);
 }
 
 void cut_pixels(Grid& grid, int source_cursor_index, int source_range_index)
@@ -332,29 +358,5 @@ void cut_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	}
 	clear_source_operation.execute();
 
-	int counter = 0;
-	row_stride_counter = 0;
-	source_index = the_clipboard.start_index;
-	paste_pixel_data_operation paste_operation = paste_pixel_data_operation(grid.sprite);
-	while (source_index <= the_clipboard.end_index)
-	{
-		uint32_t to_copy = the_clipboard.pixel_data.get_copy(counter).value;
-		int target_index = source_index + source_to_target;
-
-		paste_operation.add_pixel(target_index, to_copy);
-		counter += 1;
-
-		if (row_stride_counter < row_stride)
-		{
-			source_index += 1;
-			row_stride_counter += 1;
-		}
-		else
-		{
-			source_index += row_hop;
-			row_stride_counter = 0;
-		}
-	}
-	the_clipboard.pixel_data.clear();
-	paste_operation.execute();
+	paste(grid, source_cursor_index, source_range_index);
 }
