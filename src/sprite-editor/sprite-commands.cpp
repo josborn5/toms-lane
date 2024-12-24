@@ -310,15 +310,12 @@ void cut_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 
 	int source_index;
 	int row_stride_counter = 0;
-	paste_pixel_data_operation paste_operation = paste_pixel_data_operation(grid.sprite);
 	paste_pixel_data_operation clear_source_operation = paste_pixel_data_operation(grid.sprite);
 	source_index = source.start_index;
 	while (source_index <= source.end_index)
 	{
 		uint32_t to_copy = grid.sprite->get_pixel_data(source_index);
-		int target_index = source_index + source_to_target;
-
-		paste_operation.add_pixel(target_index, to_copy);
+		source.pixel_data.append(to_copy);
 		clear_source_operation.add_pixel(source_index, 0);
 
 		if (row_stride_counter < row_stride)
@@ -332,7 +329,30 @@ void cut_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 			row_stride_counter = 0;
 		}
 	}
-
 	clear_source_operation.execute();
+
+	int counter = 0;
+	row_stride_counter = 0;
+	source_index = source.start_index;
+	paste_pixel_data_operation paste_operation = paste_pixel_data_operation(grid.sprite);
+	while (source_index <= source.end_index)
+	{
+		uint32_t to_copy = source.pixel_data.get_copy(counter).value;
+		int target_index = source_index + source_to_target;
+
+		paste_operation.add_pixel(target_index, to_copy);
+		counter += 1;
+
+		if (row_stride_counter < row_stride)
+		{
+			source_index += 1;
+			row_stride_counter += 1;
+		}
+		else
+		{
+			source_index += row_hop;
+			row_stride_counter = 0;
+		}
+	}
 	paste_operation.execute();
 }
