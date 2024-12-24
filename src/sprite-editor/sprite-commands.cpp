@@ -267,16 +267,16 @@ static int copy(const Grid& grid, int source_cursor_index, int source_range_inde
 	return 0;
 }
 
-static int paste(Grid& grid, int source_cursor_index, int source_range_index)
+static int paste(Grid& grid)
 {
-	int source_to_target, row_stride, row_hop;
+	int source_to_target, row_stride, row_hop, junk1, junk2;
 	get_indexes_for_paste(
 		grid,
-		source_cursor_index,
-		source_range_index,
-		source_to_target,
 		the_clipboard.start_index,
 		the_clipboard.end_index,
+		source_to_target,
+		junk1,
+		junk2,
 		row_stride,
 		row_hop
 	);
@@ -318,7 +318,7 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 {
 	copy(grid, source_cursor_index, source_range_index);
 
-	paste(grid, source_cursor_index, source_range_index);
+	paste(grid);
 }
 
 int cut(Grid& grid, int source_cursor_index, int source_range_index, paste_pixel_data_operation& clear_source_operation)
@@ -365,5 +365,5 @@ void cut_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	cut(grid, source_cursor_index, source_range_index, operation);
 	operation.execute();
 
-	paste(grid, source_cursor_index, source_range_index);
+	paste(grid);
 }
