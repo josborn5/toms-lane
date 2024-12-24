@@ -178,6 +178,7 @@ struct clipboard
 {
 	int start_index;
 	int end_index;
+	int row_stride;
 	tl::stack_array<uint32_t, 256> pixel_data;
 };
 
@@ -188,7 +189,6 @@ static void get_indexes_for_copy(
 	int source_cursor_index,
 	int source_range_index,
 	clipboard& clipboard,
-	int& row_stride,
 	int& row_hop
 )
 {
@@ -224,7 +224,7 @@ static void get_indexes_for_copy(
 		clipboard.end_index -= (grid.sprite->width * rows_out_of_bounds);
 	}
 
-	row_stride = source_end_col_index - source_start_col_index;
+	clipboard.row_stride = source_end_col_index - source_start_col_index;
 	row_hop = source_start_col_index + grid.sprite->width - source_end_col_index;
 }
 
@@ -271,13 +271,12 @@ static void get_indexes_for_paste(
 
 static int copy(const Grid& grid, int source_cursor_index, int source_range_index)
 {
-	int row_stride, row_hop;
+	int row_hop;
 	get_indexes_for_copy(
 		grid,
 		source_cursor_index,
 		source_range_index,
 		the_clipboard,
-		row_stride,
 		row_hop
 	);
 
@@ -289,7 +288,7 @@ static int copy(const Grid& grid, int source_cursor_index, int source_range_inde
 		uint32_t to_copy = grid.sprite->get_pixel_data(source_index);
 		the_clipboard.pixel_data.append(to_copy); // TODO: check append result
 
-		if (row_stride_counter < row_stride)
+		if (row_stride_counter < the_clipboard.row_stride)
 		{
 			source_index += 1;
 			row_stride_counter += 1;
@@ -357,13 +356,12 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 
 int cut(Grid& grid, int source_cursor_index, int source_range_index, paste_pixel_data_operation& clear_source_operation)
 {
-	int row_stride, row_hop;
+	int row_hop;
 	get_indexes_for_copy(
 		grid,
 		source_cursor_index,
 		source_range_index,
 		the_clipboard,
-		row_stride,
 		row_hop
 	);
 
@@ -376,7 +374,7 @@ int cut(Grid& grid, int source_cursor_index, int source_range_index, paste_pixel
 		the_clipboard.pixel_data.append(to_copy);
 		clear_source_operation.add_pixel(source_index, 0);
 
-		if (row_stride_counter < row_stride)
+		if (row_stride_counter < the_clipboard.row_stride)
 		{
 			source_index += 1;
 			row_stride_counter += 1;
