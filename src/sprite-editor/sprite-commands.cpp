@@ -4,6 +4,7 @@
 #include "./utilities.hpp"
 #include "./transform.hpp"
 #include "./operations.hpp"
+#include "./commands.hpp"
 
 int SaveBitmap(
 	const tl::MemorySpace& tempMemory,
@@ -174,27 +175,19 @@ int InsertColumn(Grid& grid)
 	return append_result;
 }
 
-struct clipboard
-{
-	int start_index;
-	int end_index;
-	int row_stride;
-	tl::stack_array<uint32_t, 256> pixel_data;
-};
-
 static clipboard the_clipboard;
 
 static void get_indexes_for_copy(
 	const SpriteC& sprite,
 	int source_cursor_index,
 	int source_range_index,
-	clipboard& clipboard,
+	clipboard& write_clipboard,
 	int& row_hop
 )
 {
 	bool start_at_cursor = (source_cursor_index < source_range_index);
-	clipboard.start_index = (start_at_cursor) ? source_cursor_index : source_range_index;
-	clipboard.end_index = (start_at_cursor) ? source_range_index : source_cursor_index;
+	write_clipboard.start_index = (start_at_cursor) ? source_cursor_index : source_range_index;
+	write_clipboard.end_index = (start_at_cursor) ? source_range_index : source_cursor_index;
 
 	int source_cursor_col_index = sprite.column_index(source_cursor_index);
 	int source_range_col_index = sprite.column_index(source_range_index);
@@ -202,8 +195,8 @@ static void get_indexes_for_copy(
 	int source_start_col_index = (cursor_left_of_range) ? source_cursor_col_index : source_range_col_index;
 	int source_end_col_index = (cursor_left_of_range) ? source_range_col_index : source_cursor_col_index;
 
-	clipboard.row_stride = source_end_col_index - source_start_col_index;
-	row_hop = sprite.width - clipboard.row_stride;
+	write_clipboard.row_stride = source_end_col_index - source_start_col_index;
+	row_hop = sprite.width - write_clipboard.row_stride;
 }
 
 static void get_indexes_for_paste(
@@ -242,7 +235,12 @@ static void get_indexes_for_paste(
 	row_hop = grid.sprite->width - row_stride;
 }
 
-static int copy(const SpriteC& sprite, int source_cursor_index, int source_range_index, clipboard& clipboard)
+int copy_to_clipboard(
+	const SpriteC& sprite,
+	int source_cursor_index,
+	int source_range_index,
+	clipboard& clipboard
+)
 {
 	clipboard.pixel_data.clear();
 	int row_hop;
@@ -250,7 +248,7 @@ static int copy(const SpriteC& sprite, int source_cursor_index, int source_range
 		sprite,
 		source_cursor_index,
 		source_range_index,
-		the_clipboard,
+		clipboard,
 		row_hop
 	);
 
@@ -276,7 +274,7 @@ static int copy(const SpriteC& sprite, int source_cursor_index, int source_range
 	return 0;
 }
 
-static int paste(const Grid& grid, const clipboard& clipboard, paste_pixel_data_operation& operation)
+int paste_from_clipboard_operation(const Grid& grid, const clipboard& clipboard, paste_pixel_data_operation& operation)
 {
 	int row_stride, row_hop, target_start_index, target_end_index;
 	get_indexes_for_paste(
@@ -318,10 +316,10 @@ static int paste(const Grid& grid, const clipboard& clipboard, paste_pixel_data_
 
 void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 {
-	copy(*grid.sprite, source_cursor_index, source_range_index, the_clipboard);
+	copy_to_clipboard(*grid.sprite, source_cursor_index, source_range_index, the_clipboard);
 
 	paste_pixel_data_operation paste_operation = paste_pixel_data_operation(grid.sprite);
-	paste(grid, the_clipboard, paste_operation);
+	paste_from_clipboard_operation(grid, the_clipboard, paste_operation);
 	paste_operation.execute();
 }
 
@@ -374,6 +372,6 @@ void cut_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	cut_operation.execute();
 
 	paste_pixel_data_operation paste_operation = paste_pixel_data_operation(grid.sprite);
-	paste(grid, the_clipboard, paste_operation);
+	paste_from_clipboard_operation(grid, the_clipboard, paste_operation);
 	paste_operation.execute();
 }
