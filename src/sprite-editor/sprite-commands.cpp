@@ -242,7 +242,7 @@ int copy_to_clipboard(
 	clipboard& clipboard
 )
 {
-	clipboard.pixel_data.clear();
+	clipboard.clear();
 	int row_hop;
 	get_indexes_for_copy(
 		sprite,
@@ -331,7 +331,7 @@ int cut_to_clipboard_operation(
 	clipboard& clipboard
 )
 {
-	clipboard.pixel_data.clear();
+	clipboard.clear();
 	int row_hop;
 	get_indexes_for_copy(
 		sprite,

@@ -23,6 +23,14 @@ struct clipboard
 	int end_index = 0;
 	int row_stride = 0;
 	tl::stack_array<uint32_t, 256> pixel_data;
+
+	void clear()
+	{
+		start_index = 0;
+		end_index = 0;
+		row_stride = 0;
+		pixel_data.clear();
+	}
 };
 
 int copy_to_clipboard(
