@@ -25,8 +25,24 @@ struct clipboard
 	tl::stack_array<uint32_t, 256> pixel_data;
 };
 
-int copy_to_clipboard(const SpriteC& sprite, int source_cursor_index, int source_range_index, clipboard& clipboard);
-int paste_from_clipboard_operation(const Grid& grid, const clipboard& clipboard, paste_pixel_data_operation& operation);
+int copy_to_clipboard(
+	const SpriteC& sprite,
+	int source_cursor_index,
+	int source_range_index,
+	clipboard& clipboard
+);
+int cut_to_clipboard_operation(
+	const SpriteC& sprite,
+	int source_cursor_index,
+	int source_range_index,
+	paste_pixel_data_operation& cut_operation,
+	clipboard& clipboard
+);
+int paste_from_clipboard_operation(
+	const Grid& grid,
+	const clipboard& clipboard,
+	paste_pixel_data_operation& paste_operation
+);
 
 #endif
 

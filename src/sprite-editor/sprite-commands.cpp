@@ -323,7 +323,7 @@ void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 	paste_operation.execute();
 }
 
-int cut(
+int cut_to_clipboard_operation(
 	const SpriteC& sprite,
 	int source_cursor_index,
 	int source_range_index,
@@ -368,7 +368,7 @@ int cut(
 void cut_pixels(Grid& grid, int source_cursor_index, int source_range_index)
 {
 	paste_pixel_data_operation cut_operation = paste_pixel_data_operation(grid.sprite);
-	cut(*grid.sprite, source_cursor_index, source_range_index, cut_operation, the_clipboard);
+	cut_to_clipboard_operation(*grid.sprite, source_cursor_index, source_range_index, cut_operation, the_clipboard);
 	cut_operation.execute();
 
 	paste_pixel_data_operation paste_operation = paste_pixel_data_operation(grid.sprite);

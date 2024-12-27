@@ -566,6 +566,21 @@ void RunCopyTests()
 	printf("\nCopy tests complete\n");
 }
 
+static void test_cut_pixels(Grid& test_grid, int cursor_index, int range_index)
+{
+	clipboard test_clipboard;
+
+	paste_pixel_data_operation cut_operation = paste_pixel_data_operation(test_grid.sprite);
+	cut_to_clipboard_operation(*test_grid.sprite, cursor_index, range_index, cut_operation, test_clipboard);
+	cut_operation.execute();
+
+	paste_pixel_data_operation paste_operation = paste_pixel_data_operation(test_grid.sprite);
+	paste_from_clipboard_operation(test_grid, test_clipboard, paste_operation);
+	paste_operation.execute();
+}
+
+
+
 void RunCutTests()
 {
 	printf("\nRunning cut tests\n");
@@ -575,7 +590,7 @@ void RunCutTests()
 	// 0 1 2
 	arrange_3x3_for_copy_test();
 	grid.cursor.set_index(0);
-	cut_pixels(grid, 1, 2);
+	test_cut_pixels(grid, 1, 2);
 
 	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
 	assert(grid.sprite->get_pixel_data(1) == 0x0000FF);
@@ -596,7 +611,7 @@ void RunCutTests()
 	// 0 1 2
 	arrange_3x3_for_copy_test();
 	grid.cursor.set_index(1);
-	cut_pixels(grid, 0, 1);
+	test_cut_pixels(grid, 0, 1);
 
 	assert(grid.sprite->get_pixel_data(0) == 0);
 	assert(grid.sprite->get_pixel_data(1) == 0xFF0000);
@@ -617,7 +632,7 @@ void RunCutTests()
 	// 0 1 2
 	arrange_3x3_for_copy_test();
 	grid.cursor.set_index(0);
-	cut_pixels(grid, 2, 1);
+	test_cut_pixels(grid, 2, 1);
 
 	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
 	assert(grid.sprite->get_pixel_data(1) == 0x0000FF);
@@ -637,7 +652,7 @@ void RunCutTests()
 	// copying a square from high index to low index
 	arrange_3x3_for_copy_test();
 	grid.cursor.set_index(0);
-	cut_pixels(grid, 1, 5);
+	test_cut_pixels(grid, 1, 5);
 
 	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
 	assert(grid.sprite->get_pixel_data(1) == 0x0000FF);
@@ -656,7 +671,7 @@ void RunCutTests()
 	// copying a square from low index to high index
 	arrange_3x3_for_copy_test();
 	grid.cursor.set_index(1);
-	cut_pixels(grid, 0, 4);
+	test_cut_pixels(grid, 0, 4);
 
 	assert(grid.sprite->get_pixel_data(0) == 0);
 	assert(grid.sprite->get_pixel_data(1) == 0xFF0000);
@@ -675,7 +690,7 @@ void RunCutTests()
 	// copying a square from low index to high index going out of bounds to the right
 	arrange_3x3_for_copy_test();
 	grid.cursor.set_index(5);
-	cut_pixels(grid, 0, 4);
+	test_cut_pixels(grid, 0, 4);
 
 	assert(grid.sprite->get_pixel_data(0) == 0);
 	assert(grid.sprite->get_pixel_data(1) == 0);
@@ -694,7 +709,7 @@ void RunCutTests()
 	// copying a square from low index to high index going out of bounds to the top
 	arrange_3x3_for_copy_test();
 	grid.cursor.set_index(7);
-	cut_pixels(grid, 0, 4);
+	test_cut_pixels(grid, 0, 4);
 
 	assert(grid.sprite->get_pixel_data(0) == 0);
 	assert(grid.sprite->get_pixel_data(1) == 0);
