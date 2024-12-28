@@ -175,8 +175,6 @@ int InsertColumn(Grid& grid)
 	return append_result;
 }
 
-static clipboard the_clipboard;
-
 static void get_indexes_for_copy(
 	const SpriteC& sprite,
 	int source_cursor_index,
@@ -314,15 +312,6 @@ int paste_from_clipboard_operation(const Grid& grid, const clipboard& clipboard,
 	return 0;
 }
 
-void copy_pixels(Grid& grid, int source_cursor_index, int source_range_index)
-{
-	copy_to_clipboard(*grid.sprite, source_cursor_index, source_range_index, the_clipboard);
-
-	paste_pixel_data_operation paste_operation = paste_pixel_data_operation(grid.sprite);
-	paste_from_clipboard_operation(grid, the_clipboard, paste_operation);
-	paste_operation.execute();
-}
-
 int cut_to_clipboard_operation(
 	const SpriteC& sprite,
 	int source_cursor_index,
@@ -365,13 +354,3 @@ int cut_to_clipboard_operation(
 	return 0;
 }
 
-void cut_pixels(Grid& grid, int source_cursor_index, int source_range_index)
-{
-	paste_pixel_data_operation cut_operation = paste_pixel_data_operation(grid.sprite);
-	cut_to_clipboard_operation(*grid.sprite, source_cursor_index, source_range_index, cut_operation, the_clipboard);
-	cut_operation.execute();
-
-	paste_pixel_data_operation paste_operation = paste_pixel_data_operation(grid.sprite);
-	paste_from_clipboard_operation(grid, the_clipboard, paste_operation);
-	paste_operation.execute();
-}
