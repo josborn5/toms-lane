@@ -725,6 +725,30 @@ void RunCutTests()
 	assert(spriteContent[10] == EMPTY_COLOR);
 	assert(spriteContent[11] == EMPTY_COLOR);
 
+	// check undo
+	arrange_3x3_for_copy_test();
+	clipboard test_clipboard;
+
+	paste_pixel_data_operation cut_operation = paste_pixel_data_operation(grid.sprite);
+	cut_to_clipboard_operation(*grid.sprite, 0, 4, cut_operation, test_clipboard);
+	cut_operation.execute();
+
+	assert(grid.sprite->get_pixel_data(0) == 0);
+	assert(grid.sprite->get_pixel_data(1) == 0);
+	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(3) == 0);
+	assert(grid.sprite->get_pixel_data(4) == 0);
+	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
+
+	cut_operation.undo();
+
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(1) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(3) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(4) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
+
 	printf("\nCut tests complete\n");
 }
 

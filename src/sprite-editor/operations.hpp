@@ -71,6 +71,15 @@ struct paste_pixel_data_operation
 		return _pixels.append(pixel);
 	}
 
+	void undo()
+	{
+		for (unsigned int i = 0; i < _pixels.length(); i += 1)
+		{
+			paste_pixel* pixel = _pixels.get_pointer(i).value;
+			_sprite->set_pixel_data(pixel->index, pixel->original_data);
+		}
+	}
+
 	private:
 		SpriteC* _sprite;
 		tl::stack_array<paste_pixel, 256> _pixels;
