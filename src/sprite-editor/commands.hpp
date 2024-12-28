@@ -31,6 +31,11 @@ struct clipboard
 		row_stride = 0;
 		pixel_data.clear();
 	}
+
+	bool is_set() const
+	{
+		return row_stride == 0;
+	}
 };
 
 int copy_to_clipboard(

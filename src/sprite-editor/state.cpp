@@ -18,6 +18,9 @@ static stack_ring_buffer<set_pixel_data_operation, 8> operations;
 
 static bool hasCopied = false;
 static bool has_cut = false;
+
+static clipboard the_clipboard;
+
 static tl::MemorySpace spritePixelMemory;
 static tl::MemorySpace sprite_color_table_memory;
 static tl::MemorySpace fileReadMemory;
@@ -309,6 +312,7 @@ static int Initialize(char* commandLine)
 	state.mode = View;
 	hasCopied = false;
 	has_cut = false;
+	the_clipboard.clear();
 	copy_cursor_index = 0;
 	copy_range_index = 0;
 
@@ -497,8 +501,18 @@ static bool CheckForCopy(const tl::Input& input)
 	{
 		hasCopied = true;
 		has_cut = false;
+
 		copy_cursor_index = state.pixels.cursor.index();
 		copy_range_index = (state.mode == Visual) ? state.pixels.range.index() : copy_cursor_index;
+
+		Grid& grid = state.pixels;
+		copy_to_clipboard(
+			*grid.sprite,
+			grid.cursor.index(),
+			copy_range_index,
+			the_clipboard
+		);
+
 		WriteStringToCommandBuffer("COPIED");
 		return true;
 	}
@@ -511,8 +525,20 @@ static bool CheckForCopy(const tl::Input& input)
 	{
 		hasCopied = false;
 		has_cut = true;
+
 		copy_cursor_index = state.pixels.cursor.index();
 		copy_range_index = (state.mode == Visual) ? state.pixels.range.index() : copy_cursor_index;
+
+		Grid grid = state.pixels;
+		paste_pixel_data_operation cut_operation = paste_pixel_data_operation(grid.sprite);
+		cut_to_clipboard_operation(
+			*grid.sprite,
+			grid.cursor.index(),
+			copy_range_index,
+			cut_operation,
+			the_clipboard
+		);
+
 		WriteStringToCommandBuffer("CUT");
 		return true;
 	}
@@ -528,19 +554,19 @@ static bool CheckForPaste(const tl::Input& input)
 				|| input.buttons[tl::KEY_P].keyDown
 			)
 			&& state.pixels_are_selected()
+			&& the_clipboard.is_set()
 		)
 	{
-		if (hasCopied)
-		{
-			copy_pixels(state.pixels, copy_cursor_index, copy_range_index);
-			return true;
-		}
-		else if (has_cut)
-		{
-			cut_pixels(state.pixels, copy_cursor_index, copy_range_index);
-			has_cut = false; // kinda wonky: one time operation to clear source pixels
-			return true;
-		}
+		paste_pixel_data_operation paste_operation = paste_pixel_data_operation(state.pixels.sprite);
+		paste_from_clipboard_operation(
+			state.pixels,
+			the_clipboard,
+			paste_operation
+		);
+
+		paste_operation.execute();
+
+		return true;
 
 	}
 	return false;
