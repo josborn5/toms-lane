@@ -46,7 +46,7 @@ struct undo
 					case 2:
 						{
 							paste_pixel_data_operation paste_operation = paste_operations.pop().value;
-							// paste_operation.undo();
+							paste_operation.undo();
 						}
 						break;
 				}
