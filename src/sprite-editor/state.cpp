@@ -575,6 +575,7 @@ static bool CheckForCopy(const tl::Input& input)
 		);
 
 		cut_operation.execute();
+		the_undo.add_paste_operation(cut_operation);
 
 		WriteStringToCommandBuffer("CUT");
 		return true;
@@ -602,6 +603,7 @@ static bool CheckForPaste(const tl::Input& input)
 		);
 
 		paste_operation.execute();
+		the_undo.add_paste_operation(paste_operation);
 		WriteStringToCommandBuffer("PASTE");
 		return true;
 
