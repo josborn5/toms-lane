@@ -44,6 +44,10 @@ struct paste_pixel
 
 struct paste_pixel_data_operation
 {
+	paste_pixel_data_operation()
+	{
+	}
+
 	paste_pixel_data_operation(SpriteC* sprite)
 	{
 		_sprite = sprite;

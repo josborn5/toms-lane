@@ -14,6 +14,56 @@ static const int modeBufferSize = 2;
 static const int skipModifierKey = tl::KEY_CTRL;
 static const int cameraModifierKey = tl::KEY_SHIFT;
 
+template<int N>
+struct undo
+{
+	public:
+		void add_set_operation(set_pixel_data_operation operation)
+		{
+			set_operations.push(operation);
+			order.push(1);
+		}
+
+		void add_paste_operation(paste_pixel_data_operation operation)
+		{
+			paste_operations.push(operation);
+			order.push(2);
+		}
+
+		int do_undo()
+		{
+			operation<int> result = order.pop();
+			if (result.result == operation_success)
+			{
+				switch (result.value)
+				{
+					case 1:
+						{
+							set_pixel_data_operation set_operation = set_operations.pop().value;
+							set_operation.undo();
+						}
+						break;
+					case 2:
+						{
+							paste_pixel_data_operation paste_operation = paste_operations.pop().value;
+							// paste_operation.undo();
+						}
+						break;
+				}
+
+				return 0;
+			}
+			return 1;
+		}
+
+	private:
+		stack_ring_buffer<set_pixel_data_operation, N> set_operations;
+		stack_ring_buffer<paste_pixel_data_operation, N> paste_operations;
+
+		stack_ring_buffer<int, N> order;
+};
+
+static undo<8> the_undo;
 static stack_ring_buffer<set_pixel_data_operation, 8> operations;
 
 static clipboard the_clipboard;
@@ -467,7 +517,7 @@ static void ExecuteCurrentCommand()
 
 		set_pixel_data_operation operation(state.activeControl, parsed_color);
 		operation.execute();
-		operations.push(operation);
+		the_undo.add_set_operation(operation);
 
 		ClearCommandBuffer();
 		return;
@@ -589,12 +639,7 @@ static bool check_for_undo(const tl::Input& input)
 {
 	if (input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_Z].keyDown)
 	{
-		operation<set_pixel_data_operation> last_operation = operations.pop();
-		if (last_operation.result == operation_success)
-		{
-			last_operation.value.undo();
-		}
-
+		the_undo.do_undo();
 		return true;
 	}
 
@@ -642,7 +687,7 @@ static void ApplyInsertModeInputToState(const tl::Input& input)
 			: currentColor;
 		set_pixel_data_operation operation(state.activeControl, data_to_set);
 		operation.execute();
-		operations.push(operation);
+		the_undo.add_set_operation(operation);
 		return;
 	}
 	if (check_for_undo(input)) return;
