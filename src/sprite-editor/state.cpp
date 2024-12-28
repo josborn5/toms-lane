@@ -20,33 +20,35 @@ struct undo
 	public:
 		void add_set_operation(set_pixel_data_operation operation)
 		{
-			set_operations.push(operation);
-			order.push(1);
+			any_operation any_op;
+			any_op.generic.set_single_pixel = operation;
+			any_op.type = single;
+			all_operations.push(any_op);
 		}
 
 		void add_paste_operation(paste_pixel_data_operation operation)
 		{
-			paste_operations.push(operation);
-			order.push(2);
+			any_operation any_op;
+			any_op.generic.set_multiple_pixels = operation;
+			any_op.type = multiple;
+			all_operations.push(any_op);
 		}
 
 		int do_undo()
 		{
-			operation<int> result = order.pop();
+			operation<any_operation> result = all_operations.pop();
 			if (result.result == operation_success)
 			{
-				switch (result.value)
+				switch (result.value.type)
 				{
-					case 1:
+					case single:
 						{
-							set_pixel_data_operation set_operation = set_operations.pop().value;
-							set_operation.undo();
+							result.value.generic.set_single_pixel.undo();;
 						}
 						break;
-					case 2:
+					case multiple:
 						{
-							paste_pixel_data_operation paste_operation = paste_operations.pop().value;
-							paste_operation.undo();
+							result.value.generic.set_multiple_pixels.undo();
 						}
 						break;
 				}
@@ -57,10 +59,7 @@ struct undo
 		}
 
 	private:
-		stack_ring_buffer<set_pixel_data_operation, N> set_operations;
-		stack_ring_buffer<paste_pixel_data_operation, N> paste_operations;
-
-		stack_ring_buffer<int, N> order;
+		stack_ring_buffer<any_operation, N> all_operations;
 };
 
 static undo<8> the_undo;

@@ -6,9 +6,7 @@
 struct set_pixel_data_operation
 {
 	public:
-		set_pixel_data_operation()
-		{
-		}
+		set_pixel_data_operation() {}
 
 		set_pixel_data_operation(Grid* grid, uint32_t data_to_set)
 		{
@@ -44,9 +42,7 @@ struct paste_pixel
 
 struct paste_pixel_data_operation
 {
-	paste_pixel_data_operation()
-	{
-	}
+	paste_pixel_data_operation() {}
 
 	paste_pixel_data_operation(SpriteC* sprite)
 	{
@@ -83,6 +79,26 @@ struct paste_pixel_data_operation
 	private:
 		SpriteC* _sprite;
 		tl::stack_array<paste_pixel, 256> _pixels;
+};
+
+union generic_operation
+{
+	set_pixel_data_operation set_single_pixel;
+	paste_pixel_data_operation set_multiple_pixels;
+
+	generic_operation() {}
+};
+
+enum operation_type
+{
+	single,
+	multiple
+};
+
+struct any_operation
+{
+	union generic_operation generic;
+	operation_type type;
 };
 
 #endif
