@@ -21,20 +21,20 @@ struct clipboard
 {
 	int start_index = 0;
 	int end_index = 0;
-	int row_stride = 0;
+	int row_stride = -1;
 	tl::stack_array<uint32_t, 256> pixel_data;
 
 	void clear()
 	{
 		start_index = 0;
 		end_index = 0;
-		row_stride = 0;
+		row_stride = -1;
 		pixel_data.clear();
 	}
 
 	bool is_set() const
 	{
-		return row_stride == 0;
+		return row_stride != -1;
 	}
 };
 

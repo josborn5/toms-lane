@@ -16,9 +16,6 @@ static const int cameraModifierKey = tl::KEY_SHIFT;
 
 static stack_ring_buffer<set_pixel_data_operation, 8> operations;
 
-static bool hasCopied = false;
-static bool has_cut = false;
-
 static clipboard the_clipboard;
 
 static tl::MemorySpace spritePixelMemory;
@@ -27,8 +24,6 @@ static tl::MemorySpace fileReadMemory;
 static tl::MemorySpace paletteMemory;
 static tl::MemorySpace tempMemory;
 static uint32_t currentColor = 0;
-static int copy_cursor_index = 0;
-static int copy_range_index = 0;
 static tl::bitmap currentBitmap;
 
 EditorState state;
@@ -310,11 +305,7 @@ static int Initialize(char* commandLine)
 	state.pixels.range.move_start();
 
 	state.mode = View;
-	hasCopied = false;
-	has_cut = false;
 	the_clipboard.clear();
-	copy_cursor_index = 0;
-	copy_range_index = 0;
 
 	ClearCommandBuffer();
 	InitializeLayout(state);
@@ -499,11 +490,8 @@ static bool CheckForCopy(const tl::Input& input)
 		)
 		&& state.pixels_are_selected())
 	{
-		hasCopied = true;
-		has_cut = false;
-
-		copy_cursor_index = state.pixels.cursor.index();
-		copy_range_index = (state.mode == Visual) ? state.pixels.range.index() : copy_cursor_index;
+		int copy_cursor_index = state.pixels.cursor.index();
+		int copy_range_index = (state.mode == Visual) ? state.pixels.range.index() : copy_cursor_index;
 
 		Grid& grid = state.pixels;
 		copy_to_clipboard(
@@ -523,11 +511,8 @@ static bool CheckForCopy(const tl::Input& input)
 		)
 		&& state.pixels_are_selected())
 	{
-		hasCopied = false;
-		has_cut = true;
-
-		copy_cursor_index = state.pixels.cursor.index();
-		copy_range_index = (state.mode == Visual) ? state.pixels.range.index() : copy_cursor_index;
+		int copy_cursor_index = state.pixels.cursor.index();
+		int copy_range_index = (state.mode == Visual) ? state.pixels.range.index() : copy_cursor_index;
 
 		Grid grid = state.pixels;
 		paste_pixel_data_operation cut_operation = paste_pixel_data_operation(grid.sprite);
@@ -538,6 +523,8 @@ static bool CheckForCopy(const tl::Input& input)
 			cut_operation,
 			the_clipboard
 		);
+
+		cut_operation.execute();
 
 		WriteStringToCommandBuffer("CUT");
 		return true;
@@ -565,7 +552,7 @@ static bool CheckForPaste(const tl::Input& input)
 		);
 
 		paste_operation.execute();
-
+		WriteStringToCommandBuffer("PASTE");
 		return true;
 
 	}
