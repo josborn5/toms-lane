@@ -106,20 +106,24 @@ template<int N>
 struct operation_executor
 {
 	public:
-		void add_set_operation(set_pixel_data_operation operation)
+		void do_set_single_pixel(set_pixel_data_operation operation)
 		{
 			any_operation any_op;
 			any_op.generic.set_single_pixel = operation;
 			any_op.type = single;
 			all_operations.push(any_op);
+
+			operation.execute();
 		}
 
-		void add_paste_operation(paste_pixel_data_operation operation)
+		void do_set_multiple_pixels(paste_pixel_data_operation operation)
 		{
 			any_operation any_op;
 			any_op.generic.set_multiple_pixels = operation;
 			any_op.type = multiple;
 			all_operations.push(any_op);
+
+			operation.execute();
 		}
 
 		int do_undo()
