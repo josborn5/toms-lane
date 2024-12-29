@@ -1,3 +1,6 @@
+#ifndef SPRITE_EDITOR_RING_BUFFER_HPP
+#define SPRITE_EDITOR_RING_BUFFER_HPP
+
 #include "./stack.hpp"
 
 template<typename T, unsigned int CAPACITY>
@@ -59,3 +62,5 @@ struct stack_ring_buffer
 			return CAPACITY - 1;
 		}
 };
+
+#endif

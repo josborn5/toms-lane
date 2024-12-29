@@ -6,7 +6,6 @@
 #include "./utilities.hpp"
 #include "./transform.hpp"
 #include "./operations.hpp"
-#include "./ring-buffer.hpp"
 
 static const int commandBufferSize = 256;
 static const int filePathBufferSize = 256;
@@ -14,56 +13,7 @@ static const int modeBufferSize = 2;
 static const int skipModifierKey = tl::KEY_CTRL;
 static const int cameraModifierKey = tl::KEY_SHIFT;
 
-template<int N>
-struct undo
-{
-	public:
-		void add_set_operation(set_pixel_data_operation operation)
-		{
-			any_operation any_op;
-			any_op.generic.set_single_pixel = operation;
-			any_op.type = single;
-			all_operations.push(any_op);
-		}
-
-		void add_paste_operation(paste_pixel_data_operation operation)
-		{
-			any_operation any_op;
-			any_op.generic.set_multiple_pixels = operation;
-			any_op.type = multiple;
-			all_operations.push(any_op);
-		}
-
-		int do_undo()
-		{
-			operation<any_operation> result = all_operations.pop();
-			if (result.result == operation_success)
-			{
-				switch (result.value.type)
-				{
-					case single:
-						{
-							result.value.generic.set_single_pixel.undo();;
-						}
-						break;
-					case multiple:
-						{
-							result.value.generic.set_multiple_pixels.undo();
-						}
-						break;
-				}
-
-				return 0;
-			}
-			return 1;
-		}
-
-	private:
-		stack_ring_buffer<any_operation, N> all_operations;
-};
-
-static undo<8> the_undo;
-static stack_ring_buffer<set_pixel_data_operation, 8> operations;
+static operation_executor<8> the_undo;
 
 static clipboard the_clipboard;
 

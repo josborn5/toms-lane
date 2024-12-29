@@ -1,3 +1,6 @@
+#ifndef SPRITE_EDITOR_STACK_HPP
+#define SPRITE_EDITOR_STACK_HPP
+
 enum operation_result
 {
 	operation_success = 0,
@@ -58,3 +61,5 @@ struct stack_stack
 			return return_value;
 		}
 };
+
+#endif
