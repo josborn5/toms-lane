@@ -29,37 +29,35 @@ int SaveBitmap(
 
 struct insert_row_operation
 {
-	insert_row_operation(SpriteC* sprite, unsigned int insert_at_row_index)
+	insert_row_operation(Grid* grid)
 	{
-		_sprite = sprite;
-		_insert_at_row_index = insert_at_row_index;
+		_grid = grid;
 	}
 
 	void execute()
 	{
 		// Shift down rows after the new row
-		int first_move_pixel_index = _insert_at_row_index * _sprite->width;
-		for (int source_index = _sprite->max_index(); source_index >= first_move_pixel_index; source_index -= 1)
+		int first_move_pixel_index = _grid->cursor.row_index() * _grid->sprite->width;
+		for (int source_index = _grid->sprite->max_index(); source_index >= first_move_pixel_index; source_index -= 1)
 		{
-			int target_index = source_index + _sprite->width;
-			uint32_t to_move = _sprite->get_pixel_data(source_index);
-			_sprite->set_pixel_data(target_index, to_move);
+			int target_index = source_index + _grid->sprite->width;
+			uint32_t to_move = _grid->sprite->get_pixel_data(source_index);
+			_grid->sprite->set_pixel_data(target_index, to_move);
 		}
 
 		// Clear out pixels in the new row
 		int first_new_pixel_index = first_move_pixel_index;
-		int first_moved_pixel_index = first_new_pixel_index  + _sprite->width;
+		int first_moved_pixel_index = first_new_pixel_index  + _grid->sprite->width;
 		for (int i = first_new_pixel_index ; i < first_moved_pixel_index ; i += 1)
 		{
-			_sprite->set_pixel_data(i, 0x000000);
+			_grid->sprite->set_pixel_data(i, 0x000000);
 		}
 
-		_sprite->height += 1;
+		_grid->sprite->height += 1;
 	}
 
 	private:
-		SpriteC* _sprite = nullptr;
-		unsigned int _insert_at_row_index = 0;
+		Grid* _grid = nullptr;
 };
 
 int InsertRow(Grid& grid)
@@ -70,7 +68,7 @@ int InsertRow(Grid& grid)
 		return -1;
 	}
 
-	insert_row_operation insert_operation = insert_row_operation(grid.sprite, grid.cursor.row_index());
+	insert_row_operation insert_operation = insert_row_operation(&grid);
 	insert_operation.execute();
 
 	grid.cursor.move_up();
