@@ -83,6 +83,11 @@ struct SpriteC
 
 		return index / width;
 	}
+
+	uint64_t size_in_bytes() const
+	{
+		return pixel_count() * sizeof(uint32_t);
+	}
 };
 
 struct sprite_camera

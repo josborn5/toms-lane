@@ -65,8 +65,7 @@ struct insert_row_operation
 static int AppendRowToSpriteC(SpriteC& sprite, int insertAtIndex)
 {
 	// Check there is space to add a final row
-	int currentPixelCount = sprite.width * sprite.height;
-	uint64_t currentPixelSpace = currentPixelCount * sizeof(uint32_t);
+	uint64_t currentPixelSpace = sprite.size_in_bytes();
 	uint64_t newPixelSpace = sprite.width * sizeof(uint32_t);
 	uint64_t availableSpace = sprite.pixel_memory.sizeInBytes - currentPixelSpace;
 
