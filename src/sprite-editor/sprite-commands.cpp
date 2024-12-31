@@ -54,6 +54,7 @@ struct insert_row_operation
 		}
 
 		_grid->sprite->height += 1;
+		_grid->cursor.move_up();
 	}
 
 	private:
@@ -71,25 +72,25 @@ int InsertRow(Grid& grid)
 	insert_row_operation insert_operation = insert_row_operation(&grid);
 	insert_operation.execute();
 
-	grid.cursor.move_up();
 	return 0;
 }
 
 struct insert_column_operation
 {
 	public:
-		insert_column_operation(SpriteC* sprite, int insert_at_col_index)
+		insert_column_operation(Grid* grid)
 		{
-			_sprite = sprite;
-			_insert_at_col_index = insert_at_col_index;
+			_grid = grid;
 		}
 
 		void execute()
 		{
+			SpriteC* _sprite = _grid->sprite;
+			int insert_at_col_index = _grid->cursor.column_index();
 			// shift any columns to the right of the new column
 			for (int source_index = _sprite->max_index(); source_index >= 0; source_index -= 1)
 			{
-				bool after_new_column = (source_index % _sprite->width) >= _insert_at_col_index;
+				bool after_new_column = (source_index % _sprite->width) >= _grid->cursor.column_index();
 				int offset_for_column = (after_new_column) ? 1 : 0;
 				int offset = _sprite->row_index(source_index) + offset_for_column;
 				int target_index = source_index + offset;
@@ -99,7 +100,7 @@ struct insert_column_operation
 
 			_sprite->width += 1;
 			// clear pixels in the new column
-			for (int i = _insert_at_col_index; i < _sprite->pixel_count(); i += _sprite->width)
+			for (int i = insert_at_col_index; i < _sprite->pixel_count(); i += _sprite->width)
 			{
 				_sprite->set_pixel_data(i, 0x000000);
 			}
@@ -107,8 +108,7 @@ struct insert_column_operation
 		}
 
 	private:
-		SpriteC* _sprite = nullptr;
-		int _insert_at_col_index = 0;
+		Grid* _grid = nullptr;
 };
 
 int InsertColumn(Grid& grid)
@@ -119,10 +119,9 @@ int InsertColumn(Grid& grid)
 		return -1;
 	}
 
-	int selectedColumnIndex = grid.cursor.column_index();
 	int selectedRowIndex = grid.cursor.row_index();
 
-	insert_column_operation insert_operation = insert_column_operation(grid.sprite, selectedColumnIndex);
+	insert_column_operation insert_operation = insert_column_operation(&grid);
 	insert_operation.execute();
 
 	int new_cursor_index = grid.cursor.index() + 1 + selectedRowIndex;
