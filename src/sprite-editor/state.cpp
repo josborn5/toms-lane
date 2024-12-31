@@ -14,7 +14,6 @@ static const int skipModifierKey = tl::KEY_CTRL;
 static const int cameraModifierKey = tl::KEY_SHIFT;
 
 static operation_executor<8> the_undo;
-
 static clipboard the_clipboard;
 
 static tl::MemorySpace spritePixelMemory;

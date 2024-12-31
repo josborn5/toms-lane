@@ -27,33 +27,43 @@ int SaveBitmap(
 	return tl::file_interface_write(filePath, fileData);
 }
 
+struct insert_row_operation
+{
+	insert_row_operation(SpriteC* sprite, unsigned int insert_at_row_index)
+	{
+		_sprite = sprite;
+		_insert_at_row_index = insert_at_row_index;
+	}
+
+	void execute()
+	{
+		// Shift down rows after the new row
+		int first_move_pixel_index = _insert_at_row_index * _sprite->width;
+		for (int source_index = _sprite->max_index(); source_index >= first_move_pixel_index; source_index -= 1)
+		{
+			int target_index = source_index + _sprite->width;
+			uint32_t to_move = _sprite->get_pixel_data(source_index);
+			_sprite->set_pixel_data(target_index, to_move);
+		}
+
+		// Clear out pixels in the new row
+		int first_new_pixel_index = first_move_pixel_index;
+		int first_moved_pixel_index = first_new_pixel_index  + _sprite->width;
+		for (int i = first_new_pixel_index ; i < first_moved_pixel_index ; i += 1)
+		{
+			_sprite->set_pixel_data(i, 0x000000);
+		}
+
+		_sprite->height += 1;
+	}
+
+	private:
+		SpriteC* _sprite = nullptr;
+		unsigned int _insert_at_row_index = 0;
+};
+
 static int AppendRowToSpriteC(SpriteC& sprite, int insertAtIndex)
 {
-	/*
-		Current: 3x2 grid of pixels
-		ooo
-		ooo
-
-		ooo|ooo
-		012 345
-
-		Insert new row at row index 1:
-		ooo
-		nnn
-		ooo
-
-		ooo|nnn|ooo
-		012 345 678
-
-		Pixel index transformations:
-		5-->8
-		4-->7
-		3-->6
-		2-->2
-		1-->1
-		0-->0
-	*/
-
 	// Check there is space to add a final row
 	int currentPixelCount = sprite.width * sprite.height;
 	uint64_t currentPixelSpace = currentPixelCount * sizeof(uint32_t);
@@ -65,25 +75,8 @@ static int AppendRowToSpriteC(SpriteC& sprite, int insertAtIndex)
 		return -1;
 	}
 
-	// Shift down rows after the new row
-	int lastPixelIndex = currentPixelCount - 1;
-	int firstMovePixelIndex = insertAtIndex * sprite.width;
-	for (int sourceIndex = lastPixelIndex; sourceIndex >= firstMovePixelIndex; sourceIndex -= 1)
-	{
-		int targetIndex = sourceIndex + sprite.width;
-		uint32_t to_move = sprite.get_pixel_data(sourceIndex);
-		sprite.set_pixel_data(targetIndex, to_move);
-	}
-
-	// Clear out pixels in the new row
-	int firstNewPixelIndex = firstMovePixelIndex;
-	int firstMovedPixelIndex = firstNewPixelIndex + sprite.width;
-	for (int i = firstNewPixelIndex; i < firstMovedPixelIndex; i += 1)
-	{
-		sprite.set_pixel_data(i, 0x000000);
-	}
-
-	sprite.height += 1;
+	insert_row_operation insert_operation = insert_row_operation(&sprite, insertAtIndex);
+	insert_operation.execute();
 
 	return 0;
 }
