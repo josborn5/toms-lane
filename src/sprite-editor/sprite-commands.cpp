@@ -62,29 +62,19 @@ struct insert_row_operation
 		unsigned int _insert_at_row_index = 0;
 };
 
-static int AppendRowToSpriteC(SpriteC& sprite, int insertAtIndex)
+int InsertRow(Grid& grid)
 {
-	// Check there is space to add a final row
-	uint64_t currentPixelSpace = sprite.size_in_bytes();
-	uint64_t newPixelSpace = sprite.width * sizeof(uint32_t);
-	uint64_t availableSpace = sprite.pixel_memory.sizeInBytes - currentPixelSpace;
-
-	if (availableSpace < newPixelSpace)
+	uint64_t new_size_in_bytes = grid.sprite->size_in_bytes() + (grid.sprite->width * sizeof(uint32_t));
+	if (new_size_in_bytes > grid.sprite->pixel_memory.sizeInBytes)
 	{
 		return -1;
 	}
 
-	insert_row_operation insert_operation = insert_row_operation(&sprite, insertAtIndex);
+	insert_row_operation insert_operation = insert_row_operation(grid.sprite, grid.cursor.row_index());
 	insert_operation.execute();
 
-	return 0;
-}
-
-int InsertRow(Grid& grid)
-{
-	int append_result = AppendRowToSpriteC(*grid.sprite, grid.cursor.row_index());
 	grid.cursor.move_up();
-	return append_result;
+	return 0;
 }
 
 static int AppendColumnToSpriteC(SpriteC& sprite, int insertAtIndex)
