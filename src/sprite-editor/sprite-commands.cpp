@@ -77,7 +77,7 @@ int InsertRow(Grid& grid)
 	return 0;
 }
 
-static int AppendColumnToSpriteC(SpriteC& sprite, int insertAtIndex)
+static void AppendColumnToSpriteC(SpriteC& sprite, int insertAtIndex)
 {
 	/*
 		Current: 2x3 grid of pixels
@@ -112,20 +112,8 @@ static int AppendColumnToSpriteC(SpriteC& sprite, int insertAtIndex)
 		where pixelAfterNewColumnInRow = (oldPixelIndex % oldWidth) >= insertColumnIndex
 	*/
 
-	// Check there is space to add a final column
-	int currentPixelCount = sprite.width * sprite.height;
-	uint64_t currentPixelSpace = currentPixelCount * sizeof(uint32_t);
-	uint64_t newPixelSpace = sprite.height * sizeof(uint32_t);
-	uint64_t availableSpace = sprite.pixel_memory.sizeInBytes - currentPixelSpace;
-
-	if (availableSpace < newPixelSpace)
-	{
-		return -1;
-	}
-
 	// shift any columns to the right of the new column
-	int lastPixelIndex = currentPixelCount - 1;
-	for (int sourceIndex = lastPixelIndex; sourceIndex >= 0; sourceIndex -= 1)
+	for (int sourceIndex = sprite.max_index(); sourceIndex >= 0; sourceIndex -= 1)
 	{
 		int currentRowIndex = sourceIndex / sprite.width;
 		bool pixelIsAfterNewColumnInRow = (sourceIndex % sprite.width) >= insertAtIndex;
@@ -137,24 +125,27 @@ static int AppendColumnToSpriteC(SpriteC& sprite, int insertAtIndex)
 	}
 
 	sprite.width += 1;
-	int newPixelCount = currentPixelCount + sprite.height;
 	// clear pixels in the new column
-	for (int i = insertAtIndex; i < newPixelCount; i += sprite.width)
+	for (int i = insertAtIndex; i < sprite.pixel_count(); i += sprite.width)
 	{
 		sprite.set_pixel_data(i, 0x000000);
 	}
-
-	return 0;
 }
 
 int InsertColumn(Grid& grid)
 {
+	uint64_t new_size_in_bytes = grid.sprite->size_in_bytes() + (grid.sprite->height * sizeof(uint32_t));
+	if (new_size_in_bytes > grid.sprite->pixel_memory.sizeInBytes)
+	{
+		return -1;
+	}
+
 	int selectedColumnIndex = grid.cursor.column_index();
 	int selectedRowIndex = grid.cursor.row_index();
-	int append_result = AppendColumnToSpriteC(*grid.sprite, selectedColumnIndex);
+	AppendColumnToSpriteC(*grid.sprite, selectedColumnIndex);
 	int new_cursor_index = grid.cursor.index() + 1 + selectedRowIndex;
 	grid.cursor.set_index(new_cursor_index);
-	return append_result;
+	return 0;
 }
 
 static void get_indexes_for_copy(
