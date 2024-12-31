@@ -77,60 +77,41 @@ int InsertRow(Grid& grid)
 	return 0;
 }
 
-static void AppendColumnToSpriteC(SpriteC& sprite, int insertAtIndex)
+struct insert_column_operation
 {
-	/*
-		Current: 2x3 grid of pixels
-		oo
-		oo
-		oo
+	public:
+		insert_column_operation(SpriteC* sprite, int insert_at_col_index)
+		{
+			_sprite = sprite;
+			_insert_at_col_index = insert_at_col_index;
+		}
 
-		oo|oo|oo
-		01 23 45
+		void execute()
+		{
+			// shift any columns to the right of the new column
+			for (int source_index = _sprite->max_index(); source_index >= 0; source_index -= 1)
+			{
+				bool after_new_column = (source_index % _sprite->width) >= _insert_at_col_index;
+				int offset_for_column = (after_new_column) ? 1 : 0;
+				int offset = _sprite->row_index(source_index) + offset_for_column;
+				int target_index = source_index + offset;
+				uint32_t to_move = _sprite->get_pixel_data(source_index);
+				_sprite->set_pixel_data(target_index, to_move);
+			}
 
-		Insert new column at row index 1:
-		ono
-		ono
-		ono
+			_sprite->width += 1;
+			// clear pixels in the new column
+			for (int i = _insert_at_col_index; i < _sprite->pixel_count(); i += _sprite->width)
+			{
+				_sprite->set_pixel_data(i, 0x000000);
+			}
 
-		ono|ono|ono
-		012 345 678
+		}
 
-		Pixel index transformations:
-		5-->8
-		4-->6
-		3-->5
-		2-->3
-		1-->2
-		0-->0
-
-		transformation is:
-			offsetForRow = rowIndex;
-			offsetForColumn = (pixelAfterNewColumnInRow) ? 1 : 0;
-			finalPixelOffset = offsetForRow + offsetForColumn
-
-		where pixelAfterNewColumnInRow = (oldPixelIndex % oldWidth) >= insertColumnIndex
-	*/
-
-	// shift any columns to the right of the new column
-	for (int sourceIndex = sprite.max_index(); sourceIndex >= 0; sourceIndex -= 1)
-	{
-		int currentRowIndex = sourceIndex / sprite.width;
-		bool pixelIsAfterNewColumnInRow = (sourceIndex % sprite.width) >= insertAtIndex;
-		int offsetForColumn = (pixelIsAfterNewColumnInRow) ? 1 : 0;
-		int offset = currentRowIndex + offsetForColumn;
-		int targetIndex = sourceIndex + offset;
-		uint32_t to_move = sprite.get_pixel_data(sourceIndex);
-		sprite.set_pixel_data(targetIndex, to_move);
-	}
-
-	sprite.width += 1;
-	// clear pixels in the new column
-	for (int i = insertAtIndex; i < sprite.pixel_count(); i += sprite.width)
-	{
-		sprite.set_pixel_data(i, 0x000000);
-	}
-}
+	private:
+		SpriteC* _sprite = nullptr;
+		int _insert_at_col_index = 0;
+};
 
 int InsertColumn(Grid& grid)
 {
@@ -142,7 +123,10 @@ int InsertColumn(Grid& grid)
 
 	int selectedColumnIndex = grid.cursor.column_index();
 	int selectedRowIndex = grid.cursor.row_index();
-	AppendColumnToSpriteC(*grid.sprite, selectedColumnIndex);
+
+	insert_column_operation insert_operation = insert_column_operation(grid.sprite, selectedColumnIndex);
+	insert_operation.execute();
+
 	int new_cursor_index = grid.cursor.index() + 1 + selectedRowIndex;
 	grid.cursor.set_index(new_cursor_index);
 	return 0;
