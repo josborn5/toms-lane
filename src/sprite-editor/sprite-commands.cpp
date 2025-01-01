@@ -100,12 +100,17 @@ struct insert_column_operation
 				_sprite->set_pixel_data(target_index, to_move);
 			}
 
+			int row_index = _grid->cursor.row_index();
 			_sprite->width += 1;
 			// clear pixels in the new column
 			for (int i = _insert_at_col_index; i < _sprite->pixel_count(); i += _sprite->width)
 			{
 				_sprite->set_pixel_data(i, 0x000000);
 			}
+
+			int new_cursor_index = _grid->cursor.index() + row_index;
+			_grid->cursor.set_index(new_cursor_index);
+			_grid->cursor.move_right();
 		}
 
 	private:
@@ -121,12 +126,9 @@ int InsertColumn(Grid& grid)
 		return -1;
 	}
 
-	int selectedRowIndex = grid.cursor.row_index();
 	insert_column_operation insert_operation = insert_column_operation(&grid);
 	insert_operation.execute();
 
-	int new_cursor_index = grid.cursor.index() + 1 + selectedRowIndex;
-	grid.cursor.set_index(new_cursor_index);
 	return 0;
 }
 
