@@ -11,7 +11,6 @@ int SaveBitmap(
 	const SpriteC& sprite,
 	char* filePath
 );
-int InsertRow(Grid& grid);
 int InsertColumn(Grid& grid);
 
 operation<insert_row_operation> try_insert_row(Grid& grid);

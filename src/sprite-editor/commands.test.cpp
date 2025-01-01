@@ -136,7 +136,7 @@ static void InsertRowTests()
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 
-	InsertRow(grid);
+	execute_insert_row_operation();
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -149,11 +149,11 @@ static void InsertRowTests()
 	sprite.height = 1;
 	grid.cursor.move_start();
 
-	InsertRow(grid);
+	execute_insert_row_operation();
 
 	assert(grid.cursor.index() == 1);
 
-	InsertRow(grid);
+	execute_insert_row_operation();
 
 	assert(grid.cursor.index() == 2);
 
@@ -167,7 +167,7 @@ static void InsertRowTests()
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 
-	InsertRow(grid);
+	execute_insert_row_operation();
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -181,11 +181,11 @@ static void InsertRowTests()
 	grid.cursor.move_start();
 	grid.cursor.move_right(); // last column in first row
 
-	InsertRow(grid);
+	execute_insert_row_operation();
 
 	assert(grid.cursor.index() == 3); // last column in second row
 
-	InsertRow(grid);
+	execute_insert_row_operation();
 
 	assert(grid.cursor.index() == 5); // last colun in third row
 
@@ -203,7 +203,7 @@ static void InsertRowTests()
 	AssertSetColorForPixel(3);
 	AssertEmptyColorForPixel(4);
 
-	InsertRow(grid);
+	execute_insert_row_operation();
 
 	AssertSetColorForPixel(0);
 	AssertSetColorForPixel(1);
@@ -219,11 +219,11 @@ static void InsertRowTests()
 	grid.cursor.move_start();
 	grid.cursor.move_up(); // select the first pixel in the second row
 
-	InsertRow(grid);
+	execute_insert_row_operation();
 
 	assert(grid.cursor.index() == 4); // selected pixel is now the first pixel on the third row
 
-	InsertRow(grid);
+	execute_insert_row_operation();
 
 	assert(grid.cursor.index() == 6); // selected pixel is now the first pixel on the fourth row
 }

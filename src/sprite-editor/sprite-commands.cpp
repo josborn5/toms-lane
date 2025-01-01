@@ -41,20 +41,6 @@ operation<insert_row_operation> try_insert_row(Grid& grid)
 	return operation;
 }
 
-int InsertRow(Grid& grid)
-{
-	uint64_t new_size_in_bytes = grid.sprite->size_in_bytes() + (grid.sprite->width * sizeof(uint32_t));
-	if (new_size_in_bytes > grid.sprite->pixel_memory.sizeInBytes)
-	{
-		return -1;
-	}
-
-	insert_row_operation insert_operation = insert_row_operation(&grid);
-	insert_operation.execute();
-
-	return 0;
-}
-
 int InsertColumn(Grid& grid)
 {
 	uint64_t new_size_in_bytes = grid.sprite->size_in_bytes() + (grid.sprite->height * sizeof(uint32_t));
