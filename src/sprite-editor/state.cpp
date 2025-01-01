@@ -380,14 +380,12 @@ static void ExecuteCurrentCommand()
 	if (CommandIs("R")) // append row
 	{
 		InsertRow(state.pixels);
-		state.pixels.size();
 		ClearCommandBuffer();
 		return;
 	}
 	else if (CommandIs("C")) // append column
 	{
 		InsertColumn(state.pixels);
-		state.pixels.size();
 		ClearCommandBuffer();
 		return;
 	}

@@ -55,6 +55,7 @@ struct insert_row_operation
 
 		_grid->sprite->height += 1;
 		_grid->cursor.move_up();
+		_grid->size();
 	}
 
 	private:
@@ -110,6 +111,7 @@ struct insert_column_operation
 			int new_cursor_index = _grid->cursor.index() + row_index;
 			_grid->cursor.set_index(new_cursor_index);
 			_grid->cursor.move_right();
+			_grid->size();
 		}
 
 	private:
