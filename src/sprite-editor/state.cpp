@@ -394,8 +394,17 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandIs("C")) // append column
 	{
-		InsertColumn(state.pixels);
-		ClearCommandBuffer();
+		operation<insert_column_operation> column_operation = try_insert_column(state.pixels);
+		if (column_operation.result == operation_success)
+		{
+			column_operation.value.execute();
+			ClearCommandBuffer();
+
+		}
+		else
+		{
+			WriteStringToCommandBuffer("INSERT COLUMN FAILED!");
+		}
 		return;
 	}
 	else if (CommandIs("P")) // switch palette
