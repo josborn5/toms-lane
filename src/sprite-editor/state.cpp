@@ -382,7 +382,7 @@ static void ExecuteCurrentCommand()
 		operation<insert_row_operation> row_operation = try_insert_row(state.pixels);
 		if (row_operation.result == operation_success)
 		{
-			row_operation.value.execute();
+			the_undo.do_insert_row(row_operation.value);
 			ClearCommandBuffer();
 
 		}
@@ -397,7 +397,7 @@ static void ExecuteCurrentCommand()
 		operation<insert_column_operation> column_operation = try_insert_column(state.pixels);
 		if (column_operation.result == operation_success)
 		{
-			column_operation.value.execute();
+			the_undo.do_insert_column(column_operation.value);
 			ClearCommandBuffer();
 
 		}

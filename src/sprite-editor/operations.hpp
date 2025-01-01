@@ -169,6 +169,8 @@ union generic_operation
 {
 	set_pixel_data_operation set_single_pixel;
 	paste_pixel_data_operation set_multiple_pixels;
+	insert_row_operation insert_row;
+	insert_column_operation insert_column;
 
 	generic_operation() {}
 };
@@ -176,7 +178,9 @@ union generic_operation
 enum operation_type
 {
 	single,
-	multiple
+	multiple,
+	insert_row,
+	insert_column
 };
 
 struct any_operation
@@ -189,7 +193,7 @@ template<int N>
 struct operation_executor
 {
 	public:
-		void do_set_single_pixel(set_pixel_data_operation operation)
+		void do_set_single_pixel(set_pixel_data_operation& operation)
 		{
 			any_operation any_op;
 			any_op.generic.set_single_pixel = operation;
@@ -199,11 +203,31 @@ struct operation_executor
 			operation.execute();
 		}
 
-		void do_set_multiple_pixels(paste_pixel_data_operation operation)
+		void do_set_multiple_pixels(paste_pixel_data_operation& operation)
 		{
 			any_operation any_op;
 			any_op.generic.set_multiple_pixels = operation;
 			any_op.type = multiple;
+			all_operations.push(any_op);
+
+			operation.execute();
+		}
+
+		void do_insert_row(insert_row_operation& operation)
+		{
+			any_operation any_op;
+			any_op.generic.insert_row = operation;
+			any_op.type = insert_row;
+			all_operations.push(any_op);
+
+			operation.execute();
+		}
+
+		void do_insert_column(insert_column_operation& operation)
+		{
+			any_operation any_op;
+			any_op.generic.insert_column = operation;
+			any_op.type = insert_column;
 			all_operations.push(any_op);
 
 			operation.execute();
