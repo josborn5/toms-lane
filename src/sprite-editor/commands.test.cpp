@@ -109,6 +109,14 @@ static void AssertEmptyColorForPixel(int pixelIndex)
 	assert(pixel == EMPTY_COLOR);
 }
 
+static void execute_insert_row_operation()
+{
+	operation<insert_row_operation> operation = try_insert_row(grid);
+	assert(operation.result == operation_success);
+
+	operation.value.execute();
+}
+
 static void InsertRowTests()
 {
 	printf("\n\nInsertRow tests\n================\n");
@@ -122,7 +130,7 @@ static void InsertRowTests()
 	AssertEmptyColorForPixel(1);
 
 	grid.cursor.move_start();
-	InsertRow(grid);
+	execute_insert_row_operation();
 
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);

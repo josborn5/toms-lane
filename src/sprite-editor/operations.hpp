@@ -82,6 +82,87 @@ struct paste_pixel_data_operation
 		tl::stack_array<paste_pixel, 256> _pixels;
 };
 
+struct insert_row_operation
+{
+	insert_row_operation() {}
+
+	insert_row_operation(Grid* grid)
+	{
+		_grid = grid;
+		_insert_at_row_index = _grid->cursor.row_index();
+	}
+
+	void execute()
+	{
+		// Shift down rows after the new row
+		int first_move_pixel_index = _insert_at_row_index * _grid->sprite->width;
+		for (int source_index = _grid->sprite->max_index(); source_index >= first_move_pixel_index; source_index -= 1)
+		{
+			int target_index = source_index + _grid->sprite->width;
+			uint32_t to_move = _grid->sprite->get_pixel_data(source_index);
+			_grid->sprite->set_pixel_data(target_index, to_move);
+		}
+
+		// Clear out pixels in the new row
+		int first_new_pixel_index = first_move_pixel_index;
+		int first_moved_pixel_index = first_new_pixel_index  + _grid->sprite->width;
+		for (int i = first_new_pixel_index ; i < first_moved_pixel_index ; i += 1)
+		{
+			_grid->sprite->set_pixel_data(i, 0x000000);
+		}
+
+		_grid->sprite->height += 1;
+		_grid->cursor.move_up();
+		_grid->size();
+	}
+
+	private:
+		Grid* _grid = nullptr;
+		int _insert_at_row_index = 0;
+};
+
+struct insert_column_operation
+{
+	public:
+		insert_column_operation(Grid* grid)
+		{
+			_grid = grid;
+			_insert_at_col_index = _grid->cursor.column_index();
+		}
+
+		void execute()
+		{
+			SpriteC* _sprite = _grid->sprite;
+			// shift any columns to the right of the new column
+			for (int source_index = _sprite->max_index(); source_index >= 0; source_index -= 1)
+			{
+				bool after_new_column = (source_index % _sprite->width) >= _grid->cursor.column_index();
+				int offset_for_column = (after_new_column) ? 1 : 0;
+				int offset = _sprite->row_index(source_index) + offset_for_column;
+				int target_index = source_index + offset;
+				uint32_t to_move = _sprite->get_pixel_data(source_index);
+				_sprite->set_pixel_data(target_index, to_move);
+			}
+
+			int row_index = _grid->cursor.row_index();
+			_sprite->width += 1;
+			// clear pixels in the new column
+			for (int i = _insert_at_col_index; i < _sprite->pixel_count(); i += _sprite->width)
+			{
+				_sprite->set_pixel_data(i, 0x000000);
+			}
+
+			int new_cursor_index = _grid->cursor.index() + row_index;
+			_grid->cursor.set_index(new_cursor_index);
+			_grid->cursor.move_right();
+			_grid->size();
+		}
+
+	private:
+		Grid* _grid = nullptr;
+		int _insert_at_col_index = 0;
+};
+
 union generic_operation
 {
 	set_pixel_data_operation set_single_pixel;
