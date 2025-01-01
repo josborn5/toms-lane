@@ -228,6 +228,14 @@ static void InsertRowTests()
 	assert(grid.cursor.index() == 6); // selected pixel is now the first pixel on the fourth row
 }
 
+static void execute_insert_column_operation()
+{
+	operation<insert_column_operation> operation = try_insert_column(grid);
+	assert(operation.result == operation_success);
+
+	operation.value.execute();
+}
+
 static void InsertColumnTests()
 {
 	printf("\n\nInsertColumn tests\n================\n");
@@ -240,13 +248,13 @@ static void InsertColumnTests()
 	AssertSetColorForPixel(0);
 	AssertEmptyColorForPixel(1);
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -259,11 +267,11 @@ static void InsertColumnTests()
 	sprite.height = 1;
 
 	grid.cursor.move_start();
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	assert(grid.cursor.index() == 1);
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	assert(grid.cursor.index() == 2);
 
@@ -280,14 +288,14 @@ static void InsertColumnTests()
 	AssertEmptyColorForPixel(2);
 	AssertEmptyColorForPixel(3);
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 	AssertSetColorForPixel(3);
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -303,11 +311,11 @@ static void InsertColumnTests()
 	grid.cursor.move_start();
 	grid.cursor.move_up();
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	assert(grid.cursor.index() == 3); // second column in bottom row is now selected
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	assert(grid.cursor.index() == 5); // third column on bottom row is now selected
 
@@ -321,13 +329,13 @@ static void InsertColumnTests()
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertSetColorForPixel(2);
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
@@ -341,11 +349,11 @@ static void InsertColumnTests()
 	grid.cursor.move_start();
 	grid.cursor.move_right();
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	assert(grid.cursor.index() == 2);
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	assert(grid.cursor.index() == 3);
 
@@ -361,7 +369,7 @@ static void InsertColumnTests()
 	AssertSetColorForPixel(3);
 	AssertEmptyColorForPixel(4);
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	assert(sprite.width == 3);
 	assert(sprite.height == 2);
@@ -372,7 +380,7 @@ static void InsertColumnTests()
 	AssertSetColorForPixel(4);
 	AssertSetColorForPixel(5);
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	assert(sprite.width == 4);
 	assert(sprite.height == 2);
@@ -392,11 +400,11 @@ static void InsertColumnTests()
 	grid.cursor.move_start();
 	grid.cursor.move_up(); // first column of second row is selected
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	assert(grid.cursor.index() == 4); // second column of second row is selected
 
-	InsertColumn(grid);
+	execute_insert_column_operation();
 
 	assert(grid.cursor.index() == 6); // third column of second for is selected
 }

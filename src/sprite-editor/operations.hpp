@@ -124,6 +124,8 @@ struct insert_row_operation
 struct insert_column_operation
 {
 	public:
+		insert_column_operation() {}
+
 		insert_column_operation(Grid* grid)
 		{
 			_grid = grid;
