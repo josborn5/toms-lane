@@ -1,7 +1,6 @@
 #include "../tl-application.hpp"
 #include "../tl-library.hpp"
 #include "./editor.hpp"
-#include "./utilities.hpp"
 #include "./transform.hpp"
 #include "./operations.hpp"
 #include "./commands.hpp"
