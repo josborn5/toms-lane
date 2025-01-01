@@ -32,12 +32,13 @@ struct insert_row_operation
 	insert_row_operation(Grid* grid)
 	{
 		_grid = grid;
+		_insert_at_row_index = _grid->cursor.row_index();
 	}
 
 	void execute()
 	{
 		// Shift down rows after the new row
-		int first_move_pixel_index = _grid->cursor.row_index() * _grid->sprite->width;
+		int first_move_pixel_index = _insert_at_row_index * _grid->sprite->width;
 		for (int source_index = _grid->sprite->max_index(); source_index >= first_move_pixel_index; source_index -= 1)
 		{
 			int target_index = source_index + _grid->sprite->width;
@@ -59,6 +60,7 @@ struct insert_row_operation
 
 	private:
 		Grid* _grid = nullptr;
+		int _insert_at_row_index = 0;
 };
 
 int InsertRow(Grid& grid)
@@ -81,12 +83,12 @@ struct insert_column_operation
 		insert_column_operation(Grid* grid)
 		{
 			_grid = grid;
+			_insert_at_col_index = _grid->cursor.column_index();
 		}
 
 		void execute()
 		{
 			SpriteC* _sprite = _grid->sprite;
-			int insert_at_col_index = _grid->cursor.column_index();
 			// shift any columns to the right of the new column
 			for (int source_index = _sprite->max_index(); source_index >= 0; source_index -= 1)
 			{
@@ -100,15 +102,15 @@ struct insert_column_operation
 
 			_sprite->width += 1;
 			// clear pixels in the new column
-			for (int i = insert_at_col_index; i < _sprite->pixel_count(); i += _sprite->width)
+			for (int i = _insert_at_col_index; i < _sprite->pixel_count(); i += _sprite->width)
 			{
 				_sprite->set_pixel_data(i, 0x000000);
 			}
-
 		}
 
 	private:
 		Grid* _grid = nullptr;
+		int _insert_at_col_index = 0;
 };
 
 int InsertColumn(Grid& grid)
@@ -120,7 +122,6 @@ int InsertColumn(Grid& grid)
 	}
 
 	int selectedRowIndex = grid.cursor.row_index();
-
 	insert_column_operation insert_operation = insert_column_operation(&grid);
 	insert_operation.execute();
 
