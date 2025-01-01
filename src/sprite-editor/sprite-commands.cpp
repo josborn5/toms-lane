@@ -56,20 +56,6 @@ operation<insert_column_operation> try_insert_column(Grid& grid)
 	return operation;
 }
 
-int InsertColumn(Grid& grid)
-{
-	uint64_t new_size_in_bytes = grid.sprite->size_in_bytes() + (grid.sprite->height * sizeof(uint32_t));
-	if (new_size_in_bytes > grid.sprite->pixel_memory.sizeInBytes)
-	{
-		return -1;
-	}
-
-	insert_column_operation insert_operation = insert_column_operation(&grid);
-	insert_operation.execute();
-
-	return 0;
-}
-
 static void get_indexes_for_copy(
 	const SpriteC& sprite,
 	int source_cursor_index,
