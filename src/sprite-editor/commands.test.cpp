@@ -132,12 +132,14 @@ static void InsertRowTests()
 	grid.cursor.move_start();
 	execute_insert_row_operation();
 
+	assert(sprite.height == 2);
 	AssertEmptyColorForPixel(0);
 	AssertSetColorForPixel(1);
 	AssertEmptyColorForPixel(2);
 
 	execute_insert_row_operation();
 
+	assert(sprite.height == 3);
 	AssertEmptyColorForPixel(0);
 	AssertEmptyColorForPixel(1);
 	AssertSetColorForPixel(2);
@@ -226,6 +228,26 @@ static void InsertRowTests()
 	execute_insert_row_operation();
 
 	assert(grid.cursor.index() == 6); // selected pixel is now the first pixel on the fourth row
+
+	printf("\n2x2 undo test\n");
+	ResetState();
+	sprite.width = 2;
+	sprite.height = 2;
+	grid.cursor.move_start();
+
+	operation<insert_row_operation> row_operation = try_insert_row(grid);
+
+	row_operation.value.execute();
+
+	assert(sprite.height == 3);
+	AssertEmptyColorForPixel(0);
+ 	AssertEmptyColorForPixel(1);
+
+	row_operation.value.undo();
+
+	assert(sprite.height == 2);
+//	AssertSetColorForPixel(0);
+//	AssertSetColorForPixel(1);
 }
 
 static void execute_insert_column_operation()

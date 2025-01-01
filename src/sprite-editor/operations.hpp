@@ -116,6 +116,11 @@ struct insert_row_operation
 		_grid->size();
 	}
 
+	void undo()
+	{
+		_grid->sprite->height -= 1;
+	}
+
 	private:
 		Grid* _grid = nullptr;
 		int _insert_at_row_index = 0;
