@@ -379,8 +379,17 @@ static void ExecuteCurrentCommand()
 
 	if (CommandIs("R")) // append row
 	{
-		InsertRow(state.pixels);
-		ClearCommandBuffer();
+		operation<insert_row_operation> row_operation = try_insert_row(state.pixels);
+		if (row_operation.result == operation_success)
+		{
+			row_operation.value.execute();
+			ClearCommandBuffer();
+
+		}
+		else
+		{
+			WriteStringToCommandBuffer("INSERT ROW FAILED!");
+		}
 		return;
 	}
 	else if (CommandIs("C")) // append column
