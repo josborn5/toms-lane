@@ -170,6 +170,11 @@ struct insert_column_operation
 		int _insert_at_col_index = 0;
 };
 
+struct delete_row_operation
+{
+
+};
+
 union generic_operation
 {
 	set_pixel_data_operation set_single_pixel;

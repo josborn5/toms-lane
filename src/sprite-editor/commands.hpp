@@ -15,6 +15,8 @@ int SaveBitmap(
 operation<insert_row_operation> try_insert_row(Grid& grid);
 operation<insert_column_operation> try_insert_column(Grid& grid);
 
+operation<delete_row_operation> try_delete_row(Grid& grid);
+
 struct clipboard
 {
 	int start_index = 0;

@@ -235,3 +235,10 @@ int cut_to_clipboard_operation(
 	return 0;
 }
 
+operation<delete_row_operation> try_delete_row(Grid& grid)
+{
+	operation<delete_row_operation> operation;
+	operation.result = operation_success;
+	return operation;
+}
+

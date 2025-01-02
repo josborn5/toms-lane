@@ -86,8 +86,7 @@ static void ResetState()
 
 static void FillSprite()
 {
-	int count = sprite.width * sprite.height;
-	for (int i = 0; i < count; i += 1)
+	for (int i = 0; i < sprite.pixel_count(); i += 1)
 	{
 		spriteContent[i] = SET_COLOR;
 	}
@@ -790,6 +789,30 @@ void RunCutTests()
 	printf("\nCut tests complete\n");
 }
 
+static void run_delete_row_tests()
+{
+	printf("\nStarting delete row tests\n");
+
+	ResetState();
+	sprite.width = 2;
+	sprite.height = 3;
+
+	grid.sprite->set_pixel_data(0, 0xFF0000);
+	grid.sprite->set_pixel_data(1, 0xFF0000);
+	grid.sprite->set_pixel_data(2, 0x00FF00);
+	grid.sprite->set_pixel_data(3, 0x00FF00);
+	grid.sprite->set_pixel_data(4, 0x0000FF);
+	grid.sprite->set_pixel_data(5, 0x0000FF);
+
+	grid.cursor.move_start();
+	grid.cursor.move_up();
+
+	operation<delete_row_operation> delete_operation = try_delete_row(grid);
+	assert(delete_operation.result == operation_success);
+
+	printf("\nDelete row tests complete\n");
+}
+
 int RunCommandTests()
 {
 	printf("\nRunning command tests\n");
@@ -797,6 +820,7 @@ int RunCommandTests()
 	InsertColumnTests();
 	RunCopyTests();
 	RunCutTests();
+	run_delete_row_tests();
 	printf("\nCommand tests complete!\n");
 	return 0;
 }
