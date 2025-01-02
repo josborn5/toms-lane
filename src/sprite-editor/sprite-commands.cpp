@@ -239,6 +239,8 @@ operation<delete_row_operation> try_delete_row(Grid& grid)
 {
 	operation<delete_row_operation> operation;
 	operation.result = operation_success;
+	operation.value = delete_row_operation(&grid);
+
 	return operation;
 }
 

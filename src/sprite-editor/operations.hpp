@@ -172,7 +172,20 @@ struct insert_column_operation
 
 struct delete_row_operation
 {
+	delete_row_operation() {}
 
+	delete_row_operation(Grid* grid)
+	{
+		_grid = grid;
+	}
+
+	void execute()
+	{
+		_grid->sprite->height -= 1;
+	}
+
+	private:
+		Grid* _grid = nullptr;
 };
 
 union generic_operation

@@ -809,6 +809,10 @@ static void run_delete_row_tests()
 
 	operation<delete_row_operation> delete_operation = try_delete_row(grid);
 	assert(delete_operation.result == operation_success);
+	delete_operation.value.execute();
+
+	assert(grid.sprite->width == 2);
+	assert(grid.sprite->height == 2);
 
 	printf("\nDelete row tests complete\n");
 }
