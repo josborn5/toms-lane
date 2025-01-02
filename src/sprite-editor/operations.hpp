@@ -177,15 +177,24 @@ struct delete_row_operation
 	delete_row_operation(Grid* grid)
 	{
 		_grid = grid;
+		_row_index = _grid->cursor.row_index();
 	}
 
 	void execute()
 	{
+		unsigned int start_index = _grid->sprite->min_index_on_row(_row_index);
+		unsigned int end_index = _grid->sprite->max_index_on_row(_row_index);
+		unsigned int total_length = _grid->sprite->pixel_count();
+
+		// Call tl::DeleteFromArray with the sprite content
+		tl::DeleteFromArray(_grid->sprite->pixels(), start_index, end_index, total_length);
+
 		_grid->sprite->height -= 1;
 	}
 
 	private:
 		Grid* _grid = nullptr;
+		int _row_index = 0;
 };
 
 union generic_operation

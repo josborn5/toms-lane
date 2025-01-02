@@ -804,15 +804,19 @@ static void run_delete_row_tests()
 	grid.sprite->set_pixel_data(4, 0x0000FF);
 	grid.sprite->set_pixel_data(5, 0x0000FF);
 
+	// delete the middle row
 	grid.cursor.move_start();
 	grid.cursor.move_up();
-
 	operation<delete_row_operation> delete_operation = try_delete_row(grid);
 	assert(delete_operation.result == operation_success);
 	delete_operation.value.execute();
 
 	assert(grid.sprite->width == 2);
 	assert(grid.sprite->height == 2);
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(1) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
+	assert(grid.sprite->get_pixel_data(3) == 0x0000FF);
 
 	printf("\nDelete row tests complete\n");
 }
