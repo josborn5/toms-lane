@@ -415,20 +415,17 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandIs("DR") && state.pixels.sprite->height > 1) // delete row
 	{
-		// Get start and end index of row
-		int rowIndex = (int)(state.pixels.cursor.index() / state.pixels.sprite->width);
-		unsigned int startDeleteIndex = rowIndex * state.pixels.sprite->width;
-		unsigned int endDeleteIndex = rowIndex + state.pixels.sprite->width - 1;
-		unsigned int spriteLength = state.pixels.sprite->width * state.pixels.sprite->height;
-
-		// Call tl::DeleteFromArray with the sprite content
-		tl::DeleteFromArray(state.pixels.sprite->pixels(), startDeleteIndex, endDeleteIndex, spriteLength);
-
-		// Subtract 1 from the sprite height
-		state.pixels.sprite->height -= 1;
-
-		state.pixels.size();
-		ClearCommandBuffer();
+		operation<delete_row_operation> delete_operation = try_delete_row(state.pixels);
+		if (delete_operation.result == operation_success)
+		{
+			delete_operation.value.execute();
+			state.pixels.size();
+			ClearCommandBuffer();
+		}
+		else
+		{
+			WriteStringToCommandBuffer("DELETE ROW FAILED!");
+		}
 		return;
 	}
 	else if (CommandIs("DC") && state.pixels.sprite->width > 1) // delete column
