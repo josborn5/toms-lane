@@ -86,6 +86,12 @@ struct insert_row_operation
 {
 	insert_row_operation() {}
 
+	insert_row_operation(Grid* grid, int row_index)
+	{
+		_grid = grid;
+		_insert_at_row_index = row_index;
+	}
+
 	insert_row_operation(Grid* grid)
 	{
 		_grid = grid;
@@ -190,6 +196,12 @@ struct delete_row_operation
 		tl::DeleteFromArray(_grid->sprite->pixels(), start_index, end_index, total_length);
 
 		_grid->sprite->height -= 1;
+	}
+
+	void undo()
+	{
+		insert_row_operation undo_operation = insert_row_operation(_grid, _row_index);
+		undo_operation.execute();
 	}
 
 	private:
