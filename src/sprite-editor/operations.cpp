@@ -106,3 +106,33 @@ void insert_column_operation::execute()
 }
 
 
+template<int N>
+int operation_executor<N>::do_undo()
+{
+	operation<any_operation> result = all_operations.pop();
+	if (result.result == operation_success)
+	{
+		switch (result.value.type)
+		{
+			case single:
+				{
+					result.value.generic.set_single_pixel.undo();;
+				}
+				break;
+			case multiple:
+				{
+					result.value.generic.set_multiple_pixels.undo();
+				}
+				break;
+			case insert_row:
+				{
+					result.value.generic.insert_row.undo();
+				}
+				break;
+		}
+
+		return 0;
+	}
+	return 1;
+}
+
