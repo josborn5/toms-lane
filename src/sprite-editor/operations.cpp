@@ -21,6 +21,7 @@ void delete_row_operation::execute()
 	tl::DeleteFromArray(_grid->sprite->pixels(), start_index, end_index, total_length);
 
 	_grid->sprite->height -= 1;
+	_grid->size();
 }
 void delete_row_operation::undo()
 {

@@ -239,6 +239,11 @@ struct operation_executor
 							result.value.generic.set_multiple_pixels.undo();
 						}
 						break;
+					case insert_row:
+						{
+							result.value.generic.insert_row.undo();
+						}
+						break;
 				}
 
 				return 0;
