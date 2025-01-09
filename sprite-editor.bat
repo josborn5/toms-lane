@@ -7,6 +7,7 @@ call %~dp0\build-scripts\link.bat %APP_DIR% tests^
  "%APP_DIR%\sprite-editor.test.obj"^
  "%APP_DIR%\utilities.obj"^
  "%APP_DIR%\transform.obj"^
+ "%APP_DIR%\operations.obj"^
  "%APP_DIR%\sprite-commands.obj"
 
 call %~dp0\build-scripts\link.bat %APP_DIR% %NAME%^
@@ -17,6 +18,7 @@ call %~dp0\build-scripts\link.bat %APP_DIR% %NAME%^
  "%APP_DIR%\sprite-commands.obj"^
  "%APP_DIR%\utilities.obj"^
  "%APP_DIR%\transform.obj"^
+ "%APP_DIR%\operations.obj"^
  "%~dp0\bin-tl-platform\tl-library.lib"^
  "%~dp0\bin-tl-win32\tl-win32.lib"
 

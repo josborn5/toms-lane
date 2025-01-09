@@ -233,6 +233,7 @@ static void InsertRowTests()
 	sprite.width = 2;
 	sprite.height = 2;
 	grid.cursor.move_start();
+	FillSprite();
 
 	operation<insert_row_operation> row_operation = try_insert_row(grid);
 
@@ -241,12 +242,18 @@ static void InsertRowTests()
 	assert(sprite.height == 3);
 	AssertEmptyColorForPixel(0);
  	AssertEmptyColorForPixel(1);
+	AssertSetColorForPixel(2);
+	AssertSetColorForPixel(3);
+	AssertSetColorForPixel(4);
+	AssertSetColorForPixel(5);
 
 	row_operation.value.undo();
 
 	assert(sprite.height == 2);
-//	AssertSetColorForPixel(0);
-//	AssertSetColorForPixel(1);
+	AssertSetColorForPixel(0);
+	AssertSetColorForPixel(1);
+	AssertSetColorForPixel(2);
+	AssertSetColorForPixel(3);
 }
 
 static void execute_insert_column_operation()

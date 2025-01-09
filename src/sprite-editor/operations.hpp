@@ -82,6 +82,21 @@ struct paste_pixel_data_operation
 		tl::stack_array<paste_pixel, 256> _pixels;
 };
 
+struct delete_row_operation
+{
+	delete_row_operation();
+	delete_row_operation(Grid* grid);
+	delete_row_operation(Grid* grid, int row_index);
+
+	void execute();
+
+	void undo();
+
+	private:
+		Grid* _grid = nullptr;
+		int _row_index = 0;
+};
+
 struct insert_row_operation
 {
 	insert_row_operation() {}
@@ -124,7 +139,8 @@ struct insert_row_operation
 
 	void undo()
 	{
-		_grid->sprite->height -= 1;
+		delete_row_operation delete_op = delete_row_operation(_grid, _insert_at_row_index);
+		delete_op.execute();
 	}
 
 	private:
@@ -174,39 +190,6 @@ struct insert_column_operation
 	private:
 		Grid* _grid = nullptr;
 		int _insert_at_col_index = 0;
-};
-
-struct delete_row_operation
-{
-	delete_row_operation() {}
-
-	delete_row_operation(Grid* grid)
-	{
-		_grid = grid;
-		_row_index = _grid->cursor.row_index();
-	}
-
-	void execute()
-	{
-		unsigned int start_index = _grid->sprite->min_index_on_row(_row_index);
-		unsigned int end_index = _grid->sprite->max_index_on_row(_row_index);
-		unsigned int total_length = _grid->sprite->pixel_count();
-
-		// Call tl::DeleteFromArray with the sprite content
-		tl::DeleteFromArray(_grid->sprite->pixels(), start_index, end_index, total_length);
-
-		_grid->sprite->height -= 1;
-	}
-
-	void undo()
-	{
-		insert_row_operation undo_operation = insert_row_operation(_grid, _row_index);
-		undo_operation.execute();
-	}
-
-	private:
-		Grid* _grid = nullptr;
-		int _row_index = 0;
 };
 
 union generic_operation
