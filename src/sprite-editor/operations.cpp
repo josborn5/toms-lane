@@ -107,6 +107,17 @@ void insert_column_operation::execute()
 
 
 template<int N>
+void operation_executor<N>::do_execute(insert_row_operation& operation)
+{
+	any_operation any_op;
+	any_op.generic.insert_row = operation;
+	any_op.type = insert_row;
+	all_operations.push(any_op);
+
+	operation.execute();
+}
+
+template<int N>
 int operation_executor<N>::do_undo()
 {
 	operation<any_operation> result = all_operations.pop();

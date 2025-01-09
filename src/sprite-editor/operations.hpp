@@ -191,6 +191,8 @@ struct operation_executor
 			operation.execute();
 		}
 
+		void do_execute(insert_row_operation& operation);
+
 		int do_undo();
 
 	private:
