@@ -475,7 +475,7 @@ static void ExecuteCurrentCommand()
 		ParseColorFromCharArray(pointerToNumberChar, tempMemory, parsed_color);
 
 		set_pixel_data_operation operation = set_pixel_data_operation(state.activeControl, parsed_color);
-		the_undo.do_set_single_pixel(operation);
+		the_undo.do_execute(operation);
 
 		ClearCommandBuffer();
 		return;
@@ -532,7 +532,7 @@ static bool CheckForCopy(const tl::Input& input)
 			the_clipboard
 		);
 
-		the_undo.do_set_multiple_pixels(cut_operation);
+		the_undo.do_execute(cut_operation);
 
 		WriteStringToCommandBuffer("CUT");
 		return true;
@@ -559,7 +559,7 @@ static bool CheckForPaste(const tl::Input& input)
 			paste_operation
 		);
 
-		the_undo.do_set_multiple_pixels(paste_operation);
+		the_undo.do_execute(paste_operation);
 		WriteStringToCommandBuffer("PASTE");
 		return true;
 
@@ -644,7 +644,7 @@ static void ApplyInsertModeInputToState(const tl::Input& input)
 			? state.color_table.cursor.index()
 			: currentColor;
 		set_pixel_data_operation operation = set_pixel_data_operation(state.activeControl, data_to_set);
-		the_undo.do_set_single_pixel(operation);
+		the_undo.do_execute(operation);
 		return;
 	}
 	if (check_for_undo(input)) return;

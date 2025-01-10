@@ -106,6 +106,24 @@ void insert_column_operation::execute()
 }
 
 
+void operation_executor::do_execute(set_pixel_data_operation& operation)
+{
+	any_operation any_op;
+	any_op.generic.set_single_pixel = operation;
+	any_op.type = single;
+	all_operations.push(any_op);
+
+	operation.execute();
+}
+void operation_executor::do_execute(paste_pixel_data_operation& operation)
+{
+	any_operation any_op;
+	any_op.generic.set_multiple_pixels = operation;
+	any_op.type = multiple;
+	all_operations.push(any_op);
+
+	operation.execute();
+}
 void operation_executor::do_execute(insert_row_operation& operation)
 {
 	any_operation any_op;

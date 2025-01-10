@@ -150,26 +150,8 @@ struct any_operation
 struct operation_executor
 {
 	public:
-		void do_set_single_pixel(set_pixel_data_operation& operation)
-		{
-			any_operation any_op;
-			any_op.generic.set_single_pixel = operation;
-			any_op.type = single;
-			all_operations.push(any_op);
-
-			operation.execute();
-		}
-
-		void do_set_multiple_pixels(paste_pixel_data_operation& operation)
-		{
-			any_operation any_op;
-			any_op.generic.set_multiple_pixels = operation;
-			any_op.type = multiple;
-			all_operations.push(any_op);
-
-			operation.execute();
-		}
-
+		void do_execute(set_pixel_data_operation& operation);
+		void do_execute(paste_pixel_data_operation& operation);
 		void do_execute(insert_row_operation& operation);
 		void do_execute(insert_column_operation& operation);
 
