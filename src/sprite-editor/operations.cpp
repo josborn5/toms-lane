@@ -1,5 +1,56 @@
 #include "./operations.hpp"
 
+
+set_pixel_data_operation::set_pixel_data_operation() {}
+set_pixel_data_operation::set_pixel_data_operation(Grid* grid, uint32_t data_to_set)
+{
+	_sprite = grid->sprite;
+	_set_at_index = grid->cursor.index();
+	_data_to_set = data_to_set;
+}
+void set_pixel_data_operation::execute()
+{
+	_original_data = _sprite->get_pixel_data(_set_at_index);
+	_sprite->set_pixel_data(_set_at_index, _data_to_set);
+}
+void set_pixel_data_operation::undo()
+{
+	_sprite->set_pixel_data(_set_at_index, _original_data);
+}
+
+
+paste_pixel_data_operation::paste_pixel_data_operation() {}
+paste_pixel_data_operation::paste_pixel_data_operation(SpriteC* sprite)
+{
+	_sprite = sprite;
+}
+void paste_pixel_data_operation::execute()
+{
+	for (unsigned int i = 0; i < _pixels.length(); i += 1)
+	{
+		paste_pixel* pixel = _pixels.get_pointer(i).value;
+		pixel->original_data = _sprite->get_pixel_data(pixel->index);
+		_sprite->set_pixel_data(pixel->index, pixel->data_to_set);
+	}
+}
+int paste_pixel_data_operation::add_pixel(unsigned int pixel_index, uint32_t pixel_data)
+{
+	paste_pixel pixel;
+	pixel.index = pixel_index;
+	pixel.data_to_set = pixel_data;
+	return _pixels.append(pixel);
+}
+void paste_pixel_data_operation::undo()
+{
+	for (unsigned int i = 0; i < _pixels.length(); i += 1)
+	{
+		paste_pixel* pixel = _pixels.get_pointer(i).value;
+		_sprite->set_pixel_data(pixel->index, pixel->original_data);
+	}
+}
+
+
+
 delete_row_operation::delete_row_operation() {}
 delete_row_operation::delete_row_operation(Grid* grid)
 {

@@ -6,26 +6,11 @@
 
 struct set_pixel_data_operation
 {
-	public:
-		set_pixel_data_operation() {}
+	set_pixel_data_operation();
+	set_pixel_data_operation(Grid* grid, uint32_t data_to_set);
 
-		set_pixel_data_operation(Grid* grid, uint32_t data_to_set)
-		{
-			_sprite = grid->sprite;
-			_set_at_index = grid->cursor.index();
-			_data_to_set = data_to_set;
-		}
-
-		void execute()
-		{
-			_original_data = _sprite->get_pixel_data(_set_at_index);
-			_sprite->set_pixel_data(_set_at_index, _data_to_set);
-		}
-
-		void undo()
-		{
-			_sprite->set_pixel_data(_set_at_index, _original_data);
-		}
+	void execute();
+	void undo();
 
 	private:
 		SpriteC* _sprite = nullptr;
@@ -43,39 +28,12 @@ struct paste_pixel
 
 struct paste_pixel_data_operation
 {
-	paste_pixel_data_operation() {}
+	paste_pixel_data_operation();
+	paste_pixel_data_operation(SpriteC* sprite);
 
-	paste_pixel_data_operation(SpriteC* sprite)
-	{
-		_sprite = sprite;
-	}
-
-	void execute()
-	{
-		for (unsigned int i = 0; i < _pixels.length(); i += 1)
-		{
-			paste_pixel* pixel = _pixels.get_pointer(i).value;
-			pixel->original_data = _sprite->get_pixel_data(pixel->index);
-			_sprite->set_pixel_data(pixel->index, pixel->data_to_set);
-		}
-	}
-
-	int add_pixel(unsigned int pixel_index, uint32_t pixel_data)
-	{
-		paste_pixel pixel;
-		pixel.index = pixel_index;
-		pixel.data_to_set = pixel_data;
-		return _pixels.append(pixel);
-	}
-
-	void undo()
-	{
-		for (unsigned int i = 0; i < _pixels.length(); i += 1)
-		{
-			paste_pixel* pixel = _pixels.get_pointer(i).value;
-			_sprite->set_pixel_data(pixel->index, pixel->original_data);
-		}
-	}
+	void execute();
+	int add_pixel(unsigned int pixel_index, uint32_t pixel_data);
+	void undo();
 
 	private:
 		SpriteC* _sprite;
@@ -112,11 +70,10 @@ struct insert_row_operation
 
 struct insert_column_operation
 {
-	public:
-		insert_column_operation();
-		insert_column_operation(Grid* grid);
+	insert_column_operation();
+	insert_column_operation(Grid* grid);
 
-		void execute();
+	void execute();
 
 	private:
 		Grid* _grid = nullptr;
@@ -149,13 +106,12 @@ struct any_operation
 
 struct operation_executor
 {
-	public:
-		void do_execute(set_pixel_data_operation& operation);
-		void do_execute(paste_pixel_data_operation& operation);
-		void do_execute(insert_row_operation& operation);
-		void do_execute(insert_column_operation& operation);
+	void do_execute(set_pixel_data_operation& operation);
+	void do_execute(paste_pixel_data_operation& operation);
+	void do_execute(insert_row_operation& operation);
+	void do_execute(insert_column_operation& operation);
 
-		int do_undo();
+	int do_undo();
 
 	private:
 		stack_ring_buffer<any_operation, 8> all_operations;
