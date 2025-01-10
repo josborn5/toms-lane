@@ -106,8 +106,7 @@ void insert_column_operation::execute()
 }
 
 
-template<int N>
-void operation_executor<N>::do_execute(insert_row_operation& operation)
+void operation_executor::do_execute(insert_row_operation& operation)
 {
 	any_operation any_op;
 	any_op.generic.insert_row = operation;
@@ -116,9 +115,16 @@ void operation_executor<N>::do_execute(insert_row_operation& operation)
 
 	operation.execute();
 }
+void operation_executor::do_execute(insert_column_operation& operation)
+{
+	any_operation any_op;
+	any_op.generic.insert_column = operation;
+	any_op.type = insert_column;
+	all_operations.push(any_op);
 
-template<int N>
-int operation_executor<N>::do_undo()
+	operation.execute();
+}
+int operation_executor::do_undo()
 {
 	operation<any_operation> result = all_operations.pop();
 	if (result.result == operation_success)

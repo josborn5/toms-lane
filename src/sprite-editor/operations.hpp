@@ -147,7 +147,6 @@ struct any_operation
 	operation_type type;
 };
 
-template<int N>
 struct operation_executor
 {
 	public:
@@ -171,32 +170,13 @@ struct operation_executor
 			operation.execute();
 		}
 
-		void do_insert_row(insert_row_operation& operation)
-		{
-			any_operation any_op;
-			any_op.generic.insert_row = operation;
-			any_op.type = insert_row;
-			all_operations.push(any_op);
-
-			operation.execute();
-		}
-
-		void do_insert_column(insert_column_operation& operation)
-		{
-			any_operation any_op;
-			any_op.generic.insert_column = operation;
-			any_op.type = insert_column;
-			all_operations.push(any_op);
-
-			operation.execute();
-		}
-
 		void do_execute(insert_row_operation& operation);
+		void do_execute(insert_column_operation& operation);
 
 		int do_undo();
 
 	private:
-		stack_ring_buffer<any_operation, N> all_operations;
+		stack_ring_buffer<any_operation, 8> all_operations;
 };
 
 #endif

@@ -13,7 +13,7 @@ static const int modeBufferSize = 2;
 static const int skipModifierKey = tl::KEY_CTRL;
 static const int cameraModifierKey = tl::KEY_SHIFT;
 
-static operation_executor<8> the_undo;
+static operation_executor the_undo;
 static clipboard the_clipboard;
 
 static tl::MemorySpace spritePixelMemory;
@@ -382,9 +382,8 @@ static void ExecuteCurrentCommand()
 		operation<insert_row_operation> row_operation = try_insert_row(state.pixels);
 		if (row_operation.result == operation_success)
 		{
-			the_undo.do_insert_row(row_operation.value);
+			the_undo.do_execute(row_operation.value);
 			ClearCommandBuffer();
-
 		}
 		else
 		{
@@ -397,9 +396,8 @@ static void ExecuteCurrentCommand()
 		operation<insert_column_operation> column_operation = try_insert_column(state.pixels);
 		if (column_operation.result == operation_success)
 		{
-			the_undo.do_insert_column(column_operation.value);
+			the_undo.do_execute(column_operation.value);
 			ClearCommandBuffer();
-
 		}
 		else
 		{
