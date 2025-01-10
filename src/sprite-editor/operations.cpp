@@ -73,6 +73,11 @@ void delete_row_operation::execute()
 
 	_grid->sprite->height -= 1;
 	_grid->size();
+
+	if (_grid->cursor.index() > _grid->sprite->max_index())
+	{
+		_grid->cursor.move_down();
+	}
 }
 void delete_row_operation::undo()
 {

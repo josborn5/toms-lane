@@ -825,6 +825,8 @@ static void run_delete_row_tests()
 	assert(grid.sprite->get_pixel_data(2) == 0x0000FF);
 	assert(grid.sprite->get_pixel_data(3) == 0x0000FF);
 
+	assert(grid.cursor.index() == 2); // cursor is on same column as before, on the index of the row that was deleted
+
 	delete_operation.value.undo();
 
 	assert(grid.sprite->width == 2);
@@ -835,6 +837,21 @@ static void run_delete_row_tests()
 	assert(grid.sprite->get_pixel_data(3) == 0);
 	assert(grid.sprite->get_pixel_data(4) == 0x0000FF);
 	assert(grid.sprite->get_pixel_data(5) == 0x0000FF);
+
+	// delete the top row
+	grid.cursor.move_up();
+
+	operation<delete_row_operation> delete_operation_2 = try_delete_row(grid);
+	delete_operation_2.value.execute();
+
+	assert(grid.sprite->width == 2);
+	assert(grid.sprite->height == 2);
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(1) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(2) == 0);
+	assert(grid.sprite->get_pixel_data(3) == 0);
+
+	assert(grid.cursor.index() == 2);
 
 	printf("\nDelete row tests complete\n");
 }
