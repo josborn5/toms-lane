@@ -255,9 +255,15 @@ operation<delete_row_operation> try_delete_row(Grid& grid)
 operation<delete_column_operation> try_delete_column(Grid& grid)
 {
 	operation<delete_column_operation> operation;
-
-	operation.result = operation_success;
-	operation.value = delete_column_operation(&grid);
+	if (grid.sprite->width > 1)
+	{
+		operation.result = operation_success;
+		operation.value = delete_column_operation(&grid);
+	}
+	else
+	{
+		operation.result = operation_fail;
+	}
 
 	return operation;
 }

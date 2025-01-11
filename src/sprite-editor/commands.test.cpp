@@ -885,6 +885,10 @@ static void run_delete_column_tests()
 	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
 	assert(grid.sprite->get_pixel_data(1) == 0x00FF00);
 
+	// Can't delete the last column
+	operation<delete_column_operation> fail_op = try_delete_column(grid);
+	assert(fail_op.result == operation_fail);
+
 	printf("\nDelete column tests complete!\n");
 }
 
