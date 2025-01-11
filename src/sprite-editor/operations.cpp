@@ -126,6 +126,24 @@ void insert_row_operation::undo()
 	delete_op.execute();
 }
 
+delete_column_operation::delete_column_operation(Grid* grid)
+{
+	_grid = grid;
+	_col_index = grid->cursor.index();
+}
+void delete_column_operation::execute()
+{
+	unsigned int sprite_length = _grid->sprite->pixel_count();
+	for (int i = _grid->sprite->height - 1; i >= 0; i -= 1)
+	{
+		unsigned int delete_index = (i * _grid->sprite->width) + _col_index;
+		tl::DeleteFromArray(_grid->sprite->pixels(), delete_index, delete_index, sprite_length);
+		sprite_length -= 1;
+	}
+
+	_grid->sprite->width -= 1;
+	_grid->size();
+}
 
 insert_column_operation::insert_column_operation() {}
 insert_column_operation::insert_column_operation(Grid* grid)

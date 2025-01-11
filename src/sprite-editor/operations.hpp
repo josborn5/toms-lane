@@ -68,6 +68,17 @@ struct insert_row_operation
 		int _insert_at_row_index = 0;
 };
 
+struct delete_column_operation
+{
+	delete_column_operation(Grid* grid);
+
+	void execute();
+
+	private:
+		Grid* _grid = nullptr;
+		int _col_index = 0;
+};
+
 struct insert_column_operation
 {
 	insert_column_operation();

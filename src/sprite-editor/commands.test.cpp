@@ -856,14 +856,41 @@ static void run_delete_row_tests()
 	printf("\nDelete row tests complete\n");
 }
 
+static void run_delete_column_tests()
+{
+	printf("\nStarting delete column tests\n");
+
+	ResetState();
+	sprite.width = 2;
+	sprite.height = 2;
+
+	grid.sprite->set_pixel_data(0, 0xFF0000);
+	grid.sprite->set_pixel_data(1, 0x00FF00);
+	grid.sprite->set_pixel_data(2, 0xFF0000);
+	grid.sprite->set_pixel_data(3, 0x00FF00);
+
+	grid.cursor.move_start();
+
+	delete_column_operation op = delete_column_operation(&grid);
+	op.execute();
+
+	assert(sprite.height == 2);
+	assert(sprite.width == 1);
+	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(1) == 0x00FF00);
+
+	printf("\nDelete column tests complete!\n");
+}
+
 int RunCommandTests()
 {
 	printf("\nRunning command tests\n");
 	InsertRowTests();
+	run_delete_row_tests();
 	InsertColumnTests();
+	run_delete_column_tests();
 	RunCopyTests();
 	RunCutTests();
-	run_delete_row_tests();
 	printf("\nCommand tests complete!\n");
 	return 0;
 }
