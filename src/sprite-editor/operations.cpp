@@ -189,6 +189,15 @@ void operation_executor::do_execute(insert_row_operation& operation)
 
 	operation.execute();
 }
+void operation_executor::do_execute(delete_row_operation& operation)
+{
+	any_operation any_op;
+	any_op.generic.delete_row = operation;
+	any_op.type = delete_row;
+	all_operations.push(any_op);
+
+	operation.execute();
+}
 void operation_executor::do_execute(insert_column_operation& operation)
 {
 	any_operation any_op;
@@ -206,20 +215,24 @@ int operation_executor::do_undo()
 		switch (result.value.type)
 		{
 			case single:
-				{
-					result.value.generic.set_single_pixel.undo();;
-				}
+			{
+				result.value.generic.set_single_pixel.undo();
 				break;
+			}
 			case multiple:
-				{
-					result.value.generic.set_multiple_pixels.undo();
-				}
+			{
+				result.value.generic.set_multiple_pixels.undo();
 				break;
+			}
 			case insert_row:
-				{
-					result.value.generic.insert_row.undo();
-				}
+			{
+				result.value.generic.insert_row.undo();
 				break;
+			}
+			case delete_row:
+			{
+				result.value.generic.delete_row.undo();
+			}
 		}
 
 		return 0;

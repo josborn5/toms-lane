@@ -85,6 +85,7 @@ union generic_operation
 	set_pixel_data_operation set_single_pixel;
 	paste_pixel_data_operation set_multiple_pixels;
 	insert_row_operation insert_row;
+	delete_row_operation delete_row;
 	insert_column_operation insert_column;
 
 	generic_operation() {}
@@ -95,6 +96,7 @@ enum operation_type
 	single,
 	multiple,
 	insert_row,
+	delete_row,
 	insert_column
 };
 
@@ -109,6 +111,7 @@ struct operation_executor
 	void do_execute(set_pixel_data_operation& operation);
 	void do_execute(paste_pixel_data_operation& operation);
 	void do_execute(insert_row_operation& operation);
+	void do_execute(delete_row_operation& operation);
 	void do_execute(insert_column_operation& operation);
 
 	int do_undo();

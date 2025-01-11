@@ -416,8 +416,7 @@ static void ExecuteCurrentCommand()
 		operation<delete_row_operation> delete_operation = try_delete_row(state.pixels);
 		if (delete_operation.result == operation_success)
 		{
-			delete_operation.value.execute();
-			state.pixels.size();
+			the_undo.do_execute(delete_operation.value);
 			ClearCommandBuffer();
 		}
 		else
