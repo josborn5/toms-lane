@@ -853,6 +853,11 @@ static void run_delete_row_tests()
 
 	assert(grid.cursor.index() == 2);
 
+	// Can't delete last row
+	grid.sprite->height = 1;
+	operation<delete_row_operation> fail_operation = try_delete_row(grid);
+	assert(fail_operation.result == operation_fail);
+
 	printf("\nDelete row tests complete\n");
 }
 

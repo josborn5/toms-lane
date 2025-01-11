@@ -238,8 +238,15 @@ int cut_to_clipboard_operation(
 operation<delete_row_operation> try_delete_row(Grid& grid)
 {
 	operation<delete_row_operation> operation;
-	operation.result = operation_success;
-	operation.value = delete_row_operation(&grid);
+	if (grid.sprite->height > 1)
+	{
+		operation.result = operation_success;
+		operation.value = delete_row_operation(&grid);
+	}
+	else
+	{
+		operation.result = operation_fail;
+	}
 
 	return operation;
 }

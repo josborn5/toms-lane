@@ -411,7 +411,7 @@ static void ExecuteCurrentCommand()
 		ClearCommandBuffer();
 		return;
 	}
-	else if (CommandIs("DR") && state.pixels.sprite->height > 1) // delete row
+	else if (CommandIs("DR")) // delete row
 	{
 		operation<delete_row_operation> delete_operation = try_delete_row(state.pixels);
 		if (delete_operation.result == operation_success)
