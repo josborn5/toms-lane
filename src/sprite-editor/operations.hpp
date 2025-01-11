@@ -74,6 +74,7 @@ struct delete_column_operation
 	delete_column_operation(Grid* grid);
 
 	void execute();
+	void undo();
 
 	private:
 		Grid* _grid = nullptr;
@@ -99,6 +100,7 @@ union generic_operation
 	insert_row_operation insert_row;
 	delete_row_operation delete_row;
 	insert_column_operation insert_column;
+	delete_column_operation delete_column;
 
 	generic_operation() {}
 };
@@ -109,7 +111,8 @@ enum operation_type
 	multiple,
 	insert_row,
 	delete_row,
-	insert_column
+	insert_column,
+	delete_column
 };
 
 struct any_operation
@@ -125,6 +128,7 @@ struct operation_executor
 	void do_execute(insert_row_operation& operation);
 	void do_execute(delete_row_operation& operation);
 	void do_execute(insert_column_operation& operation);
+	void do_execute(delete_column_operation& operation);
 
 	int do_undo();
 

@@ -430,7 +430,7 @@ static void ExecuteCurrentCommand()
 		operation<delete_column_operation> delete_operation = try_delete_column(state.pixels);
 		if (delete_operation.result == operation_success)
 		{
-			delete_operation.value.execute();
+			the_undo.do_execute(delete_operation.value);
 			ClearCommandBuffer();
 		}
 		else
