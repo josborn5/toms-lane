@@ -70,6 +70,7 @@ struct insert_row_operation
 
 struct delete_column_operation
 {
+	delete_column_operation();
 	delete_column_operation(Grid* grid);
 
 	void execute();

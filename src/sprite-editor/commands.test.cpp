@@ -876,8 +876,9 @@ static void run_delete_column_tests()
 
 	grid.cursor.move_start();
 
-	delete_column_operation op = delete_column_operation(&grid);
-	op.execute();
+	operation<delete_column_operation> op = try_delete_column(grid);
+	assert(op.result == operation_success);
+	op.value.execute();
 
 	assert(sprite.height == 2);
 	assert(sprite.width == 1);

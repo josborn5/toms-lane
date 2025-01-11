@@ -126,6 +126,8 @@ void insert_row_operation::undo()
 	delete_op.execute();
 }
 
+
+delete_column_operation::delete_column_operation() {}
 delete_column_operation::delete_column_operation(Grid* grid)
 {
 	_grid = grid;
@@ -144,6 +146,7 @@ void delete_column_operation::execute()
 	_grid->sprite->width -= 1;
 	_grid->size();
 }
+
 
 insert_column_operation::insert_column_operation() {}
 insert_column_operation::insert_column_operation(Grid* grid)
