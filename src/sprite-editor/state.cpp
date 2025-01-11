@@ -425,21 +425,18 @@ static void ExecuteCurrentCommand()
 		}
 		return;
 	}
-	else if (CommandIs("DC") && state.pixels.sprite->width > 1) // delete column
+	else if (CommandIs("DC")) // delete column
 	{
-		// get the column index
-		unsigned int columnIndex = state.pixels.cursor.index() % state.pixels.sprite->width;
-		unsigned int spriteLength = state.pixels.sprite->width * state.pixels.sprite->height;
-		for (int i = state.pixels.sprite->height - 1; i >= 0; i -= 1)
+		operation<delete_column_operation> delete_operation = try_delete_column(state.pixels);
+		if (delete_operation.result == operation_success)
 		{
-			unsigned int deleteIndex = (i * state.pixels.sprite->width) + columnIndex;
-			tl::DeleteFromArray(state.pixels.sprite->pixels(), deleteIndex, deleteIndex, spriteLength);
-			spriteLength -= 1;
+			delete_operation.value.execute();
+			ClearCommandBuffer();
 		}
-		state.pixels.sprite->width -= 1;
-
-		state.pixels.size();
-		ClearCommandBuffer();
+		else
+		{
+			WriteStringToCommandBuffer("DELETE COLUMN FAILED!");
+		}
 		return;
 	}
 	else if (CommandIs("W") || CommandStartsWith("W ")) // write to file
