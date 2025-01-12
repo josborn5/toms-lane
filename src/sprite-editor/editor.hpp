@@ -6,8 +6,8 @@
 
 struct SpriteC
 {
-	int width = 0;
-	int height = 0;
+	unsigned int width = 0;
+	unsigned int height = 0;
 	uint16_t bitsPerPixel = 24;
 
 	tl::MemorySpace pixel_memory = {0};
@@ -51,7 +51,7 @@ struct SpriteC
 
 	unsigned int max_index_on_row(unsigned int row_index) const
 	{
-		return ((unsigned int)width * (row_index + 1)) - 1;
+		return (width * (row_index + 1)) - 1;
 	}
 
 	unsigned int min_index_on_row(unsigned int row_index) const
@@ -165,7 +165,7 @@ struct item_in_grid
 
 	void move_up()
 	{
-		unsigned int next_index = _index + (unsigned int)_sprite->width;
+		unsigned int next_index = _index + _sprite->width;
 		if (next_index <= _sprite->max_index())
 		{
 			_index = next_index;
@@ -212,12 +212,12 @@ struct item_in_grid
 
 	void color_jump_down()
 	{
-		jump_to_next_color(-_sprite->width, 0, _sprite->max_index());
+		jump_to_next_color(-(int)_sprite->width, 0, _sprite->max_index());
 	}
 
 	void set_index(unsigned int index)
 	{
-		if (index > (unsigned int)_sprite->max_index()) return;
+		if (index > _sprite->max_index()) return;
 		_index = index;
 	}
 

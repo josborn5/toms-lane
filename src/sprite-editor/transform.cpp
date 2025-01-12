@@ -131,10 +131,10 @@ int InitializeBitmapFromSpriteC(
 	bitmap.content = (uint8_t*)tempMemory.content;
 
 	// Bitmap & SpriteC origins are both bottom left
-	int pixelIndex = 0;
-	for (int pixelY = 0; pixelY < sprite.height; pixelY += 1)
+	unsigned int pixelIndex = 0;
+	for (unsigned int pixelY = 0; pixelY < sprite.height; pixelY += 1)
 	{
-		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
+		for (unsigned int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
 			uint32_t pixel_data = sprite.get_pixel_data(pixelIndex);
 			(*colorToBitmapTransformer)(pixel_data, pixelX, pixelY, bitmap);
@@ -165,17 +165,17 @@ int InitializeSpriteCFromBitmap(
 	sprite.p_color_table->width = 1;
 	sprite.p_color_table->height = bitmap.color_table.size;
 	sprite.p_color_table->bitsPerPixel = 32;
-	for (int i = 0; i < bitmap.color_table.size; i += 1)
+	for (unsigned int i = 0; i < (unsigned int)bitmap.color_table.size; i += 1)
 	{
 		// TODO: check pixel memory on color table
 		sprite.p_color_table->set_pixel_data(i, bitmap.color_table.content[i]);
 	}
 
 	// Bitmap & SpriteC origins are both bottom left
-	int pixelIndex = 0;
-	for (int pixelY = 0; pixelY < sprite.height; pixelY += 1)
+	unsigned int pixelIndex = 0;
+	for (unsigned int pixelY = 0; pixelY < sprite.height; pixelY += 1)
 	{
-		for (int pixelX = 0; pixelX < sprite.width; pixelX += 1)
+		for (unsigned int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
 			uint32_t pixel_data;
 			tl::bitmap_interface_get_pixel_data(bitmap, pixelX, pixelY, pixel_data);

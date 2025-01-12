@@ -398,9 +398,9 @@ static void arrange_3x3_for_copy_test()
 	sprite.width = 3;
 	sprite.height = 3;
 
-	for (int j = 0; j < sprite.height; j += 1)
+	for (unsigned int j = 0; j < sprite.height; j += 1)
 	{
-		int i = j * sprite.width;
+		unsigned int i = j * sprite.width;
 		spriteContent[i + 0] = 0xFF0000;
 		spriteContent[i + 1] = 0x00FF00;
 		spriteContent[i + 2] = 0x0000FF;

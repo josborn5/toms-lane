@@ -123,21 +123,21 @@ static void RenderSpriteAsGrid(
 	float yOriginalPosition = view.footprint.y_min() + pixelHalfSize.y;
 	float xOriginalPosition = view.footprint.x_min() + pixelHalfSize.x;
 
-	int selectedColIndex = grid.cursor.column_index();
-	int rangeColIndex = grid.range.column_index();
-	int selectedRowIndex = grid.cursor.row_index();
-	int rangeRowIndex = grid.range.row_index();
+	unsigned int selectedColIndex = grid.cursor.column_index();
+	unsigned int rangeColIndex = grid.range.column_index();
+	unsigned int selectedRowIndex = grid.cursor.row_index();
+	unsigned int rangeRowIndex = grid.range.row_index();
 
-	int startColIndex = (mode != Visual || selectedColIndex < rangeColIndex)
+	unsigned int startColIndex = (mode != Visual || selectedColIndex < rangeColIndex)
 		? selectedColIndex
 		: rangeColIndex;
-	int endColIndex = (mode != Visual || rangeColIndex < selectedColIndex)
+	unsigned int endColIndex = (mode != Visual || rangeColIndex < selectedColIndex)
 		? selectedColIndex
 		: rangeColIndex;
-	int startRowIndex = (mode != Visual || selectedRowIndex < rangeRowIndex)
+	unsigned int startRowIndex = (mode != Visual || selectedRowIndex < rangeRowIndex)
 		? selectedRowIndex
 		: rangeRowIndex;
-	int endRowIndex = (mode != Visual || rangeRowIndex < selectedRowIndex)
+	unsigned int endRowIndex = (mode != Visual || rangeRowIndex < selectedRowIndex)
 		? selectedRowIndex
 		: rangeRowIndex;
 
@@ -151,11 +151,11 @@ static void RenderSpriteAsGrid(
 		gridToRenderProjection
 	);
 
-	for (int j = 0; j < sprite.height; j += 1)
+	for (unsigned int j = 0; j < sprite.height; j += 1)
 	{
 		float yPosition = yOriginalPosition + (j * pixelHalfSize.y * 2.0f);
 		bool yIsInSelectedRange = (j >= startRowIndex && j <= endRowIndex);
-		for (int i = 0; i < sprite.width; i += 1)
+		for (unsigned int i = 0; i < sprite.width; i += 1)
 		{
 			float xPosition = xOriginalPosition + (i * pixelHalfSize.x * 2.0f);
 
