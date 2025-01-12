@@ -44,20 +44,20 @@ struct delete_row_operation
 {
 	delete_row_operation();
 	delete_row_operation(Grid* grid);
-	delete_row_operation(Grid* grid, int row_index);
+	delete_row_operation(Grid* grid, unsigned int row_index);
 
 	void execute();
 	void undo();
 
 	private:
 		Grid* _grid = nullptr;
-		int _row_index = 0;
+		unsigned int _row_index = 0;
 };
 
 struct insert_row_operation
 {
 	insert_row_operation();
-	insert_row_operation(Grid* grid, int row_index);
+	insert_row_operation(Grid* grid, unsigned int row_index);
 	insert_row_operation(Grid* grid);
 
 	void execute();
@@ -65,7 +65,7 @@ struct insert_row_operation
 
 	private:
 		Grid* _grid = nullptr;
-		int _insert_at_row_index = 0;
+		unsigned int _insert_at_row_index = 0;
 };
 
 struct delete_column_operation
@@ -78,7 +78,7 @@ struct delete_column_operation
 
 	private:
 		Grid* _grid = nullptr;
-		int _col_index = 0;
+		unsigned int _col_index = 0;
 };
 
 struct insert_column_operation

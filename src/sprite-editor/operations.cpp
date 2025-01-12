@@ -57,7 +57,7 @@ delete_row_operation::delete_row_operation(Grid* grid)
 	_grid = grid;
 	_row_index = _grid->cursor.row_index();
 }
-delete_row_operation::delete_row_operation(Grid* grid, int row_index)
+delete_row_operation::delete_row_operation(Grid* grid, unsigned int row_index)
 {
 	_grid = grid;
 	_row_index = row_index;
@@ -75,7 +75,7 @@ void delete_row_operation::execute()
 	_grid->sprite->height -= 1;
 	_grid->size();
 
-	int row_index = (_row_index >= _grid->sprite->height) ? _grid->sprite->height - 1 : _row_index;
+	unsigned int row_index = (_row_index >= (unsigned int)_grid->sprite->height) ? (unsigned int)_grid->sprite->height - 1 : _row_index;
 	_grid->cursor.set_index(col_index, row_index);
 }
 void delete_row_operation::undo()
@@ -86,7 +86,7 @@ void delete_row_operation::undo()
 
 
 insert_row_operation::insert_row_operation() {}
-insert_row_operation::insert_row_operation(Grid* grid, int row_index)
+insert_row_operation::insert_row_operation(Grid* grid, unsigned int row_index)
 {
 	_grid = grid;
 	_insert_at_row_index = row_index;
@@ -98,7 +98,7 @@ insert_row_operation::insert_row_operation(Grid* grid)
 }
 void insert_row_operation::execute()
 {
-	int col_index = _grid->cursor.column_index();
+	unsigned int col_index = _grid->cursor.column_index();
 	// Shift down rows after the new row
 	int first_move_pixel_index = _insert_at_row_index * _grid->sprite->width;
 	for (int source_index = _grid->sprite->max_index(); source_index >= first_move_pixel_index; source_index -= 1)
@@ -147,7 +147,7 @@ void delete_column_operation::execute()
 	_grid->sprite->width -= 1;
 	_grid->size();
 
-	unsigned int col_index = (_col_index >= _grid->sprite->width) ? _grid->sprite->width - 1 : _col_index;
+	unsigned int col_index = (_col_index >= (unsigned int)_grid->sprite->width) ? (unsigned int)_grid->sprite->width - 1 : _col_index;
 	_grid->cursor.set_index(col_index, row_index);
 }
 void delete_column_operation::undo()
