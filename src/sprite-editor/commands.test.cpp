@@ -840,12 +840,35 @@ static void run_delete_column_tests()
 	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
 	assert(grid.sprite->get_pixel_data(1) == 0x00FF00);
 
+	assert(grid.cursor.index() == 0);
+
 	// undo
 	op.value.undo();
 
-	// Can't delete the last column
+	// Can't delete the last column if it's the only one
 	operation<delete_column_operation> fail_op = try_delete_column(grid);
 	assert(fail_op.result == operation_fail);
+
+	// Delete last column
+	ResetState();
+	sprite.width = 2;
+	sprite.height = 2;
+
+	grid.sprite->set_pixel_data(0, 0xFF0000);
+	grid.sprite->set_pixel_data(1, 0x00FF00);
+	grid.sprite->set_pixel_data(2, 0xFF0000);
+	grid.sprite->set_pixel_data(3, 0x00FF00);
+
+	grid.cursor.move_start();
+	grid.cursor.move_right();
+
+	assert(grid.cursor.index() == 1);
+
+	operation<delete_column_operation> op2 = try_delete_column(grid);
+	assert(op2.result == operation_success);
+	op2.value.execute();
+
+	assert(grid.cursor.index() == 0);
 
 	printf("\nDelete column tests complete!\n");
 }

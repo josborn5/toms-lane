@@ -135,6 +135,7 @@ delete_column_operation::delete_column_operation(Grid* grid)
 }
 void delete_column_operation::execute()
 {
+	unsigned int row_index = _grid->cursor.row_index();
 	unsigned int sprite_length = _grid->sprite->pixel_count();
 	for (int i = _grid->sprite->height - 1; i >= 0; i -= 1)
 	{
@@ -145,6 +146,9 @@ void delete_column_operation::execute()
 
 	_grid->sprite->width -= 1;
 	_grid->size();
+
+	unsigned int col_index = (_col_index >= _grid->sprite->width) ? _grid->sprite->width - 1 : _col_index;
+	_grid->cursor.set_index(col_index, row_index);
 }
 void delete_column_operation::undo()
 {
