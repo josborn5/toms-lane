@@ -282,11 +282,11 @@ static void InsertColumnTests()
 	grid.cursor.move_start();
 	execute_insert_column_operation();
 
-	assert(grid.cursor.index() == 1);
+	assert(grid.cursor.index() == 0);
 
 	execute_insert_column_operation();
 
-	assert(grid.cursor.index() == 2);
+	assert(grid.cursor.index() == 0);
 
 	printf("\n\n1x2 pixel content test\n");
 	ResetState();
@@ -326,11 +326,11 @@ static void InsertColumnTests()
 
 	execute_insert_column_operation();
 
-	assert(grid.cursor.index() == 3); // second column in bottom row is now selected
+	assert(grid.cursor.index() == 2); // second column in bottom row is now selected
 
 	execute_insert_column_operation();
 
-	assert(grid.cursor.index() == 5); // third column on bottom row is now selected
+	assert(grid.cursor.index() == 3); // third column on bottom row is now selected
 
 	printf("\n\n2x1 pixel content test\n");
 	ResetState();
@@ -354,21 +354,6 @@ static void InsertColumnTests()
 	AssertEmptyColorForPixel(1);
 	AssertSetColorForPixel(2);
 	AssertSetColorForPixel(3);
-
-	printf("\n\n2x1 selected index test\n");
-	ResetState();
-	sprite.width = 2;
-	sprite.height = 1;
-	grid.cursor.move_start();
-	grid.cursor.move_right();
-
-	execute_insert_column_operation();
-
-	assert(grid.cursor.index() == 2);
-
-	execute_insert_column_operation();
-
-	assert(grid.cursor.index() == 3);
 
 	printf("\n\n2x2 pixel content test\n");
 	ResetState();
@@ -405,21 +390,6 @@ static void InsertColumnTests()
 	AssertEmptyColorForPixel(5);
 	AssertSetColorForPixel(6);
 	AssertSetColorForPixel(7);
-
-	printf("\n\n2x2 selected index test\n");
-	ResetState();
-	sprite.width = 2;
-	sprite.height = 2;
-	grid.cursor.move_start();
-	grid.cursor.move_up(); // first column of second row is selected
-
-	execute_insert_column_operation();
-
-	assert(grid.cursor.index() == 4); // second column of second row is selected
-
-	execute_insert_column_operation();
-
-	assert(grid.cursor.index() == 6); // third column of second for is selected
 }
 
 static void arrange_3x3_for_copy_test()

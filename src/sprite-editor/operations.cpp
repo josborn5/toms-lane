@@ -161,6 +161,7 @@ insert_column_operation::insert_column_operation(Grid* grid)
 }
 void insert_column_operation::execute()
 {
+	int row_index = _grid->cursor.row_index();
 	SpriteC* _sprite = _grid->sprite;
 	// shift any columns to the right of the new column
 	for (int source_index = _sprite->max_index(); source_index >= 0; source_index -= 1)
@@ -173,7 +174,6 @@ void insert_column_operation::execute()
 		_sprite->set_pixel_data(target_index, to_move);
 	}
 
-	int row_index = _grid->cursor.row_index();
 	_sprite->width += 1;
 	// clear pixels in the new column
 	for (int i = _insert_at_col_index; i < _sprite->pixel_count(); i += _sprite->width)
@@ -181,9 +181,7 @@ void insert_column_operation::execute()
 		_sprite->set_pixel_data(i, 0x000000);
 	}
 
-	int new_cursor_index = _grid->cursor.index() + row_index;
-	_grid->cursor.set_index(new_cursor_index);
-	_grid->cursor.move_right();
+	_grid->cursor.set_index(_insert_at_col_index, row_index);
 	_grid->size();
 }
 
