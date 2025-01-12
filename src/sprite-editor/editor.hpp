@@ -14,7 +14,7 @@ struct SpriteC
 
 	SpriteC* p_color_table = nullptr;
 
-	int pixel_count() const
+	unsigned int pixel_count() const
 	{
 		return width * height;
 	}
@@ -24,7 +24,7 @@ struct SpriteC
 		return (uint32_t*)pixel_memory.content;
 	}
 
-	int color_table_length() const
+	unsigned int color_table_length() const
 	{
 		return (p_color_table == nullptr) ? 0 : p_color_table->pixel_count();
 	}
@@ -34,7 +34,7 @@ struct SpriteC
 		return color_table_length() > 0;
 	}
 
-	uint32_t get_pixel_data(int index) const
+	uint32_t get_pixel_data(unsigned int index) const
 	{
 		return pixels()[index];
 	}
@@ -44,14 +44,14 @@ struct SpriteC
 		pixels()[index] = data;
 	}
 
-	int max_index() const
+	unsigned int max_index() const
 	{
 		return pixel_count() - 1;
 	}
 
-	int max_index_on_row(unsigned int row_index) const
+	unsigned int max_index_on_row(unsigned int row_index) const
 	{
-		return (width * (row_index + 1)) - 1;
+		return ((unsigned int)width * (row_index + 1)) - 1;
 	}
 
 	int min_index_on_row(unsigned int row_index) const
@@ -143,8 +143,8 @@ struct item_in_grid
 
 	void move_right()
 	{
-		int current_row_index = row_index();
-		int next_index = _index + 1;
+		unsigned int current_row_index = row_index();
+		unsigned int next_index = _index + 1;
 		if (next_index <= _sprite->max_index_on_row(current_row_index))
 		{
 			_index = next_index;
@@ -165,7 +165,7 @@ struct item_in_grid
 
 	void move_up()
 	{
-		int next_index = _index + _sprite->width;
+		unsigned int next_index = _index + (unsigned int)_sprite->width;
 		if (next_index <= _sprite->max_index())
 		{
 			_index = next_index;

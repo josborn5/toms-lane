@@ -86,7 +86,7 @@ static void ResetState()
 
 static void FillSprite()
 {
-	for (int i = 0; i < sprite.pixel_count(); i += 1)
+	for (unsigned int i = 0; i < sprite.pixel_count(); i += 1)
 	{
 		spriteContent[i] = SET_COLOR;
 	}

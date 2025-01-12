@@ -123,7 +123,7 @@ int InitializeBitmapFromSpriteC(
 	if (bitmap.file_header.fileSizeInBytes > tempMemory.sizeInBytes) return -1;
 
 	bitmap.color_table.size = sprite.color_table_length();
-	for (int i = 0; i < sprite.color_table_length(); i += 1)
+	for (unsigned int i = 0; i < sprite.color_table_length(); i += 1)
 	{
 		bitmap.color_table.content[i] = sprite.p_color_table->get_pixel_data(i);
 	}

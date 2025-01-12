@@ -186,7 +186,7 @@ void insert_column_operation::execute()
 
 	_sprite->width += 1;
 	// clear pixels in the new column
-	for (int i = _insert_at_col_index; i < _sprite->pixel_count(); i += _sprite->width)
+	for (unsigned int i = _insert_at_col_index; i < _sprite->pixel_count(); i += _sprite->width)
 	{
 		_sprite->set_pixel_data(i, 0x000000);
 	}

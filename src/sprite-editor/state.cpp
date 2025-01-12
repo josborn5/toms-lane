@@ -200,7 +200,7 @@ static void set_bits_per_pixel(int bits_per_pixel)
 
 	if (bits_per_pixel == 24)
 	{
-		for (int i = 0; i < state.canvas.pixel_count(); i += 1)
+		for (unsigned int i = 0; i < state.canvas.pixel_count(); i += 1)
 		{
 			uint32_t color_table_index = state.canvas.get_pixel_data(i);
 			uint32_t pixel_color = state.canvas.p_color_table->get_pixel_data(color_table_index);
@@ -215,7 +215,7 @@ static void set_bits_per_pixel(int bits_per_pixel)
 		state.canvas.p_color_table->set_pixel_data(0, 0x000000);
 		state.canvas.p_color_table->set_pixel_data(1, 0xFFFFFF);
 
-		for (int i = 0; i < state.canvas.pixel_count(); i += 1)
+		for (unsigned int i = 0; i < state.canvas.pixel_count(); i += 1)
 		{
 			uint32_t pixel_color = state.canvas.get_pixel_data(i);
 			uint32_t pixel_data = (pixel_color > 0x000000) ? 1 : 0;
