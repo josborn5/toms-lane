@@ -99,6 +99,7 @@ insert_row_operation::insert_row_operation(Grid* grid)
 }
 void insert_row_operation::execute()
 {
+	int col_index = _grid->cursor.column_index();
 	// Shift down rows after the new row
 	int first_move_pixel_index = _insert_at_row_index * _grid->sprite->width;
 	for (int source_index = _grid->sprite->max_index(); source_index >= first_move_pixel_index; source_index -= 1)
@@ -117,7 +118,7 @@ void insert_row_operation::execute()
 	}
 
 	_grid->sprite->height += 1;
-	_grid->cursor.move_up();
+	_grid->cursor.set_index(col_index, _insert_at_row_index);
 	_grid->size();
 }
 void insert_row_operation::undo()

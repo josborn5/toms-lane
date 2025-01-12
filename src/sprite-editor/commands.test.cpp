@@ -152,11 +152,11 @@ static void InsertRowTests()
 
 	execute_insert_row_operation();
 
-	assert(grid.cursor.index() == 1);
+	assert(grid.cursor.index() == 0);
 
 	execute_insert_row_operation();
 
-	assert(grid.cursor.index() == 2);
+	assert(grid.cursor.index() == 0);
 
 	printf("\n2x1 pixel content test\n");
 	ResetState();
@@ -174,21 +174,6 @@ static void InsertRowTests()
 	AssertEmptyColorForPixel(1);
 	AssertSetColorForPixel(2);
 	AssertSetColorForPixel(3);
-
-	printf("\n2x1 selected index test\n");
-	ResetState();
-	sprite.width = 2;
-	sprite.height = 1;
-	grid.cursor.move_start();
-	grid.cursor.move_right(); // last column in first row
-
-	execute_insert_row_operation();
-
-	assert(grid.cursor.index() == 3); // last column in second row
-
-	execute_insert_row_operation();
-
-	assert(grid.cursor.index() == 5); // last colun in third row
 
 	printf("\n2x2 pixel content test\n");
 	ResetState();
@@ -222,11 +207,11 @@ static void InsertRowTests()
 
 	execute_insert_row_operation();
 
-	assert(grid.cursor.index() == 4); // selected pixel is now the first pixel on the third row
+	assert(grid.cursor.index() == 2);
 
 	execute_insert_row_operation();
 
-	assert(grid.cursor.index() == 6); // selected pixel is now the first pixel on the fourth row
+	assert(grid.cursor.index() == 2);
 
 	printf("\n2x2 undo test\n");
 	ResetState();

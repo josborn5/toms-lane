@@ -221,6 +221,12 @@ struct item_in_grid
 		_index = index;
 	}
 
+	void set_index(unsigned int col_index, unsigned int row_index)
+	{
+		int index = col_index + (_sprite->width * row_index);
+		set_index(index);
+	}
+
 	private:
 		const SpriteC* _sprite = nullptr;
 		int _index = 0;
