@@ -85,12 +85,13 @@ struct insert_column_operation
 {
 	insert_column_operation();
 	insert_column_operation(Grid* grid);
+	insert_column_operation(Grid* grid, unsigned int column_index);
 
 	void execute();
 
 	private:
 		Grid* _grid = nullptr;
-		int _insert_at_col_index = 0;
+		unsigned int _insert_at_col_index = 0;
 };
 
 union generic_operation

@@ -845,7 +845,17 @@ static void run_delete_column_tests()
 	// undo
 	op.value.undo();
 
+	assert(sprite.width == 2);
+	assert(sprite.height == 2);
+	assert(grid.sprite->get_pixel_data(0) == 0x000000);
+	assert(grid.sprite->get_pixel_data(1) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(2) == 0x000000);
+	assert(grid.sprite->get_pixel_data(3) == 0x00FF00);
+
 	// Can't delete the last column if it's the only one
+	ResetState();
+	sprite.width = 1;
+	sprite.height = 2;
 	operation<delete_column_operation> fail_op = try_delete_column(grid);
 	assert(fail_op.result == operation_fail);
 

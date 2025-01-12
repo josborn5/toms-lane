@@ -152,8 +152,10 @@ void delete_column_operation::execute()
 }
 void delete_column_operation::undo()
 {
-
+	insert_column_operation undo_op = insert_column_operation(_grid, _col_index);
+	undo_op.execute();
 }
+
 
 
 insert_column_operation::insert_column_operation() {}
@@ -161,6 +163,11 @@ insert_column_operation::insert_column_operation(Grid* grid)
 {
 	_grid = grid;
 	_insert_at_col_index = _grid->cursor.column_index();
+}
+insert_column_operation::insert_column_operation(Grid* grid, unsigned int column_index)
+{
+	_grid = grid;
+	_insert_at_col_index = column_index;
 }
 void insert_column_operation::execute()
 {
