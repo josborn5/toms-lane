@@ -64,6 +64,7 @@ delete_row_operation::delete_row_operation(Grid* grid, int row_index)
 }
 void delete_row_operation::execute()
 {
+	unsigned int col_index = _grid->cursor.column_index();
 	unsigned int start_index = _grid->sprite->min_index_on_row(_row_index);
 	unsigned int end_index = _grid->sprite->max_index_on_row(_row_index);
 	unsigned int total_length = _grid->sprite->pixel_count();
@@ -74,10 +75,8 @@ void delete_row_operation::execute()
 	_grid->sprite->height -= 1;
 	_grid->size();
 
-	if (_grid->cursor.index() > _grid->sprite->max_index())
-	{
-		_grid->cursor.move_down();
-	}
+	int row_index = (_row_index >= _grid->sprite->height) ? _grid->sprite->height - 1 : _row_index;
+	_grid->cursor.set_index(col_index, row_index);
 }
 void delete_row_operation::undo()
 {
