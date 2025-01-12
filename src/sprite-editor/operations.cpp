@@ -171,15 +171,15 @@ insert_column_operation::insert_column_operation(Grid* grid, unsigned int column
 }
 void insert_column_operation::execute()
 {
-	int row_index = _grid->cursor.row_index();
+	unsigned int row_index = _grid->cursor.row_index();
 	SpriteC* _sprite = _grid->sprite;
 	// shift any columns to the right of the new column
 	for (int source_index = _sprite->max_index(); source_index >= 0; source_index -= 1)
 	{
-		bool after_new_column = (source_index % _sprite->width) >= _grid->cursor.column_index();
-		int offset_for_column = (after_new_column) ? 1 : 0;
-		int offset = _sprite->row_index(source_index) + offset_for_column;
-		int target_index = source_index + offset;
+		bool after_new_column = (source_index % _sprite->width) >= (int)_grid->cursor.column_index();
+		unsigned int offset_for_column = (after_new_column) ? 1 : 0;
+		unsigned int offset = _sprite->row_index(source_index) + offset_for_column;
+		unsigned int target_index = source_index + offset;
 		uint32_t to_move = _sprite->get_pixel_data(source_index);
 		_sprite->set_pixel_data(target_index, to_move);
 	}

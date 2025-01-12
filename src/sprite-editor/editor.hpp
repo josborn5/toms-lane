@@ -54,12 +54,12 @@ struct SpriteC
 		return ((unsigned int)width * (row_index + 1)) - 1;
 	}
 
-	int min_index_on_row(unsigned int row_index) const
+	unsigned int min_index_on_row(unsigned int row_index) const
 	{
 		return width * row_index;
 	}
 
-	int column_index(unsigned int index) const
+	unsigned int column_index(unsigned int index) const
 	{
 		if (width == 1)
 		{
@@ -69,7 +69,7 @@ struct SpriteC
 		return index % width;
 	}
 
-	int row_index(unsigned int index) const
+	unsigned int row_index(unsigned int index) const
 	{
 		if (height == 1)
 		{
@@ -78,7 +78,7 @@ struct SpriteC
 
 		if (width == 0)
 		{
-			return -1;
+			return index;
 		}
 
 		return index / width;
@@ -105,7 +105,7 @@ struct item_in_grid
 		_sprite = sprite;
 	}
 
-	int index() const
+	unsigned int index() const
 	{
 		return _index;
 	}
@@ -115,27 +115,27 @@ struct item_in_grid
 		return _sprite->pixels()[_index];
 	}
 
-	int row_index() const
+	unsigned int row_index() const
 	{
 		return _sprite->row_index(_index);
 	}
 
-	int column_index() const
+	unsigned int column_index() const
 	{
 		return _sprite->column_index(_index);
 	}
 
-	int column_end_index() const
+	unsigned int column_end_index() const
 	{
-		int top_left_index = _sprite->pixel_count() - _sprite->width;
+		unsigned int top_left_index = _sprite->pixel_count() - _sprite->width;
 		return top_left_index + column_index();
 	}
 
 	void move_left()
 	{
-		int current_row_index = row_index();
+		unsigned int current_row_index = row_index();
 		int next_index = _index - 1;
-		if (next_index >= _sprite->min_index_on_row(current_row_index))
+		if (next_index >= (int)_sprite->min_index_on_row(current_row_index))
 		{
 			_index = next_index;
 		}
@@ -153,13 +153,13 @@ struct item_in_grid
 
 	void move_row_start()
 	{
-		int current_row_index = row_index();
+		unsigned int current_row_index = row_index();
 		_index = _sprite->min_index_on_row(current_row_index);
 	}
 
 	void move_row_end()
 	{
-		int current_row_index = row_index();
+		unsigned int current_row_index = row_index();
 		_index = _sprite->max_index_on_row(current_row_index);
 	}
 
@@ -193,15 +193,15 @@ struct item_in_grid
 
 	void color_jump_left()
 	{
-		int current_row_index = row_index();
-		int min_row = _sprite->min_index_on_row(current_row_index);
+		unsigned int current_row_index = row_index();
+		unsigned int min_row = _sprite->min_index_on_row(current_row_index);
 		jump_to_next_color(-1, min_row, _sprite->max_index());
 	}
 
 	void color_jump_right()
 	{
-		int current_row_index = row_index();
-		int max_row = _sprite->max_index_on_row(current_row_index);
+		unsigned int current_row_index = row_index();
+		unsigned int max_row = _sprite->max_index_on_row(current_row_index);
 		jump_to_next_color(1, 0, max_row);
 	}
 
