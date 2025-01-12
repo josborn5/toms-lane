@@ -275,6 +275,12 @@ int operation_executor::do_undo()
 			case delete_row:
 			{
 				result.value.generic.delete_row.undo();
+				break;
+			}
+			case delete_column:
+			{
+				result.value.generic.delete_column.undo();
+				break;
 			}
 		}
 
