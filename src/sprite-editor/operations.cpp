@@ -240,12 +240,12 @@ void operation_executor::do_execute(insert_row_operation& operation)
 }
 void operation_executor::do_execute(delete_row_operation& operation)
 {
+	operation.execute();
+
 	any_operation any_op;
 	any_op.generic.delete_row = operation;
 	any_op.type = delete_row;
 	all_operations.push(any_op);
-
-	operation.execute();
 }
 void operation_executor::do_execute(insert_column_operation& operation)
 {
