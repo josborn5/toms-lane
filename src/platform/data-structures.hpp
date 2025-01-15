@@ -180,6 +180,11 @@ namespace tl
 			{
 				_length = 0;
 			}
+
+			unsigned int capacity()
+			{
+				return _capacity;
+			}
 	};
 
 	template<typename T>
