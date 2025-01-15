@@ -52,6 +52,7 @@ struct delete_row_operation
 	private:
 		Grid* _grid = nullptr;
 		unsigned int _row_index = 0;
+		tl::stack_array<uint32_t, 256> _deleted_pixels;
 };
 
 struct insert_row_operation

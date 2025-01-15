@@ -69,6 +69,13 @@ void delete_row_operation::execute()
 	unsigned int end_index = _grid->sprite->max_index_on_row(_row_index);
 	unsigned int total_length = _grid->sprite->pixel_count();
 
+	unsigned int row_length = end_index - start_index;
+	unsigned int capture_length = (row_length > _deleted_pixels.capacity()) ? _deleted_pixels.capacity() : row_length;
+	for (unsigned int i = 0; i <= capture_length; i += 1)
+	{
+		_deleted_pixels.append(_grid->sprite->get_pixel_data(i + start_index));
+	}
+
 	// Call tl::DeleteFromArray with the sprite content
 	tl::DeleteFromArray(_grid->sprite->pixels(), start_index, end_index, total_length);
 
@@ -82,6 +89,14 @@ void delete_row_operation::undo()
 {
 	insert_row_operation undo_operation = insert_row_operation(_grid, _row_index);
 	undo_operation.execute();
+
+	unsigned int start_index = _grid->sprite->min_index_on_row(_row_index);
+
+	for (unsigned int i = 0; i < _deleted_pixels.length(); i += 1)
+	{
+		uint32_t pixel_data = _deleted_pixels.get_copy(i).value;
+		_grid->sprite->set_pixel_data(i + start_index, pixel_data);
+	}
 }
 
 
