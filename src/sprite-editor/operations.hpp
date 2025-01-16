@@ -80,6 +80,7 @@ struct delete_column_operation
 	private:
 		Grid* _grid = nullptr;
 		unsigned int _col_index = 0;
+		tl::stack_array<uint32_t, 256> _deleted_pixels;
 };
 
 struct insert_column_operation

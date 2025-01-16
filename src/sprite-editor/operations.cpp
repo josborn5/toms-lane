@@ -69,8 +69,9 @@ void delete_row_operation::execute()
 	unsigned int end_index = _grid->sprite->max_index_on_row(_row_index);
 	unsigned int total_length = _grid->sprite->pixel_count();
 
-	unsigned int row_length = end_index - start_index;
-	unsigned int capture_length = (row_length > _deleted_pixels.capacity()) ? _deleted_pixels.capacity() : row_length;
+	unsigned int capture_length = (_grid->sprite->width > _deleted_pixels.capacity())
+		? _deleted_pixels.capacity()
+		: _grid->sprite->width;
 	for (unsigned int i = 0; i <= capture_length; i += 1)
 	{
 		_deleted_pixels.append(_grid->sprite->get_pixel_data(i + start_index));
@@ -125,7 +126,7 @@ void insert_row_operation::execute()
 
 	// Clear out pixels in the new row
 	int first_new_pixel_index = first_move_pixel_index;
-	int first_moved_pixel_index = first_new_pixel_index  + _grid->sprite->width;
+	int first_moved_pixel_index = first_new_pixel_index + _grid->sprite->width;
 	for (int i = first_new_pixel_index ; i < first_moved_pixel_index ; i += 1)
 	{
 		_grid->sprite->set_pixel_data(i, 0x000000);
@@ -155,6 +156,7 @@ void delete_column_operation::execute()
 	for (int i = _grid->sprite->height - 1; i >= 0; i -= 1)
 	{
 		unsigned int delete_index = (i * _grid->sprite->width) + _col_index;
+		_deleted_pixels.append(_grid->sprite->get_pixel_data(delete_index));
 		tl::DeleteFromArray(_grid->sprite->pixels(), delete_index, delete_index, sprite_length);
 		sprite_length -= 1;
 	}
@@ -169,6 +171,17 @@ void delete_column_operation::undo()
 {
 	insert_column_operation undo_op = insert_column_operation(_grid, _col_index);
 	undo_op.execute();
+
+	for (int i = _grid->sprite->height - 1; i >= 0; i -= 1)
+	{
+		int p_index = _grid->sprite->height - 1 - i;
+		unsigned int delete_index = (i * _grid->sprite->width) + _col_index;
+		tl::operation<uint32_t> pixel_data = _deleted_pixels.get_copy(p_index);
+		if (pixel_data.result == operation_success)
+		{
+			_grid->sprite->set_pixel_data(delete_index, pixel_data.value);
+		}
+	}
 }
 
 

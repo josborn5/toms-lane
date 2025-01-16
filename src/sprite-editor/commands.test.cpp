@@ -826,8 +826,8 @@ static void run_delete_column_tests()
 
 	grid.sprite->set_pixel_data(0, 0xFF0000);
 	grid.sprite->set_pixel_data(1, 0x00FF00);
-	grid.sprite->set_pixel_data(2, 0xFF0000);
-	grid.sprite->set_pixel_data(3, 0x00FF00);
+	grid.sprite->set_pixel_data(2, 0xFF0011);
+	grid.sprite->set_pixel_data(3, 0x00FF11);
 
 	grid.cursor.move_start();
 
@@ -838,7 +838,7 @@ static void run_delete_column_tests()
 	assert(sprite.height == 2);
 	assert(sprite.width == 1);
 	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
-	assert(grid.sprite->get_pixel_data(1) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(1) == 0x00FF11);
 
 	assert(grid.cursor.index() == 0);
 
@@ -847,10 +847,10 @@ static void run_delete_column_tests()
 
 	assert(sprite.width == 2);
 	assert(sprite.height == 2);
-	assert(grid.sprite->get_pixel_data(0) == 0x000000);
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
 	assert(grid.sprite->get_pixel_data(1) == 0x00FF00);
-	assert(grid.sprite->get_pixel_data(2) == 0x000000);
-	assert(grid.sprite->get_pixel_data(3) == 0x00FF00);
+	assert(grid.sprite->get_pixel_data(2) == 0xFF0011);
+	assert(grid.sprite->get_pixel_data(3) == 0x00FF11);
 
 	// Can't delete the last column if it's the only one
 	ResetState();
@@ -866,8 +866,8 @@ static void run_delete_column_tests()
 
 	grid.sprite->set_pixel_data(0, 0xFF0000);
 	grid.sprite->set_pixel_data(1, 0x00FF00);
-	grid.sprite->set_pixel_data(2, 0xFF0000);
-	grid.sprite->set_pixel_data(3, 0x00FF00);
+	grid.sprite->set_pixel_data(2, 0xFF0011);
+	grid.sprite->set_pixel_data(3, 0x00FF11);
 
 	grid.cursor.move_start();
 	grid.cursor.move_right();
@@ -879,6 +879,10 @@ static void run_delete_column_tests()
 	op2.value.execute();
 
 	assert(grid.cursor.index() == 0);
+	assert(sprite.width == 1);
+	assert(sprite.height == 2);
+	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);
+	assert(grid.sprite->get_pixel_data(1) == 0xFF0011);
 
 	printf("\nDelete column tests complete!\n");
 }
