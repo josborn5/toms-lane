@@ -830,6 +830,7 @@ static void run_delete_column_tests()
 	grid.sprite->set_pixel_data(3, 0x00FF11);
 
 	grid.cursor.move_start();
+	grid.cursor.move_up();
 
 	operation<delete_column_operation> op = try_delete_column(grid);
 	assert(op.result == operation_success);
@@ -840,7 +841,7 @@ static void run_delete_column_tests()
 	assert(grid.sprite->get_pixel_data(0) == 0x00FF00);
 	assert(grid.sprite->get_pixel_data(1) == 0x00FF11);
 
-	assert(grid.cursor.index() == 0);
+	assert(grid.cursor.index() == 1);
 
 	// undo
 	op.value.undo();
@@ -870,15 +871,16 @@ static void run_delete_column_tests()
 	grid.sprite->set_pixel_data(3, 0x00FF11);
 
 	grid.cursor.move_start();
+	grid.cursor.move_up();
 	grid.cursor.move_right();
 
-	assert(grid.cursor.index() == 1);
+	assert(grid.cursor.index() == 3);
 
 	operation<delete_column_operation> op2 = try_delete_column(grid);
 	assert(op2.result == operation_success);
 	op2.value.execute();
 
-	assert(grid.cursor.index() == 0);
+	assert(grid.cursor.index() == 1);
 	assert(sprite.width == 1);
 	assert(sprite.height == 2);
 	assert(grid.sprite->get_pixel_data(0) == 0xFF0000);

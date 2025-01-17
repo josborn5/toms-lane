@@ -147,7 +147,7 @@ delete_column_operation::delete_column_operation() {}
 delete_column_operation::delete_column_operation(Grid* grid)
 {
 	_grid = grid;
-	_col_index = grid->cursor.index();
+	_col_index = grid->cursor.column_index();
 }
 void delete_column_operation::execute()
 {
