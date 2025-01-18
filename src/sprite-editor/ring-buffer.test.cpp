@@ -37,5 +37,11 @@ void run_ring_buffer_tests()
 	pop = ring_buffer.pop();
 	assert(pop.result == operation_fail);
 
+	int& value_to_use = ring_buffer.use();
+	value_to_use = 1;
+	pop = ring_buffer.pop();
+	assert(pop.result == operation_success);
+	assert(pop.value == 1);
+
 	printf("\nRing buffer tests complete.\n");
 }

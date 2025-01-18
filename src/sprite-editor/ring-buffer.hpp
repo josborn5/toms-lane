@@ -47,6 +47,26 @@ struct stack_ring_buffer
 			return result;
 		}
 
+		T& use()
+		{
+			T& item_to_use = _content[_next_tail_index];
+			if ((_next_tail_index + 1) > max_index())
+			{
+				_next_tail_index = 0;
+			}
+			else
+			{
+				_next_tail_index += 1;
+			}
+
+			if (_length < CAPACITY)
+			{
+				_length += 1;
+			}
+
+			return item_to_use;
+		}
+
 	private:
 		unsigned int _length = 0;
 		unsigned int _next_tail_index = 0;
