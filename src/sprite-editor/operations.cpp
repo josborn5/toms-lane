@@ -73,11 +73,6 @@ delete_row_operation::delete_row_operation(Grid* grid)
 	_grid = grid;
 	_row_index = _grid->cursor.row_index();
 }
-delete_row_operation::delete_row_operation(Grid* grid, unsigned int row_index)
-{
-	_grid = grid;
-	_row_index = row_index;
-}
 void delete_row_operation::execute()
 {
 	unsigned int start_index = _grid->sprite->min_index_on_row(_row_index);

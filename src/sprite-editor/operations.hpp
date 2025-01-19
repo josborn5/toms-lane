@@ -44,7 +44,6 @@ struct delete_row_operation
 {
 	delete_row_operation();
 	delete_row_operation(Grid* grid);
-	delete_row_operation(Grid* grid, unsigned int row_index);
 
 	void execute();
 	void undo();
