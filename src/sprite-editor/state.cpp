@@ -379,10 +379,10 @@ static void ExecuteCurrentCommand()
 
 	if (CommandIs("R")) // append row
 	{
-		operation<insert_row_operation> row_operation = try_insert_row(state.pixels);
-		if (row_operation.result == operation_success)
+		if (can_insert_row(state.pixels))
 		{
-			the_undo.do_execute(row_operation.value);
+			insert_row_operation& insert_operation = the_undo.get_insert_row(&state.pixels);
+			insert_operation.execute();
 			ClearCommandBuffer();
 		}
 		else

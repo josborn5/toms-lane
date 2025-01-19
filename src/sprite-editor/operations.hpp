@@ -131,6 +131,7 @@ struct operation_executor
 	void do_execute(insert_column_operation& operation);
 	void do_execute(delete_column_operation& operation);
 
+	insert_row_operation& get_insert_row(Grid* grid);
 	delete_row_operation& get_delete_row(Grid* grid);
 
 	int do_undo();
