@@ -519,7 +519,7 @@ static bool CheckForCopy(const tl::Input& input)
 		int copy_range_index = (state.mode == Visual) ? state.pixels.range.index() : copy_cursor_index;
 
 		Grid grid = state.pixels;
-		paste_pixel_data_operation cut_operation = paste_pixel_data_operation(grid.sprite);
+		paste_pixel_data_operation& cut_operation = the_undo.get_paste_pixel_data(grid.sprite);
 		cut_to_clipboard_operation(
 			*grid.sprite,
 			grid.cursor.index(),
@@ -528,7 +528,7 @@ static bool CheckForCopy(const tl::Input& input)
 			the_clipboard
 		);
 
-		the_undo.do_execute(cut_operation);
+		cut_operation.execute();
 
 		WriteStringToCommandBuffer("CUT");
 		return true;
@@ -548,14 +548,14 @@ static bool CheckForPaste(const tl::Input& input)
 			&& the_clipboard.is_set()
 		)
 	{
-		paste_pixel_data_operation paste_operation = paste_pixel_data_operation(state.pixels.sprite);
+		paste_pixel_data_operation& paste_operation  = the_undo.get_paste_pixel_data(state.pixels.sprite);
 		paste_from_clipboard_operation(
 			state.pixels,
 			the_clipboard,
 			paste_operation
 		);
 
-		the_undo.do_execute(paste_operation);
+		paste_operation.execute();
 		WriteStringToCommandBuffer("PASTE");
 		return true;
 

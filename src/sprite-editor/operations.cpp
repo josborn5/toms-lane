@@ -230,6 +230,14 @@ set_pixel_data_operation& operation_executor::get_set_pixel_data(Grid* grid, uin
 	any_op.generic.set_single_pixel = set_pixel_data_operation(grid, data_to_set);
 	return any_op.generic.set_single_pixel;
 }
+
+paste_pixel_data_operation& operation_executor::get_paste_pixel_data(SpriteC* sprite)
+{
+	any_operation& any_op = all_operations.use();
+	any_op.type = multiple;
+	any_op.generic.set_multiple_pixels = paste_pixel_data_operation(sprite);
+	return any_op.generic.set_multiple_pixels;
+}
 void operation_executor::do_execute(paste_pixel_data_operation& operation)
 {
 	any_operation any_op;
