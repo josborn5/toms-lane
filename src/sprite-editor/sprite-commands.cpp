@@ -26,13 +26,13 @@ int SaveBitmap(
 	return tl::file_interface_write(filePath, fileData);
 }
 
-bool can_insert_row(SpriteC& sprite)
+bool can_insert_row(const SpriteC& sprite)
 {
 	uint64_t new_size_in_bytes = sprite.size_in_bytes() + (sprite.width * sizeof(uint32_t));
 	return new_size_in_bytes <= sprite.pixel_memory.sizeInBytes;
 }
 
-bool can_insert_column(SpriteC& sprite)
+bool can_insert_column(const SpriteC& sprite)
 {
 	uint64_t new_size_in_bytes = sprite.size_in_bytes() + (sprite.height * sizeof(uint32_t));
 	return (new_size_in_bytes <= sprite.pixel_memory.sizeInBytes);
@@ -217,11 +217,14 @@ int cut_to_clipboard_operation(
 	return 0;
 }
 
-bool can_delete_row(SpriteC& sprite)
+bool can_delete_row(const SpriteC& sprite)
 {
 	return sprite.height > 1;
 }
-
+bool can_delete_column(const SpriteC& sprite)
+{
+	return sprite.width > 1;
+}
 operation<delete_column_operation> try_delete_column(Grid& grid)
 {
 	operation<delete_column_operation> operation;

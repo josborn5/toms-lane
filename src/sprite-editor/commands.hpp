@@ -12,10 +12,11 @@ int SaveBitmap(
 	char* filePath
 );
 
-bool can_insert_row(SpriteC& sprite);
-bool can_insert_column(SpriteC& sprite);
+bool can_insert_row(const SpriteC& sprite);
+bool can_insert_column(const SpriteC& sprite);
 
-bool can_delete_row(SpriteC& sprite);
+bool can_delete_row(const SpriteC& sprite);
+bool can_delete_column(const SpriteC& sprite);
 operation<delete_column_operation> try_delete_column(Grid& grid);
 
 struct clipboard

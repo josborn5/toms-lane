@@ -834,9 +834,9 @@ static void run_delete_column_tests()
 	grid.cursor.move_start();
 	grid.cursor.move_up();
 
-	operation<delete_column_operation> op = try_delete_column(grid);
-	assert(op.result == operation_success);
-	op.value.execute();
+	assert(can_delete_column(*grid.sprite) == true);
+	delete_column_operation op = delete_column_operation(&grid);
+	op.execute();
 
 	assert(sprite.height == 2);
 	assert(sprite.width == 1);
@@ -846,7 +846,7 @@ static void run_delete_column_tests()
 	assert(grid.cursor.index() == 1);
 
 	// undo
-	op.value.undo();
+	op.undo();
 
 	assert(sprite.width == 2);
 	assert(sprite.height == 2);
@@ -859,8 +859,7 @@ static void run_delete_column_tests()
 	ResetState();
 	sprite.width = 1;
 	sprite.height = 2;
-	operation<delete_column_operation> fail_op = try_delete_column(grid);
-	assert(fail_op.result == operation_fail);
+	assert(can_delete_column(*grid.sprite) == false);
 
 	// Delete last column
 	ResetState();
@@ -878,9 +877,9 @@ static void run_delete_column_tests()
 
 	assert(grid.cursor.index() == 3);
 
-	operation<delete_column_operation> op2 = try_delete_column(grid);
-	assert(op2.result == operation_success);
-	op2.value.execute();
+	assert(can_delete_column(*grid.sprite) == true);
+	delete_column_operation op2 = delete_column_operation(&grid);
+	op2.execute();
 
 	assert(grid.cursor.index() == 1);
 	assert(sprite.width == 1);
