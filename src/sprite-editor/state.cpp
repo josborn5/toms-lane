@@ -427,10 +427,10 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandIs("DC")) // delete column
 	{
-		operation<delete_column_operation> delete_operation = try_delete_column(state.pixels);
-		if (delete_operation.result == operation_success)
+		if (can_delete_column(*state.pixels.sprite))
 		{
-			the_undo.do_execute(delete_operation.value);
+			delete_column_operation& delete_operation = the_undo.get_delete_column(&state.pixels);
+			delete_operation.execute();
 			ClearCommandBuffer();
 		}
 		else

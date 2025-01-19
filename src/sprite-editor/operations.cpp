@@ -263,6 +263,14 @@ insert_column_operation& operation_executor::get_insert_column(Grid* grid)
 	any_op.generic.insert_column = insert_column_operation(grid);
 	return any_op.generic.insert_column;
 }
+
+delete_column_operation& operation_executor::get_delete_column(Grid* grid)
+{
+	any_operation& any_op = all_operations.use();
+	any_op.type = delete_column;
+	any_op.generic.delete_column = delete_column_operation(grid);
+	return any_op.generic.delete_column;
+}
 void operation_executor::do_execute(delete_column_operation& operation)
 {
 	operation.execute();
