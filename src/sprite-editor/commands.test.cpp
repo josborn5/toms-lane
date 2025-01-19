@@ -392,6 +392,21 @@ static void InsertColumnTests()
 	AssertEmptyColorForPixel(5);
 	AssertSetColorForPixel(6);
 	AssertSetColorForPixel(7);
+
+	// undo
+	ResetState();
+	sprite.width = 1;
+	sprite.height = 2;
+	FillSprite();
+
+	insert_column_operation insert_op = insert_column_operation(&grid);
+	insert_op.execute();
+
+	insert_op.undo();
+	assert(sprite.width == 1);
+	assert(sprite.height == 2);
+	AssertSetColorForPixel(0);
+	AssertSetColorForPixel(1);
 }
 
 static void arrange_3x3_for_copy_test()

@@ -149,6 +149,11 @@ delete_column_operation::delete_column_operation(Grid* grid)
 	_grid = grid;
 	_col_index = grid->cursor.column_index();
 }
+delete_column_operation::delete_column_operation(Grid* grid, unsigned int column_index)
+{
+	_grid = grid;
+	_col_index = column_index;
+}
 void delete_column_operation::execute()
 {
 	unsigned int row_index = _grid->cursor.row_index();
@@ -221,6 +226,11 @@ void insert_column_operation::execute()
 
 	_grid->cursor.set_index(_insert_at_col_index, row_index);
 	_grid->size();
+}
+void insert_column_operation::undo()
+{
+	delete_column_operation delete_op = delete_column_operation(_grid, _insert_at_col_index);
+	delete_op.execute();
 }
 
 

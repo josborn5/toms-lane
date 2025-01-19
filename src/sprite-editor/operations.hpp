@@ -72,6 +72,7 @@ struct delete_column_operation
 {
 	delete_column_operation();
 	delete_column_operation(Grid* grid);
+	delete_column_operation(Grid* grid, unsigned int column_index);
 
 	void execute();
 	void undo();
@@ -89,6 +90,7 @@ struct insert_column_operation
 	insert_column_operation(Grid* grid, unsigned int column_index);
 
 	void execute();
+	void undo();
 
 	private:
 		Grid* _grid = nullptr;
