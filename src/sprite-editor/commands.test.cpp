@@ -798,8 +798,9 @@ static void run_delete_row_tests()
 	// delete the top row
 	grid.cursor.move_up();
 
-	operation<delete_row_operation> delete_operation_2 = try_delete_row(grid);
-	delete_operation_2.value.execute();
+	delete_row_operation delete_operation_2;
+	delete_operation_2.initialize(&grid);
+	delete_operation_2.execute();
 
 	assert(grid.sprite->width == 2);
 	assert(grid.sprite->height == 2);
@@ -812,8 +813,7 @@ static void run_delete_row_tests()
 
 	// Can't delete last row
 	grid.sprite->height = 1;
-	operation<delete_row_operation> fail_operation = try_delete_row(grid);
-	assert(fail_operation.result == operation_fail);
+	assert(can_delete_row(*grid.sprite) == false);
 
 	printf("\nDelete row tests complete\n");
 }
