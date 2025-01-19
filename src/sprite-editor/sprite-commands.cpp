@@ -38,21 +38,6 @@ bool can_insert_column(SpriteC& sprite)
 	return (new_size_in_bytes <= sprite.pixel_memory.sizeInBytes);
 }
 
-operation<insert_column_operation> try_insert_column(Grid& grid)
-{
-	operation<insert_column_operation> operation;
-	uint64_t new_size_in_bytes = grid.sprite->size_in_bytes() + (grid.sprite->height * sizeof(uint32_t));
-	if (new_size_in_bytes > grid.sprite->pixel_memory.sizeInBytes)
-	{
-		operation.result = operation_fail;
-		return operation;
-	}
-
-	operation.result = operation_success;
-	operation.value = insert_column_operation(&grid);
-	return operation;
-}
-
 static void get_indexes_for_copy(
 	const SpriteC& sprite,
 	int source_cursor_index,

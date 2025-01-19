@@ -14,7 +14,6 @@ int SaveBitmap(
 
 bool can_insert_row(SpriteC& sprite);
 bool can_insert_column(SpriteC& sprite);
-operation<insert_column_operation> try_insert_column(Grid& grid);
 
 bool can_delete_row(SpriteC& sprite);
 operation<delete_column_operation> try_delete_column(Grid& grid);
