@@ -221,9 +221,9 @@ static void InsertRowTests()
 	grid.cursor.move_start();
 	FillSprite();
 
-	operation<insert_row_operation> row_operation = try_insert_row(grid);
+	insert_row_operation row_operation = insert_row_operation(&grid);
 
-	row_operation.value.execute();
+	row_operation.execute();
 
 	assert(sprite.height == 3);
 	AssertEmptyColorForPixel(0);
@@ -233,7 +233,7 @@ static void InsertRowTests()
 	AssertSetColorForPixel(4);
 	AssertSetColorForPixel(5);
 
-	row_operation.value.undo();
+	row_operation.undo();
 
 	assert(sprite.height == 2);
 	AssertSetColorForPixel(0);
