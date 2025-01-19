@@ -470,8 +470,8 @@ static void ExecuteCurrentCommand()
 		uint32_t parsed_color;
 		ParseColorFromCharArray(pointerToNumberChar, tempMemory, parsed_color);
 
-		set_pixel_data_operation operation = set_pixel_data_operation(state.activeControl, parsed_color);
-		the_undo.do_execute(operation);
+		set_pixel_data_operation& operation = the_undo.get_set_pixel_data(state.activeControl, parsed_color);
+		operation.execute();
 
 		ClearCommandBuffer();
 		return;
@@ -639,8 +639,8 @@ static void ApplyInsertModeInputToState(const tl::Input& input)
 		uint32_t data_to_set = (state.pixels_are_selected() && state.canvas.has_color_table())
 			? state.color_table.cursor.index()
 			: currentColor;
-		set_pixel_data_operation operation = set_pixel_data_operation(state.activeControl, data_to_set);
-		the_undo.do_execute(operation);
+		set_pixel_data_operation& operation = the_undo.get_set_pixel_data(state.activeControl, data_to_set);
+		operation.execute();
 		return;
 	}
 	if (check_for_undo(input)) return;

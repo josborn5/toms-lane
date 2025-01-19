@@ -223,15 +223,12 @@ void insert_column_operation::execute()
 	_grid->size();
 }
 
-
-void operation_executor::do_execute(set_pixel_data_operation& operation)
+set_pixel_data_operation& operation_executor::get_set_pixel_data(Grid* grid, uint32_t data_to_set)
 {
-	any_operation any_op;
-	any_op.generic.set_single_pixel = operation;
+	any_operation& any_op = all_operations.use();
 	any_op.type = single;
-	all_operations.push(any_op);
-
-	operation.execute();
+	any_op.generic.set_single_pixel = set_pixel_data_operation(grid, data_to_set);
+	return any_op.generic.set_single_pixel;
 }
 void operation_executor::do_execute(paste_pixel_data_operation& operation)
 {
