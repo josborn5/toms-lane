@@ -393,10 +393,10 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandIs("C")) // append column
 	{
-		operation<insert_column_operation> column_operation = try_insert_column(state.pixels);
-		if (column_operation.result == operation_success)
+		if (can_insert_column(*state.pixels.sprite))
 		{
-			the_undo.do_execute(column_operation.value);
+			insert_column_operation& insert_operation = the_undo.get_insert_column(&state.pixels);
+			insert_operation.execute();
 			ClearCommandBuffer();
 		}
 		else
