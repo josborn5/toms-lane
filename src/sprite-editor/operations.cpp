@@ -251,15 +251,6 @@ void operation_executor::do_execute(insert_row_operation& operation)
 
 	operation.execute();
 }
-void operation_executor::do_execute(delete_row_operation& operation)
-{
-	operation.execute();
-
-	any_operation any_op;
-	any_op.generic.delete_row = operation;
-	any_op.type = delete_row;
-	all_operations.push(any_op);
-}
 delete_row_operation& operation_executor::get_delete_row(Grid* grid)
 {
 	any_operation& any_op = all_operations.use();
