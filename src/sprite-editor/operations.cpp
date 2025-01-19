@@ -62,12 +62,6 @@ delete_row_operation::delete_row_operation(Grid* grid, unsigned int row_index)
 	_grid = grid;
 	_row_index = row_index;
 }
-void delete_row_operation::initialize(Grid* grid)
-{
-	_grid = grid;
-	_row_index = _grid->cursor.row_index();
-	_deleted_pixels.clear();
-}
 void delete_row_operation::execute()
 {
 	unsigned int col_index = _grid->cursor.column_index();
@@ -266,11 +260,11 @@ void operation_executor::do_execute(delete_row_operation& operation)
 	any_op.type = delete_row;
 	all_operations.push(any_op);
 }
-delete_row_operation& operation_executor::get_delete_row()
+delete_row_operation& operation_executor::get_delete_row(Grid* grid)
 {
 	any_operation& any_op = all_operations.use();
 	any_op.type = delete_row;
-	any_op.generic.delete_row = delete_row_operation();
+	any_op.generic.delete_row = delete_row_operation(grid);
 	return any_op.generic.delete_row;
 
 }

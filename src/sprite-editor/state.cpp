@@ -415,8 +415,7 @@ static void ExecuteCurrentCommand()
 	{
 		if (can_delete_row(*state.pixels.sprite))
 		{
-			delete_row_operation& delete_operation = the_undo.get_delete_row();
-			delete_operation.initialize(&state.pixels);
+			delete_row_operation& delete_operation = the_undo.get_delete_row(&state.pixels);
 			delete_operation.execute();
 			ClearCommandBuffer();
 		}

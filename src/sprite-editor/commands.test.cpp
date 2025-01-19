@@ -771,8 +771,7 @@ static void run_delete_row_tests()
 	grid.cursor.move_up();
 	bool can_delete = can_delete_row(*grid.sprite);
 	assert(can_delete == true);
-	delete_row_operation delete_operation;
-	delete_operation.initialize(&grid);
+	delete_row_operation delete_operation = delete_row_operation(&grid);
 	delete_operation.execute();
 
 	assert(grid.sprite->width == 2);
@@ -798,8 +797,7 @@ static void run_delete_row_tests()
 	// delete the top row
 	grid.cursor.move_up();
 
-	delete_row_operation delete_operation_2;
-	delete_operation_2.initialize(&grid);
+	delete_row_operation delete_operation_2 = delete_row_operation(&grid);
 	delete_operation_2.execute();
 
 	assert(grid.sprite->width == 2);
