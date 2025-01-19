@@ -244,10 +244,11 @@ static void InsertRowTests()
 
 static void execute_insert_column_operation()
 {
-	operation<insert_column_operation> operation = try_insert_column(grid);
-	assert(operation.result == operation_success);
+	bool can_do = can_insert_column(*grid.sprite);
+	assert(can_do == true);
 
-	operation.value.execute();
+	insert_column_operation operation = insert_column_operation(&grid);
+	operation.execute();
 }
 
 static void InsertColumnTests()

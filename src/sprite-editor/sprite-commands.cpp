@@ -32,6 +32,12 @@ bool can_insert_row(SpriteC& sprite)
 	return new_size_in_bytes <= sprite.pixel_memory.sizeInBytes;
 }
 
+bool can_insert_column(SpriteC& sprite)
+{
+	uint64_t new_size_in_bytes = sprite.size_in_bytes() + (sprite.height * sizeof(uint32_t));
+	return (new_size_in_bytes <= sprite.pixel_memory.sizeInBytes);
+}
+
 operation<insert_column_operation> try_insert_column(Grid& grid)
 {
 	operation<insert_column_operation> operation;
