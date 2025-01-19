@@ -110,10 +110,11 @@ static void AssertEmptyColorForPixel(int pixelIndex)
 
 static void execute_insert_row_operation()
 {
-	operation<insert_row_operation> operation = try_insert_row(grid);
-	assert(operation.result == operation_success);
+	bool can_do = can_insert_row(grid);
+	assert(can_do == true);
+	insert_row_operation operation = insert_row_operation(&grid);
 
-	operation.value.execute();
+	operation.execute();
 }
 
 static void InsertRowTests()

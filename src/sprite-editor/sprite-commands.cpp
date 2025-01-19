@@ -26,6 +26,12 @@ int SaveBitmap(
 	return tl::file_interface_write(filePath, fileData);
 }
 
+bool can_insert_row(Grid& grid)
+{
+	uint64_t new_size_in_bytes = grid.sprite->size_in_bytes() + (grid.sprite->width * sizeof(uint32_t));
+	return new_size_in_bytes <= grid.sprite->pixel_memory.sizeInBytes;
+}
+
 operation<insert_row_operation> try_insert_row(Grid& grid)
 {
 	operation<insert_row_operation> operation;
