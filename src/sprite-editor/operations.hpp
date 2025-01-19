@@ -133,6 +133,8 @@ struct operation_executor
 	void do_execute(insert_column_operation& operation);
 	void do_execute(delete_column_operation& operation);
 
+	delete_row_operation& get_delete_row();
+
 	int do_undo();
 
 	private:

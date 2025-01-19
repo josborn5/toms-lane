@@ -251,6 +251,10 @@ operation<delete_row_operation> try_delete_row(Grid& grid)
 	return operation;
 }
 
+bool can_delete_row(SpriteC& sprite)
+{
+	return sprite.height > 1;
+}
 
 operation<delete_column_operation> try_delete_column(Grid& grid)
 {

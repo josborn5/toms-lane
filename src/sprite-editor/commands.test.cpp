@@ -769,6 +769,8 @@ static void run_delete_row_tests()
 	// delete the middle row
 	grid.cursor.move_start();
 	grid.cursor.move_up();
+	bool can_delete = can_delete_row(*grid.sprite);
+	assert(can_delete == true);
 	operation<delete_row_operation> delete_operation = try_delete_row(grid);
 	assert(delete_operation.result == operation_success);
 	delete_operation.value.execute();
