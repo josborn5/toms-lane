@@ -62,6 +62,11 @@ delete_row_operation::delete_row_operation(Grid* grid, unsigned int row_index)
 	_grid = grid;
 	_row_index = row_index;
 }
+void delete_row_operation::initialize(Grid* grid)
+{
+	_grid = grid;
+	_row_index = _grid->cursor.row_index();
+}
 void delete_row_operation::execute()
 {
 	unsigned int col_index = _grid->cursor.column_index();

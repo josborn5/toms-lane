@@ -771,9 +771,9 @@ static void run_delete_row_tests()
 	grid.cursor.move_up();
 	bool can_delete = can_delete_row(*grid.sprite);
 	assert(can_delete == true);
-	operation<delete_row_operation> delete_operation = try_delete_row(grid);
-	assert(delete_operation.result == operation_success);
-	delete_operation.value.execute();
+	delete_row_operation delete_operation;
+	delete_operation.initialize(&grid);
+	delete_operation.execute();
 
 	assert(grid.sprite->width == 2);
 	assert(grid.sprite->height == 2);
@@ -784,7 +784,7 @@ static void run_delete_row_tests()
 
 	assert(grid.cursor.index() == 2); // cursor is on same column as before, on the index of the row that was deleted
 
-	delete_operation.value.undo();
+	delete_operation.undo();
 
 	assert(grid.sprite->width == 2);
 	assert(grid.sprite->height == 3);
