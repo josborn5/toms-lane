@@ -66,6 +66,7 @@ void delete_row_operation::initialize(Grid* grid)
 {
 	_grid = grid;
 	_row_index = _grid->cursor.row_index();
+	_deleted_pixels.clear();
 }
 void delete_row_operation::execute()
 {
@@ -269,6 +270,7 @@ delete_row_operation& operation_executor::get_delete_row()
 {
 	any_operation& any_op = all_operations.use();
 	any_op.type = delete_row;
+	any_op.generic.delete_row = delete_row_operation();
 	return any_op.generic.delete_row;
 
 }

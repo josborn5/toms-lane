@@ -413,10 +413,11 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandIs("DR")) // delete row
 	{
-		operation<delete_row_operation> delete_operation = try_delete_row(state.pixels);
-		if (delete_operation.result == operation_success)
+		if (can_delete_row(*state.pixels.sprite))
 		{
-			the_undo.do_execute(delete_operation.value);
+			delete_row_operation& delete_operation = the_undo.get_delete_row();
+			delete_operation.initialize(&state.pixels);
+			delete_operation.execute();
 			ClearCommandBuffer();
 		}
 		else

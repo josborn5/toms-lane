@@ -16,7 +16,6 @@ operation<insert_row_operation> try_insert_row(Grid& grid);
 operation<insert_column_operation> try_insert_column(Grid& grid);
 
 bool can_delete_row(SpriteC& sprite);
-operation<delete_row_operation> try_delete_row(Grid& grid);
 operation<delete_column_operation> try_delete_column(Grid& grid);
 
 struct clipboard
