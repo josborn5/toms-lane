@@ -12,7 +12,7 @@ int SaveBitmap(
 	char* filePath
 );
 
-bool can_insert_row(Grid& grid);
+bool can_insert_row(SpriteC& sprite);
 operation<insert_row_operation> try_insert_row(Grid& grid);
 operation<insert_column_operation> try_insert_column(Grid& grid);
 

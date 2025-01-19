@@ -379,7 +379,7 @@ static void ExecuteCurrentCommand()
 
 	if (CommandIs("R")) // append row
 	{
-		if (can_insert_row(state.pixels))
+		if (can_insert_row(*state.pixels.sprite))
 		{
 			insert_row_operation& insert_operation = the_undo.get_insert_row(&state.pixels);
 			insert_operation.execute();

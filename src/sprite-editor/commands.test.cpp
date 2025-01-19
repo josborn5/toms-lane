@@ -110,7 +110,7 @@ static void AssertEmptyColorForPixel(int pixelIndex)
 
 static void execute_insert_row_operation()
 {
-	bool can_do = can_insert_row(grid);
+	bool can_do = can_insert_row(*grid.sprite);
 	assert(can_do == true);
 	insert_row_operation operation = insert_row_operation(&grid);
 

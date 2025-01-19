@@ -242,15 +242,6 @@ void operation_executor::do_execute(paste_pixel_data_operation& operation)
 
 	operation.execute();
 }
-void operation_executor::do_execute(insert_row_operation& operation)
-{
-	any_operation any_op;
-	any_op.generic.insert_row = operation;
-	any_op.type = insert_row;
-	all_operations.push(any_op);
-
-	operation.execute();
-}
 insert_row_operation& operation_executor::get_insert_row(Grid* grid)
 {
 	any_operation& any_op = all_operations.use();

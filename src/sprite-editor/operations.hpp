@@ -127,7 +127,6 @@ struct operation_executor
 {
 	void do_execute(set_pixel_data_operation& operation);
 	void do_execute(paste_pixel_data_operation& operation);
-	void do_execute(insert_row_operation& operation);
 	void do_execute(insert_column_operation& operation);
 	void do_execute(delete_column_operation& operation);
 
