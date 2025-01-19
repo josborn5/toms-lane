@@ -127,7 +127,6 @@ struct operation_executor
 {
 	void do_execute(set_pixel_data_operation& operation);
 	void do_execute(paste_pixel_data_operation& operation);
-	void do_execute(delete_column_operation& operation);
 
 	insert_column_operation& get_insert_column(Grid* grid);
 	delete_column_operation& get_delete_column(Grid* grid);

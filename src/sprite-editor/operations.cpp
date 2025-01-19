@@ -271,15 +271,6 @@ delete_column_operation& operation_executor::get_delete_column(Grid* grid)
 	any_op.generic.delete_column = delete_column_operation(grid);
 	return any_op.generic.delete_column;
 }
-void operation_executor::do_execute(delete_column_operation& operation)
-{
-	operation.execute();
-
-	any_operation any_op;
-	any_op.generic.delete_column = operation;
-	any_op.type = delete_column;
-	all_operations.push(any_op);
-}
 int operation_executor::do_undo()
 {
 	operation<any_operation> result = all_operations.pop();

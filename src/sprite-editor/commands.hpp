@@ -17,7 +17,6 @@ bool can_insert_column(const SpriteC& sprite);
 
 bool can_delete_row(const SpriteC& sprite);
 bool can_delete_column(const SpriteC& sprite);
-operation<delete_column_operation> try_delete_column(Grid& grid);
 
 struct clipboard
 {

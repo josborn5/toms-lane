@@ -225,19 +225,4 @@ bool can_delete_column(const SpriteC& sprite)
 {
 	return sprite.width > 1;
 }
-operation<delete_column_operation> try_delete_column(Grid& grid)
-{
-	operation<delete_column_operation> operation;
-	if (grid.sprite->width > 1)
-	{
-		operation.result = operation_success;
-		operation.value = delete_column_operation(&grid);
-	}
-	else
-	{
-		operation.result = operation_fail;
-	}
-
-	return operation;
-}
 
