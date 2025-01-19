@@ -223,6 +223,7 @@ void insert_column_operation::execute()
 	_grid->size();
 }
 
+
 set_pixel_data_operation& operation_executor::get_set_pixel_data(Grid* grid, uint32_t data_to_set)
 {
 	any_operation& any_op = all_operations.use();
@@ -230,22 +231,12 @@ set_pixel_data_operation& operation_executor::get_set_pixel_data(Grid* grid, uin
 	any_op.generic.set_single_pixel = set_pixel_data_operation(grid, data_to_set);
 	return any_op.generic.set_single_pixel;
 }
-
 paste_pixel_data_operation& operation_executor::get_paste_pixel_data(SpriteC* sprite)
 {
 	any_operation& any_op = all_operations.use();
 	any_op.type = multiple;
 	any_op.generic.set_multiple_pixels = paste_pixel_data_operation(sprite);
 	return any_op.generic.set_multiple_pixels;
-}
-void operation_executor::do_execute(paste_pixel_data_operation& operation)
-{
-	any_operation any_op;
-	any_op.generic.set_multiple_pixels = operation;
-	any_op.type = multiple;
-	all_operations.push(any_op);
-
-	operation.execute();
 }
 insert_row_operation& operation_executor::get_insert_row(Grid* grid)
 {

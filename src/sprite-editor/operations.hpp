@@ -125,8 +125,6 @@ struct any_operation
 
 struct operation_executor
 {
-	void do_execute(paste_pixel_data_operation& operation);
-
 	set_pixel_data_operation& get_set_pixel_data(Grid* grid, uint32_t data_to_set);
 	paste_pixel_data_operation& get_paste_pixel_data(SpriteC* sprite);
 	insert_column_operation& get_insert_column(Grid* grid);
