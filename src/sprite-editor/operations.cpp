@@ -143,24 +143,24 @@ void insert_row_operation::undo()
 }
 
 
-static void delete_column_in_grid(Grid* grid, unsigned int column_index)
+static void delete_column_in_grid(Grid& grid, unsigned int column_index)
 {
-	unsigned int row_index = grid->cursor.row_index();
-	unsigned int sprite_length = grid->sprite->pixel_count();
-	for (int i = grid->sprite->height - 1; i >= 0; i -= 1)
+	unsigned int row_index = grid.cursor.row_index();
+	unsigned int sprite_length = grid.sprite->pixel_count();
+	for (int i = grid.sprite->height - 1; i >= 0; i -= 1)
 	{
-		unsigned int delete_index = (i * grid->sprite->width) + column_index;
-		tl::DeleteFromArray(grid->sprite->pixels(), delete_index, delete_index, sprite_length);
+		unsigned int delete_index = (i * grid.sprite->width) + column_index;
+		tl::DeleteFromArray(grid.sprite->pixels(), delete_index, delete_index, sprite_length);
 		sprite_length -= 1;
 	}
 
-	grid->sprite->width -= 1;
-	grid->size();
+	grid.sprite->width -= 1;
+	grid.size();
 
-	unsigned int col_index = (column_index >= (unsigned int)grid->sprite->width)
-		? (unsigned int)grid->sprite->width - 1
+	unsigned int col_index = (column_index >= (unsigned int)grid.sprite->width)
+		? (unsigned int)grid.sprite->width - 1
 		: column_index;
-	grid->cursor.set_index(col_index, row_index);
+	grid.cursor.set_index(col_index, row_index);
 }
 
 delete_column_operation::delete_column_operation() {}
@@ -182,7 +182,7 @@ void delete_column_operation::execute()
 		_deleted_pixels.append(_grid->sprite->get_pixel_data(delete_index));
 	}
 
-	delete_column_in_grid(_grid, _col_index);
+	delete_column_in_grid(*_grid, _col_index);
 }
 void delete_column_operation::undo()
 {
@@ -241,7 +241,7 @@ void insert_column_operation::execute()
 }
 void insert_column_operation::undo()
 {
-	delete_column_in_grid(_grid, _insert_at_col_index);
+	delete_column_in_grid(*_grid, _insert_at_col_index);
 }
 
 
