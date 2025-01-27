@@ -7,6 +7,7 @@
 #include "./application/tl-sound.hpp"
 #include "./application/tl-window.hpp"
 #include "./application/tl-input.hpp"
+#include "./application/tl-text.hpp"
 
 namespace tl
 {

@@ -3,7 +3,7 @@
 #include "mmeapi.h"
 #include "../tl-sound.hpp"
 #include "../tl-console.hpp"
-#include "./win32-application.hpp"
+#include "./win32-window.hpp"
 
 #define WAVE_HEADER_COUNT 6
 

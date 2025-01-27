@@ -13,6 +13,7 @@ lib.exe /OUT:"%APP_DIR%\tl-win32.lib"^
  "%APP_DIR%\win32-winmmsound.obj"^
  "%APP_DIR%\win32-memory.obj"^
  "%APP_DIR%\win32-application.obj"^
+ "%APP_DIR%\win32-text.obj"^
  "%APP_DIR%\win32-input.obj"^
  user32.lib^
  Gdi32.lib^

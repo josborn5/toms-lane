@@ -14,6 +14,11 @@ static RenderBuffer globalRenderBuffer = {0};
 static BITMAPINFO bitmapInfo = {0};	// platform dependent
 static HWND globalWindow;
 
+HWND window_handle_get()
+{
+	return globalWindow;
+}
+
 static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 {
 	RECT clientRect = {0};

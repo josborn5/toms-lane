@@ -3,9 +3,6 @@
 
 namespace tl
 {
-	HWND window_handle_get();
-	void window_handle_set(HWND windowHandle);
-
 	HINSTANCE instance_handle_get();
 }
 

@@ -19,6 +19,8 @@ int UpdateAndRender(const tl::RenderBuffer& renderBuffer)
 
 	tl::bitmap_interface_render(renderBuffer, bitmap, tl::Vec2<int>{ 0, 0 });
 
+	tl::text_interface_render("HELLO!", 400, 200, 400, 200);
+
 	return 0;
 }
 

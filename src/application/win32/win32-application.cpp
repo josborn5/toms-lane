@@ -7,16 +7,6 @@ static HWND _window = 0;
 namespace tl
 {
 
-HWND window_handle_get()
-{
-	return _window;
-}
-
-void window_handle_set(HWND windowHandle)
-{
-	_window = windowHandle;
-}
-
 HINSTANCE instance_handle_get()
 {
 	return _instance;
