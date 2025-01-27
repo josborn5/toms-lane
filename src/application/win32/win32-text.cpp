@@ -39,7 +39,7 @@ int text_interface_render(
 		DT_LEFT
 	);
 
-	DeleteDC(device_context);
+	ReleaseDC(window_handle, device_context);
 
 	return draw_result;
 }
