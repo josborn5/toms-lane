@@ -19,7 +19,11 @@ int UpdateAndRender(const tl::RenderBuffer& renderBuffer)
 
 	tl::bitmap_interface_render(renderBuffer, bitmap, tl::Vec2<int>{ 0, 0 });
 
-	tl::text_interface_render("HELLO!", 400, 200, 400, 200);
+	int render_result = tl::text_interface_render("HELLO!", 400, 200, 400, 200);
+
+	char text[64] = {0};
+	tl::IntToCharString(render_result, text);
+	tl::console_interface_write(text);
 
 	return 0;
 }
@@ -54,6 +58,7 @@ int Initialize()
 	tl::memory_interface_initialize(memory);
 	tl::file_interface_read("test.bmp", memory);
 	tl::bitmap_interface_initialize(bitmap, memory);
+	tl::console_interface_open();
 	return 0;
 }
 
