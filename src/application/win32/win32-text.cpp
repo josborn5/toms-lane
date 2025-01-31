@@ -15,7 +15,7 @@ int text_interface_render(
 
 	if (nullptr == window_handle)
 	{
-		return -1;
+		return 1;
 	}
 
 	HDC device_context = GetDC(window_handle);
@@ -41,7 +41,9 @@ int text_interface_render(
 
 	ReleaseDC(window_handle, device_context);
 
-	return draw_result;
+	return (draw_result != 0) // DrawText returning 0 indicates failure
+		? 0
+		: draw_result;
 }
 
 }
