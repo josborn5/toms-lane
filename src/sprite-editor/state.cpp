@@ -601,6 +601,17 @@ static bool check_for_undo(const tl::Input& input)
 	return false;
 }
 
+static bool center_cursor_on_screen(const tl::Input& input)
+{
+	if (input.buttons[tl::KEY_C].keyDown)
+	{
+		state.activeControl->cursor.center();
+		return true;
+	}
+
+	return false;
+}
+
 static void ApplyViewModeInputToState(const tl::Input& input)
 {
 	if (ApplyCursorMovementToState(input)) return;
@@ -630,6 +641,7 @@ static void ApplyViewModeInputToState(const tl::Input& input)
 		return;
 	}
 	if (check_for_undo(input)) return;
+	if (center_cursor_on_screen(input)) return;
 }
 
 static void ApplyInsertModeInputToState(const tl::Input& input)

@@ -227,6 +227,13 @@ struct item_in_grid
 		set_index(index);
 	}
 
+	void center()
+	{
+		unsigned int center_col_index = _sprite->width / 2;
+		unsigned int center_row_index = _sprite->height / 2;
+		set_index(center_col_index, center_row_index);
+	}
+
 	private:
 		const SpriteC* _sprite = nullptr;
 		unsigned int _index = 0;

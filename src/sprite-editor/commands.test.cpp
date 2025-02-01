@@ -905,6 +905,21 @@ static void run_delete_column_tests()
 	printf("\nDelete column tests complete!\n");
 }
 
+static void run_center_cursor_tests()
+{
+	ResetState();
+	sprite.width = 5;
+	sprite.height = 15;
+	grid.cursor.move_start();
+
+	assert(grid.cursor.index() == 0);
+
+	grid.cursor.center();
+
+	assert(grid.cursor.column_index() == 2);
+	assert(grid.cursor.row_index() == 7);
+}
+
 int RunCommandTests()
 {
 	printf("\nRunning command tests\n");
@@ -914,6 +929,8 @@ int RunCommandTests()
 	run_delete_column_tests();
 	RunCopyTests();
 	RunCutTests();
+
+	run_center_cursor_tests();
 	printf("\nCommand tests complete!\n");
 	return 0;
 }
