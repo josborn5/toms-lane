@@ -591,7 +591,8 @@ static void ProcessCommandInput(const tl::Input& input)
 
 static bool check_for_undo(const tl::Input& input)
 {
-	if (input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_Z].keyDown)
+	if ((input.buttons[tl::KEY_CTRL].isDown && input.buttons[tl::KEY_Z].keyDown)
+		|| input.buttons[tl::KEY_U].keyDown)
 	{
 		the_undo.do_undo();
 		return true;
