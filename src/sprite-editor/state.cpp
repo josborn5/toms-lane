@@ -146,6 +146,12 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 		return false;
 	}
 
+	if (input.buttons[tl::KEY_R].keyDown)
+	{
+		state.pixels.camera.zoom = 1.0f;
+		state.pixels.camera.displacement = { 0.0f, 0.0f };
+	}
+
 	if (input.buttons[tl::KEY_I].keyDown)
 	{
 		state.pixels.camera.zoom *= 0.75f;
