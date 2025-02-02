@@ -115,6 +115,30 @@ static bool ApplyCursorMovementToState(const tl::Input& input)
 	return handledInput;
 }
 
+static float clamp_float(float min, float val, float max)
+{
+	if (val < min)
+	{
+		return min;
+	}
+
+	if (val > max)
+	{
+		return max;
+	}
+
+	return val;
+}
+
+static void pin_camera_displacement()
+{
+	float max_displacement = 1.0f + state.pixels.camera.zoom;
+	float min_displacement = -1.0f - state.pixels.camera.zoom;
+
+	state.pixels.camera.displacement.y = clamp_float(min_displacement, state.pixels.camera.displacement.y, max_displacement);
+	state.pixels.camera.displacement.x = clamp_float(min_displacement, state.pixels.camera.displacement.x, max_displacement);
+}
+
 static bool ApplyCameraMovementToState(const tl::Input& input)
 {
 	if (!state.pixels_are_selected() || !input.buttons[cameraModifierKey].isDown)
@@ -125,11 +149,13 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 	if (input.buttons[tl::KEY_I].keyDown)
 	{
 		state.pixels.camera.zoom *= 0.75f;
+		pin_camera_displacement();
 		return true;
 	}
 	else if (input.buttons[tl::KEY_U].keyDown)
 	{
 		state.pixels.camera.zoom /= 0.75f;
+		pin_camera_displacement();
 		return true;
 	}
 
@@ -137,21 +163,25 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 	if (input.buttons[tl::KEY_UP].keyDown)
 	{
 		state.pixels.camera.displacement.y += delta;
+		pin_camera_displacement();
 		return true;
 	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
 		state.pixels.camera.displacement.y -= delta;
+		pin_camera_displacement();
 		return true;
 	}
 	else if (input.buttons[tl::KEY_LEFT].keyDown)
 	{
 		state.pixels.camera.displacement.x -= delta;
+		pin_camera_displacement();
 		return true;
 	}
 	else if (input.buttons[tl::KEY_RIGHT].keyDown)
 	{
 		state.pixels.camera.displacement.x += delta;
+		pin_camera_displacement();
 		return true;
 	}
 
