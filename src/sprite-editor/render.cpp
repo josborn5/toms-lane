@@ -98,7 +98,7 @@ static void pixel_footprint_get(
 static void set_camera_rect(const sprite_control_view& view, tl::Rect<float>& camera_rect)
 {
 	camera_rect.halfSize.x = view.footprint.halfSize.x * view.sprite_control->camera.zoom;
-	camera_rect.halfSize.y = view.footprint.halfSize.y * view.sprite_control->camera.zoom;;
+	camera_rect.halfSize.y = view.footprint.halfSize.y * view.sprite_control->camera.zoom;
 
 	camera_rect.position.x = view.footprint.position.x + (view.footprint.halfSize.x * view.sprite_control->camera.displacement.x);
 	camera_rect.position.y = view.footprint.position.y + (view.footprint.halfSize.y * view.sprite_control->camera.displacement.y);
