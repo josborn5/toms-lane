@@ -750,6 +750,7 @@ const EditorState& GetLatestState(const tl::Input& input)
 			ApplyInsertModeInputToState(input);
 			break;
 		case Visual:
+			if (ApplyCameraMovementToState(input)) return state;
 			if (ApplySelectedRangeMovementToState(input)) return state;
 			if (CheckForCopy(input))
 			{
