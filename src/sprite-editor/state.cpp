@@ -427,6 +427,22 @@ static void ExecuteCurrentCommand()
 		}
 		return;
 	}
+	else if (CommandStartsWith("R")) // append multiple rows
+	{
+		char row_count_char = commands.get(2);
+		if (row_count_char < '0' || row_count_char > '9')
+		{
+			WriteStringToCommandBuffer("BAD INSERT ROW COUNT!");
+			return;
+		}
+		int row_count = row_count_char - '0';
+		for (int i = 0; i < row_count; i += 1)
+		{
+			insert_row_operation& insert_operation = the_undo.get_insert_row(&state.pixels);
+			insert_operation.execute();
+		}
+		ClearCommandBuffer();
+	}
 	else if (CommandIs("C")) // append column
 	{
 		if (can_insert_column(*state.pixels.sprite))
