@@ -150,9 +150,9 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 	{
 		state.pixels.camera.zoom = 1.0f;
 		state.pixels.camera.displacement = { 0.0f, 0.0f };
+		return true;
 	}
-
-	if (input.buttons[tl::KEY_I].keyDown)
+	else if (input.buttons[tl::KEY_I].keyDown)
 	{
 		state.pixels.camera.zoom *= 0.75f;
 		pin_camera_displacement();
@@ -172,9 +172,21 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 		pin_camera_displacement();
 		return true;
 	}
+	if (input.buttons[tl::KEY_PAGEUP].keyDown)
+	{
+		state.pixels.camera.displacement.y += (delta * 5);
+		pin_camera_displacement();
+		return true;
+	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
 		state.pixels.camera.displacement.y -= delta;
+		pin_camera_displacement();
+		return true;
+	}
+	if (input.buttons[tl::KEY_PAGEDOWN].keyDown)
+	{
+		state.pixels.camera.displacement.y -= (delta * 5);
 		pin_camera_displacement();
 		return true;
 	}
