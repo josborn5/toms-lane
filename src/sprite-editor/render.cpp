@@ -151,6 +151,25 @@ static void RenderSpriteAsGrid(
 		gridToRenderProjection
 	);
 
+	// Check if we need to iterate through the pixels on the screen (i.e. downsample the sprite)
+	// or the pixles in the bitmap (i.e. upsample the sprite)
+	tl::Rect<float> testPixel;
+	testPixel.halfSize = pixelHalfSize;
+	testPixel.position = pixelHalfSize;
+	tl::Rect<float> pixelRenderFootprint;
+	tl::transform_interface_project_rect(
+		gridToRenderProjection,
+		testPixel,
+		pixelRenderFootprint
+	);
+
+	bool need_to_downsample = pixelRenderFootprint.halfSize.x < 1.0f;
+	if (need_to_downsample)
+	{
+		// TODO: iterate through the pixels on the screen
+		tl::DrawRect(renderBuffer, 0x00FF00, view.footprint);
+	}
+
 	for (unsigned int j = 0; j < sprite.height; j += 1)
 	{
 		float yPosition = yOriginalPosition + (j * pixelHalfSize.y * 2.0f);
@@ -161,7 +180,6 @@ static void RenderSpriteAsGrid(
 
 			tl::Vec2<float> pixelPosition = { xPosition, yPosition };
 			tl::Rect<float> pixelFootPrint;
-			tl::Rect<float> pixelRenderFootprint;
 			pixelFootPrint.halfSize = pixelHalfSize;
 			pixelFootPrint.position = pixelPosition;
 			tl::transform_interface_project_rect(
