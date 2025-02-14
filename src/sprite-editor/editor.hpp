@@ -261,6 +261,7 @@ struct Grid
 
 	item_in_grid cursor;
 	item_in_grid range;
+	item_in_grid camera_focus;
 
 	grid_size_change_callback* size_change_callback;
 
@@ -269,6 +270,7 @@ struct Grid
 		sprite = sprite_data;
 		cursor.initialize(sprite_data);
 		range.initialize(sprite_data);
+		camera_focus.initialize(sprite_data);
 	}
 
 	uint32_t selected_color() const
