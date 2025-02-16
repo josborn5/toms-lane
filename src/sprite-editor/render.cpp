@@ -114,8 +114,8 @@ static void set_camera_rect(const sprite_control_view& view, tl::Rect<float>& ca
 	camera_rect.position.y = view.footprint.position.y - view.footprint.halfSize.y
 		+ ((float)view.sprite_control->camera_focus.row_index() + vertical_offset) * (pixel_half_size.y * 2.0f);
 
-	camera_rect.halfSize.x = view.footprint.halfSize.x * view.sprite_control->camera.zoom;
-	camera_rect.halfSize.y = view.footprint.halfSize.y * view.sprite_control->camera.zoom;
+	camera_rect.halfSize.x = view.footprint.halfSize.x * view.sprite_control->camera_zoom;
+	camera_rect.halfSize.y = view.footprint.halfSize.y * view.sprite_control->camera_zoom;
 }
 
 static void RenderSpriteAsGrid(

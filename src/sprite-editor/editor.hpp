@@ -90,12 +90,6 @@ struct SpriteC
 	}
 };
 
-struct sprite_camera
-{
-	float zoom = 1.0f;
-	tl::Vec2<float> displacement = {0};
-};
-
 typedef void grid_size_change_callback();
 
 struct item_in_grid
@@ -257,11 +251,11 @@ struct item_in_grid
 struct Grid
 {
 	SpriteC* sprite;
-	sprite_camera camera;
 
 	item_in_grid cursor;
 	item_in_grid range;
 	item_in_grid camera_focus;
+	float camera_zoom = 1.0f;
 
 	grid_size_change_callback* size_change_callback;
 
