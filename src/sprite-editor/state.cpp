@@ -354,7 +354,9 @@ static int Initialize(char* commandLine)
 	ClearCommandBuffer();
 	InitializeLayout(state);
 	state.pixels.size();
+	state.pixels.reset_items();
 	state.color_table.size();
+	state.color_table.reset_items();
 	InitializePalettes(paletteMemory, tempMemory, state);
 
 	return 0;
