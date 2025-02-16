@@ -150,44 +150,55 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 	{
 		state.pixels.camera.zoom = 1.0f;
 		state.pixels.camera.displacement = { 0.0f, 0.0f };
+		state.pixels.camera_focus.center();
 		return true;
 	}
 	else if (input.buttons[tl::KEY_I].keyDown)
 	{
 		state.pixels.camera.zoom *= 0.75f;
-		pin_camera_displacement();
 		return true;
 	}
 	else if (input.buttons[tl::KEY_U].keyDown)
 	{
 		state.pixels.camera.zoom /= 0.75f;
-		pin_camera_displacement();
 		return true;
 	}
 
 	float delta = (state.pixels.camera.zoom * 0.2f);
 	if (input.buttons[tl::KEY_UP].keyDown)
 	{
-		state.pixels.camera.displacement.y += delta;
-		pin_camera_displacement();
+		int delta_y = (int)(state.pixels.camera.zoom * 0.2f * (float)state.pixels.sprite->height);
+		for (int i = 0; i < delta_y; i += 1)
+		{
+			state.pixels.camera_focus.move_up();
+		}
 		return true;
 	}
 	if (input.buttons[tl::KEY_PAGEUP].keyDown)
 	{
-		state.pixels.camera.displacement.y += (delta * 5);
-		pin_camera_displacement();
+		int delta_y = (int)(state.pixels.camera.zoom * 1.0f * (float)state.pixels.sprite->height);
+		for (int i = 0; i < delta_y; i += 1)
+		{
+			state.pixels.camera_focus.move_up();
+		}
 		return true;
 	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
-		state.pixels.camera.displacement.y -= delta;
-		pin_camera_displacement();
+		int delta_y = (int)(state.pixels.camera.zoom * 0.2f * (float)state.pixels.sprite->height);
+		for (int i = 0; i < delta_y; i += 1)
+		{
+			state.pixels.camera_focus.move_down();
+		}
 		return true;
 	}
 	if (input.buttons[tl::KEY_PAGEDOWN].keyDown)
 	{
-		state.pixels.camera.displacement.y -= (delta * 5);
-		pin_camera_displacement();
+		int delta_y = (int)(state.pixels.camera.zoom * 1.0f * (float)state.pixels.sprite->height);
+		for (int i = 0; i < delta_y; i += 1)
+		{
+			state.pixels.camera_focus.move_down();
+		}
 		return true;
 	}
 	else if (input.buttons[tl::KEY_LEFT].keyDown)
