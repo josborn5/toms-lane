@@ -177,7 +177,6 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 		return true;
 	}
 
-
 	int delta_x = (int)(state.pixels.camera_zoom * 0.2f * (float)state.pixels.sprite->width);
 	if (delta_x < 1)
 	{

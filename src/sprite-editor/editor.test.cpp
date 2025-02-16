@@ -60,9 +60,30 @@ void TwoByTwoGridTests()
 	assert(editor_grid.cursor.index() == 0);
 }
 
+static void five_by_five_grid_tests()
+{
+	SpriteC editor_sprite;
+	editor_sprite.height = 5;
+	editor_sprite.width = 5;
+
+	Grid editor_grid;
+	editor_grid.initialize(&editor_sprite);
+
+	editor_grid.camera_focus.center();
+
+	assert(editor_grid.camera_focus.index() == 12);
+
+	editor_grid.camera_focus.move_up();
+	editor_grid.camera_focus.move_up();
+	editor_grid.camera_focus.move_up();
+
+	assert(editor_grid.camera_focus.index() == 22);
+}
+
 void RunEditorTests()
 {
 	TwoByTwoGridTests();
+	five_by_five_grid_tests();
 
 	printf("Editor tests complete!\n");
 }
