@@ -271,6 +271,10 @@ struct Grid
 		cursor.initialize(sprite_data);
 		range.initialize(sprite_data);
 		camera_focus.initialize(sprite_data);
+
+		cursor.move_start();
+		range.move_start();
+		camera_focus.center();
 	}
 
 	uint32_t selected_color() const

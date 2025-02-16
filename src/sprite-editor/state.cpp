@@ -347,8 +347,6 @@ static int Initialize(char* commandLine)
 
 	state.pixels.camera.zoom = 1.0f;
 	state.pixels.camera.displacement = { 0.0f, 0.0f };
-	state.pixels.cursor.move_start();
-	state.pixels.range.move_start();
 
 	state.mode = View;
 	the_clipboard.clear();
