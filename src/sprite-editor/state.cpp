@@ -139,18 +139,21 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 		return true;
 	}
 
+	int delta_y = (int)(state.pixels.camera_zoom * 0.2f * (float)state.pixels.sprite->height);
+	if (delta_y < 1)
+	{
+		delta_y = 1;
+	}
 	if (input.buttons[tl::KEY_UP].keyDown)
 	{
-		int delta_y = (int)(state.pixels.camera_zoom * 0.2f * (float)state.pixels.sprite->height);
 		for (int i = 0; i < delta_y; i += 1)
 		{
 			state.pixels.camera_focus.move_up();
 		}
 		return true;
 	}
-	if (input.buttons[tl::KEY_PAGEUP].keyDown)
+	else if (input.buttons[tl::KEY_PAGEUP].keyDown)
 	{
-		int delta_y = (int)(state.pixels.camera_zoom * 1.0f * (float)state.pixels.sprite->height);
 		for (int i = 0; i < delta_y; i += 1)
 		{
 			state.pixels.camera_focus.move_up();
@@ -159,25 +162,29 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 	}
 	else if (input.buttons[tl::KEY_DOWN].keyDown)
 	{
-		int delta_y = (int)(state.pixels.camera_zoom * 0.2f * (float)state.pixels.sprite->height);
 		for (int i = 0; i < delta_y; i += 1)
 		{
 			state.pixels.camera_focus.move_down();
 		}
 		return true;
 	}
-	if (input.buttons[tl::KEY_PAGEDOWN].keyDown)
+	else if (input.buttons[tl::KEY_PAGEDOWN].keyDown)
 	{
-		int delta_y = (int)(state.pixels.camera_zoom * 1.0f * (float)state.pixels.sprite->height);
 		for (int i = 0; i < delta_y; i += 1)
 		{
 			state.pixels.camera_focus.move_down();
 		}
 		return true;
 	}
-	else if (input.buttons[tl::KEY_LEFT].keyDown)
+
+
+	int delta_x = (int)(state.pixels.camera_zoom * 0.2f * (float)state.pixels.sprite->width);
+	if (delta_x < 1)
 	{
-		int delta_x = (int)(state.pixels.camera_zoom * 0.2f * (float)state.pixels.sprite->width);
+		delta_x = 1;
+	}
+	if (input.buttons[tl::KEY_LEFT].keyDown)
+	{
 		for (int i = 0; i < delta_x; i += 1)
 		{
 			state.pixels.camera_focus.move_left();
@@ -186,7 +193,6 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 	}
 	else if (input.buttons[tl::KEY_RIGHT].keyDown)
 	{
-		int delta_x = (int)(state.pixels.camera_zoom * 0.2f * (float)state.pixels.sprite->width);
 		for (int i = 0; i < delta_x; i += 1)
 		{
 			state.pixels.camera_focus.move_right();
