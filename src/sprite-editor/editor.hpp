@@ -253,14 +253,14 @@ struct sprite_camera : item_in_grid
 {
 	unsigned int bottom_row_index()
 	{
-		if (_zoom == 1.0f)
+		if (zoom == 1.0f)
 		{
 			unsigned int half_height = _sprite->height / 2;
 			unsigned int r_index = row_index();
 			return r_index > half_height ? r_index - half_height : 0;
 		}
 
-		float half_height = _zoom * (float)_sprite->height * 0.5f;
+		float half_height = zoom * (float)_sprite->height * 0.5f;
 		unsigned int r_index = row_index();
 		return ((float)r_index > half_height) ? (unsigned int)((float)r_index - half_height) : 0;
 	}
@@ -268,7 +268,7 @@ struct sprite_camera : item_in_grid
 	unsigned int top_row_index()
 	{
 		unsigned int max_top_index = _sprite->height - 1;
-		if (_zoom == 1.0f)
+		if (zoom == 1.0f)
 		{
 			unsigned int half_height = _sprite->height / 2;
 			unsigned int r_index = row_index();
@@ -276,7 +276,7 @@ struct sprite_camera : item_in_grid
 			return (top_index > max_top_index) ? max_top_index : top_index;
 		}
 
-		float half_height = _zoom * (float)_sprite->height * 0.5f;
+		float half_height = zoom * (float)_sprite->height * 0.5f;
 		unsigned int r_index = row_index();
 		float top_index = (float)r_index + half_height;
 		return (top_index > (float)max_top_index) ? max_top_index : (unsigned int)top_index;
@@ -284,13 +284,13 @@ struct sprite_camera : item_in_grid
 
 	unsigned int left_column_index()
 	{
-		if (_zoom == 1.0f)
+		if (zoom == 1.0f)
 		{
 			unsigned int half_width = _sprite->width / 2;
 			unsigned int c_index = column_index();
 			return c_index > half_width ? c_index - half_width : 0;
 		}
-		float half_width = _zoom * (float)_sprite->width * 0.5f;
+		float half_width = zoom * (float)_sprite->width * 0.5f;
 		unsigned int c_index = column_index();
 		return ((float)c_index > half_width) ? (unsigned int)((float)c_index - half_width) : 0;
 	}
@@ -298,7 +298,7 @@ struct sprite_camera : item_in_grid
 	unsigned int right_column_index()
 	{
 		unsigned int max_right_index = _sprite->width - 1;
-		if (_zoom == 1.0f)
+		if (zoom == 1.0f)
 		{
 			unsigned int half_width = _sprite->width / 2;
 			unsigned int c_index = column_index();
@@ -306,7 +306,7 @@ struct sprite_camera : item_in_grid
 			return (right_index > max_right_index) ? max_right_index : right_index;
 		}
 
-		float half_width = _zoom * (float)_sprite->width * 0.5f;
+		float half_width = zoom * (float)_sprite->width * 0.5f;
 		unsigned int c_index = column_index();
 		float right_index = (float)c_index + half_width;
 		return (right_index > (float)max_right_index) ? max_right_index : (unsigned int)right_index;
@@ -314,11 +314,31 @@ struct sprite_camera : item_in_grid
 
 	void zoom_in()
 	{
-		_zoom *= 0.75f;
+		zoom *= 0.75f;
 	}
 
-	private:
-		float _zoom = 1.0f;
+	void zoom_out()
+	{
+		zoom /= 0.75f;
+	}
+
+	float width_in_pixels()
+	{
+		return zoom * (float)_sprite->width;
+	}
+
+	float height_in_pixels()
+	{
+		return zoom * (float)_sprite->height;
+	}
+
+	void reset()
+	{
+		center();
+		zoom = 1.0f;
+	}
+
+	float zoom = 1.0f;
 };
 
 struct Grid

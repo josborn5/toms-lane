@@ -125,17 +125,19 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 	if (input.buttons[tl::KEY_R].keyDown)
 	{
 		state.pixels.camera_zoom = 1.0f;
-		state.pixels.camera_focus.center();
+		state.pixels.camera_focus.reset();
 		return true;
 	}
 	else if (input.buttons[tl::KEY_I].keyDown)
 	{
 		state.pixels.camera_zoom *= 0.75f;
+		state.pixels.camera_focus.zoom_in();
 		return true;
 	}
 	else if (input.buttons[tl::KEY_U].keyDown)
 	{
 		state.pixels.camera_zoom /= 0.75f;
+		state.pixels.camera_focus.zoom_out();
 		return true;
 	}
 
