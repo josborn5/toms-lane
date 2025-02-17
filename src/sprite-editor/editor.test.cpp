@@ -72,12 +72,25 @@ static void five_by_five_grid_tests()
 	editor_grid.camera_focus.center();
 
 	assert(editor_grid.camera_focus.index() == 12);
+	assert(editor_grid.camera_focus.bottom_row_index() == 0);
+	assert(editor_grid.camera_focus.top_row_index() == 4);
 
 	editor_grid.camera_focus.move_up();
 	editor_grid.camera_focus.move_up();
 	editor_grid.camera_focus.move_up();
 
 	assert(editor_grid.camera_focus.index() == 22);
+	assert(editor_grid.camera_focus.bottom_row_index() == 2);
+	assert(editor_grid.camera_focus.top_row_index() == 4);
+
+	editor_grid.camera_focus.center();
+	editor_grid.camera_focus.move_down();
+	editor_grid.camera_focus.move_down();
+	editor_grid.camera_focus.move_down();
+
+	assert(editor_grid.camera_focus.index() == 2);
+	assert(editor_grid.camera_focus.bottom_row_index() == 0);
+	assert(editor_grid.camera_focus.top_row_index() == 2);
 }
 
 void RunEditorTests()

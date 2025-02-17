@@ -228,7 +228,7 @@ struct item_in_grid
 		set_index(center_col_index, center_row_index);
 	}
 
-	private:
+	protected:
 		const SpriteC* _sprite = nullptr;
 		unsigned int _index = 0;
 
@@ -248,13 +248,31 @@ struct item_in_grid
 		}
 };
 
+struct sprite_camera : item_in_grid
+{
+	unsigned int bottom_row_index()
+	{
+		unsigned int half_height = _sprite->height / 2;
+		unsigned int r_index = row_index();
+		return r_index > half_height ? r_index - half_height : 0;
+	}
+
+	unsigned int top_row_index()
+	{
+		unsigned int half_height = _sprite->height / 2;
+		unsigned int r_index = row_index();
+		unsigned int top_index = r_index + half_height;
+		return top_index > (_sprite->height - 1) ? r_index : top_index;
+	}
+};
+
 struct Grid
 {
 	SpriteC* sprite;
 
 	item_in_grid cursor;
 	item_in_grid range;
-	item_in_grid camera_focus;
+	sprite_camera camera_focus;
 	float camera_zoom = 1.0f;
 
 	grid_size_change_callback* size_change_callback;
