@@ -134,27 +134,6 @@ static void RenderSpriteAsGrid(
 		pixelHalfSize
 	);
 
-	float yOriginalPosition = view.footprint.y_min() + pixelHalfSize.y;
-	float xOriginalPosition = view.footprint.x_min() + pixelHalfSize.x;
-
-	unsigned int selectedColIndex = grid.cursor.column_index();
-	unsigned int rangeColIndex = grid.range.column_index();
-	unsigned int selectedRowIndex = grid.cursor.row_index();
-	unsigned int rangeRowIndex = grid.range.row_index();
-
-	unsigned int startColIndex = (mode != Visual || selectedColIndex < rangeColIndex)
-		? selectedColIndex
-		: rangeColIndex;
-	unsigned int endColIndex = (mode != Visual || rangeColIndex < selectedColIndex)
-		? selectedColIndex
-		: rangeColIndex;
-	unsigned int startRowIndex = (mode != Visual || selectedRowIndex < rangeRowIndex)
-		? selectedRowIndex
-		: rangeRowIndex;
-	unsigned int endRowIndex = (mode != Visual || rangeRowIndex < selectedRowIndex)
-		? selectedRowIndex
-		: rangeRowIndex;
-
 	tl::Rect<float> camera_rect;
 	set_camera_rect(view, camera_rect);
 
@@ -180,7 +159,8 @@ static void RenderSpriteAsGrid(
 	bool need_to_downsample = pixelRenderFootprint.halfSize.x < 1.0f;
 	if (need_to_downsample)
 	{
-		float sprite_pixels_per_screen_pixel = (float)sprite.width / (camera_rect.halfSize.x * 2.0f);
+		// TODO: transformview.footprint through the gridToRenderProjection matrix!
+		float sprite_pixels_per_screen_pixel = (float)view.sprite_control->camera_focus.width_in_pixels() / (camera_rect.halfSize.x * 2.0f);
 
 		for (unsigned int j = 0; j < (unsigned int)(2.0f * camera_rect.halfSize.y); j += 1)
 		{
@@ -204,6 +184,27 @@ static void RenderSpriteAsGrid(
 		}
 		return;
 	}
+
+	float yOriginalPosition = view.footprint.y_min() + pixelHalfSize.y;
+	float xOriginalPosition = view.footprint.x_min() + pixelHalfSize.x;
+
+	unsigned int selectedColIndex = grid.cursor.column_index();
+	unsigned int rangeColIndex = grid.range.column_index();
+	unsigned int selectedRowIndex = grid.cursor.row_index();
+	unsigned int rangeRowIndex = grid.range.row_index();
+
+	unsigned int startColIndex = (mode != Visual || selectedColIndex < rangeColIndex)
+		? selectedColIndex
+		: rangeColIndex;
+	unsigned int endColIndex = (mode != Visual || rangeColIndex < selectedColIndex)
+		? selectedColIndex
+		: rangeColIndex;
+	unsigned int startRowIndex = (mode != Visual || selectedRowIndex < rangeRowIndex)
+		? selectedRowIndex
+		: rangeRowIndex;
+	unsigned int endRowIndex = (mode != Visual || rangeRowIndex < selectedRowIndex)
+		? selectedRowIndex
+		: rangeRowIndex;
 
 	for (unsigned int j = 0; j < sprite.height; j += 1)
 	{
