@@ -664,7 +664,9 @@ static bool center_cursor_on_screen(const tl::Input& input)
 {
 	if (input.buttons[tl::KEY_C].keyDown)
 	{
-		state.activeControl->cursor.center();
+		int camera_col_index = state.activeControl->camera_focus.column_index();
+		int camera_row_index = state.activeControl->camera_focus.row_index();
+		state.activeControl->cursor.set_index(camera_col_index, camera_row_index);
 		return true;
 	}
 
