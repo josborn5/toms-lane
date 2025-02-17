@@ -8,6 +8,8 @@
 
 namespace tl
 {
+	void PlotPixel(const RenderBuffer &renderBuffer, uint32_t color, int x, int y);
+
 	/**
 	 *	|---|---|---|
 	 *	| 0 | 1 | 2 |	pixel ordinals

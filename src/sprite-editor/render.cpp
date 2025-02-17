@@ -180,8 +180,29 @@ static void RenderSpriteAsGrid(
 	bool need_to_downsample = pixelRenderFootprint.halfSize.x < 1.0f;
 	if (need_to_downsample)
 	{
-		// TODO: iterate through the pixels on the screen
-		tl::DrawRect(renderBuffer, 0x00FF00, view.footprint);
+		float sprite_pixels_per_screen_pixel = (float)sprite.width / (camera_rect.halfSize.x * 2.0f);
+
+		for (unsigned int j = 0; j < (unsigned int)(2.0f * camera_rect.halfSize.y); j += 1)
+		{
+			int sprite_j = (int)(sprite_pixels_per_screen_pixel * (float)j);
+			int screen_j = (int)(view.footprint.position.y - view.footprint.halfSize.y) + j;
+			for (unsigned int i = 0; i < (unsigned int)(2.0f * camera_rect.halfSize.x); i += 1)
+			{
+				int sprite_i = (int)(sprite_pixels_per_screen_pixel * (float(i)));
+
+				int pixel_index = sprite_i + (sprite_j * sprite.width);
+				uint32_t pixel_data = sprite.get_pixel_data(pixel_index);
+				if (sprite.has_color_table())
+				{
+					pixel_data = sprite.p_color_table->get_pixel_data(pixel_data);
+				}
+
+				int screen_i = (int)(view.footprint.position.x - view.footprint.halfSize.x) + i;
+
+				tl::PlotPixel(renderBuffer, pixel_data, screen_i, screen_j);
+			}
+		}
+		return;
 	}
 
 	for (unsigned int j = 0; j < sprite.height; j += 1)
