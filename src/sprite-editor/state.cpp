@@ -124,24 +124,21 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 
 	if (input.buttons[tl::KEY_R].keyDown)
 	{
-		state.pixels.camera_zoom = 1.0f;
 		state.pixels.camera_focus.reset();
 		return true;
 	}
 	else if (input.buttons[tl::KEY_I].keyDown)
 	{
-		state.pixels.camera_zoom *= 0.75f;
 		state.pixels.camera_focus.zoom_in();
 		return true;
 	}
 	else if (input.buttons[tl::KEY_U].keyDown)
 	{
-		state.pixels.camera_zoom /= 0.75f;
 		state.pixels.camera_focus.zoom_out();
 		return true;
 	}
 
-	int delta_y = (int)(state.pixels.camera_zoom * 0.2f * (float)state.pixels.sprite->height);
+	int delta_y = (int)(state.pixels.camera_focus.zoom * 0.2f * (float)state.pixels.sprite->height);
 	if (delta_y < 1)
 	{
 		delta_y = 1;
@@ -179,7 +176,7 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 		return true;
 	}
 
-	int delta_x = (int)(state.pixels.camera_zoom * 0.2f * (float)state.pixels.sprite->width);
+	int delta_x = (int)(state.pixels.camera_focus.zoom * 0.2f * (float)state.pixels.sprite->width);
 	if (delta_x < 1)
 	{
 		delta_x = 1;
@@ -343,7 +340,7 @@ static int Initialize(char* commandLine)
 		}
 	}
 
-	state.pixels.camera_zoom = 1.0f;
+	state.pixels.camera_focus.reset();
 
 	state.mode = View;
 	the_clipboard.clear();

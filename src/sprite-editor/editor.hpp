@@ -348,7 +348,6 @@ struct Grid
 	item_in_grid cursor;
 	item_in_grid range;
 	sprite_camera camera_focus;
-	float camera_zoom = 1.0f;
 
 	grid_size_change_callback* size_change_callback;
 
