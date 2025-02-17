@@ -113,6 +113,18 @@ static void five_by_five_grid_tests()
 	assert(editor_grid.camera_focus.bottom_row_index() == 0);
 	assert(editor_grid.camera_focus.top_row_index() == 4);
 	assert(editor_grid.camera_focus.left_column_index() == 2);
+
+	editor_sprite.height = 100;
+	editor_sprite.width = 100;
+
+	editor_grid.camera_focus.center();
+	editor_grid.camera_focus.zoom_in();
+
+	assert(editor_grid.camera_focus.index() == 5050);
+	assert(editor_grid.camera_focus.bottom_row_index() == 12);
+	assert(editor_grid.camera_focus.top_row_index() == 87);
+	assert(editor_grid.camera_focus.left_column_index() == 12);
+	assert(editor_grid.camera_focus.right_column_index() == 87);
 }
 
 void RunEditorTests()

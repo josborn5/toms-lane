@@ -253,35 +253,72 @@ struct sprite_camera : item_in_grid
 {
 	unsigned int bottom_row_index()
 	{
-		unsigned int half_height = _sprite->height / 2;
+		if (_zoom == 1.0f)
+		{
+			unsigned int half_height = _sprite->height / 2;
+			unsigned int r_index = row_index();
+			return r_index > half_height ? r_index - half_height : 0;
+		}
+
+		float half_height = _zoom * (float)_sprite->height * 0.5f;
 		unsigned int r_index = row_index();
-		return r_index > half_height ? r_index - half_height : 0;
+		return ((float)r_index > half_height) ? (unsigned int)((float)r_index - half_height) : 0;
 	}
 
 	unsigned int top_row_index()
 	{
-		unsigned int half_height = _sprite->height / 2;
-		unsigned int r_index = row_index();
-		unsigned int top_index = r_index + half_height;
 		unsigned int max_top_index = _sprite->height - 1;
-		return (top_index > max_top_index) ? max_top_index : top_index;
+		if (_zoom == 1.0f)
+		{
+			unsigned int half_height = _sprite->height / 2;
+			unsigned int r_index = row_index();
+			unsigned int top_index = r_index + half_height;
+			return (top_index > max_top_index) ? max_top_index : top_index;
+		}
+
+		float half_height = _zoom * (float)_sprite->height * 0.5f;
+		unsigned int r_index = row_index();
+		float top_index = (float)r_index + half_height;
+		return (top_index > (float)max_top_index) ? max_top_index : (unsigned int)top_index;
 	}
 
 	unsigned int left_column_index()
 	{
-		unsigned int half_width = _sprite->width / 2;
+		if (_zoom == 1.0f)
+		{
+			unsigned int half_width = _sprite->width / 2;
+			unsigned int c_index = column_index();
+			return c_index > half_width ? c_index - half_width : 0;
+		}
+		float half_width = _zoom * (float)_sprite->width * 0.5f;
 		unsigned int c_index = column_index();
-		return c_index > half_width ? c_index - half_width : 0;
+		return ((float)c_index > half_width) ? (unsigned int)((float)c_index - half_width) : 0;
 	}
 
 	unsigned int right_column_index()
 	{
-		unsigned int half_width = _sprite->width / 2;
-		unsigned int c_index = column_index();
-		unsigned int right_index = c_index + half_width;
 		unsigned int max_right_index = _sprite->width - 1;
-		return (right_index > max_right_index) ? max_right_index : right_index;
+		if (_zoom == 1.0f)
+		{
+			unsigned int half_width = _sprite->width / 2;
+			unsigned int c_index = column_index();
+			unsigned int right_index = c_index + half_width;
+			return (right_index > max_right_index) ? max_right_index : right_index;
+		}
+
+		float half_width = _zoom * (float)_sprite->width * 0.5f;
+		unsigned int c_index = column_index();
+		float right_index = (float)c_index + half_width;
+		return (right_index > (float)max_right_index) ? max_right_index : (unsigned int)right_index;
 	}
+
+	void zoom_in()
+	{
+		_zoom *= 0.75f;
+	}
+
+	private:
+		float _zoom = 1.0f;
 };
 
 struct Grid
