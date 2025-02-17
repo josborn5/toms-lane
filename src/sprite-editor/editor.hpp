@@ -232,6 +232,7 @@ struct item_in_grid
 		const SpriteC* _sprite = nullptr;
 		unsigned int _index = 0;
 
+	private:
 		void jump_to_next_color(int step, int inclusiveMinPixelIndex, int inclusiveMaxPixelIndex)
 		{
 			uint32_t active_color = color();
@@ -262,7 +263,24 @@ struct sprite_camera : item_in_grid
 		unsigned int half_height = _sprite->height / 2;
 		unsigned int r_index = row_index();
 		unsigned int top_index = r_index + half_height;
-		return top_index > (_sprite->height - 1) ? r_index : top_index;
+		unsigned int max_top_index = _sprite->height - 1;
+		return (top_index > max_top_index) ? max_top_index : top_index;
+	}
+
+	unsigned int left_column_index()
+	{
+		unsigned int half_width = _sprite->width / 2;
+		unsigned int c_index = column_index();
+		return c_index > half_width ? c_index - half_width : 0;
+	}
+
+	unsigned int right_column_index()
+	{
+		unsigned int half_width = _sprite->width / 2;
+		unsigned int c_index = column_index();
+		unsigned int right_index = c_index + half_width;
+		unsigned int max_right_index = _sprite->width - 1;
+		return (right_index > max_right_index) ? max_right_index : right_index;
 	}
 };
 
