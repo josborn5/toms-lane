@@ -102,7 +102,7 @@ static void set_camera_rect(const sprite_control_view& view, tl::Rect<float>& ca
 		view,
 		pixel_half_size
 	);
-
+	Grid& grid = *view.sprite_control;
 	bool even_horizontal = (view.sprite_control->sprite->width % 2) == 0;
 	float horizontal_offset = even_horizontal ? 0.0f : 0.5f;
 
@@ -110,12 +110,12 @@ static void set_camera_rect(const sprite_control_view& view, tl::Rect<float>& ca
 	float vertical_offset = even_vertical ? 0.0f : 0.5f;
 
 	camera_rect.position.x = view.footprint.position.x - view.footprint.halfSize.x
-		+ ((float)view.sprite_control->camera_focus.column_index() + horizontal_offset) * (pixel_half_size.x * 2.0f);
+		+ ((float)grid.camera_focus.column_index() + horizontal_offset) * (pixel_half_size.x * 2.0f);
 	camera_rect.position.y = view.footprint.position.y - view.footprint.halfSize.y
-		+ ((float)view.sprite_control->camera_focus.row_index() + vertical_offset) * (pixel_half_size.y * 2.0f);
+		+ ((float)grid.camera_focus.row_index() + vertical_offset) * (pixel_half_size.y * 2.0f);
 
-	camera_rect.halfSize.x = view.footprint.halfSize.x * view.sprite_control->camera_focus.zoom;
-	camera_rect.halfSize.y = view.footprint.halfSize.y * view.sprite_control->camera_focus.zoom;
+	camera_rect.halfSize.x = view.footprint.halfSize.x * grid.camera_focus.zoom;
+	camera_rect.halfSize.y = view.footprint.halfSize.y * grid.camera_focus.zoom;
 }
 
 static void RenderSpriteAsGrid(
@@ -159,14 +159,20 @@ static void RenderSpriteAsGrid(
 	bool need_to_downsample = pixelRenderFootprint.halfSize.x < 1.0f;
 	if (need_to_downsample)
 	{
-		// TODO: transformview.footprint through the gridToRenderProjection matrix!
-		float sprite_pixels_per_screen_pixel = (float)view.sprite_control->camera_focus.width_in_pixels() / (camera_rect.halfSize.x * 2.0f);
+		tl::Rect<float> projected_camera;
+		tl::transform_interface_project_rect(
+			gridToRenderProjection,
+			camera_rect,
+			projected_camera
+		);
 
-		for (unsigned int j = 0; j < (unsigned int)(2.0f * camera_rect.halfSize.y); j += 1)
+		float sprite_pixels_per_screen_pixel = (float)grid.camera_focus.width_in_pixels() / (camera_rect.halfSize.x * 2.0f);
+
+		for (unsigned int j = 0; j < (unsigned int)(2.0f * projected_camera.halfSize.y); j += 1)
 		{
 			int sprite_j = (int)(sprite_pixels_per_screen_pixel * (float)j);
-			int screen_j = (int)(view.footprint.position.y - view.footprint.halfSize.y) + j;
-			for (unsigned int i = 0; i < (unsigned int)(2.0f * camera_rect.halfSize.x); i += 1)
+			int screen_j = (int)(projected_camera.position.y - projected_camera.halfSize.y) + j;
+			for (unsigned int i = 0; i < (unsigned int)(2.0f * projected_camera.halfSize.x); i += 1)
 			{
 				int sprite_i = (int)(sprite_pixels_per_screen_pixel * (float(i)));
 
@@ -177,7 +183,7 @@ static void RenderSpriteAsGrid(
 					pixel_data = sprite.p_color_table->get_pixel_data(pixel_data);
 				}
 
-				int screen_i = (int)(view.footprint.position.x - view.footprint.halfSize.x) + i;
+				int screen_i = (int)(projected_camera.position.x - projected_camera.halfSize.x) + i;
 
 				tl::PlotPixel(renderBuffer, pixel_data, screen_i, screen_j);
 			}
