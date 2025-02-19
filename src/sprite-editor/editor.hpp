@@ -324,19 +324,11 @@ struct sprite_camera : item_in_grid
 
 	float width_in_pixels()
 	{
-		if (zoom > 1.0f)
-		{
-			return (float)_sprite->width;
-		}
 		return zoom * (float)_sprite->width;
 	}
 
 	float height_in_pixels()
 	{
-		if (zoom > 1.0f)
-		{
-			return (float)_sprite->height;
-		}
 		return zoom * (float)_sprite->height;
 	}
 
