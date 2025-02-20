@@ -166,7 +166,7 @@ static void RenderSpriteAsGrid(
 			projected_footprint
 		);
 
-		float sprite_pixels_per_screen_pixel = (float)sprite.width / projected_footprint.halfSize.x * 2.0f;
+		float sprite_pixels_per_screen_pixel = (float)sprite.width / (projected_footprint.halfSize.x * 2.0f);
 
 		for (unsigned int j = 0; j < (unsigned int)(2.0f * projected_footprint.halfSize.y); j += 1)
 		{
@@ -174,7 +174,7 @@ static void RenderSpriteAsGrid(
 			int screen_j = (int)(projected_footprint.position.y - projected_footprint.halfSize.y) + j;
 			for (unsigned int i = 0; i < (unsigned int)(2.0f * projected_footprint.halfSize.x); i += 1)
 			{
-				int sprite_i = (int)(sprite_pixels_per_screen_pixel * (float(i)));
+				int sprite_i = (int)(sprite_pixels_per_screen_pixel * (float)i);
 
 				int pixel_index = sprite_i + (sprite_j * sprite.width);
 				uint32_t pixel_data = sprite.get_pixel_data(pixel_index);
