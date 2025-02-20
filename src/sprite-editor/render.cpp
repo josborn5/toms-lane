@@ -159,20 +159,20 @@ static void RenderSpriteAsGrid(
 	bool need_to_downsample = pixelRenderFootprint.halfSize.x < 1.0f;
 	if (need_to_downsample)
 	{
-		tl::Rect<float> projected_camera;
+		tl::Rect<float> projected_footprint;
 		tl::transform_interface_project_rect(
 			gridToRenderProjection,
-			camera_rect,
-			projected_camera
+			view.footprint,
+			projected_footprint
 		);
 
-		float sprite_pixels_per_screen_pixel = (float)grid.camera_focus.width_in_pixels() / (camera_rect.halfSize.x * 2.0f);
+		float sprite_pixels_per_screen_pixel = projected_footprint.halfSize.x * 2.0f / (float)sprite.width;
 
-		for (unsigned int j = 0; j < (unsigned int)(2.0f * projected_camera.halfSize.y); j += 1)
+		for (unsigned int j = 0; j < (unsigned int)(2.0f * projected_footprint.halfSize.y); j += 1)
 		{
 			int sprite_j = (int)(sprite_pixels_per_screen_pixel * (float)j);
-			int screen_j = (int)(projected_camera.position.y - projected_camera.halfSize.y) + j;
-			for (unsigned int i = 0; i < (unsigned int)(2.0f * projected_camera.halfSize.x); i += 1)
+			int screen_j = (int)(projected_footprint.position.y - projected_footprint.halfSize.y) + j;
+			for (unsigned int i = 0; i < (unsigned int)(2.0f * projected_footprint.halfSize.x); i += 1)
 			{
 				int sprite_i = (int)(sprite_pixels_per_screen_pixel * (float(i)));
 
@@ -183,7 +183,7 @@ static void RenderSpriteAsGrid(
 					pixel_data = sprite.p_color_table->get_pixel_data(pixel_data);
 				}
 
-				int screen_i = (int)(projected_camera.position.x - projected_camera.halfSize.x) + i;
+				int screen_i = (int)(projected_footprint.position.x - projected_footprint.halfSize.x) + i;
 
 				tl::PlotPixel(renderBuffer, pixel_data, screen_i, screen_j);
 			}
