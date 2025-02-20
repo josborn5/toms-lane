@@ -483,6 +483,13 @@ static void ExecuteCurrentCommand()
 		}
 		return;
 	}
+	else if (CommandIs("G")) // toggle grid outline
+	{
+		state.pixels.show_grid_outline = !state.pixels.show_grid_outline;
+		char* result_string = state.pixels.show_grid_outline ? "GRID ON" : "GRID OFF";
+		WriteStringToCommandBuffer(result_string);
+		return;
+	}
 	else if (CommandIs("DC")) // delete column
 	{
 		if (can_delete_column(*state.pixels.sprite))
