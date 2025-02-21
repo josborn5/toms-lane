@@ -386,7 +386,8 @@ enum Mode
 	View,
 	Command,
 	Visual,
-	Insert
+	Insert,
+	ViewNoGrid
 };
 
 struct EditorState

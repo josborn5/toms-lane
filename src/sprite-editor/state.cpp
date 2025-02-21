@@ -109,6 +109,8 @@ static bool ApplyCursorMovementToState(const tl::Input& input)
 {
 	if (input.buttons[cameraModifierKey].isDown) return false;
 
+	if (state.pixels_are_selected() && !state.pixels.show_grid_outline) return false;
+
 	Grid& activeGrid = *state.activeControl;
 	bool handledInput = apply_movement_to_item_in_grid(input, activeGrid.cursor);
 	currentColor = state.palette_.selected_color();
@@ -203,6 +205,8 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 
 static bool ApplySelectedRangeMovementToState(const tl::Input& input)
 {
+	if (state.pixels_are_selected() && !state.pixels.show_grid_outline) return false;
+
 	Grid& activeGrid = *state.activeControl;
 	return apply_movement_to_item_in_grid(input, activeGrid.range);
 }
@@ -694,6 +698,13 @@ static void ApplyViewModeInputToState(const tl::Input& input)
 		return;
 	}
 
+	if (input.buttons[tl::KEY_G].keyDown)
+	{
+		state.mode = ViewNoGrid;
+		WriteStringToCommandBuffer("NO GRID");
+		return;
+	}
+
 	if (input.buttons[tl::KEY_I].keyDown)
 	{
 		state.mode = Insert;
@@ -792,6 +803,9 @@ const EditorState& GetLatestState(const tl::Input& input)
 			break;
 		case Command:
 			ApplyCommandModeInputToState(input);
+			break;
+		case ViewNoGrid:
+			if (ApplyCameraMovementToState(input)) return state;
 			break;
 	}
 
