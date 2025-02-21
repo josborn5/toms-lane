@@ -407,7 +407,7 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state, floa
 	RenderSpriteAsGrid(
 		main_view.palette,
 		renderBuffer,
-		state.mode
+		View
 	);
 
 	if (state.canvas.has_color_table())
@@ -415,7 +415,7 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state, floa
 		RenderSpriteAsGrid(
 			main_view.color_table,
 			renderBuffer,
-			state.mode
+			View
 		);
 	}
 }
