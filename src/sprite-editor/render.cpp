@@ -118,6 +118,75 @@ static void set_camera_rect(const sprite_control_view& view, tl::Rect<float>& ca
 	camera_rect.halfSize.y = view.footprint.halfSize.y * grid.camera_focus.zoom;
 }
 
+static void render_side_grid(
+	const sprite_control_view& view,
+	const tl::RenderBuffer& renderBuffer
+) {
+	Grid& grid = *view.sprite_control;
+	SpriteC& sprite = *grid.sprite;
+
+	const uint32_t selectedPixelColor = 0xFFFF00;
+
+	tl::Vec2<float> pixelHalfSize;
+	pixel_footprint_get(
+		view,
+		pixelHalfSize
+	);
+
+	float yOriginalPosition = view.footprint.y_min() + pixelHalfSize.y;
+	float xOriginalPosition = view.footprint.x_min() + pixelHalfSize.x;
+
+	unsigned int cursor_index = grid.cursor.index();
+
+	for (unsigned int j = 0; j < sprite.height; j += 1)
+	{
+		float yPosition = yOriginalPosition + (j * pixelHalfSize.y * 2.0f);
+		for (unsigned int i = 0; i < sprite.width; i += 1)
+		{
+			float xPosition = xOriginalPosition + (i * pixelHalfSize.x * 2.0f);
+
+			tl::Vec2<float> pixelPosition = { xPosition, yPosition };
+			tl::Rect<float> pixelFootprint;
+			pixelFootprint.halfSize = pixelHalfSize;
+			pixelFootprint.position = pixelPosition;
+
+			unsigned int pixel_index = (j * sprite.width) + i;
+			if (pixel_index == cursor_index)
+			{
+				tl::DrawRect(renderBuffer, selectedPixelColor, pixelFootprint);
+			}
+
+			uint32_t pixelData = sprite.get_pixel_data(pixel_index);
+			if (sprite.has_color_table())
+			{
+				pixelData = sprite.p_color_table->get_pixel_data(pixelData);
+			}
+			pixelFootprint.halfSize.x -= 1;
+			pixelFootprint.halfSize.y -= 1;
+			tl::DrawRect(renderBuffer, pixelData, pixelFootprint);
+		}
+	}
+
+	tl::Rect<float> charFootprint;
+	charFootprint.halfSize = textCharFootprintHalfsize;
+	charFootprint.position = {
+		view.container.x_min() + textCharFootprintHalfsize.x,
+		view.container.y_min() + textCharFootprintHalfsize.y
+	};
+
+	const uint32_t displayTextColor = 0xFFFF00;
+	const int displayBufferSize = 16;
+	char displayBuffer[displayBufferSize];
+	GetDisplayStringForGrid(grid, displayBuffer);
+
+	tl::font_interface_render_chars(
+		renderBuffer,
+		displayBuffer,
+		charFootprint,
+		displayTextColor
+	);
+}
+
 static void RenderSpriteAsGrid(
 	const sprite_control_view& view,
 	const tl::RenderBuffer& renderBuffer,
@@ -404,18 +473,16 @@ void Render(const tl::RenderBuffer& renderBuffer, const EditorState& state, floa
 
 	RenderCommandBuffer(renderBuffer, state, dt);
 
-	RenderSpriteAsGrid(
+	render_side_grid(
 		main_view.palette,
-		renderBuffer,
-		View
+		renderBuffer
 	);
 
 	if (state.canvas.has_color_table())
 	{
-		RenderSpriteAsGrid(
+		render_side_grid(
 			main_view.color_table,
-			renderBuffer,
-			View
+			renderBuffer
 		);
 	}
 }
