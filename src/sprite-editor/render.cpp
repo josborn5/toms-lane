@@ -250,6 +250,8 @@ static void RenderSpriteAsGrid(
 		}
 	}
 
+	if (!grid.show_grid_outline) return;
+
 	tl::Rect<float> charFootprint;
 	charFootprint.halfSize = textCharFootprintHalfsize;
 	charFootprint.position = {
