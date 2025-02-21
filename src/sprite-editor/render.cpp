@@ -230,7 +230,7 @@ static void RenderSpriteAsGrid(
 				pixelRenderFootprint
 			);
 
-			if (yIsInSelectedRange && i >= startColIndex && i <= endColIndex)
+			if (grid.show_grid_outline && yIsInSelectedRange && i >= startColIndex && i <= endColIndex)
 			{
 				tl::DrawRect(renderBuffer, selectedPixelColor, pixelRenderFootprint);
 			}
@@ -241,8 +241,11 @@ static void RenderSpriteAsGrid(
 			{
 				pixelData = sprite.p_color_table->get_pixel_data(pixelData);
 			}
-			pixelRenderFootprint.halfSize.x -= 1;
-			pixelRenderFootprint.halfSize.y -= 1;
+			if (grid.show_grid_outline)
+			{
+				pixelRenderFootprint.halfSize.x -= 1;
+				pixelRenderFootprint.halfSize.y -= 1;
+			}
 			tl::DrawRect(renderBuffer, pixelData, pixelRenderFootprint);
 		}
 	}
