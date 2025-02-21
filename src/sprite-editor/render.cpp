@@ -230,7 +230,7 @@ static void RenderSpriteAsGrid(
 				pixelRenderFootprint
 			);
 
-			if (grid.show_grid_outline && yIsInSelectedRange && i >= startColIndex && i <= endColIndex)
+			if ((mode != ViewNoGrid) && yIsInSelectedRange && i >= startColIndex && i <= endColIndex)
 			{
 				tl::DrawRect(renderBuffer, selectedPixelColor, pixelRenderFootprint);
 			}
@@ -241,7 +241,7 @@ static void RenderSpriteAsGrid(
 			{
 				pixelData = sprite.p_color_table->get_pixel_data(pixelData);
 			}
-			if (grid.show_grid_outline)
+			if (mode != ViewNoGrid)
 			{
 				pixelRenderFootprint.halfSize.x -= 1;
 				pixelRenderFootprint.halfSize.y -= 1;
@@ -250,7 +250,7 @@ static void RenderSpriteAsGrid(
 		}
 	}
 
-	if (!grid.show_grid_outline) return;
+	if (mode == ViewNoGrid) return;
 
 	tl::Rect<float> charFootprint;
 	charFootprint.halfSize = textCharFootprintHalfsize;

@@ -109,8 +109,6 @@ static bool ApplyCursorMovementToState(const tl::Input& input)
 {
 	if (input.buttons[cameraModifierKey].isDown) return false;
 
-	if (state.pixels_are_selected() && !state.pixels.show_grid_outline) return false;
-
 	Grid& activeGrid = *state.activeControl;
 	bool handledInput = apply_movement_to_item_in_grid(input, activeGrid.cursor);
 	currentColor = state.palette_.selected_color();
@@ -205,8 +203,6 @@ static bool ApplyCameraMovementToState(const tl::Input& input)
 
 static bool ApplySelectedRangeMovementToState(const tl::Input& input)
 {
-	if (state.pixels_are_selected() && !state.pixels.show_grid_outline) return false;
-
 	Grid& activeGrid = *state.activeControl;
 	return apply_movement_to_item_in_grid(input, activeGrid.range);
 }
@@ -485,13 +481,6 @@ static void ExecuteCurrentCommand()
 		{
 			WriteStringToCommandBuffer("DELETE ROW FAILED!");
 		}
-		return;
-	}
-	else if (CommandIs("G")) // toggle grid outline
-	{
-		state.pixels.show_grid_outline = !state.pixels.show_grid_outline;
-		char* result_string = state.pixels.show_grid_outline ? "GRID ON" : "GRID OFF";
-		WriteStringToCommandBuffer(result_string);
 		return;
 	}
 	else if (CommandIs("DC")) // delete column

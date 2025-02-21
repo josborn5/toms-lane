@@ -348,7 +348,6 @@ struct Grid
 	item_in_grid cursor;
 	item_in_grid range;
 	sprite_camera camera_focus;
-	bool show_grid_outline = true;
 
 	grid_size_change_callback* size_change_callback;
 
