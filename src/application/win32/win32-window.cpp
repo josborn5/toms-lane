@@ -55,10 +55,17 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 
 static void Win32_DisplayglobalRenderBufferInWindow(HDC deviceContext)
 {
+	SetDIBitsToDevice(
+		deviceContext,
+		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
+		0, 0, 0, globalRenderBuffer.height,
+		globalRenderBuffer.pixels, &bitmapInfo, DIB_RGB_COLORS);
+/*
 	StretchDIBits(deviceContext,
 		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
 		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
 		globalRenderBuffer.pixels, &bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
+*/
 }
 
 LRESULT CALLBACK Win32_MainWindowCallback(HWND window, UINT Message, WPARAM wParam, LPARAM lParam)
