@@ -4,6 +4,32 @@
 namespace tl
 {
 
+static const unsigned int text_buffer_size = 256;
+static char text_to_render[text_buffer_size] = {0};
+static RECT footprint = {0};
+static bool need_to_render = false;
+
+void win32_text_render(HDC device_context)
+{
+	if (!need_to_render)
+	{
+		return;
+	}
+
+	need_to_render = false;
+
+	SetTextColor(device_context, 0xFFFFFF);
+	SetBkMode(device_context, TRANSPARENT);
+
+	DrawText(
+		device_context,
+		(LPCTSTR)text_to_render,
+		-1,
+		&footprint,
+		DT_LEFT
+	);
+}
+
 int text_interface_render(
 	char* text,
 	unsigned int half_width,
@@ -11,16 +37,13 @@ int text_interface_render(
 	unsigned int center_x,
 	unsigned int center_y)
 {
-	HWND window_handle = window_handle_get();
-
-	if (nullptr == window_handle)
+	if (need_to_render)
 	{
 		return 1;
 	}
 
-	HDC device_context = GetDC(window_handle);
+	need_to_render = true;
 
-	RECT footprint = {0};
 	footprint.left = center_x - half_width;
 	footprint.right = center_x + half_width;
 
@@ -28,22 +51,13 @@ int text_interface_render(
 	footprint.top = center_y - half_height;
 	footprint.bottom = center_y + half_height;
 
-	SetTextColor(device_context, 0xFFFFFF);
-	SetBkMode(device_context, TRANSPARENT);
+	for (int i = 0; (i < text_buffer_size - 1) && *text; i += 1)
+	{
+		text_to_render[i] = *text;
+		text++;
+	}
 
-	int draw_result = DrawText(
-		device_context,
-		(LPCTSTR)text,
-		-1,
-		&footprint,
-		DT_LEFT
-	);
-
-	ReleaseDC(window_handle, device_context);
-
-	return (draw_result != 0) // DrawText returning 0 indicates failure
-		? 0
-		: draw_result;
+	return 0;
 }
 
 }

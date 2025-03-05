@@ -5,6 +5,7 @@
 #include "./win32-time.hpp"
 #include "./win32-application.hpp"
 #include "./win32-input.hpp"
+#include "./win32-text.hpp"
 
 namespace tl
 {
@@ -60,12 +61,8 @@ static void Win32_DisplayglobalRenderBufferInWindow(HDC deviceContext)
 		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
 		0, 0, 0, globalRenderBuffer.height,
 		globalRenderBuffer.pixels, &bitmapInfo, DIB_RGB_COLORS);
-/*
-	StretchDIBits(deviceContext,
-		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
-		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
-		globalRenderBuffer.pixels, &bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
-*/
+
+	win32_text_render(deviceContext);
 }
 
 LRESULT CALLBACK Win32_MainWindowCallback(HWND window, UINT Message, WPARAM wParam, LPARAM lParam)
