@@ -4,30 +4,41 @@
 namespace tl
 {
 
-static const unsigned int text_buffer_size = 256;
-static char text_to_render[text_buffer_size] = {0};
-static RECT footprint = {0};
-static bool need_to_render = false;
+struct text_to_render
+{
+	char* text = nullptr;
+	RECT footprint = {0};
+};
+
+static unsigned int texts_count = 0;
+
+static const unsigned int text_buffer_size = 64;
+static text_to_render texts_to_render[text_buffer_size] = {0};
 
 void win32_text_render(HDC device_context)
 {
-	if (!need_to_render)
+	if (texts_count == 0)
 	{
 		return;
 	}
 
-	need_to_render = false;
-
 	SetTextColor(device_context, 0xFFFFFF);
 	SetBkMode(device_context, TRANSPARENT);
 
-	DrawText(
-		device_context,
-		(LPCTSTR)text_to_render,
-		-1,
-		&footprint,
-		DT_LEFT
-	);
+
+	for (unsigned int i = 0; i < texts_count; i += 1)
+	{
+		text_to_render& render_text = texts_to_render[i];
+		DrawText(
+			device_context,
+			(LPCTSTR)(render_text.text),
+			-1,
+			&render_text.footprint,
+			DT_LEFT
+		);
+	}
+
+	texts_count = 0;
 }
 
 int text_interface_render(
@@ -37,25 +48,23 @@ int text_interface_render(
 	unsigned int center_x,
 	unsigned int center_y)
 {
-	if (need_to_render)
+	if (texts_count >= text_buffer_size)
 	{
 		return 1;
 	}
 
-	need_to_render = true;
+	text_to_render* render_text = &texts_to_render[texts_count];
 
-	footprint.left = center_x - half_width;
-	footprint.right = center_x + half_width;
+	render_text->text = text;
+
+	render_text->footprint.left = center_x - half_width;
+	render_text->footprint.right = center_x + half_width;
 
 	// windows has origin in top left. TL has origin in bottom left
-	footprint.top = center_y - half_height;
-	footprint.bottom = center_y + half_height;
+	render_text->footprint.top = center_y - half_height;
+	render_text->footprint.bottom = center_y + half_height;
 
-	for (int i = 0; (i < text_buffer_size - 1) && *text; i += 1)
-	{
-		text_to_render[i] = *text;
-		text++;
-	}
+	texts_count += 1;
 
 	return 0;
 }
