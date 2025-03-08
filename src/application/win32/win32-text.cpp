@@ -47,6 +47,15 @@ void win32_text_render(HDC device_context)
 		font_info.lfItalic = FALSE;
 		font_info.lfUnderline = FALSE;
 		font_info.lfStrikeOut = FALSE;
+		font_info.lfFaceName[0] = 'C';
+		font_info.lfFaceName[1] = 'o';
+		font_info.lfFaceName[2] = 'n';
+		font_info.lfFaceName[3] = 's';
+		font_info.lfFaceName[4] = 'o';
+		font_info.lfFaceName[5] = 'l';
+		font_info.lfFaceName[6] = 'a';
+		font_info.lfFaceName[7] = 's';
+		font_info.lfFaceName[8] = '\0';
 
 		HFONT font_to_set = CreateFontIndirectA(&font_info);
 
