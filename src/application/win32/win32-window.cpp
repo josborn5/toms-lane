@@ -14,6 +14,8 @@ static bool IsRunning = false;
 static RenderBuffer globalRenderBuffer = {0};
 static BITMAPINFO bitmapInfo = {0};	// platform dependent
 static HWND globalWindow;
+static HDC memory_context = NULL;
+static HBITMAP memory_context_bitmap_handle = NULL;
 
 HWND window_handle_get()
 {
@@ -38,6 +40,12 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 		VirtualFree(globalRenderBuffer.depth, 0, MEM_RELEASE);
 	}
 
+	if (memory_context == NULL)
+	{
+		DeleteObject(memory_context_bitmap_handle);
+		DeleteDC(memory_context);
+	}
+
 	bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
 	bitmapInfo.bmiHeader.biWidth = globalRenderBuffer.width;
 	bitmapInfo.bmiHeader.biHeight = globalRenderBuffer.height;
@@ -52,17 +60,29 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 
 	int depthBufferMemorySize = bitmapPixelCount * sizeof(float);
 	globalRenderBuffer.depth = (float *)VirtualAlloc(0, depthBufferMemorySize, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+
+	HDC window_context = GetDC(globalWindow);
+	memory_context = CreateCompatibleDC(window_context);
+	memory_context_bitmap_handle = CreateCompatibleBitmap(window_context, globalRenderBuffer.width, globalRenderBuffer.height);
+	SelectObject(memory_context, memory_context_bitmap_handle);
+
+	ReleaseDC(globalWindow, window_context);
 }
 
-static void Win32_DisplayglobalRenderBufferInWindow(HDC deviceContext)
+static void Win32_DisplayglobalRenderBufferInWindow(HDC device_context)
 {
 	SetDIBitsToDevice(
-		deviceContext,
+		memory_context,
 		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
 		0, 0, 0, globalRenderBuffer.height,
 		globalRenderBuffer.pixels, &bitmapInfo, DIB_RGB_COLORS);
 
-	win32_text_render(deviceContext);
+	win32_text_render(memory_context);
+
+	BitBlt(device_context,
+		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
+		memory_context, 0, 0, SRCCOPY);
+
 }
 
 LRESULT CALLBACK Win32_MainWindowCallback(HWND window, UINT Message, WPARAM wParam, LPARAM lParam)
@@ -237,6 +257,8 @@ int RunWindowUpdateLoop(
 		win32_input_interface_reset(gameInput);
 
 		// render visual
+//		RedrawWindow(globalWindow, NULL, NULL, RDW_INTERNALPAINT);
+
 		HDC deviceContext = GetDC(globalWindow);
 		Win32_DisplayglobalRenderBufferInWindow(deviceContext);
 		ReleaseDC(globalWindow, deviceContext);
