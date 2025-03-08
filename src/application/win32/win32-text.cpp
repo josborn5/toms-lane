@@ -15,6 +15,11 @@ static unsigned int texts_count = 0;
 static const unsigned int text_buffer_size = 64;
 static text_to_render texts_to_render[text_buffer_size] = {0};
 
+bool win32_text_will_render()
+{
+	return (texts_count > 0);
+}
+
 void win32_text_render(HDC device_context)
 {
 	if (texts_count == 0)
@@ -29,6 +34,24 @@ void win32_text_render(HDC device_context)
 	for (unsigned int i = 0; i < texts_count; i += 1)
 	{
 		text_to_render& render_text = texts_to_render[i];
+
+		// Use the current font as a base to create a new font with its height set to
+		// height of the rect
+		HFONT default_font;
+		GetObject(device_context, sizeof(HFONT), &default_font);
+
+		LOGFONT font_info;
+		GetObject(default_font, sizeof(LOGFONT), &font_info);
+		font_info.lfHeight = render_text.footprint.bottom - render_text.footprint.top;
+		font_info.lfWidth = 0;
+		font_info.lfItalic = FALSE;
+		font_info.lfUnderline = FALSE;
+		font_info.lfStrikeOut = FALSE;
+
+		HFONT font_to_set = CreateFontIndirectA(&font_info);
+
+		SelectObject(device_context, font_to_set);
+
 		DrawText(
 			device_context,
 			(LPCTSTR)(render_text.text),

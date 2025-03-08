@@ -71,14 +71,17 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 
 static void Win32_DisplayglobalRenderBufferInWindow(HDC device_context)
 {
+	// Copy Device Independent Bits in our RGB buffer to the Device Dependent memory context
 	SetDIBitsToDevice(
 		memory_context,
 		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
 		0, 0, 0, globalRenderBuffer.height,
 		globalRenderBuffer.pixels, &bitmapInfo, DIB_RGB_COLORS);
 
+	// Render text in the memory context before copying to the window context to prevent flicker
 	win32_text_render(memory_context);
 
+	// Copy from memory context to window context to paint the window
 	BitBlt(device_context,
 		0, 0, globalRenderBuffer.width, globalRenderBuffer.height,
 		memory_context, 0, 0, SRCCOPY);
