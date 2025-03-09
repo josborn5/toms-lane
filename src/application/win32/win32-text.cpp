@@ -14,15 +14,15 @@ static unsigned int texts_count = 0;
 
 static const unsigned int text_buffer_size = 64;
 static text_to_render texts_to_render[text_buffer_size] = {0};
-static HFONT default_font = NULL;
 static LOGFONT font_info = {0};
-
+static bool initialized = false;
 static float char_height_over_width = 0.0f;
 
 static void default_font_read(HDC device_context)
 {
 	// Use the current font as a base to create a new font with its height set to
 	// height of the rect
+	HFONT default_font;
 	GetObject(device_context, sizeof(HFONT), &default_font);
 	GetObject(default_font, sizeof(LOGFONT), &font_info);
 }
@@ -55,6 +55,7 @@ static void default_font_initialize()
 	ReleaseDC(window_handle, device_context);
 
 	char_height_over_width = (float)font_info.lfHeight / (float)font_info.lfWidth;
+	initialized = true;
 }
 
 bool win32_text_will_render()
@@ -106,7 +107,7 @@ int text_interface_render(
 		return -1;
 	}
 
-	if (default_font == NULL)
+	if (!initialized)
 	{
 		default_font_initialize();
 	}
