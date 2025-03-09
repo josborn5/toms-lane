@@ -168,13 +168,6 @@ static void render_side_grid(
 		}
 	}
 
-	tl::Rect<float> charFootprint;
-	charFootprint.halfSize = textCharFootprintHalfsize;
-	charFootprint.position = {
-		view.container.x_min() + textCharFootprintHalfsize.x,
-		view.container.y_min() + textCharFootprintHalfsize.y
-	};
-
 //	const uint32_t displayTextColor = 0xFFFF00;
 	GetDisplayStringForGrid(grid, &view.display_text[0]);
 
@@ -185,17 +178,10 @@ static void render_side_grid(
 		(unsigned int)(view.container.x_min() + view.container.halfSize.x),
 		(unsigned int)(view.container.y_min() + textCharFootprintHalfsize.y)
 	);
-
-/*	tl::font_interface_render_chars(
-		renderBuffer,
-		displayBuffer,
-		charFootprint,
-		displayTextColor
-	);*/
 }
 
 static void RenderSpriteAsGrid(
-	const sprite_control_view& view,
+	sprite_control_view& view,
 	const tl::RenderBuffer& renderBuffer,
 	Mode mode
 ) {
@@ -328,23 +314,15 @@ static void RenderSpriteAsGrid(
 
 	if (mode == ViewNoGrid) return;
 
-	tl::Rect<float> charFootprint;
-	charFootprint.halfSize = textCharFootprintHalfsize;
-	charFootprint.position = {
-		view.container.x_min() + textCharFootprintHalfsize.x,
-		view.container.y_min() + textCharFootprintHalfsize.y
-	};
+//	const uint32_t displayTextColor = 0xFFFF00;
+	GetDisplayStringForGrid(grid, &view.display_text[0]);
 
-	const uint32_t displayTextColor = 0xFFFF00;
-	const int displayBufferSize = 16;
-	char displayBuffer[displayBufferSize];
-	GetDisplayStringForGrid(grid, displayBuffer);
-
-	tl::font_interface_render_chars(
-		renderBuffer,
-		displayBuffer,
-		charFootprint,
-		displayTextColor
+	tl::text_interface_render(
+		&view.display_text[0],
+		(unsigned int)view.container.halfSize.x,
+		(unsigned int)textCharFootprintHalfsize.y,
+		(unsigned int)(view.container.x_min() + view.container.halfSize.x),
+		(unsigned int)(view.container.y_min() + textCharFootprintHalfsize.y)
 	);
 }
 
