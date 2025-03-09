@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <stdint.h>
 #include "./win32-window.hpp"
 
 namespace tl
@@ -8,6 +9,7 @@ struct text_to_render
 {
 	char* text = nullptr;
 	RECT footprint = {0};
+	uint32_t color = 0xFFFFFF;
 };
 
 static unsigned int texts_count = 0;
@@ -117,6 +119,43 @@ int text_interface_render(
 	render_text->text = text;
 	render_text->footprint.left = center_x - half_width;
 	render_text->footprint.right = center_x + half_width;
+
+	// windows has origin in top left. TL has origin in bottom left
+	const RenderBuffer& render_buffer = render_buffer_get();
+	render_text->footprint.top = render_buffer.height - center_y - half_height;
+	render_text->footprint.bottom = render_buffer.height - center_y + half_height;
+
+	texts_count += 1;
+
+	int char_width = (int)((float)(half_height + half_height) / char_height_over_width);
+
+	return char_width;
+}
+
+int text_interface_render(
+	char* text,
+	uint32_t color,
+	unsigned int half_width,
+	unsigned int half_height,
+	unsigned int center_x,
+	unsigned int center_y)
+{
+	if (texts_count >= text_buffer_size)
+	{
+		return -1;
+	}
+
+	if (!initialized)
+	{
+		default_font_initialize();
+	}
+
+	text_to_render* render_text = &texts_to_render[texts_count];
+
+	render_text->text = text;
+	render_text->footprint.left = center_x - half_width;
+	render_text->footprint.right = center_x + half_width;
+	render_text->color = color;
 
 	// windows has origin in top left. TL has origin in bottom left
 	const RenderBuffer& render_buffer = render_buffer_get();
