@@ -10,7 +10,6 @@ int text_interface_render(
 	unsigned int half_height,
 	unsigned int center_x,
 	unsigned int center_y);
-
 }
 
 #endif

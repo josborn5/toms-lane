@@ -14,6 +14,8 @@ static unsigned int texts_count = 0;
 
 static const unsigned int text_buffer_size = 64;
 static text_to_render texts_to_render[text_buffer_size] = {0};
+static HFONT default_font = NULL;
+static LOGFONT font_info = {0};
 
 bool win32_text_will_render()
 {
@@ -35,28 +37,28 @@ void win32_text_render(HDC device_context)
 	{
 		text_to_render& render_text = texts_to_render[i];
 
-		// Use the current font as a base to create a new font with its height set to
-		// height of the rect
-		HFONT default_font;
-		GetObject(device_context, sizeof(HFONT), &default_font);
+		if (default_font == NULL)
+		{
+			// Use the current font as a base to create a new font with its height set to
+			// height of the rect
+			GetObject(device_context, sizeof(HFONT), &default_font);
+			GetObject(default_font, sizeof(LOGFONT), &font_info);
+			font_info.lfWidth = 0;
+			font_info.lfItalic = FALSE;
+			font_info.lfUnderline = FALSE;
+			font_info.lfStrikeOut = FALSE;
+			font_info.lfFaceName[0] = 'C';
+			font_info.lfFaceName[1] = 'o';
+			font_info.lfFaceName[2] = 'n';
+			font_info.lfFaceName[3] = 's';
+			font_info.lfFaceName[4] = 'o';
+			font_info.lfFaceName[5] = 'l';
+			font_info.lfFaceName[6] = 'a';
+			font_info.lfFaceName[7] = 's';
+			font_info.lfFaceName[8] = '\0';
+		}
 
-		LOGFONT font_info;
-		GetObject(default_font, sizeof(LOGFONT), &font_info);
 		font_info.lfHeight = render_text.footprint.bottom - render_text.footprint.top;
-		font_info.lfWidth = 0;
-		font_info.lfItalic = FALSE;
-		font_info.lfUnderline = FALSE;
-		font_info.lfStrikeOut = FALSE;
-		font_info.lfFaceName[0] = 'C';
-		font_info.lfFaceName[1] = 'o';
-		font_info.lfFaceName[2] = 'n';
-		font_info.lfFaceName[3] = 's';
-		font_info.lfFaceName[4] = 'o';
-		font_info.lfFaceName[5] = 'l';
-		font_info.lfFaceName[6] = 'a';
-		font_info.lfFaceName[7] = 's';
-		font_info.lfFaceName[8] = '\0';
-
 		HFONT font_to_set = CreateFontIndirectA(&font_info);
 
 		SelectObject(device_context, font_to_set);
