@@ -4,16 +4,17 @@
 
 struct sprite_control_view
 {
-	tl::Rect<float> container;
-	tl::Rect<float> footprint;
-	Grid* sprite_control;
+	tl::Rect<float> container = {0};
+	tl::Rect<float> footprint = {0};
+	Grid* sprite_control = nullptr;
+	char display_text[16] = {0};
 };
 
 struct window_view
 {
-	sprite_control_view canvas;
-	sprite_control_view color_table;
-	sprite_control_view palette;
+	sprite_control_view canvas = {0};
+	sprite_control_view color_table = {0};
+	sprite_control_view palette = {0};
 };
 
 window_view main_view;
@@ -119,7 +120,7 @@ static void set_camera_rect(const sprite_control_view& view, tl::Rect<float>& ca
 }
 
 static void render_side_grid(
-	const sprite_control_view& view,
+	sprite_control_view& view,
 	const tl::RenderBuffer& renderBuffer
 ) {
 	Grid& grid = *view.sprite_control;
@@ -174,17 +175,23 @@ static void render_side_grid(
 		view.container.y_min() + textCharFootprintHalfsize.y
 	};
 
-	const uint32_t displayTextColor = 0xFFFF00;
-	const int displayBufferSize = 16;
-	char displayBuffer[displayBufferSize];
-	GetDisplayStringForGrid(grid, displayBuffer);
+//	const uint32_t displayTextColor = 0xFFFF00;
+	GetDisplayStringForGrid(grid, &view.display_text[0]);
 
-	tl::font_interface_render_chars(
+	tl::text_interface_render(
+		&view.display_text[0],
+		(unsigned int)view.container.halfSize.x,
+		(unsigned int)textCharFootprintHalfsize.y,
+		(unsigned int)(view.container.x_min() + view.container.halfSize.x),
+		(unsigned int)(view.container.y_min() + textCharFootprintHalfsize.y)
+	);
+
+/*	tl::font_interface_render_chars(
 		renderBuffer,
 		displayBuffer,
 		charFootprint,
 		displayTextColor
-	);
+	);*/
 }
 
 static void RenderSpriteAsGrid(
