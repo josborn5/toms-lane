@@ -22,6 +22,12 @@ HWND window_handle_get()
 	return globalWindow;
 }
 
+
+const RenderBuffer& render_buffer_get()
+{
+	return globalRenderBuffer;
+}
+
 static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 {
 	RECT clientRect = {0};

@@ -93,8 +93,9 @@ int text_interface_render(
 	render_text->footprint.right = center_x + half_width;
 
 	// windows has origin in top left. TL has origin in bottom left
-	render_text->footprint.top = center_y - half_height;
-	render_text->footprint.bottom = center_y + half_height;
+	const RenderBuffer& render_buffer = render_buffer_get();
+	render_text->footprint.top = render_buffer.height - center_y - half_height;
+	render_text->footprint.bottom = render_buffer.height - center_y + half_height;
 
 	texts_count += 1;
 
