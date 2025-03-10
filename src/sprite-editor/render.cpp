@@ -168,11 +168,12 @@ static void render_side_grid(
 		}
 	}
 
-//	const uint32_t displayTextColor = 0xFFFF00;
+	const uint32_t display_text_color = 0xFFFF00;
 	GetDisplayStringForGrid(grid, &view.display_text[0]);
 
 	tl::text_interface_render(
 		&view.display_text[0],
+		display_text_color,
 		(unsigned int)view.container.halfSize.x,
 		(unsigned int)textCharFootprintHalfsize.y,
 		(unsigned int)(view.container.x_min() + view.container.halfSize.x),
@@ -314,11 +315,12 @@ static void RenderSpriteAsGrid(
 
 	if (mode == ViewNoGrid) return;
 
-//	const uint32_t displayTextColor = 0xFFFF00;
+	const uint32_t display_text_color = 0xFFFF00;
 	GetDisplayStringForGrid(grid, &view.display_text[0]);
 
 	tl::text_interface_render(
 		&view.display_text[0],
+		display_text_color,
 		(unsigned int)view.container.halfSize.x,
 		(unsigned int)textCharFootprintHalfsize.y,
 		(unsigned int)(view.container.x_min() + view.container.halfSize.x),
@@ -415,7 +417,7 @@ void InitializeLayout(EditorState& state)
 static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const EditorState& state, float dt)
 {
 	const uint32_t commandBackgroundColor = 0x111111;
-//	const uint32_t commandTextColor = 0xFFFFFF;
+	const uint32_t commandTextColor = 0xFFFFFF;
 	tl::DrawRect(renderBuffer, commandBackgroundColor, commandTextRect);
 /*	float dx = tl::font_interface_render_chars(
 		renderBuffer,
@@ -426,6 +428,7 @@ static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const Edit
 */
 	tl::text_interface_render(
 		state.commandBuffer,
+		commandTextColor,
 		(int)commandTextRect.halfSize.x,
 		(int)commandTextRect.halfSize.y,
 		(int)commandTextRect.position.x,
