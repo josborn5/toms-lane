@@ -419,7 +419,7 @@ static void ExecuteCurrentCommand()
 		return;
 	}
 
-	if (CommandIs("R")) // append row
+	if (CommandIs("r")) // append row
 	{
 		if (can_insert_row(*state.pixels.sprite))
 		{
@@ -433,7 +433,7 @@ static void ExecuteCurrentCommand()
 		}
 		return;
 	}
-	else if (CommandStartsWith("R")) // append multiple rows
+	else if (CommandStartsWith("r")) // append multiple rows
 	{
 		char row_count_char = commands.get(2);
 		if (row_count_char < '0' || row_count_char > '9')
@@ -449,7 +449,7 @@ static void ExecuteCurrentCommand()
 		}
 		ClearCommandBuffer();
 	}
-	else if (CommandIs("C")) // append column
+	else if (CommandIs("c")) // append column
 	{
 		if (can_insert_column(*state.pixels.sprite))
 		{
@@ -463,13 +463,13 @@ static void ExecuteCurrentCommand()
 		}
 		return;
 	}
-	else if (CommandIs("P")) // switch palette
+	else if (CommandIs("p")) // switch palette
 	{
 		SwitchPalette(state);
 		ClearCommandBuffer();
 		return;
 	}
-	else if (CommandIs("DR")) // delete row
+	else if (CommandIs("dr")) // delete row
 	{
 		if (can_delete_row(*state.pixels.sprite))
 		{
@@ -483,7 +483,7 @@ static void ExecuteCurrentCommand()
 		}
 		return;
 	}
-	else if (CommandIs("DC")) // delete column
+	else if (CommandIs("dc")) // delete column
 	{
 		if (can_delete_column(*state.pixels.sprite))
 		{
@@ -497,9 +497,9 @@ static void ExecuteCurrentCommand()
 		}
 		return;
 	}
-	else if (CommandIs("W") || CommandStartsWith("W ")) // write to file
+	else if (CommandIs("w") || CommandStartsWith("w ")) // write to file
 	{
-		char* targetFilePath = CommandIs("W") ? filePath : &commands.access(3);
+		char* targetFilePath = CommandIs("w") ? filePath : &commands.access(3);
 
 		int saveResult = SaveBitmap(tempMemory, *state.pixels.sprite, targetFilePath);
 		if (saveResult == tl::Success)
@@ -512,12 +512,12 @@ static void ExecuteCurrentCommand()
 		}
 		return;
 	}
-	else if (CommandStartsWith("EDIT ")) // edit new file
+	else if (CommandStartsWith("edit ")) // edit new file
 	{
 		Initialize(&commands.access(6));
 		return;
 	}
-	else if (CommandStartsWith("E ")) // edit selected pixel
+	else if (CommandStartsWith("e ")) // edit selected pixel
 	{
 		if (state.pixels_are_selected() && state.canvas.has_color_table())
 		{
@@ -534,7 +534,7 @@ static void ExecuteCurrentCommand()
 		ClearCommandBuffer();
 		return;
 	}
-	else if (CommandStartsWith("BPP ")) // set bits per pixel
+	else if (CommandStartsWith("bpp ")) // set bits per pixel
 	{
 		int new_bits_per_pixel = tl::CharStringToInt(&commands.access(5));
 		set_bits_per_pixel(new_bits_per_pixel);
@@ -639,11 +639,7 @@ static void ProcessCommandInput(const tl::Input& input)
 	// Update command buffer from input
 	if (commands.length() < commands.capacity() && input.character != 0)
 	{
-		// Capitalize
-		char toAppend = (input.character >= 'a' && input.character <= 'z')
-			? input.character + ('A' - 'a')
-			: input.character;
-		commands.append(toAppend);
+		commands.append(input.character);
 	}
 }
 
