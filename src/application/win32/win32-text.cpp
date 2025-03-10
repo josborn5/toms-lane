@@ -72,7 +72,6 @@ void win32_text_render(HDC device_context)
 		return;
 	}
 
-	SetTextColor(device_context, 0xFFFFFF);
 	SetBkMode(device_context, TRANSPARENT);
 
 
@@ -80,6 +79,7 @@ void win32_text_render(HDC device_context)
 	{
 		text_to_render& render_text = texts_to_render[i];
 
+		SetTextColor(device_context, render_text.color);
 		font_info.lfHeight = render_text.footprint.bottom - render_text.footprint.top;
 		HFONT font_to_set = CreateFontIndirectA(&font_info);
 
