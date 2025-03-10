@@ -79,7 +79,13 @@ void win32_text_render(HDC device_context)
 	{
 		text_to_render& render_text = texts_to_render[i];
 
-		SetTextColor(device_context, render_text.color);
+		// windows uses color in BGR formar. input is in RGB format.
+		unsigned int blue = 0x0000FF & render_text.color;
+		unsigned int green = (0x00FF00 & render_text.color) >> 8;
+		unsigned int red = (0xFF0000 & render_text.color) >> 16;
+		COLORREF color_to_set = 0x00000000 + (blue << 16) + (green << 8) + red;
+
+		SetTextColor(device_context, color_to_set);
 		font_info.lfHeight = render_text.footprint.bottom - render_text.footprint.top;
 		HFONT font_to_set = CreateFontIndirectA(&font_info);
 
