@@ -433,6 +433,11 @@ static void ExecuteCurrentCommand()
 		}
 		return;
 	}
+	else if (CommandIs("q"))
+	{
+		state.quit = true;
+		return;
+	}
 	else if (CommandStartsWith("r")) // append multiple rows
 	{
 		char row_count_char = commands.get(2);

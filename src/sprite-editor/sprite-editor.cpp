@@ -9,6 +9,11 @@ tl::GameMemory appMemory;
 int updateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
 	EditorState latestState = GetLatestState(input);
+	if (latestState.quit)
+	{
+		return 1;
+	}
+
 	Render(renderBuffer, latestState, dt);
 
 	return 0;

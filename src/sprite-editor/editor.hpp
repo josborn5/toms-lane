@@ -403,6 +403,8 @@ struct EditorState
 	SpriteC canvas;
 	SpriteC canvas_color_table;
 
+	bool quit = false;
+
 	bool pixels_are_selected() const
 	{
 		return activeControl == &pixels;
