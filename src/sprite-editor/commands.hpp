@@ -23,7 +23,16 @@ struct clipboard
 	int start_index = 0;
 	int end_index = 0;
 	int row_stride = -1;
-	tl::stack_array<uint32_t, 256> pixel_data;
+
+	void append(uint32_t value)
+	{
+		pixel_data.append(value);
+	}
+
+	uint32_t read(unsigned int index) const
+	{
+		return pixel_data.get_copy(index).value;
+	}
 
 	void clear()
 	{
@@ -37,6 +46,9 @@ struct clipboard
 	{
 		return row_stride != -1;
 	}
+
+	private:
+		tl::stack_array<uint32_t, 256> pixel_data;
 };
 
 int copy_to_clipboard(

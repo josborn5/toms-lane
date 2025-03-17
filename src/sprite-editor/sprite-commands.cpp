@@ -118,7 +118,7 @@ int copy_to_clipboard(
 	while (source_index <= clipboard.end_index)
 	{
 		uint32_t to_copy = sprite.get_pixel_data(source_index);
-		clipboard.pixel_data.append(to_copy); // TODO: check append result
+		clipboard.append(to_copy); // TODO: check append result
 
 		if (row_stride_counter < clipboard.row_stride)
 		{
@@ -154,7 +154,7 @@ int paste_from_clipboard_operation(const Grid& grid, const clipboard& clipboard,
 
 	while (target_index <= target_end_index)
 	{
-		uint32_t to_copy = clipboard.pixel_data.get_copy(clipboard_index).value;
+		uint32_t to_copy = clipboard.read(clipboard_index);
 
 		operation.add_pixel(target_index, to_copy);
 
@@ -199,7 +199,7 @@ int cut_to_clipboard_operation(
 	while (source_index <= clipboard.end_index)
 	{
 		uint32_t to_copy = sprite.get_pixel_data(source_index);
-		clipboard.pixel_data.append(to_copy);
+		clipboard.append(to_copy);
 		clear_source_operation.add_pixel(source_index, 0);
 
 		if (row_stride_counter < clipboard.row_stride)
