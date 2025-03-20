@@ -16,8 +16,6 @@ static const int cameraModifierKey = tl::KEY_SHIFT;
 static operation_executor the_undo;
 static clipboard the_clipboard;
 
-static tl::MemorySpace spritePixelMemory;
-static tl::MemorySpace sprite_color_table_memory;
 static tl::MemorySpace fileReadMemory;
 static tl::MemorySpace paletteMemory;
 static tl::MemorySpace tempMemory;
@@ -29,6 +27,8 @@ static char commandBuffer[commandBufferSize] = {0};
 static char filePathBuffer[filePathBufferSize] = {0};
 static constexpr char* filePath = &filePathBuffer[0];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
+
+static SpriteC operation_root_sprite;
 
 static bool apply_movement_to_item_in_grid(const tl::Input &input, item_in_grid& grid)
 {
@@ -371,13 +371,11 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 
 	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
 	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
-	sprite_color_table_memory = tl::CarveMemorySpace(color_table_size_in_bytes, working);
-	spritePixelMemory = working; // left over memory goes to main sprite
+	state.canvas_color_table.pixel_memory = tl::CarveMemorySpace(color_table_size_in_bytes, working);
+	state.canvas.pixel_memory = working; // left over memory goes to main sprite
 	tempMemory = gameMemory.transient;
 
-	state.canvas.pixel_memory = spritePixelMemory;
 	state.canvas.p_color_table = &state.canvas_color_table;
-	state.canvas_color_table.pixel_memory = sprite_color_table_memory;
 	state.commandBuffer = &commandBuffer[0];
 	state.pixels.initialize(&state.canvas);
 	state.color_table.initialize(&state.canvas_color_table);

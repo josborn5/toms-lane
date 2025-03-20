@@ -42,7 +42,7 @@ int tl::main(char* commandLine)
 	}
 
 	tl::InitializeMemory(
-		4,
+		5,
 		1,
 		appMemory
 	);
