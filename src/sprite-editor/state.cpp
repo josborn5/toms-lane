@@ -28,8 +28,6 @@ static char filePathBuffer[filePathBufferSize] = {0};
 static constexpr char* filePath = &filePathBuffer[0];
 static tl::array<char> commands = tl::array<char>(commandBuffer, commandBufferSize);
 
-static SpriteC operation_root_sprite;
-
 static bool apply_movement_to_item_in_grid(const tl::Input &input, item_in_grid& grid)
 {
 	if (input.buttons[skipModifierKey].isDown)

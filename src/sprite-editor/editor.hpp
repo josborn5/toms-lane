@@ -88,6 +88,11 @@ struct SpriteC
 	{
 		return pixel_count() * sizeof(uint32_t);
 	}
+
+	uint64_t capacity_in_bytes() const
+	{
+		return pixel_memory.sizeInBytes;
+	}
 };
 
 typedef void grid_size_change_callback();

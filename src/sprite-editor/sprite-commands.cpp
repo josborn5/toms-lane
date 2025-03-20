@@ -29,13 +29,13 @@ int SaveBitmap(
 bool can_insert_row(const SpriteC& sprite)
 {
 	uint64_t new_size_in_bytes = sprite.size_in_bytes() + (sprite.width * sizeof(uint32_t));
-	return new_size_in_bytes <= sprite.pixel_memory.sizeInBytes;
+	return new_size_in_bytes <= sprite.capacity_in_bytes();
 }
 
 bool can_insert_column(const SpriteC& sprite)
 {
 	uint64_t new_size_in_bytes = sprite.size_in_bytes() + (sprite.height * sizeof(uint32_t));
-	return (new_size_in_bytes <= sprite.pixel_memory.sizeInBytes);
+	return (new_size_in_bytes <= sprite.capacity_in_bytes());
 }
 
 static void get_indexes_for_copy(
