@@ -75,7 +75,7 @@ static void ResetState()
 	memory.content = spriteContent;
 	memory.sizeInBytes = sizeof(uint32_t) * pixelCount;
 
-	sprite.pixel_memory = memory;
+	sprite.init(memory);
 
 	for (int i = 0; i < pixelCount; i += 1)
 	{

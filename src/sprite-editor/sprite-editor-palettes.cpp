@@ -152,7 +152,7 @@ void InitializePalettes(tl::MemorySpace& paletteMemory, tl::MemorySpace& tempMem
 		uint64_t pixel_size_in_bytes = sizeof(uint32_t) * palette_pixel_count;
 		tl::MemorySpace palette_allocation = tl::CarveMemorySpace(pixel_size_in_bytes, paletteMemory);
 
-		palette.pixel_memory = palette_allocation;
+		palette.init(palette_allocation);
 
 		LoadSpriteC(paletteContents[i], tempMemory, palette);
 		palettes.append(palette);

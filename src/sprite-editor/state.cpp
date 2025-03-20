@@ -369,8 +369,8 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 
 	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
 	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
-	state.canvas_color_table.pixel_memory = tl::CarveMemorySpace(color_table_size_in_bytes, working);
-	state.canvas.pixel_memory = working; // left over memory goes to main sprite
+	state.canvas_color_table.init(tl::CarveMemorySpace(color_table_size_in_bytes, working));
+	state.canvas.init(working); // left over memory goes to main sprite
 	tempMemory = gameMemory.transient;
 
 	state.canvas.p_color_table = &state.canvas_color_table;

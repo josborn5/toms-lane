@@ -10,9 +10,12 @@ struct SpriteC
 	unsigned int height = 0;
 	uint16_t bitsPerPixel = 24;
 
-	tl::MemorySpace pixel_memory = {0};
-
 	SpriteC* p_color_table = nullptr;
+
+	void init(tl::MemorySpace memory_space)
+	{
+		pixel_memory = memory_space;
+	}
 
 	unsigned int pixel_count() const
 	{
@@ -93,6 +96,9 @@ struct SpriteC
 	{
 		return pixel_memory.sizeInBytes;
 	}
+
+	private:
+		tl::MemorySpace pixel_memory = {0};
 };
 
 typedef void grid_size_change_callback();
