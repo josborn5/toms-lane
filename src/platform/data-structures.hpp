@@ -16,8 +16,8 @@ namespace tl
 	struct array
 	{
 		private:
-			int _length = 0;
-			int _capacity = 0;
+			unsigned int _length = 0;
+			unsigned int _capacity = 0;
 			size_t _itemSizeInBytes = sizeof(T);
 			T* _content;
 
@@ -113,6 +113,28 @@ namespace tl
 			T* getTailPointer()
 			{
 				return &_content[_length - 1];
+			}
+
+			int delete_from(unsigned int inclusive_start_index, unsigned int inclusive_end_index)
+			{
+				if (inclusive_start_index >= _length ||
+					inclusive_end_index >= _length ||
+					inclusive_start_index > inclusive_end_index)
+				{
+					return -1;
+				}
+
+				unsigned int start_copy_index = inclusive_end_index + 1;
+				unsigned int offset = start_copy_index - inclusive_start_index;
+				for (unsigned int source_index = start_copy_index; source_index < _length; source_index += 1)
+				{
+					unsigned int target_index = source_index - offset;
+					T copy_value = _content[source_index];
+					_content[target_index] = copy_value;
+				}
+
+				unsigned int subtraction_count = inclusive_end_index - inclusive_start_index + 1;
+				return subtraction_count;
 			}
 	};
 

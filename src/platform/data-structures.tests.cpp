@@ -4,7 +4,7 @@
 
 using namespace tl;
 
-void RunArrayTailTest()
+static void RunArrayTailTest()
 {
 	int fourIntsStack[4] = { 0 };
 	MemorySpace fourInts;
@@ -23,6 +23,56 @@ void RunArrayTailTest()
 	tail = heapArray.getTailPointer();
 
 	assert(tail == &fourIntsStack[1]);
+}
+
+static void run_array_delete_test()
+{
+	const int ARRAY_SIZE = 10;
+	char charsStack[ARRAY_SIZE] = {0};
+	MemorySpace ten_chars;
+	ten_chars.content = &charsStack[0];
+	ten_chars.sizeInBytes = 4 * sizeof(int);
+
+	array<char> delete_array = array<char>(ten_chars);
+
+	printf("\n===== array.delete =====\n");
+	delete_array.clear();
+	for (int i = 0; i < ARRAY_SIZE; i += 1) delete_array.append('a' + (char)i);
+	assert(charsStack[0] == 'a');
+	assert(charsStack[1] == 'b');
+	assert(charsStack[2] == 'c');
+	assert(charsStack[3] == 'd');
+	assert(charsStack[4] == 'e');
+
+	delete_array.delete_from(2, 3);
+
+	assert(charsStack[0] == 'a');
+	assert(charsStack[1] == 'b');
+	assert(charsStack[2] == 'e');
+	assert(charsStack[3] == 'f');
+	assert(charsStack[4] == 'g');
+
+	delete_array.clear();
+	for (int i = 0; i < ARRAY_SIZE; i += 1) delete_array.append('a' + (char)i);
+
+	delete_array.delete_from(0, 3);
+
+	assert(charsStack[0] == 'e');
+	assert(charsStack[1] == 'f');
+	assert(charsStack[2] == 'g');
+	assert(charsStack[3] == 'h');
+	assert(charsStack[4] == 'i');
+
+	delete_array.clear();
+	for (int i = 0; i < ARRAY_SIZE; i += 1) delete_array.append('a' + (char)i);
+
+	delete_array.delete_from(2, 2);
+
+	assert(charsStack[0] == 'a');
+	assert(charsStack[1] == 'b');
+	assert(charsStack[2] == 'd');
+	assert(charsStack[3] == 'e');
+	assert(charsStack[4] == 'f');
 }
 
 void RunArrayTests()
@@ -97,6 +147,8 @@ void RunArrayTests()
 	assert(array1.length() == 2);
 	array1.clear();
 	assert(array1.length() == 0);
+
+	run_array_delete_test();
 }
 
 void RunQueueTests()
