@@ -100,8 +100,13 @@ struct SpriteC
 		return pixel_memory.sizeInBytes;
 	}
 
-	void copy_from(const SpriteC& source)
+	int copy_from(const SpriteC& source)
 	{
+		if (capacity_in_bytes() < source.size_in_bytes())
+		{
+			return -1;
+		}
+
 		height = source.height;
 		width = source.width;
 
@@ -110,6 +115,8 @@ struct SpriteC
 			uint32_t to_copy = source.get_pixel_data(i);
 			set_pixel_data(i, to_copy);
 		}
+
+		return 0;
 	}
 
 	private:
