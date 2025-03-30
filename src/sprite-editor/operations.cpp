@@ -144,12 +144,10 @@ void insert_row_operation::undo()
 static void delete_column_in_grid(Grid& grid, unsigned int column_index)
 {
 	unsigned int row_index = grid.cursor.row_index();
-	unsigned int sprite_length = grid.sprite->pixel_count();
 	for (int i = grid.sprite->height - 1; i >= 0; i -= 1)
 	{
 		unsigned int delete_index = (i * grid.sprite->width) + column_index;
-		tl::DeleteFromArray(grid.sprite->pixels(), delete_index, delete_index, sprite_length);
-		sprite_length -= 1;
+		grid.sprite->pixel_array.delete_from(delete_index, delete_index);
 	}
 
 	grid.sprite->width -= 1;
