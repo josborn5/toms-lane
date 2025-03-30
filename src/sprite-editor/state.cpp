@@ -344,12 +344,10 @@ static int Initialize(char* commandLine)
 	the_clipboard.clear();
 
 	ClearCommandBuffer();
-	InitializeLayout(state);
 	state.pixels.size();
 	state.pixels.reset_items();
 	state.color_table.size();
 	state.color_table.reset_items();
-	InitializePalettes(paletteMemory, tempMemory, state);
 
 	return 0;
 }
@@ -377,6 +375,9 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 	state.commandBuffer = &commandBuffer[0];
 	state.pixels.initialize(&state.canvas);
 	state.color_table.initialize(&state.canvas_color_table);
+
+	InitializeLayout(state);
+	InitializePalettes(paletteMemory, tempMemory, state);
 
 	return Initialize(commandLine);
 }
