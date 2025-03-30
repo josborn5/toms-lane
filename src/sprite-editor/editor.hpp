@@ -20,6 +20,11 @@ struct SpriteC
 		pixel_array.initialize(pixel_memory, pixel_count());
 	}
 
+	void refresh() // TODO: this is a hack and should be removed. any update to width/height should trigger this refresh
+	{
+		pixel_array.initialize(pixel_memory, pixel_count());
+	}
+
 	unsigned int pixel_count() const
 	{
 		return width * height;
@@ -387,6 +392,7 @@ struct Grid
 
 	void size()
 	{
+		sprite->refresh();
 		if (size_change_callback != nullptr)
 		{
 			size_change_callback();

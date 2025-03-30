@@ -54,10 +54,8 @@ static void delete_row_in_sprite(Grid& grid, unsigned int _row_index)
 	unsigned int start_index = grid.sprite->min_index_on_row(_row_index);
 	unsigned int col_index = grid.cursor.column_index();
 	unsigned int end_index = grid.sprite->max_index_on_row(_row_index);
-	unsigned int total_length = grid.sprite->pixel_count();
-	// Call tl::DeleteFromArray with the sprite content
-	tl::DeleteFromArray(grid.sprite->pixels(), start_index, end_index, total_length);
 
+	grid.sprite->pixel_array.delete_from(start_index, end_index);
 	grid.sprite->height -= 1;
 	grid.size();
 
