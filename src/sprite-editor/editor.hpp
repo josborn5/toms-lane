@@ -30,11 +30,6 @@ struct SpriteC
 		return width * height;
 	}
 
-	uint32_t* pixels() const
-	{
-		return (uint32_t*)pixel_memory.content;
-	}
-
 	unsigned int color_table_length() const
 	{
 		return (p_color_table == nullptr) ? 0 : p_color_table->pixel_count();
@@ -125,7 +120,7 @@ struct item_in_grid
 
 	uint32_t color() const
 	{
-		return _sprite->pixels()[_index];
+		return _sprite->get_pixel_data(_index);
 	}
 
 	unsigned int row_index() const
@@ -261,7 +256,7 @@ struct item_in_grid
 			while (next_index >= inclusiveMinPixelIndex && next_index <= inclusiveMaxPixelIndex && sameColor)
 			{
 				cursor = next_index;
-				sameColor = (active_color == _sprite->pixels()[cursor]);
+				sameColor = (active_color == _sprite->get_pixel_data(cursor));
 				next_index += step;
 			}
 			_index = cursor;
