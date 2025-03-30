@@ -25,29 +25,36 @@ static void RunArrayTailTest()
 	assert(tail == &fourIntsStack[1]);
 }
 
+static void reset_delete_array(array<char>& delete_array)
+{
+	delete_array.clear();
+	for (int i = 0; i < delete_array.capacity(); i += 1) delete_array.append('a' + (char)i);
+	assert(delete_array.length() == 10);
+}
+
 static void run_array_delete_test()
 {
 	const int ARRAY_SIZE = 10;
 	char charsStack[ARRAY_SIZE] = {0};
 	MemorySpace ten_chars;
 	ten_chars.content = &charsStack[0];
-	ten_chars.sizeInBytes = 4 * sizeof(int);
+	ten_chars.sizeInBytes = ARRAY_SIZE * sizeof(char);
 
 	array<char> delete_array = array<char>(ten_chars);
 
-	printf("\n===== array.delete =====\n");
-	delete_array.clear();
-	for (int i = 0; i < ARRAY_SIZE; i += 1) delete_array.append('a' + (char)i);
+	printf("\n===== array.delete_from =====\n");
+	int delete_result = 0;
 
-	assert(delete_array.length() == 10);
+	reset_delete_array(delete_array);
 	assert(charsStack[0] == 'a');
 	assert(charsStack[1] == 'b');
 	assert(charsStack[2] == 'c');
 	assert(charsStack[3] == 'd');
 	assert(charsStack[4] == 'e');
 
-	delete_array.delete_from(2, 3);
+	delete_result = delete_array.delete_from(2, 3);
 
+	assert(delete_result == 0);
 	assert(delete_array.length() == 8);
 	assert(charsStack[0] == 'a');
 	assert(charsStack[1] == 'b');
@@ -55,11 +62,11 @@ static void run_array_delete_test()
 	assert(charsStack[3] == 'f');
 	assert(charsStack[4] == 'g');
 
-	delete_array.clear();
-	for (int i = 0; i < ARRAY_SIZE; i += 1) delete_array.append('a' + (char)i);
+	reset_delete_array(delete_array);
 
-	delete_array.delete_from(0, 3);
+	delete_result = delete_array.delete_from(0, 3);
 
+	assert(delete_result == 0);
 	assert(delete_array.length() == 6);
 	assert(charsStack[0] == 'e');
 	assert(charsStack[1] == 'f');
@@ -67,16 +74,35 @@ static void run_array_delete_test()
 	assert(charsStack[3] == 'h');
 	assert(charsStack[4] == 'i');
 
-	delete_array.clear();
-	for (int i = 0; i < ARRAY_SIZE; i += 1) delete_array.append('a' + (char)i);
+	reset_delete_array(delete_array);
 
-	delete_array.delete_from(2, 2);
+	delete_result = delete_array.delete_from(2, 2);
 
+	assert(delete_result == 0);
+	assert(delete_array.length() == 9);
 	assert(charsStack[0] == 'a');
 	assert(charsStack[1] == 'b');
 	assert(charsStack[2] == 'd');
 	assert(charsStack[3] == 'e');
 	assert(charsStack[4] == 'f');
+
+	reset_delete_array(delete_array);
+
+	delete_result = delete_array.delete_from(0, 10);
+
+	assert(delete_result == -1);
+	assert(delete_array.length() == 10);
+
+	reset_delete_array(delete_array);
+
+	delete_result = delete_array.delete_from(5, 9);
+	assert(delete_result == 0);
+	assert(delete_array.length() == 5);
+	assert(charsStack[0] == 'a');
+	assert(charsStack[1] == 'b');
+	assert(charsStack[2] == 'c');
+	assert(charsStack[3] == 'd');
+	assert(charsStack[4] == 'e');
 }
 
 void RunArrayTests()
