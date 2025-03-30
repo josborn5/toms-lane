@@ -104,6 +104,12 @@ struct SpriteC
 	{
 		height = source.height;
 		width = source.width;
+
+		for (unsigned int i = 0; i < source.pixel_count(); i += 1)
+		{
+			uint32_t to_copy = source.get_pixel_data(i);
+			set_pixel_data(i, to_copy);
+		}
 	}
 
 	private:

@@ -129,6 +129,8 @@ static void five_by_five_grid_tests()
 
 static void run_sprite_copy_tests()
 {
+	printf("\n====== sprite copy with no color table tests ======\n");
+
 	SpriteC source_sprite, target_sprite;
 	const int ARRAY_SIZE = 8;
 	uint32_t source_memory[ARRAY_SIZE];
@@ -140,8 +142,14 @@ static void run_sprite_copy_tests()
 	target_space.sizeInBytes = ARRAY_SIZE * sizeof(uint32_t);
 
 	source_sprite.height = 2;
-	source_sprite.width = 8;
+	source_sprite.width = 3;
 	source_sprite.init(source_space);
+
+	target_sprite.init(target_space);
+	for (unsigned int i = 0; i < source_sprite.pixel_count(); i += 1)
+	{
+		source_sprite.set_pixel_data(i, 0x000000 + i);
+	}
 
 	assert(source_sprite.height != target_sprite.height);
 	assert(source_sprite.width != target_sprite.width);
@@ -150,6 +158,14 @@ static void run_sprite_copy_tests()
 
 	assert(source_sprite.height == target_sprite.height);
 	assert(source_sprite.width == target_sprite.width);
+
+	for (unsigned int i = 0; i < source_sprite.pixel_count(); i += 1)
+	{
+		uint32_t expected_color = source_sprite.get_pixel_data(i);
+		uint32_t actual_color = target_sprite.get_pixel_data(i);
+
+		assert(expected_color == actual_color);
+	}
 }
 
 void RunEditorTests()
