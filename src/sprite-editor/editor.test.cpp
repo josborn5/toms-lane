@@ -127,10 +127,36 @@ static void five_by_five_grid_tests()
 	assert(editor_grid.camera_focus.right_column_index() == 87);
 }
 
+static void run_sprite_copy_tests()
+{
+	SpriteC source_sprite, target_sprite;
+	const int ARRAY_SIZE = 8;
+	uint32_t source_memory[ARRAY_SIZE];
+	uint32_t target_memory[ARRAY_SIZE];
+	tl::MemorySpace source_space, target_space;
+	source_space.content = &source_memory[0];
+	source_space.sizeInBytes = ARRAY_SIZE * sizeof(uint32_t);
+	target_space.content = &target_memory[0];
+	target_space.sizeInBytes = ARRAY_SIZE * sizeof(uint32_t);
+
+	source_sprite.height = 2;
+	source_sprite.width = 8;
+	source_sprite.init(source_space);
+
+	assert(source_sprite.height != target_sprite.height);
+	assert(source_sprite.width != target_sprite.width);
+
+	target_sprite.copy_from(source_sprite);
+
+	assert(source_sprite.height == target_sprite.height);
+	assert(source_sprite.width == target_sprite.width);
+}
+
 void RunEditorTests()
 {
 	TwoByTwoGridTests();
 	five_by_five_grid_tests();
+	run_sprite_copy_tests();
 
 	printf("Editor tests complete!\n");
 }

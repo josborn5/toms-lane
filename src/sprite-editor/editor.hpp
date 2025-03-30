@@ -100,6 +100,12 @@ struct SpriteC
 		return pixel_memory.sizeInBytes;
 	}
 
+	void copy_from(const SpriteC& source)
+	{
+		height = source.height;
+		width = source.width;
+	}
+
 	private:
 		tl::MemorySpace pixel_memory = {0};
 };
