@@ -38,6 +38,8 @@ static void run_array_delete_test()
 	printf("\n===== array.delete =====\n");
 	delete_array.clear();
 	for (int i = 0; i < ARRAY_SIZE; i += 1) delete_array.append('a' + (char)i);
+
+	assert(delete_array.length() == 10);
 	assert(charsStack[0] == 'a');
 	assert(charsStack[1] == 'b');
 	assert(charsStack[2] == 'c');
@@ -46,6 +48,7 @@ static void run_array_delete_test()
 
 	delete_array.delete_from(2, 3);
 
+	assert(delete_array.length() == 8);
 	assert(charsStack[0] == 'a');
 	assert(charsStack[1] == 'b');
 	assert(charsStack[2] == 'e');
@@ -57,6 +60,7 @@ static void run_array_delete_test()
 
 	delete_array.delete_from(0, 3);
 
+	assert(delete_array.length() == 6);
 	assert(charsStack[0] == 'e');
 	assert(charsStack[1] == 'f');
 	assert(charsStack[2] == 'g');

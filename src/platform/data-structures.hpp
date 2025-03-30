@@ -134,7 +134,10 @@ namespace tl
 				}
 
 				unsigned int subtraction_count = inclusive_end_index - inclusive_start_index + 1;
-				return subtraction_count;
+
+				_length -= subtraction_count;
+
+				return 0;
 			}
 	};
 
