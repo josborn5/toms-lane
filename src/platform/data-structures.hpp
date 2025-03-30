@@ -38,6 +38,12 @@ namespace tl
 				_capacity = (int)(memory.sizeInBytes / _itemSizeInBytes);
 			}
 
+			void initialize(const MemorySpace& memory, unsigned int length)
+			{
+				initialize(memory);
+				_length = length;
+			}
+
 			void initialize(T* pointer, int capacity)
 			{
 				_content = pointer;

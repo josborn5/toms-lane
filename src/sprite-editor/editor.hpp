@@ -17,7 +17,7 @@ struct SpriteC
 	void init(tl::MemorySpace memory_space)
 	{
 		pixel_memory = memory_space;
-		pixel_array = tl::array<uint32_t>(pixel_memory);
+		pixel_array.initialize(pixel_memory, pixel_count());
 	}
 
 	unsigned int pixel_count() const
@@ -47,7 +47,7 @@ struct SpriteC
 
 	void set_pixel_data(unsigned int index, uint32_t data)
 	{
-		pixels()[index] = data;
+		pixel_array.get(index) = data;
 	}
 
 	unsigned int max_index() const
