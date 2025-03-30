@@ -62,7 +62,7 @@ int tl::bitmap_interface_get_pixel_data(const tl::bitmap& bitmap,
 const int pixelCount = 32;
 static uint32_t spriteContent[pixelCount];
 static SpriteC sprite;
-tl::MemorySpace memory;
+tl::MemorySpace test_memory;
 static Grid grid = {0};
 
 static const int EMPTY_COLOR = 0x000000;
@@ -72,10 +72,10 @@ static void ResetState()
 {
 	grid = {0};
 	grid.initialize(&sprite);
-	memory.content = spriteContent;
-	memory.sizeInBytes = sizeof(uint32_t) * pixelCount;
+	test_memory.content = spriteContent;
+	test_memory.sizeInBytes = sizeof(uint32_t) * pixelCount;
 
-	sprite.init(memory);
+	sprite.init(test_memory);
 
 	for (int i = 0; i < pixelCount; i += 1)
 	{

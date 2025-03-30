@@ -12,9 +12,12 @@ struct SpriteC
 
 	SpriteC* p_color_table = nullptr;
 
+	tl::array<uint32_t> pixel_array;
+
 	void init(tl::MemorySpace memory_space)
 	{
 		pixel_memory = memory_space;
+		pixel_array = tl::array<uint32_t>(pixel_memory);
 	}
 
 	unsigned int pixel_count() const
@@ -39,7 +42,7 @@ struct SpriteC
 
 	uint32_t get_pixel_data(unsigned int index) const
 	{
-		return pixels()[index];
+		return pixel_array.get(index);
 	}
 
 	void set_pixel_data(unsigned int index, uint32_t data)
