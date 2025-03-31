@@ -156,6 +156,8 @@ static void run_sprite_copy_tests()
 	// copy fails if target sprite is not initialized
 	copy_result = target_sprite.copy_from(source_sprite);
 	assert(copy_result == -1);
+	assert(source_sprite.height != target_sprite.height);
+	assert(source_sprite.width != target_sprite.width);
 
 	// copy succeeds when target sprite is initialized
 	target_sprite.init(target_space);
