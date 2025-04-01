@@ -1,10 +1,10 @@
+src\sprite-editor\commands.cpp
 src\sprite-editor\commands.test.cpp
 src\sprite-editor\editor.test.cpp
 src\sprite-editor\sprite-editor.test.cpp
 src\sprite-editor\state.cpp
 src\sprite-editor\render.cpp
 src\sprite-editor\sprite-editor-palettes.cpp
-src\sprite-editor\sprite-commands.cpp
 src\sprite-editor\sprite-editor.cpp
 src\sprite-editor\utilities.cpp
 src\sprite-editor\transform.cpp
