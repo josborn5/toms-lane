@@ -14,7 +14,7 @@ call %~dp0\build-scripts\link.bat %APP_DIR% %NAME%^
  "%APP_DIR%\sprite-editor.obj"^
  "%APP_DIR%\state.obj"^
  "%APP_DIR%\render.obj"^
- "%APP_DIR%\sprite-editor-palettes.obj"^
+ "%APP_DIR%\palettes.obj"^
  "%APP_DIR%\commands.obj"^
  "%APP_DIR%\utilities.obj"^
  "%APP_DIR%\transform.obj"^
