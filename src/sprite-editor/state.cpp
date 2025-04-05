@@ -409,6 +409,28 @@ static bool CommandIs(char* command)
 	return has && (commands.get(cursor) == '\0');
 }
 
+static bool execute_command_insert_row(Grid& grid)
+{
+	if (can_insert_row(*grid.sprite))
+	{
+		insert_row_operation& insert_operation = the_undo.get_insert_row(&grid);
+		insert_operation.execute();
+		return true;
+	}
+	return false;
+}
+
+static bool execute_command_insert_column(Grid& grid)
+{
+	if (can_insert_column(*grid.sprite))
+	{
+		insert_column_operation& insert_operation = the_undo.get_insert_column(&grid);
+		insert_operation.execute();
+		return true;
+	}
+	return false;
+}
+
 static void ExecuteCurrentCommand()
 {
 	if (commands.get(0) != ':')
@@ -418,10 +440,8 @@ static void ExecuteCurrentCommand()
 
 	if (CommandIs("r")) // append row
 	{
-		if (can_insert_row(*state.pixels.sprite))
+		if (execute_command_insert_row(state.pixels))
 		{
-			insert_row_operation& insert_operation = the_undo.get_insert_row(&state.pixels);
-			insert_operation.execute();
 			ClearCommandBuffer();
 		}
 		else
@@ -446,17 +466,14 @@ static void ExecuteCurrentCommand()
 		int row_count = row_count_char - '0';
 		for (int i = 0; i < row_count; i += 1)
 		{
-			insert_row_operation& insert_operation = the_undo.get_insert_row(&state.pixels);
-			insert_operation.execute();
+			execute_command_insert_row(state.pixels);
 		}
 		ClearCommandBuffer();
 	}
 	else if (CommandIs("c")) // append column
 	{
-		if (can_insert_column(*state.pixels.sprite))
+		if (execute_command_insert_column(state.pixels))
 		{
-			insert_column_operation& insert_operation = the_undo.get_insert_column(&state.pixels);
-			insert_operation.execute();
 			ClearCommandBuffer();
 		}
 		else
