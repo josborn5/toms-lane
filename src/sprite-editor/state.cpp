@@ -453,6 +453,26 @@ static bool execute_command_delete_column(Grid& grid)
 	return false;
 }
 
+static bool execute_command_cut(EditorState& editor_state)
+{
+	int copy_cursor_index = editor_state.pixels.cursor.index();
+	int copy_range_index = (editor_state.mode == Visual) ? editor_state.pixels.range.index() : copy_cursor_index;
+
+	Grid grid = editor_state.pixels;
+	paste_pixel_data_operation& cut_operation = the_undo.get_paste_pixel_data(grid.sprite);
+	cut_to_clipboard_operation(
+		*grid.sprite,
+		grid.cursor.index(),
+		copy_range_index,
+		cut_operation,
+		the_clipboard
+	);
+
+	cut_operation.execute();
+
+	return true;
+}
+
 static void ExecuteCurrentCommand()
 {
 	if (commands.get(0) != ':')
@@ -610,21 +630,7 @@ static bool CheckForCopy(const tl::Input& input)
 		)
 		&& state.pixels_are_selected())
 	{
-		int copy_cursor_index = state.pixels.cursor.index();
-		int copy_range_index = (state.mode == Visual) ? state.pixels.range.index() : copy_cursor_index;
-
-		Grid grid = state.pixels;
-		paste_pixel_data_operation& cut_operation = the_undo.get_paste_pixel_data(grid.sprite);
-		cut_to_clipboard_operation(
-			*grid.sprite,
-			grid.cursor.index(),
-			copy_range_index,
-			cut_operation,
-			the_clipboard
-		);
-
-		cut_operation.execute();
-
+		execute_command_cut(state);
 		WriteStringToCommandBuffer("CUT");
 		return true;
 	}
