@@ -431,6 +431,28 @@ static bool execute_command_insert_column(Grid& grid)
 	return false;
 }
 
+static bool execute_command_delete_row(Grid& grid)
+{
+	if (can_delete_row(*grid.sprite))
+	{
+		delete_row_operation& delete_operation = the_undo.get_delete_row(&grid);
+		delete_operation.execute();
+		return true;
+	}
+	return false;
+}
+
+static bool execute_command_delete_column(Grid& grid)
+{
+	if (can_delete_column(*grid.sprite))
+	{
+		delete_column_operation& delete_operation = the_undo.get_delete_column(&grid);
+		delete_operation.execute();
+		return true;
+	}
+	return false;
+}
+
 static void ExecuteCurrentCommand()
 {
 	if (commands.get(0) != ':')
@@ -490,10 +512,8 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandIs("dr")) // delete row
 	{
-		if (can_delete_row(*state.pixels.sprite))
+		if (execute_command_delete_row(state.pixels))
 		{
-			delete_row_operation& delete_operation = the_undo.get_delete_row(&state.pixels);
-			delete_operation.execute();
 			ClearCommandBuffer();
 		}
 		else
@@ -504,10 +524,8 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandIs("dc")) // delete column
 	{
-		if (can_delete_column(*state.pixels.sprite))
+		if (execute_command_delete_column(state.pixels))
 		{
-			delete_column_operation& delete_operation = the_undo.get_delete_column(&state.pixels);
-			delete_operation.execute();
 			ClearCommandBuffer();
 		}
 		else
