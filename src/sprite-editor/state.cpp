@@ -473,6 +473,26 @@ static bool execute_command_cut(EditorState& editor_state)
 	return true;
 }
 
+static bool execute_command_paste(const Grid& grid)
+{
+	paste_pixel_data_operation& paste_operation  = the_undo.get_paste_pixel_data(grid.sprite);
+	paste_from_clipboard_operation(
+		grid,
+		the_clipboard,
+		paste_operation
+	);
+	paste_operation.execute();
+
+	return true;
+}
+
+static bool execute_command_edit_pixel(Grid* grid, uint32_t parsed_color)
+{
+	set_pixel_data_operation& operation = the_undo.get_set_pixel_data(grid, parsed_color);
+	operation.execute();
+	return true;
+}
+
 static void ExecuteCurrentCommand()
 {
 	if (commands.get(0) != ':')
@@ -585,8 +605,7 @@ static void ExecuteCurrentCommand()
 		uint32_t parsed_color;
 		ParseColorFromCharArray(pointerToNumberChar, tempMemory, parsed_color);
 
-		set_pixel_data_operation& operation = the_undo.get_set_pixel_data(state.activeControl, parsed_color);
-		operation.execute();
+		execute_command_edit_pixel(state.activeControl, parsed_color);
 
 		ClearCommandBuffer();
 		return;
@@ -649,14 +668,7 @@ static bool CheckForPaste(const tl::Input& input)
 			&& the_clipboard.is_set()
 		)
 	{
-		paste_pixel_data_operation& paste_operation  = the_undo.get_paste_pixel_data(state.pixels.sprite);
-		paste_from_clipboard_operation(
-			state.pixels,
-			the_clipboard,
-			paste_operation
-		);
-
-		paste_operation.execute();
+		execute_command_paste(state.pixels);
 		WriteStringToCommandBuffer("PASTE");
 		return true;
 
