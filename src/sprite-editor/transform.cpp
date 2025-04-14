@@ -104,8 +104,11 @@ int InitializeBitmapFromSpriteC(
 	// work out header space requirements
 	const int file_header_size_in_bytes = 14;
 	const int dibs_header_size_in_bytes = 40;
-	int color_table_size_in_bytes = (sprite.p_color_table->pixel_count())
-		? sizeof(uint32_t[2])
+	bitmap.color_table.size = (sprite.bitsPerPixel == 24)
+		? 0
+		: 2;
+	int color_table_size_in_bytes = (sprite.has_color_table())
+		? (sizeof(uint32_t) * bitmap.color_table.size)
 		: 0;
 
 	bitmap.file_header.offsetToPixelDataInBytes = file_header_size_in_bytes + dibs_header_size_in_bytes + color_table_size_in_bytes;
@@ -122,8 +125,7 @@ int InitializeBitmapFromSpriteC(
 
 	if (bitmap.file_header.fileSizeInBytes > tempMemory.sizeInBytes) return -1;
 
-	bitmap.color_table.size = sprite.color_table_length();
-	for (unsigned int i = 0; i < sprite.color_table_length(); i += 1)
+	for (int i = 0; i < bitmap.color_table.size; i += 1)
 	{
 		bitmap.color_table.content[i] = sprite.p_color_table->get_pixel_data(i);
 	}
@@ -164,7 +166,7 @@ int InitializeSpriteCFromBitmap(
 
 	sprite.p_color_table->width = 1;
 	sprite.p_color_table->height = bitmap.color_table.size;
-	sprite.p_color_table->bitsPerPixel = 32;
+	sprite.p_color_table->bitsPerPixel = 24;
 	for (unsigned int i = 0; i < (unsigned int)bitmap.color_table.size; i += 1)
 	{
 		// TODO: check pixel memory on color table

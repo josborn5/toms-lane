@@ -30,14 +30,9 @@ struct SpriteC
 		return width * height;
 	}
 
-	unsigned int color_table_length() const
-	{
-		return (p_color_table == nullptr) ? 0 : p_color_table->pixel_count();
-	}
-
 	bool has_color_table() const
 	{
-		return color_table_length() > 0;
+		return bitsPerPixel != 24;
 	}
 
 	uint32_t get_pixel_data(unsigned int index) const
