@@ -233,7 +233,7 @@ static void set_bits_per_pixel(int bits_per_pixel)
 		return;
 	}
 
-	if (bits_per_pixel != 1 && bits_per_pixel != 24)
+	if (bits_per_pixel != 1 && bits_per_pixel != 24 && bits_per_pixel != 2)
 	{
 		WriteStringToCommandBuffer("Invalid bits per pixel");
 		return;
@@ -260,6 +260,25 @@ static void set_bits_per_pixel(int bits_per_pixel)
 		{
 			uint32_t pixel_color = state.canvas.get_pixel_data(i);
 			uint32_t pixel_data = (pixel_color > 0x000000) ? 1 : 0;
+			state.canvas.set_pixel_data(i, pixel_data);
+		}
+	} else if (bits_per_pixel == 2) {
+		state.canvas.p_color_table->height = 4;
+		state.canvas.p_color_table->set_pixel_data(0, 0x000000);
+		state.canvas.p_color_table->set_pixel_data(1, 0x444444);
+		state.canvas.p_color_table->set_pixel_data(2, 0x888888);
+		state.canvas.p_color_table->set_pixel_data(3, 0xFFFFFF);
+
+		for (unsigned int i = 0; i < state.canvas.pixel_count(); i += 1)
+		{
+			uint32_t pixel_color = state.canvas.get_pixel_data(i);
+			uint32_t pixel_data = (pixel_color > 0xCCCCCC) // midpoint between 0x888888 & 0xFFFFFF
+				? 3
+				: (pixel_color > 0x666666) // midpoint between 0x444444 & 0x888888
+					? 2
+					: (pixel_color > 0x222222) // midpoint between 0x000000 & 0x444444
+						? 1
+						: 0;
 			state.canvas.set_pixel_data(i, pixel_data);
 		}
 	}
@@ -360,7 +379,8 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 	// Define memory slices
 	const uint64_t oneKiloByteInBytes = 1024;
 	const uint64_t oneMegaByteInBytes = oneKiloByteInBytes * 1024;
-	constexpr uint64_t color_table_size_in_bytes = sizeof(uint32_t) * 8;
+	const unsigned int max_color_table_size_in_items = 256;
+	constexpr uint64_t color_table_size_in_bytes = sizeof(uint32_t) * max_color_table_size_in_items;
 
 	tl::MemorySpace working = gameMemory.permanent;
 	tl::font_interface_initialize();

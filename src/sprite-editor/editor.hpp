@@ -32,7 +32,7 @@ struct SpriteC
 
 	bool has_color_table() const
 	{
-		return bitsPerPixel != 24;
+		return (bitsPerPixel != 24);
 	}
 
 	uint32_t get_pixel_data(unsigned int index) const
