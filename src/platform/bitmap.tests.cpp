@@ -66,14 +66,20 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 	assert(testBitmap.color_table.size == 0);
 }
 
-static void initialize_8_bit_bitmap_test_run() {
+void assert_uint16(uint16_t actual, uint16_t expected) {
+	printf("\nactual: %d, expected: %d\n", actual, expected);
+	assert(actual == expected);
+}
+
+static void initialize_4_bit_bitmap_test_run() {
 	tl::bitmap test_bitmap;
-	int fileReadResult = tl::file_interface_read("../src/platform/bitmap-8bit.bmp", bitmapReadMemory);
+	int fileReadResult = tl::file_interface_read("../src/platform/bitmap-4bit.bmp", bitmapReadMemory);
 	assert(fileReadResult == 0);
 
 	tl::bitmap_interface_initialize(test_bitmap, bitmapReadMemory);
 
-	assert(test_bitmap.file_header.fileType == 0x4d42);
+	assert_uint16(test_bitmap.file_header.fileType, 0x4d42);
+	assert_uint16(test_bitmap.dibs_header.bitsPerPixel, 4);
 }
 
 static void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
@@ -350,6 +356,6 @@ void RunBitmapTests()
 
 	RunBitmapReinitializeTest();
 
-	initialize_8_bit_bitmap_test_run();
+	initialize_4_bit_bitmap_test_run();
 }
 
