@@ -66,7 +66,8 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 	assert(testBitmap.color_table.size == 0);
 }
 
-void assert_uint16(uint16_t actual, uint16_t expected) {
+template<typename T>
+void assert_whole_number(T actual, T expected) {
 	printf("\nactual: %d, expected: %d\n", actual, expected);
 	assert(actual == expected);
 }
@@ -78,8 +79,13 @@ static void initialize_4_bit_bitmap_test_run() {
 
 	tl::bitmap_interface_initialize(test_bitmap, bitmapReadMemory);
 
-	assert_uint16(test_bitmap.file_header.fileType, 0x4d42);
-	assert_uint16(test_bitmap.dibs_header.bitsPerPixel, 4);
+	assert_whole_number<uint16_t>(test_bitmap.file_header.fileType, 0x4d42);
+	assert_whole_number<int32_t>(test_bitmap.file_header.offsetToPixelDataInBytes, 118);
+
+	assert_whole_number<uint32_t>(test_bitmap.dibs_header.headerSizeInBytes, 40);
+	assert_whole_number<uint16_t>(test_bitmap.dibs_header.bitsPerPixel, 4);
+
+	assert_whole_number<int32_t>(test_bitmap.color_table.size, 8);
 }
 
 static void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
