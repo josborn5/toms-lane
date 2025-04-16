@@ -66,7 +66,17 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 	assert(testBitmap.color_table.size == 0);
 }
 
-void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
+static void initialize_8_bit_bitmap_test_run() {
+	tl::bitmap test_bitmap;
+	int fileReadResult = tl::file_interface_read("../src/platform/bitmap-8bit.bmp", bitmapReadMemory);
+	assert(fileReadResult == 0);
+
+	tl::bitmap_interface_initialize(test_bitmap, bitmapReadMemory);
+
+	assert(test_bitmap.file_header.fileType == 0x4d42);
+}
+
+static void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 {
 	tl::ClearScreen(renderBuffer, grey);
 	tl::bitmap_interface_render(renderBuffer, testBitmap, tl::Vec2<int>{ 0, 0 });
@@ -339,5 +349,7 @@ void RunBitmapTests()
 	RunSmallMonochromeBitmapTests();
 
 	RunBitmapReinitializeTest();
+
+	initialize_8_bit_bitmap_test_run();
 }
 
