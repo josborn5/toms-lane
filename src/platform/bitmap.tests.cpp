@@ -16,6 +16,12 @@ static MemorySpace renderBufferPixels;
 static MemorySpace renderBufferDepth;
 static RenderBuffer renderBuffer;
 
+template<typename T>
+void assert_whole_number(T actual, T expected) {
+	printf("\nactual: %d, expected: %d\n", actual, expected);
+	assert(actual == expected);
+}
+
 static void InitializeMemory()
 {
 	bitmapReadMemory.sizeInBytes = 1024 * 60;
@@ -66,10 +72,26 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 	assert(testBitmap.color_table.size == 0);
 }
 
-template<typename T>
-void assert_whole_number(T actual, T expected) {
-	printf("\nactual: %d, expected: %d\n", actual, expected);
-	assert(actual == expected);
+static void RunBitmapWriteTest(const bitmap& bitmap)
+{
+	int writeResult = tl::bitmap_interface_write(bitmap, bitmapWriteMemory);
+	assert(writeResult == tl::bitmap_write_success);
+
+	uint8_t* readMemory = (uint8_t*)bitmapReadMemory.content;
+	uint8_t* writeMemory = (uint8_t*)bitmapWriteMemory.content;
+
+	const int fileHeaderSizeInBytes = 14;
+	int minPaddingIndex = fileHeaderSizeInBytes + bitmap.dibs_header.headerSizeInBytes + (bitmap.color_table.size * 4);
+	int maxPaddingIndex = bitmap.file_header.offsetToPixelDataInBytes;
+	for (int i = 0; i < bitmap.file_header.fileSizeInBytes; i += 1)
+	{
+		if (i < minPaddingIndex || i > maxPaddingIndex) // don't care about padding memory content
+		{
+			assert_whole_number<uint8_t>(*readMemory, *writeMemory);
+		}
+		readMemory++;
+		writeMemory++;
+	}
 }
 
 static void initialize_4_bit_bitmap_test_run() {
@@ -96,6 +118,8 @@ static void initialize_4_bit_bitmap_test_run() {
 	uint32_t bottom_left_pixel_data = 0xFFFFFF;
 	bitmap_interface_get_pixel_data(test_bitmap, 0, 0, bottom_left_pixel_data);
 	assert_whole_number<uint32_t>(bottom_left_pixel_data, 0);
+
+	RunBitmapWriteTest(test_bitmap);
 }
 
 static void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
@@ -159,28 +183,6 @@ static void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 	assert(*(bottomLeftPixel + 2) == white);
 	assert(*(bottomLeftPixel + 3) == white);
 	assert(*(bottomLeftPixel + 4) == black);
-}
-
-static void RunBitmapWriteTest(const bitmap& bitmap)
-{
-	int writeResult = tl::bitmap_interface_write(bitmap, bitmapWriteMemory);
-	assert(writeResult == tl::bitmap_write_success);
-
-	uint8_t* readMemory = (uint8_t*)bitmapReadMemory.content;
-	uint8_t* writeMemory = (uint8_t*)bitmapWriteMemory.content;
-
-	const int fileHeaderSizeInBytes = 14;
-	int minPaddingIndex = fileHeaderSizeInBytes + bitmap.dibs_header.headerSizeInBytes + (bitmap.color_table.size * 4);
-	int maxPaddingIndex = bitmap.file_header.offsetToPixelDataInBytes;
-	for (int i = 0; i < bitmap.file_header.fileSizeInBytes; i += 1)
-	{
-		if (i < minPaddingIndex || i > maxPaddingIndex) // don't care about padding memory content
-		{
-			assert_whole_number<uint8_t>(*readMemory, *writeMemory);
-		}
-		readMemory++;
-		writeMemory++;
-	}
 }
 
 static void RunBitmapWriteToSmallMemoryTest(const bitmap& bitmap)
