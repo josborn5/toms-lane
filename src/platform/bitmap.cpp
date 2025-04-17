@@ -277,6 +277,9 @@ int bitmap_interface_get_pixel_data(
 		case 24:
 			data_function = &get_pixel_data_24_bit;
 			break;
+		case 4:
+			data_function = &get_pixel_data_4_bit;
+			break;
 		case 1:
 			data_function = &get_pixel_data_1_bit;
 			break;

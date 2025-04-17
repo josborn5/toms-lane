@@ -90,8 +90,12 @@ static void initialize_4_bit_bitmap_test_run() {
 	tl::ClearScreen(renderBuffer, grey);
 	tl::bitmap_interface_render(renderBuffer, test_bitmap, tl::Vec2<int>{ 0, 0 });
 
-	uint32_t* bottom_left = renderBuffer.pixels;
-	assert_whole_number<uint32_t>(*bottom_left, 0x000000);
+	uint32_t* bottom_left_color = renderBuffer.pixels;
+	assert_whole_number<uint32_t>(*bottom_left_color, 0x000000);
+
+	uint32_t bottom_left_pixel_data = 0xFFFFFF;
+	bitmap_interface_get_pixel_data(test_bitmap, 0, 0, bottom_left_pixel_data);
+	assert_whole_number<uint32_t>(bottom_left_pixel_data, 0);
 }
 
 static void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
@@ -172,7 +176,7 @@ static void RunBitmapWriteTest(const bitmap& bitmap)
 	{
 		if (i < minPaddingIndex || i > maxPaddingIndex) // don't care about padding memory content
 		{
-			assert(*readMemory == *writeMemory);
+			assert_whole_number<uint8_t>(*readMemory, *writeMemory);
 		}
 		readMemory++;
 		writeMemory++;
