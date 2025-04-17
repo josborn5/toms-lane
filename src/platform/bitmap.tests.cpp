@@ -86,6 +86,12 @@ static void initialize_4_bit_bitmap_test_run() {
 	assert_whole_number<uint16_t>(test_bitmap.dibs_header.bitsPerPixel, 4);
 
 	assert_whole_number<int32_t>(test_bitmap.color_table.size, 8);
+
+	tl::ClearScreen(renderBuffer, grey);
+	tl::bitmap_interface_render(renderBuffer, test_bitmap, tl::Vec2<int>{ 0, 0 });
+
+	uint32_t* bottom_left = renderBuffer.pixels;
+	assert_whole_number<uint32_t>(*bottom_left, 0x000000);
 }
 
 static void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)

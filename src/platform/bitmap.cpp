@@ -182,6 +182,26 @@ static uint32_t get_pixel_data_24_bit(const bitmap& bitmap, int bitmapX, int bit
 	return colorRGB;
 }
 
+static uint32_t get_pixel_data_4_bit(const bitmap& bitmap, int bitmapX, int bitmapY)
+{
+	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
+	const int bits_per_byte = 8;
+	const int pixels_per_byte = 2;
+	constexpr int bits_per_pixel = bits_per_byte / pixels_per_byte;
+	int bytes_per_row = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
+
+	int content_offset_in_bytes = (bitmapY * bytes_per_row) + (bitmapX / pixels_per_byte);
+
+	uint8_t* eight_bit_content = (uint8_t*)bitmap.content;
+
+	int bit_shift_count = (bitmapX % pixels_per_byte == 0) ? bits_per_pixel : 0; // even pixels read the first 4 bits. odd pixels read the last 4 bits.
+
+	uint8_t* byte_from_bitmap = eight_bit_content + content_offset_in_bytes;
+
+	uint32_t pixel_data = ((*byte_from_bitmap  >> bit_shift_count) & 0b00001111) ? 1 : 0;
+	return pixel_data;
+}
+
 static uint32_t get_pixel_data_1_bit(const bitmap& bitmap, int bitmapX, int bitmapY)
 {
 	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
@@ -204,14 +224,15 @@ static uint32_t get_pixel_data_1_bit(const bitmap& bitmap, int bitmapX, int bitm
 	return pixelDataAsInt;
 }
 
-static uint32_t GetColorFrom24BitBitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
-{
-	return get_pixel_data_24_bit(bitmap, bitmapX, bitmapY);
-}
-
 static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
 {
 	int pixel_index = get_pixel_data_1_bit(bitmap, bitmapX, bitmapY);
+	return bitmap.color_table.content[pixel_index];
+}
+
+static uint32_t get_color_from_4_bit_bitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
+{
+	int pixel_index = get_pixel_data_4_bit(bitmap, bitmapX, bitmapY);
 	return bitmap.color_table.content[pixel_index];
 }
 
@@ -220,7 +241,9 @@ static GetColorFromBitmap* resolve_color_resolution_function(const bitmap_dibs_h
 	switch (dibs_header.bitsPerPixel)
 	{
 		case 24:
-			return &GetColorFrom24BitBitmap;
+			return &get_pixel_data_24_bit;
+		case 4:
+			return &get_color_from_4_bit_bitmap;
 		case 1:
 			return &GetColorFrom1BitBitmap;
 		default:
