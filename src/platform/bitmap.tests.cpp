@@ -115,9 +115,11 @@ static void initialize_4_bit_bitmap_test_run() {
 	uint32_t* bottom_left_color = renderBuffer.pixels;
 	assert_whole_number<uint32_t>(*bottom_left_color, 0x000000);
 
-	uint32_t bottom_left_pixel_data = 0xFFFFFF;
-	bitmap_interface_get_pixel_data(test_bitmap, 0, 0, bottom_left_pixel_data);
-	assert_whole_number<uint32_t>(bottom_left_pixel_data, 0);
+	uint32_t test_pixel_data = 0xFFFFFF;
+	bitmap_interface_get_pixel_data(test_bitmap, 0, 0, test_pixel_data);
+	assert_whole_number<uint32_t>(test_pixel_data, 0);
+	bitmap_interface_get_pixel_data(test_bitmap, 1, 0, test_pixel_data);
+	assert_whole_number<uint32_t>(test_pixel_data, 1);
 
 	RunBitmapWriteTest(test_bitmap);
 }
