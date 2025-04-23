@@ -33,7 +33,7 @@ namespace tl
 
 	struct bitmap_color_table
 	{
-		uint32_t content[8];
+		uint32_t content[16];
 		int32_t size = 0;
 	};
 

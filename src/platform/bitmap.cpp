@@ -153,8 +153,8 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	{
 		bitmap.color_table.size = 2;
 	}
-	else if (color_table_size_in_bytes >= (8 * sizeof(uint32_t)) && bitmap.dibs_header.bitsPerPixel == 4) {
-		bitmap.color_table.size = 8;
+	else if (color_table_size_in_bytes >= (16 * sizeof(uint32_t)) && bitmap.dibs_header.bitsPerPixel == 4) {
+		bitmap.color_table.size = 16;
 	}
 	else
 	{
