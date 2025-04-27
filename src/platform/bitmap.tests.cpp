@@ -119,17 +119,22 @@ static void initialize_4_bit_bitmap_test_run() {
 	bitmap_interface_get_pixel_data(test_bitmap, 0, 0, test_pixel_data);
 	assert_whole_number<uint32_t>(test_pixel_data, 0);
 
-	assert_whole_number<uint32_t>(test_bitmap.color_table.content[0], 0x000000);
-	assert_whole_number<uint32_t>(test_bitmap.color_table.content[1], 0x800000);
-	assert_whole_number<uint32_t>(test_bitmap.color_table.content[2], 0x008000);
-	assert_whole_number<uint32_t>(test_bitmap.color_table.content[3], 0x808000);
-	assert_whole_number<uint32_t>(test_bitmap.color_table.content[4], 0x000080);
-	assert_whole_number<uint32_t>(test_bitmap.color_table.content[5], 0x800080);
-	assert_whole_number<uint32_t>(test_bitmap.color_table.content[6], 0x008080);
-	assert_whole_number<uint32_t>(test_bitmap.color_table.content[7], 0x808080);
-
+	bitmap_interface_get_pixel_data(test_bitmap, 0, 0, test_pixel_data);
+	assert_whole_number<uint32_t>(test_pixel_data, 0);
 	bitmap_interface_get_pixel_data(test_bitmap, 1, 0, test_pixel_data);
-	assert_whole_number<uint32_t>(test_pixel_data, 1);
+	assert_whole_number<uint32_t>(test_pixel_data, 15);
+	bitmap_interface_get_pixel_data(test_bitmap, 2, 0, test_pixel_data);
+	assert_whole_number<uint32_t>(test_pixel_data, 9);
+	bitmap_interface_get_pixel_data(test_bitmap, 3, 0, test_pixel_data);
+	assert_whole_number<uint32_t>(test_pixel_data, 10);
+	bitmap_interface_get_pixel_data(test_bitmap, 4, 0, test_pixel_data);
+	assert_whole_number<uint32_t>(test_pixel_data, 12);
+
+	assert_whole_number<uint32_t>(test_bitmap.color_table.content[0], 0x000000);
+	assert_whole_number<uint32_t>(test_bitmap.color_table.content[15], 0xFFFFFF);
+	assert_whole_number<uint32_t>(test_bitmap.color_table.content[9], 0xFF0000);
+	assert_whole_number<uint32_t>(test_bitmap.color_table.content[10], 0x00FF00);
+	assert_whole_number<uint32_t>(test_bitmap.color_table.content[12], 0x0000FF);
 
 	RunBitmapWriteTest(test_bitmap);
 }
