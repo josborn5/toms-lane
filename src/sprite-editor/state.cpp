@@ -363,6 +363,7 @@ static int Initialize(char* commandLine)
 	the_clipboard.clear();
 
 	ClearCommandBuffer();
+	InitializeLayout(state);
 	state.pixels.size();
 	state.pixels.reset_items();
 	state.color_table.size();
