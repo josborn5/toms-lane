@@ -31,6 +31,7 @@ static void write_color_to_4_bit_bitmap(uint32_t pixel_data, int bitmapX, int bi
 	int content_offset_in_bytes = (bitmapY * bytes_per_row) + (bitmapX / pixels_per_byte);
 
 	uint8_t* eight_bit_content = (uint8_t*)bitmap.content;
+	uint8_t pixel_byte = (uint8_t)pixel_data;
 
 	int bit_mask_index = (bitmapX % pixels_per_byte == 0) ? 0 : 1;
 
@@ -38,11 +39,11 @@ static void write_color_to_4_bit_bitmap(uint32_t pixel_data, int bitmapX, int bi
 
 	if (bit_mask_index == 0)
 	{
-		*byte_from_bitmap = ((uint8_t)pixel_data << 4);
+		*byte_from_bitmap = pixel_byte << 4;
 	}
 	else
 	{
-		uint8_t byte_to_write = 0b00001111 & (uint8_t)pixel_data;
+		uint8_t byte_to_write = 0b00001111 & pixel_byte;
 		*byte_from_bitmap = *byte_from_bitmap | byte_to_write;
 	}
 }
