@@ -21,39 +21,29 @@ static void WriteColorTo24BitBitmap(uint32_t spriteColor, int bitmapX, int bitma
 	*((RGB24Bit*)bitmap.content + pixelOffset) = bitmapPixel;
 }
 
-static void write_color_to_2_bit_bitmap(uint32_t pixel_data, int bitmapX, int bitmapY, tl::bitmap& bitmap)
+static void write_color_to_4_bit_bitmap(uint32_t pixel_data, int bitmapX, int bitmapY, tl::bitmap& bitmap)
 {
-	const int bitsPerByte = 8;
-	int bytesPerRow = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
+	const int bits_per_byte = 8;
+	const int bits_per_pixel = 4;
+	constexpr int pixels_per_byte = bits_per_byte / bits_per_pixel;
+	int bytes_per_row = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
 
-	int contentOffsetInBytes = (bitmapY * bytesPerRow) + ((2 * bitmapX) / bitsPerByte);
-	uint8_t* eightBitContent = (uint8_t*)bitmap.content;
+	int content_offset_in_bytes = (bitmapY * bytes_per_row) + (bitmapX / pixels_per_byte);
 
-	int bitOffset = (2 * bitmapX) % bitsPerByte;
+	uint8_t* eight_bit_content = (uint8_t*)bitmap.content;
 
-	uint8_t* byteFromBitmap = eightBitContent + contentOffsetInBytes;
+	int bit_mask_index = (bitmapX % pixels_per_byte == 0) ? 0 : 1;
 
-	uint8_t or_on_bit_masks[4] = {
-		0b11000000,
-		0b00110000,
-		0b00001100,
-		0b00000011
-	};
+	uint8_t* byte_from_bitmap = eight_bit_content + content_offset_in_bytes;
 
-	uint8_t and_off_bit_masks[4] = {
-		0b00111111,
-		0b11001111,
-		0b11110011,
-		0b11111100
-	};
-
-	if (pixel_data == 0)
+	if (bit_mask_index == 0)
 	{
-		*byteFromBitmap = *byteFromBitmap & and_off_bit_masks[bitOffset];
+		*byte_from_bitmap = ((uint8_t)pixel_data << 4);
 	}
 	else
 	{
-		*byteFromBitmap = *byteFromBitmap | or_on_bit_masks[bitOffset];
+		uint8_t byte_to_write = 0b00001111 & (uint8_t)pixel_data;
+		*byte_from_bitmap = *byte_from_bitmap | byte_to_write;
 	}
 }
 
@@ -107,8 +97,8 @@ static ColorToBitmap* ResolveColorToBitmapTransformer(int bitsPerPixel)
 	{
 		case 24:
 			return &WriteColorTo24BitBitmap;
-		case 2:
-			return &write_color_to_2_bit_bitmap;
+		case 4:
+			return &write_color_to_4_bit_bitmap;
 		case 1:
 			return &WriteColorTo1BitBitmap;
 	}
