@@ -31,20 +31,17 @@ static void write_color_to_4_bit_bitmap(uint32_t pixel_data, int bitmapX, int bi
 	int content_offset_in_bytes = (bitmapY * bytes_per_row) + (bitmapX / pixels_per_byte);
 
 	uint8_t* eight_bit_content = (uint8_t*)bitmap.content;
-	uint8_t pixel_byte = (uint8_t)pixel_data;
-
-	int bit_mask_index = (bitmapX % pixels_per_byte == 0) ? 0 : 1;
-
 	uint8_t* byte_from_bitmap = eight_bit_content + content_offset_in_bytes;
 
-	if (bit_mask_index == 0)
+	uint8_t pixel_byte = (uint8_t)pixel_data;
+
+	if (bitmapX % pixels_per_byte == 0)
 	{
-		*byte_from_bitmap = pixel_byte << 4;
+		*byte_from_bitmap = pixel_byte << bits_per_pixel;
 	}
 	else
 	{
-		uint8_t byte_to_write = 0b00001111 & pixel_byte;
-		*byte_from_bitmap = *byte_from_bitmap | byte_to_write;
+		*byte_from_bitmap = (*byte_from_bitmap & 0b11110000) | (pixel_byte & 0b00001111);
 	}
 }
 
@@ -135,8 +132,8 @@ int InitializeBitmapFromSpriteC(
 	const int dibs_header_size_in_bytes = 40;
 	bitmap.color_table.size = (sprite.bitsPerPixel == 1)
 		? 2
-		: (sprite.bitsPerPixel == 2)
-			? 4
+		: (sprite.bitsPerPixel == 4)
+			? 16
 			: 0;
 	int color_table_size_in_bytes = (sprite.has_color_table())
 		? (sizeof(uint32_t) * bitmap.color_table.size)
