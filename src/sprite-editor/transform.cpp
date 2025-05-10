@@ -45,6 +45,35 @@ static void write_color_to_4_bit_bitmap(uint32_t pixel_data, int bitmapX, int bi
 	}
 }
 
+static void write_color_to_2_bit_bitmap(uint32_t pixel_data, int bitmapX, int bitmapY, tl::bitmap& bitmap)
+{
+	const int bits_per_byte = 8;
+	const int bits_per_pixel = 2;
+	constexpr int pixels_per_byte = bits_per_byte / bits_per_pixel;
+	int bytes_per_row = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
+
+	int content_offset_in_bytes = (bitmapY * bytes_per_row) + (bitmapX / pixels_per_byte);
+
+	uint8_t* eight_bit_content = (uint8_t*)bitmap.content;
+	uint8_t* byte_from_bitmap = eight_bit_content + content_offset_in_bytes;
+
+	uint8_t pixel_byte = (uint8_t)pixel_data;
+
+	unsigned int bit_offset_from_left = bitmapX % pixels_per_byte;
+
+	if (bit_offset_from_left == 0) {
+		*byte_from_bitmap = pixel_byte << 6;
+	} else if (bit_offset_from_left == 1) {
+		uint8_t byte_to_write = pixel_byte << 4;
+		*byte_from_bitmap = (*byte_from_bitmap & 0b11001111) | (byte_to_write & 0b00110000);
+	} else if (bit_offset_from_left == 2) {
+		uint8_t byte_to_write = pixel_byte << 2;
+		*byte_from_bitmap = (*byte_from_bitmap & 0b11110011) | (byte_to_write & 0b00001100);
+	} else {
+		*byte_from_bitmap = (*byte_from_bitmap & 0b11111100) | (pixel_data & 0b00000011);
+	}
+}
+
 static void WriteColorTo1BitBitmap(uint32_t pixel_data, int bitmapX, int bitmapY, tl::bitmap& bitmap)
 {
 	const int bitsPerByte = 8;
@@ -97,6 +126,8 @@ static ColorToBitmap* ResolveColorToBitmapTransformer(int bitsPerPixel)
 			return &WriteColorTo24BitBitmap;
 		case 4:
 			return &write_color_to_4_bit_bitmap;
+		case 2:
+			return &write_color_to_2_bit_bitmap;
 		case 1:
 			return &WriteColorTo1BitBitmap;
 	}
@@ -167,7 +198,7 @@ int InitializeBitmapFromSpriteC(
 		for (unsigned int pixelX = 0; pixelX < sprite.width; pixelX += 1)
 		{
 			uint32_t pixel_data = sprite.get_pixel_data(pixelIndex);
-			(*colorToBitmapTransformer)(pixel_data, pixelX, pixelY, bitmap);
+		;	(*colorToBitmapTransformer)(pixel_data, pixelX, pixelY, bitmap);
 			pixelIndex += 1;
 		}
 	}
