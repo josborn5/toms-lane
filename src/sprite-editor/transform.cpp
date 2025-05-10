@@ -161,10 +161,9 @@ int InitializeBitmapFromSpriteC(
 	// work out header space requirements
 	const int file_header_size_in_bytes = 14;
 	const int dibs_header_size_in_bytes = 40;
-	bitmap.color_table.size = (sprite.bitsPerPixel == 1)
-		? 2
-		: (sprite.bitsPerPixel == 4)
-			? 16
+	bitmap.color_table.size = (sprite.bitsPerPixel == 1) ? 2
+		: (sprite.bitsPerPixel == 2) ? 4
+		: (sprite.bitsPerPixel == 4) ? 16
 			: 0;
 	int color_table_size_in_bytes = (sprite.has_color_table())
 		? (sizeof(uint32_t) * bitmap.color_table.size)
