@@ -310,6 +310,9 @@ int bitmap_interface_get_pixel_data(
 		case 4:
 			data_function = &get_pixel_data_4_bit;
 			break;
+		case 2:
+			data_function = &get_pixel_data_2_bit;
+			break;
 		case 1:
 			data_function = &get_pixel_data_1_bit;
 			break;
