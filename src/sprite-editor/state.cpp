@@ -233,7 +233,7 @@ static void set_bits_per_pixel(int bits_per_pixel)
 		return;
 	}
 
-	if (bits_per_pixel != 1 && bits_per_pixel != 24 && bits_per_pixel != 2)
+	if (bits_per_pixel != 1 && bits_per_pixel != 24 && bits_per_pixel != 4 && bits_per_pixel != 2)
 	{
 		WriteStringToCommandBuffer("Invalid bits per pixel");
 		return;
@@ -261,6 +261,37 @@ static void set_bits_per_pixel(int bits_per_pixel)
 			uint32_t pixel_color = state.canvas.get_pixel_data(i);
 			uint32_t pixel_data = (pixel_color > 0x000000) ? 1 : 0;
 			state.canvas.set_pixel_data(i, pixel_data);
+		}
+	} else if (bits_per_pixel == 4) {
+		const unsigned int color_table_size = 16;
+		state.canvas.p_color_table->height = color_table_size;
+
+		// for now pick the first 16 unique colors from the sprite to set in the color table
+		unsigned int color_table_fill_index = 0;
+
+		for (unsigned int i = 0; i < state.canvas.pixel_count(); i += 1) {
+			uint32_t pixel_color = state.canvas.get_pixel_data(i);
+
+			int index_in_color_table = -1;
+			for (unsigned int j = 0; j < color_table_fill_index; j += 1) {
+				uint32_t color_table_color = state.canvas.p_color_table->get_pixel_data(j);
+				if (color_table_color == pixel_color) {
+					index_in_color_table = j;
+					break;
+				}
+			}
+
+			if (index_in_color_table != -1) {
+				state.canvas.set_pixel_data(i, index_in_color_table);
+			} else {
+				if (color_table_fill_index < 15) {
+					color_table_fill_index += 1;
+					state.canvas.p_color_table->set_pixel_data(color_table_fill_index, pixel_color);
+					state.canvas.set_pixel_data(i, color_table_fill_index);
+				} else {
+					state.canvas.set_pixel_data(i, 0x000000); // if color table is already full, set to black
+				}
+			}
 		}
 	} else if (bits_per_pixel == 2) {
 		state.canvas.p_color_table->height = 4;
