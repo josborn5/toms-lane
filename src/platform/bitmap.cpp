@@ -186,19 +186,41 @@ static uint32_t get_pixel_data_4_bit(const bitmap& bitmap, int bitmapX, int bitm
 {
 	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
 	const int bits_per_byte = 8;
-	const int pixels_per_byte = 2;
-	constexpr int bits_per_pixel = bits_per_byte / pixels_per_byte;
+	const int bits_per_pixel = 4;
+	constexpr int pixels_per_byte = bits_per_byte / bits_per_pixel;
 	int bytes_per_row = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
 
 	int content_offset_in_bytes = (bitmapY * bytes_per_row) + (bitmapX / pixels_per_byte);
 
 	uint8_t* eight_bit_content = (uint8_t*)bitmap.content;
 
-	int bit_shift_count = (bitmapX % pixels_per_byte == 0) ? bits_per_pixel : 0; // even pixels read the first 4 bits. odd pixels read the last 4 bits.
+	int pixel_index_in_byte = (bitmapX % pixels_per_byte);
+	int bit_shift_count = bits_per_byte - ((pixel_index_in_byte + 1) * bits_per_pixel);
 
 	uint8_t* byte_from_bitmap = eight_bit_content + content_offset_in_bytes;
 
-	uint32_t pixel_data = (uint32_t)((*byte_from_bitmap  >> bit_shift_count) & 0b00001111);
+	uint32_t pixel_data = (uint32_t)((*byte_from_bitmap >> bit_shift_count) & 0b00001111);
+	return pixel_data;
+}
+
+static uint32_t get_pixel_data_2_bit(const bitmap& bitmap, int bitmapX, int bitmapY)
+{
+	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
+	const int bits_per_byte = 8;
+	const int bits_per_pixel = 2;
+	constexpr int pixels_per_byte = bits_per_byte / bits_per_pixel;
+	int bytes_per_row = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
+
+	int content_offset_in_bytes = (bitmapY * bytes_per_row) + (bitmapX / pixels_per_byte);
+
+	uint8_t* eight_bit_content = (uint8_t*)bitmap.content;
+
+	int pixel_index_in_byte = (bitmapX % pixels_per_byte);
+	int bit_shift_count = bits_per_byte - ((pixel_index_in_byte + 1) * bits_per_pixel);
+
+	uint8_t* byte_from_bitmap = eight_bit_content + content_offset_in_bytes;
+
+	uint32_t pixel_data = (uint32_t)((*byte_from_bitmap >> bit_shift_count) & 0b00000011);
 	return pixel_data;
 }
 
@@ -236,6 +258,12 @@ static uint32_t get_color_from_4_bit_bitmap(const bitmap& bitmap, int bitmapX, i
 	return bitmap.color_table.content[pixel_index];
 }
 
+static uint32_t get_color_from_2_bit_bitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
+{
+	int pixel_index = get_pixel_data_2_bit(bitmap, bitmapX, bitmapY);
+	return bitmap.color_table.content[pixel_index];
+}
+
 static GetColorFromBitmap* resolve_color_resolution_function(const bitmap_dibs_header& dibs_header)
 {
 	switch (dibs_header.bitsPerPixel)
@@ -244,6 +272,8 @@ static GetColorFromBitmap* resolve_color_resolution_function(const bitmap_dibs_h
 			return &get_pixel_data_24_bit;
 		case 4:
 			return &get_color_from_4_bit_bitmap;
+		case 2:
+			return &get_color_from_2_bit_bitmap;
 		case 1:
 			return &GetColorFrom1BitBitmap;
 		default:
