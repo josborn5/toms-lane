@@ -149,15 +149,13 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	// Check for a color table
 	int32_t file_and_dibs_header_size_in_bytes = 14 + bitmap.dibs_header.headerSizeInBytes; // 14 bytes for the file header
 	int32_t color_table_size_in_bytes = bitmap.file_header.offsetToPixelDataInBytes - file_and_dibs_header_size_in_bytes;
-	if (bitmap.dibs_header.bitsPerPixel == 1 && color_table_size_in_bytes >= (2 * sizeof(uint32_t)))
-	{
+	if (bitmap.dibs_header.bitsPerPixel == 1 && color_table_size_in_bytes >= (2 * sizeof(uint32_t))) {
 		bitmap.color_table.size = 2;
-	}
-	else if (bitmap.dibs_header.bitsPerPixel == 4 && color_table_size_in_bytes >= (16 * sizeof(uint32_t))) {
+	} else if (bitmap.dibs_header.bitsPerPixel == 4 && color_table_size_in_bytes >= (16 * sizeof(uint32_t))) {
 		bitmap.color_table.size = 16;
-	}
-	else
-	{
+	} else if (bitmap.dibs_header.bitsPerPixel == 2 && color_table_size_in_bytes >= (4 * sizeof(uint32_t))) {
+		bitmap.color_table.size = 4;
+	} else {
 		bitmap.color_table.size = 0;
 	}
 
