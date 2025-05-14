@@ -226,6 +226,35 @@ static void WriteStringToCommandBuffer(char* character)
 	}
 }
 
+static void fill_color_table(SpriteC& sprite)
+{
+	// for now pick the first 16 unique colors from the sprite to set in the color table
+	unsigned int color_table_fill_count = 0;
+
+	for (unsigned int i = 0; i < sprite.pixel_count(); i += 1) {
+		uint32_t pixel_color = sprite.get_pixel_data(i);
+
+		int index_in_color_table = -1;
+		for (unsigned int j = 0; j < color_table_fill_count; j += 1) {
+			uint32_t color_table_color = sprite.p_color_table->get_pixel_data(j);
+			if (color_table_color == pixel_color) {
+				index_in_color_table = j;
+				break;
+			}
+		}
+
+		uint32_t pixel_data_to_set = 0x000000;
+		if (index_in_color_table != -1) {
+			pixel_data_to_set = index_in_color_table;
+		} else if (color_table_fill_count < sprite.p_color_table->pixel_count()) {
+			sprite.p_color_table->set_pixel_data(color_table_fill_count, pixel_color);
+			pixel_data_to_set = color_table_fill_count;
+			color_table_fill_count += 1;
+		}
+		sprite.set_pixel_data(i, pixel_data_to_set);
+	}
+}
+
 static void set_bits_per_pixel(int bits_per_pixel)
 {
 	if (bits_per_pixel == state.canvas.bitsPerPixel)
@@ -252,64 +281,20 @@ static void set_bits_per_pixel(int bits_per_pixel)
 	}
 	else if (bits_per_pixel == 1)
 	{
+		state.canvas.p_color_table->width = 1;
 		state.canvas.p_color_table->height = 2;
-		state.canvas.p_color_table->set_pixel_data(0, 0x000000);
-		state.canvas.p_color_table->set_pixel_data(1, 0xFFFFFF);
 
-		for (unsigned int i = 0; i < state.canvas.pixel_count(); i += 1)
-		{
-			uint32_t pixel_color = state.canvas.get_pixel_data(i);
-			uint32_t pixel_data = (pixel_color > 0x000000) ? 1 : 0;
-			state.canvas.set_pixel_data(i, pixel_data);
-		}
+		fill_color_table(state.canvas);
 	} else if (bits_per_pixel == 4) {
-		const unsigned int color_table_size = 16;
-		state.canvas.p_color_table->height = color_table_size;
+		state.canvas.p_color_table->width = 1;
+		state.canvas.p_color_table->height = 16;
 
-		// for now pick the first 16 unique colors from the sprite to set in the color table
-		unsigned int color_table_fill_count = 0;
-
-		for (unsigned int i = 0; i < state.canvas.pixel_count(); i += 1) {
-			uint32_t pixel_color = state.canvas.get_pixel_data(i);
-
-			int index_in_color_table = -1;
-			for (unsigned int j = 0; j < color_table_fill_count; j += 1) {
-				uint32_t color_table_color = state.canvas.p_color_table->get_pixel_data(j);
-				if (color_table_color == pixel_color) {
-					index_in_color_table = j;
-					break;
-				}
-			}
-
-			uint32_t pixel_data_to_set = 0x000000;
-			if (index_in_color_table != -1) {
-				pixel_data_to_set = index_in_color_table;
-			} else if (color_table_fill_count < color_table_size) {
-				state.canvas.p_color_table->set_pixel_data(color_table_fill_count, pixel_color);
-				pixel_data_to_set = color_table_fill_count;
-				color_table_fill_count += 1;
-			}
-			state.canvas.set_pixel_data(i, pixel_data_to_set);
-		}
+		fill_color_table(state.canvas);
 	} else if (bits_per_pixel == 2) {
+		state.canvas.p_color_table->width = 1;
 		state.canvas.p_color_table->height = 4;
-		state.canvas.p_color_table->set_pixel_data(0, 0x000000);
-		state.canvas.p_color_table->set_pixel_data(1, 0x444444);
-		state.canvas.p_color_table->set_pixel_data(2, 0x888888);
-		state.canvas.p_color_table->set_pixel_data(3, 0xFFFFFF);
 
-		for (unsigned int i = 0; i < state.canvas.pixel_count(); i += 1)
-		{
-			uint32_t pixel_color = state.canvas.get_pixel_data(i);
-			uint32_t pixel_data = (pixel_color > 0xCCCCCC) // midpoint between 0x888888 & 0xFFFFFF
-				? 3
-				: (pixel_color > 0x666666) // midpoint between 0x444444 & 0x888888
-					? 2
-					: (pixel_color > 0x222222) // midpoint between 0x000000 & 0x444444
-						? 1
-						: 0;
-			state.canvas.set_pixel_data(i, pixel_data);
-		}
+		fill_color_table(state.canvas);
 	}
 
 	state.canvas.bitsPerPixel = (uint16_t)bits_per_pixel;
