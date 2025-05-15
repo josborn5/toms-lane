@@ -310,6 +310,11 @@ namespace tl
 		DrawRectInPixels(renderBuffer, color, x0, y0, x1, y1);
 	}
 
+	void render_interface_fill_rect_rgba(const RenderBuffer& render_buffer, uint32_t color, const Rect<float> footprint)
+	{
+
+	}
+
 
 	/*	p0------p1
 	 *	\       /	|

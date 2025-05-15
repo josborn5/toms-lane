@@ -39,6 +39,8 @@ namespace tl
 		const Rect<float> &rect
 	);
 
+	void render_interface_fill_rect_rgba(const RenderBuffer& render_buffer, uint32_t color, const Rect<float> footprint);
+
 	// Circles
 	void DrawCircle(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<float>& center, float radius);
 
