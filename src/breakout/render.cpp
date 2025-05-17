@@ -71,33 +71,96 @@ static void updateRainbowColor()
 	rainbowColor = rgb_to_color(newR, newG, newB);
 }
 
+static void render_title_screen(const tl::RenderBuffer& render_buffer)
+{
+	tl::ClearScreen(render_buffer, 0x050505);
+
+	updateRainbowColor();
+	tl::Rect<float> titleCharRect;
+	titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
+	titleCharRect.halfSize = tl::Vec2<float> { 0.5f * TITLE_FONT_SIZE, TITLE_FONT_SIZE };
+	tl::font_interface_render_chars(
+		render_buffer,
+		"BREAKOUT",
+		titleCharRect,
+		rainbowColor
+	);
+
+	tl::Rect<float> smallCharRect;
+	smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f};
+	smallCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
+	tl::font_interface_render_chars(
+		render_buffer,
+		"PRESS S TO START",
+		smallCharRect,
+		TEXT_COLOR
+	);
+}
+
+static void render_start_level_screen(const tl::RenderBuffer& render_buffer)
+{
+	tl::ClearScreen(render_buffer, 0x050505);
+
+	updateRainbowColor();
+	tl::Rect<float> titleCharRect;
+	titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
+	titleCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
+	tl::font_interface_render_chars(
+		render_buffer,
+		"START LEVEL!",
+		titleCharRect,
+		rainbowColor
+	);
+
+	tl::Rect<float> smallCharRect;
+	smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f};
+	smallCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
+	tl::font_interface_render_chars(
+		render_buffer,
+		"PRESS SPACE TO START LEVEL",
+		smallCharRect,
+		TEXT_COLOR
+	);
+}
+
+static void render_game_over_screen(const tl::RenderBuffer& render_buffer)
+{
+	tl::ClearScreen(render_buffer, 0x050505);
+
+	updateRainbowColor();
+	tl::Rect<float> titleCharRect;
+	titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
+	titleCharRect.halfSize = tl::Vec2<float> { 0.5f * TITLE_FONT_SIZE, TITLE_FONT_SIZE };
+	tl::font_interface_render_chars(
+		render_buffer,
+		"GAME OVER!",
+		titleCharRect,
+		rainbowColor
+	);
+
+	tl::Rect<float> smallCharRect;
+	smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f};
+	smallCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
+	tl::font_interface_render_chars(
+		render_buffer,
+		"PRESS SPACE",
+		smallCharRect,
+		TEXT_COLOR
+	);
+}
+
 void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& state)
 {
-	if (state.mode != Started)
-	{
-		tl::ClearScreen(renderBuffer, 0x050505);
-
-		updateRainbowColor();
-		tl::Rect<float> titleCharRect;
-		titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
-		titleCharRect.halfSize = tl::Vec2<float> { 0.5f * TITLE_FONT_SIZE, TITLE_FONT_SIZE };
-		tl::font_interface_render_chars(
-			renderBuffer,
-			"BREAKOUT",
-			titleCharRect,
-			rainbowColor
-		);
-
-		tl::Rect<float> smallCharRect;
-		smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f};
-		smallCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
-		tl::font_interface_render_chars(
-			renderBuffer,
-			"PRESS S TO START",
-			smallCharRect,
-			TEXT_COLOR
-		);
-
+	if (state.mode == ReadyToStart) {
+		render_title_screen(renderBuffer);
+		return;
+	}
+	else if (state.mode == ReadyToStartLevel) {
+		render_start_level_screen(renderBuffer);
+		return;
+	}
+	else if (state.mode == GameOver) {
+		render_game_over_screen(renderBuffer);
 		return;
 	}
 

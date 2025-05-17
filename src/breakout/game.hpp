@@ -23,8 +23,8 @@ enum Mode
 {
 	ReadyToStart,
 	Started,
-	GameOver,
-	Paused
+	ReadyToStartLevel,
+	GameOver
 };
 
 struct Boundary

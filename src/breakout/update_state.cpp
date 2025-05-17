@@ -365,6 +365,34 @@ static void UpdateBallAndBlockState(float dt)
 
 GameState& UpdateGameState(const tl::Input& input, float dt)
 {
+	if (gamestate.mode == ReadyToStart) {
+		if (input.buttons[tl::KEY_S].keyUp)
+		{
+			StartNextLevel();
+			gamestate.mode = ReadyToStartLevel;
+		}
+		return gamestate;
+	}
+
+	if (gamestate.mode == ReadyToStartLevel) {
+		if (input.buttons[tl::KEY_SPACE].keyUp) {
+			gamestate.mode = Started;
+		}
+		else if (input.buttons[tl::KEY_R].keyUp)
+		{
+			InitializeGameState((int)rightBoundary.position, (int)topBoundary.position);
+		}
+		return gamestate;
+	}
+
+	if (gamestate.mode == GameOver) {
+		if (input.buttons[tl::KEY_SPACE].keyUp)
+		{
+			InitializeGameState((int)rightBoundary.position, (int)topBoundary.position);
+		}
+		return gamestate;
+	}
+
 	if (input.buttons[tl::KEY_SPACE].keyUp)
 	{
 		isPaused = !isPaused;
