@@ -262,16 +262,14 @@ static void set_bits_per_pixel(int bits_per_pixel)
 		return;
 	}
 
-	if (bits_per_pixel != 1 && bits_per_pixel != 24 && bits_per_pixel != 4 && bits_per_pixel != 2)
+	if (bits_per_pixel != 1 && bits_per_pixel != 24 && bits_per_pixel != 4 && bits_per_pixel != 2 && bits_per_pixel != 8)
 	{
 		WriteStringToCommandBuffer("Invalid bits per pixel");
 		return;
 	}
 
-	if (bits_per_pixel == 24)
-	{
-		for (unsigned int i = 0; i < state.canvas.pixel_count(); i += 1)
-		{
+	if (bits_per_pixel == 24) {
+		for (unsigned int i = 0; i < state.canvas.pixel_count(); i += 1) {
 			uint32_t color_table_index = state.canvas.get_pixel_data(i);
 			uint32_t pixel_color = state.canvas.p_color_table->get_pixel_data(color_table_index);
 			state.canvas.set_pixel_data(i, pixel_color);
@@ -279,20 +277,27 @@ static void set_bits_per_pixel(int bits_per_pixel)
 
 		state.canvas.p_color_table->height = 0;
 	}
-	else if (bits_per_pixel == 1)
-	{
+	else if (bits_per_pixel == 1) {
 		state.canvas.p_color_table->width = 1;
 		state.canvas.p_color_table->height = 2;
 
 		fill_color_table(state.canvas);
-	} else if (bits_per_pixel == 4) {
+	}
+	else if (bits_per_pixel == 4) {
 		state.canvas.p_color_table->width = 1;
 		state.canvas.p_color_table->height = 16;
 
 		fill_color_table(state.canvas);
-	} else if (bits_per_pixel == 2) {
+	}
+	else if (bits_per_pixel == 2) {
 		state.canvas.p_color_table->width = 1;
 		state.canvas.p_color_table->height = 4;
+
+		fill_color_table(state.canvas);
+	}
+	else if (bits_per_pixel == 8) {
+		state.canvas.p_color_table->width = 8;
+		state.canvas.p_color_table->height = 32;
 
 		fill_color_table(state.canvas);
 	}

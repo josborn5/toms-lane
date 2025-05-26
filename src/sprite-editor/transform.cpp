@@ -21,6 +21,21 @@ static void WriteColorTo24BitBitmap(uint32_t spriteColor, int bitmapX, int bitma
 	*((RGB24Bit*)bitmap.content + pixelOffset) = bitmapPixel;
 }
 
+static void write_color_to_8_bit_bitmap(uint32_t pixel_data, int bitmapX, int bitmapY, tl::bitmap& bitmap)
+{
+	const int bits_per_byte = 8;
+	const int bits_per_pixel = 8;
+	constexpr int pixels_per_byte = bits_per_byte / bits_per_pixel;
+	int bytes_per_row = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
+
+	int content_offset_in_bytes = (bitmapY * bytes_per_row) + (bitmapX / pixels_per_byte);
+
+	uint8_t* eight_bit_content = (uint8_t*)bitmap.content;
+	uint8_t* byte_from_bitmap = eight_bit_content + content_offset_in_bytes;
+
+	*byte_from_bitmap = (uint8_t)pixel_data;
+}
+
 static void write_color_to_4_bit_bitmap(uint32_t pixel_data, int bitmapX, int bitmapY, tl::bitmap& bitmap)
 {
 	const int bits_per_byte = 8;
@@ -124,6 +139,8 @@ static ColorToBitmap* ResolveColorToBitmapTransformer(int bitsPerPixel)
 	{
 		case 24:
 			return &WriteColorTo24BitBitmap;
+		case 8:
+			return &write_color_to_8_bit_bitmap;
 		case 4:
 			return &write_color_to_4_bit_bitmap;
 		case 2:
