@@ -180,6 +180,22 @@ static uint32_t get_pixel_data_24_bit(const bitmap& bitmap, int bitmapX, int bit
 	return colorRGB;
 }
 
+static uint32_t get_pixel_data_8_bit(const bitmap& bitmap, int bitmapX, int bitmapY)
+{
+	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
+	const int bits_per_byte = 8;
+	const int bits_per_pixel = 8;
+	constexpr int pixels_per_byte = bits_per_byte / bits_per_pixel;
+	int bytes_per_row = bitmap.dibs_header.imageSizeInBytes / bitmap.dibs_header.height;
+
+	int content_offset_in_bytes = (bitmapY * bytes_per_row) + (bitmapX / pixels_per_byte);
+
+	uint8_t* eight_bit_content = (uint8_t*)bitmap.content;
+	uint8_t* byte_from_bitmap = eight_bit_content + content_offset_in_bytes;
+
+	return (uint32_t)(*byte_from_bitmap);
+}
+
 static uint32_t get_pixel_data_4_bit(const bitmap& bitmap, int bitmapX, int bitmapY)
 {
 	// rows have a byte size that is a multiple of 4 bytes (32 bits) !!!
@@ -304,6 +320,9 @@ int bitmap_interface_get_pixel_data(
 	{
 		case 24:
 			data_function = &get_pixel_data_24_bit;
+			break;
+		case 8:
+			data_function = &get_pixel_data_8_bit;
 			break;
 		case 4:
 			data_function = &get_pixel_data_4_bit;
