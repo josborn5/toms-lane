@@ -266,6 +266,12 @@ static uint32_t GetColorFrom1BitBitmap(const bitmap& bitmap, int bitmapX, int bi
 	return bitmap.color_table.content[pixel_index];
 }
 
+static uint32_t get_color_from_8_bit_bitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
+{
+	int pixel_index = get_pixel_data_8_bit(bitmap, bitmapX, bitmapY);
+	return bitmap.color_table.content[pixel_index];
+}
+
 static uint32_t get_color_from_4_bit_bitmap(const bitmap& bitmap, int bitmapX, int bitmapY)
 {
 	int pixel_index = get_pixel_data_4_bit(bitmap, bitmapX, bitmapY);
@@ -284,6 +290,8 @@ static GetColorFromBitmap* resolve_color_resolution_function(const bitmap_dibs_h
 	{
 		case 24:
 			return &get_pixel_data_24_bit;
+		case 8:
+			return &get_color_from_8_bit_bitmap;
 		case 4:
 			return &get_color_from_4_bit_bitmap;
 		case 2:
