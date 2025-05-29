@@ -802,6 +802,29 @@ static void ApplyViewModeInputToState(const tl::Input& input)
 	if (center_cursor_on_screen(input)) return;
 }
 
+static void fill_neighbors(SpriteC& sprite, unsigned int pixel_index, uint32_t old_color, uint32_t new_color) {
+	if (pixel_index > sprite.max_index()) return;
+	if (sprite.get_pixel_data(pixel_index) != old_color) return;
+
+	sprite.set_pixel_data(pixel_index, new_color);
+
+	unsigned int row_index = sprite.row_index(pixel_index);
+	if (pixel_index < sprite.max_index_on_row(row_index)) {
+		fill_neighbors(sprite, pixel_index + 1, old_color, new_color);
+	}
+	if (pixel_index > sprite.min_index_on_row(row_index)) {
+		fill_neighbors(sprite, pixel_index - 1, old_color, new_color);
+	}
+
+	unsigned int column_index = sprite.column_index(pixel_index);
+	if (pixel_index < sprite.max_index_on_column(column_index)) {
+		fill_neighbors(sprite, pixel_index + sprite.width, old_color, new_color);
+	}
+	if (pixel_index > sprite.min_index_on_column(column_index)) {
+		fill_neighbors(sprite, pixel_index - sprite.width, old_color, new_color);
+	}
+}
+
 static void ApplyInsertModeInputToState(const tl::Input& input)
 {
 	if (ApplyCursorMovementToState(input)) return;
@@ -815,6 +838,15 @@ static void ApplyInsertModeInputToState(const tl::Input& input)
 		return;
 	}
 	if (check_for_undo(input)) return;
+
+	if (input.buttons[tl::KEY_F].keyDown && state.pixels_are_selected()) {
+		uint32_t old_color = state.pixels.selected_color();
+		uint32_t new_color = state.canvas.has_color_table()
+			? state.color_table.cursor.index()
+			: state.palette_.selected_color();
+
+		fill_neighbors(*state.pixels.sprite, state.pixels.cursor.index(), old_color, new_color);
+	}
 }
 
 static void ApplyCommandModeInputToState(const tl::Input& input)

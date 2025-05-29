@@ -60,6 +60,16 @@ struct SpriteC
 		return width * row_index;
 	}
 
+	unsigned int max_index_on_column(unsigned int column_index) const
+	{
+		return (width * (height - 1)) + column_index;
+	}
+
+	unsigned int min_index_on_column(unsigned int column_index) const
+	{
+		return column_index;
+	}
+
 	unsigned int column_index(unsigned int index) const
 	{
 		if (width == 1)
