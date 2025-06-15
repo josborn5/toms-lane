@@ -14,3 +14,4 @@ src/obby-1/player.cpp
 src/obby-2/background-asset.cpp
 src/obby-2/player-asset.cpp
 
+cmake-build/
