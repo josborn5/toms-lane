@@ -25,18 +25,18 @@ void assert_whole_number(T actual, T expected) {
 static void InitializeMemory()
 {
 	bitmapReadMemory.sizeInBytes = 1024 * 60;
-	tl::memory_interface_initialize(bitmapReadMemory);
+	bitmapReadMemory.content = malloc(bitmapReadMemory.sizeInBytes);
 	bitmapWriteMemory.sizeInBytes = 1024 * 60;
-	tl::memory_interface_initialize(bitmapWriteMemory);
+	bitmapReadMemory.content = malloc(bitmapWriteMemory.sizeInBytes);
 
 	renderBuffer.width = 12;
 	renderBuffer.height = 8;
 	renderBuffer.bytesPerPixel = 4;
 
 	renderBufferPixels.sizeInBytes = sizeof(unsigned int) * renderBuffer.width * renderBuffer.height;
+	renderBufferPixels.content = malloc(renderBufferPixels.sizeInBytes);
 	renderBufferDepth.sizeInBytes = sizeof(float) * renderBuffer.width * renderBuffer.height;
-	tl::memory_interface_initialize(renderBufferPixels);
-	tl::memory_interface_initialize(renderBufferDepth);
+	renderBufferDepth.content = malloc(renderBufferDepth.sizeInBytes);
 	renderBuffer.pixels = (unsigned int*)renderBufferPixels.content;
 	renderBuffer.depth = (float*)renderBufferDepth.content;
 }

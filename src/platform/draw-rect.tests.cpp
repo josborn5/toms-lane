@@ -13,9 +13,9 @@ static void run_fill_rgba_rect_tests()
 	renderBuffer.bytesPerPixel = 4;
 
 	renderBufferPixels.sizeInBytes = sizeof(unsigned int) * renderBuffer.width * renderBuffer.height;
+	renderBufferPixels.content = malloc(renderBufferPixels.sizeInBytes);
 	renderBufferDepth.sizeInBytes = sizeof(float) * renderBuffer.width * renderBuffer.height;
-	tl::memory_interface_initialize(renderBufferPixels);
-	tl::memory_interface_initialize(renderBufferDepth);
+	renderBufferDepth.content = malloc(renderBufferDepth.sizeInBytes);
 	renderBuffer.pixels = (unsigned int*)renderBufferPixels.content;
 	renderBuffer.depth = (float*)renderBufferDepth.content;
 
@@ -37,9 +37,9 @@ void RunDrawRectTests()
 	renderBuffer.bytesPerPixel = 4;
 
 	renderBufferPixels.sizeInBytes = sizeof(unsigned int) * renderBuffer.width * renderBuffer.height;
+	renderBufferPixels.content = malloc(renderBufferPixels.sizeInBytes);
 	renderBufferDepth.sizeInBytes = sizeof(float) * renderBuffer.width * renderBuffer.height;
-	tl::memory_interface_initialize(renderBufferPixels);
-	tl::memory_interface_initialize(renderBufferDepth);
+	renderBufferDepth.content = malloc(renderBufferDepth.sizeInBytes);
 	renderBuffer.pixels = (unsigned int*)renderBufferPixels.content;
 	renderBuffer.depth = (float*)renderBufferDepth.content;
 
