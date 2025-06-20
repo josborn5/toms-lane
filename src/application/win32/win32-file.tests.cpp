@@ -20,6 +20,7 @@ int RunFileTests()
 	testSpace2.content = &testBuffer2[0];
 
 	// Read file that does not exist returns non-zero result
+	remove("test-file.dat");
 	int readFileResult = tl::file_interface_read("test-file.dat", testSpace);
 	assert(readFileResult == tl::FileDoesNotExist);
 
