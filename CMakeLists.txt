@@ -11,28 +11,10 @@ add_library(
 	src/application/win32/win32-console.cpp
 	src/application/win32/win32-winmmsound.cpp
 	src/application/win32/win32-memory.cpp
-	src/application/win32/win32-application.cpp
-	src/application/win32/win32-text.cpp
-)
-add_library(
-	toms-lane-win32-application-v2 STATIC
-	src/application/win32/win32-input.cpp
-	src/application/win32/win32-window.cpp
-	src/application/win32/win32-file.cpp
-	src/application/win32/win32-time.cpp
-	src/application/win32/win32-console.cpp
-	src/application/win32/win32-winmmsound.cpp
-	src/application/win32/win32-memory.cpp
 	src/application/win32/win32-text.cpp
 )
 target_link_libraries(
 	toms-lane-win32-application
-	user32
-	winmm
-	gdi32
-)
-target_link_libraries(
-	toms-lane-win32-application-v2
 	user32
 	winmm
 	gdi32
@@ -94,7 +76,7 @@ target_link_libraries(
 	sprite-editor-win32
 	sprite-editor
 	toms-lane-platform
-	toms-lane-win32-application-v2
+	toms-lane-win32-application
 )
 
 
@@ -112,5 +94,18 @@ target_link_libraries(
 	breakout-win32
 	breakout
 	toms-lane-platform
-	toms-lane-win32-application-v2
+	toms-lane-win32-application
+)
+
+
+# paths are relative to the build dir (i.e. ./cmake-build
+add_custom_command(
+	OUTPUT ../src/obby-1/brick.cpp
+	COMMAND xxd -i ../src/obby-1/brick.bmp > ../src/obby-1/brick.cpp
+	DEPENDS src/obby-1/brick.bmp
+	COMMENT "Converting bmp to code"
+)
+add_library(
+	obby-1
+	src/obby-1/brick.cpp
 )
