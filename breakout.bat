@@ -1,13 +1,9 @@
-set NAME=breakout
-set APP_DIR=%~dp0\bin-breakout
+pushd cmake-build
 
-call "%~dp0\build-scripts\compile.bat" "@%~dp0\src\breakout\filemanifest.txt", "%APP_DIR%" %1
+cmake ../
 
-call .\build-scripts\link.bat %APP_DIR% %NAME%^
- "%APP_DIR%\breakout.obj"^
- "%APP_DIR%\render.obj"^
- "%APP_DIR%\update_state.obj"^
- "%~dp0\bin-tl-platform\tl-library.lib"^
- "%~dp0\bin-tl-win32\tl-win32.lib"
+cmake --build .
 
-call "%~dp0\build-scripts\run.bat" "%APP_DIR%\%NAME%.exe" %1
+popd
+
+call "%~dp0\build-scripts\run.bat" "%~dp0/cmake-build/Debug/breakout-win32.exe" %1

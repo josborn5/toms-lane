@@ -34,7 +34,7 @@ int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::Rende
 	return 0;
 }
 
-int tl::main(char* commandLine)
+int breakout_main()
 {
 	startSound();
 
