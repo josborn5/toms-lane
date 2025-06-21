@@ -25,7 +25,7 @@ int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::Rende
 	return updateAndRender(input, renderBuffer, dt);
 }
 
-int tl::main(char* commandLine)
+int sprite_editor_main(char* commandLine)
 {
 	const int targetFPS = 60;
 
