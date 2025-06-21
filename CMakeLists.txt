@@ -2,6 +2,18 @@ cmake_minimum_required(VERSION 4.0.3)
 
 project(toms-lane VERSION 1.0)
 
+
+# paths are relative to the build dir (i.e. ./cmake-build
+function(xxd input_path output_path)
+add_custom_command(
+	OUTPUT output_path
+	COMMAND xxd -i input_path > output_path
+	DEPENDS input_path
+	COMMENT "Generatrion ${output_path} from ${input_path}"
+)
+endfunction()
+
+
 add_library(
 	toms-lane-win32-application STATIC
 	src/application/win32/win32-input.cpp
@@ -98,14 +110,13 @@ target_link_libraries(
 )
 
 
-# paths are relative to the build dir (i.e. ./cmake-build
-add_custom_command(
-	OUTPUT ../src/obby-1/brick.cpp
-	COMMAND xxd -i ../src/obby-1/brick.bmp > ../src/obby-1/brick.cpp
-	DEPENDS src/obby-1/brick.bmp
-	COMMENT "Converting bmp to code"
-)
+
+xxd(../src/obby-1/brick.bmp ../src/obby-1/brick.cpp)
+xxd(../src/obby-1/checkout.bmp ../src/obby-1/checkout.cpp)
+xxd(../src/obby-1/player.bmp ../src/obby-1/player.cpp)
 add_library(
 	obby-1
 	src/obby-1/brick.cpp
+	src/obby-1/checkpoint.cpp
+	src/obby-1/player.cpp
 )
