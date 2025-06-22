@@ -3,15 +3,7 @@ cmake_minimum_required(VERSION 4.0.3)
 project(toms-lane VERSION 1.0)
 
 
-# paths are relative to the build dir (i.e. ./cmake-build
-function(xxd input_path output_path)
-add_custom_command(
-	OUTPUT output_path
-	COMMAND xxd -i input_path > output_path
-	DEPENDS input_path
-	COMMENT "Generatrion ${output_path} from ${input_path}"
-)
-endfunction()
+
 
 
 add_library(
@@ -110,13 +102,39 @@ target_link_libraries(
 )
 
 
-
-xxd(../src/obby-1/brick.bmp ../src/obby-1/brick.cpp)
-xxd(../src/obby-1/checkout.bmp ../src/obby-1/checkout.cpp)
-xxd(../src/obby-1/player.bmp ../src/obby-1/player.cpp)
+add_custom_command(
+	OUTPUT "${CMAKE_SOURCE_DIR}/src/obby-1/brick.cpp"
+	COMMAND xxd -i brick.bmp > brick.cpp
+	DEPENDS "${CMAKE_SOURCE_DIR}/src/obby-1/brick.bmp"
+	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/obby-1"
+)
+add_custom_command(
+	OUTPUT "${CMAKE_SOURCE_DIR}/src/obby-1/checkpoint.cpp"
+	COMMAND xxd -i checkpoint.bmp > checkpoint.cpp
+	DEPENDS "${CMAKE_SOURCE_DIR}/src/obby-1/checkpoint.bmp"
+	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/obby-1"
+)
+add_custom_command(
+	OUTPUT "${CMAKE_SOURCE_DIR}/src/obby-1/player.cpp"
+	COMMAND xxd -i player.bmp > player.cpp
+	DEPENDS "${CMAKE_SOURCE_DIR}/src/obby-1/player.bmp"
+	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/obby-1"
+)
 add_library(
 	obby-1
+	src/obby-1/obby-1.cpp
 	src/obby-1/brick.cpp
 	src/obby-1/checkpoint.cpp
 	src/obby-1/player.cpp
 )
+add_executable(
+	obby-1-win32 WIN32
+	src/obby-1/obby-1-win32.cpp
+)
+target_link_libraries(
+	obby-1-win32
+	obby-1
+	toms-lane-platform
+	toms-lane-win32-application
+)
+

@@ -31,7 +31,7 @@ int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::Rende
 	return UpdateAndRender(input, renderBuffer, dt);
 }
 
-int tl::main(char* commandLine)
+int obby_1_main()
 {
 	const int targetFPS = 60;
 
