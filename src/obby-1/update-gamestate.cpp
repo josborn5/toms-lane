@@ -1,7 +1,7 @@
 #include "./game.hpp"
 #include "../tl-library.hpp"
 
-#include "./brick.cpp"
+#include "./brick.hpp"
 #include "./checkpoint.cpp"
 #include "./player.cpp"
 
