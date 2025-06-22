@@ -1,9 +1,7 @@
 #include "./game.hpp"
 #include "../tl-library.hpp"
 
-#include "./brick.hpp"
-#include "./checkpoint.cpp"
-#include "./player.cpp"
+#include "./generated-assets.hpp"
 
 GameState gamestate = {};
 
