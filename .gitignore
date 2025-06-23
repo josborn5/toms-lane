@@ -11,7 +11,7 @@ src/obby-1/brick.cpp
 src/obby-1/checkpoint.cpp
 src/obby-1/player.cpp
 
-src/obby-2/background-asset.cpp
-src/obby-2/player-asset.cpp
+src/obby-2/background.cpp
+src/obby-2/player.cpp
 
 cmake-build/
