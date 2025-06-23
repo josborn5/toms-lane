@@ -13,3 +13,4 @@ call .\build-scripts\link.bat %APP_DIR% %NAME%^
  "%~dp0\bin-tl-win32\tl-win32.lib"
 
 call "%~dp0\build-scripts\run.bat" "%APP_DIR%\obby-2.exe" %1
+

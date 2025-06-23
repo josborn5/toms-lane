@@ -2,10 +2,6 @@ cmake_minimum_required(VERSION 4.0.3)
 
 project(toms-lane VERSION 1.0)
 
-
-
-
-
 add_library(
 	toms-lane-win32-application STATIC
 	src/application/win32/win32-input.cpp
@@ -53,6 +49,7 @@ target_link_libraries(
 )
 
 
+######## breakout ########
 add_executable(
 	sprite-editor-win32 WIN32
 	src/sprite-editor/sprite-editor-win32.cpp
@@ -84,6 +81,7 @@ target_link_libraries(
 )
 
 
+######## breakout ########
 add_executable(
 	breakout-win32 WIN32
 	src/breakout/breakout-win32.cpp
@@ -101,6 +99,8 @@ target_link_libraries(
 	toms-lane-win32-application
 )
 
+
+######## obby-1 ########
 function(generate_obby_1_asset name)
 	file(REMOVE "${CMAKE_SOURCE_DIR}/src/obby-1/${name}.cpp")
 	add_custom_command(
@@ -111,9 +111,9 @@ function(generate_obby_1_asset name)
 	)
 endfunction()
 
-generate_obby_1_asset(brick)
-generate_obby_1_asset(checkpoint)
-generate_obby_1_asset(player)
+generate_obby_1_asset("brick")
+generate_obby_1_asset("checkpoint")
+generate_obby_1_asset("player")
 
 add_library(
 	obby-1
@@ -129,6 +129,38 @@ add_executable(
 target_link_libraries(
 	obby-1-win32
 	obby-1
+	toms-lane-platform
+	toms-lane-win32-application
+)
+
+
+######## obby-2 ########
+function(generate_obby_2_asset name)
+	file(REMOVE "${CMAKE_SOURCE_DIR}/src/obby-2/${name}.cpp")
+	add_custom_command(
+		OUTPUT "${CMAKE_SOURCE_DIR}/src/obby-2/${name}.cpp"
+		COMMAND xxd -i "${name}.bmp" > "${name}.cpp"
+		DEPENDS "${CMAKE_SOURCE_DIR}/src/obby-2/${name}.bmp"
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/obby-2"
+	)
+endfunction()
+
+generate_obby_2_asset("background")
+generate_obby_2_asset("obby2-player")
+
+add_library(
+	obby-2
+	src/obby-2/obby-2.cpp
+	src/obby-2/background.cpp
+	src/obby-2/obby2-player.cpp
+)
+add_executable(
+	obby-2-win32 WIN32
+	src/obby-2/obby-2-win32.cpp
+)
+target_link_libraries(
+	obby-2-win32
+	obby-2
 	toms-lane-platform
 	toms-lane-win32-application
 )

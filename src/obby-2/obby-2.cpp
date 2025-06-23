@@ -11,8 +11,7 @@ tl::bitmap playerBitmaps;
 #include "./render-gamestate.cpp"
 #include "./update-gamestate.cpp"
 
-#include "./background-asset.cpp"
-#include "./player-asset.cpp"
+#include "./assets.hpp"
 
 /*
 
@@ -81,7 +80,7 @@ int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::Rende
 	return UpdateAndRender(input, renderBuffer, dt);
 }
 
-int tl::main(char* commandLine)
+int obby_2_main()
 {
 	const int targetFPS = 60;
 
