@@ -101,25 +101,20 @@ target_link_libraries(
 	toms-lane-win32-application
 )
 
+function(generate_obby_1_asset name)
+	file(REMOVE "${CMAKE_SOURCE_DIR}/src/obby-1/${name}.cpp")
+	add_custom_command(
+		OUTPUT "${CMAKE_SOURCE_DIR}/src/obby-1/${name}.cpp"
+		COMMAND xxd -i "${name}.bmp" > "${name}.cpp"
+		DEPENDS "${CMAKE_SOURCE_DIR}/src/obby-1/${name}.bmp"
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/obby-1"
+	)
+endfunction()
 
-add_custom_command(
-	OUTPUT "${CMAKE_SOURCE_DIR}/src/obby-1/brick.cpp"
-	COMMAND xxd -i brick.bmp > brick.cpp
-	DEPENDS "${CMAKE_SOURCE_DIR}/src/obby-1/brick.bmp"
-	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/obby-1"
-)
-add_custom_command(
-	OUTPUT "${CMAKE_SOURCE_DIR}/src/obby-1/checkpoint.cpp"
-	COMMAND xxd -i checkpoint.bmp > checkpoint.cpp
-	DEPENDS "${CMAKE_SOURCE_DIR}/src/obby-1/checkpoint.bmp"
-	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/obby-1"
-)
-add_custom_command(
-	OUTPUT "${CMAKE_SOURCE_DIR}/src/obby-1/player.cpp"
-	COMMAND xxd -i player.bmp > player.cpp
-	DEPENDS "${CMAKE_SOURCE_DIR}/src/obby-1/player.bmp"
-	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/obby-1"
-)
+generate_obby_1_asset(brick)
+generate_obby_1_asset(checkpoint)
+generate_obby_1_asset(player)
+
 add_library(
 	obby-1
 	src/obby-1/obby-1.cpp
