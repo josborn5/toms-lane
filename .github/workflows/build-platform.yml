@@ -7,5 +7,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - shell: bash
-      run: ./compile.bat
+      run: |
+        cmake -S . -B ./cmake-build
+        cmake --build ./cmake-build
 
