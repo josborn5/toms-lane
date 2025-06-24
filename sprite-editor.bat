@@ -1,6 +1,4 @@
-cmake -S . -B ./cmake-build
-
-cmake --build ./cmake-build
+call "%~dp0\compile.bat"
 
 SET TEST=%1
 if "%TEST%"=="-dt" (
