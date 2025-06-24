@@ -377,7 +377,7 @@ int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::Rende
 	return UpdateAndRender1(appMemory, input, renderBuffer, dt);
 }
 
-int tl::main(char* commandLine)
+int demo_main()
 {
 	const int targetFPS = 60;
 

@@ -165,3 +165,20 @@ target_link_libraries(
 	toms-lane-win32-application
 )
 
+######## demo ########
+add_library(
+	demo
+	src/demo/demo.cpp
+)
+add_executable(
+	demo-win32 WIN32
+	src/demo/demo-win32.cpp
+)
+target_link_libraries(
+	demo-win32
+	demo
+	toms-lane-platform
+	toms-lane-win32-application
+)
+configure_file(src/demo/teapot.obj Debug/teapot.obj COPYONLY)
+
