@@ -30,9 +30,22 @@ target_link_libraries(
 	toms-lane-win32-application
 )
 
+
+function(generate_platform_asset name)
+	file(REMOVE "${CMAKE_SOURCE_DIR}/src/platform/${name}.cpp")
+	add_custom_command(
+		OUTPUT "${CMAKE_SOURCE_DIR}/src/platform/${name}.cpp"
+		COMMAND xxd -i "${name}.tlsf" > "${name}.cpp"
+		DEPENDS "${CMAKE_SOURCE_DIR}/src/platform/${name}.tlsf"
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/platform"
+	)
+endfunction()
+generate_platform_asset(font-mono)
+
 add_library(
 	toms-lane-platform STATIC
 	src/platform/toms-lane-platform.cpp
+	src/platform/font-mono.cpp
 	src/platform/font.cpp
 	src/platform/transform.cpp
 )
@@ -49,7 +62,7 @@ target_link_libraries(
 )
 
 
-######## breakout ########
+######## sprite-editor ########
 add_executable(
 	sprite-editor-win32 WIN32
 	src/sprite-editor/sprite-editor-win32.cpp

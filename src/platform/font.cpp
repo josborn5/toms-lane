@@ -4,7 +4,7 @@
 #include "./utilities.hpp"
 #include "./software-rendering.hpp"
 #include "./software-rendering.sprite.hpp"
-#include "./font-mono.cpp"
+#include "./generated-assets.hpp"
 
 namespace tl
 {
