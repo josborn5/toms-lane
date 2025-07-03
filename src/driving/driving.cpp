@@ -1,13 +1,22 @@
+#include <windows.h>
+#include "../application/win32/win32-application.hpp"
 #include "../tl-application.hpp"
 #include "../tl-library.hpp"
 
-#include "driving.hpp"
+#include "./driving.hpp"
 
 State gameState = State();
 
 tl::bitmap bitmap;
 
 tl::MemorySpace memory;
+
+static HINSTANCE _instance;
+
+HINSTANCE tl::instance_handle_get() {
+	return _instance;
+}
+
 
 int UpdateAndRender(const tl::RenderBuffer& renderBuffer)
 {
@@ -67,8 +76,8 @@ int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::Rende
 	return UpdateAndRender(renderBuffer);
 }
 
-int tl::main(char* commandLine)
-{
+int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode) {
+	_instance = instance;
 	const int targetFPS = 60;
 
 	tl::WindowSettings settings;
