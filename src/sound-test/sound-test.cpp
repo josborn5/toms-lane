@@ -1,14 +1,22 @@
 #include <math.h>
+#include <windows.h>
+#include "../application/win32/win32-application.hpp"
 #include "../tl-application.hpp"
 
 static uint64_t sampleCounter = 0;
 static const int sampleRate = 48000;
 static const int samplesPerCallback = 4096;
 
+static HINSTANCE _instance;
+static HWND _window = 0;
+
+HINSTANCE tl::instance_handle_get()
+{
+	return _instance;
+}
+
 int UpdateSound(const tl::SoundBuffer& soundBuffer)
 {
-	tl::console_interface_write("### hello from callback!!!\n");
-
 	double toneHz = 440.0;
 	double pi = 3.14159;
 	double max16BitValue = 32767;
@@ -27,9 +35,9 @@ int UpdateSound(const tl::SoundBuffer& soundBuffer)
 	return 0;
 }
 
-int tl::main(char* commandLine)
+int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
 {
-	tl::console_interface_open();
+	_instance = instance;
 
 	tl::sound_interface_initialize(
 		&UpdateSound,
