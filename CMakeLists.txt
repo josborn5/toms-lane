@@ -42,6 +42,9 @@ function(generate_platform_asset input_file output_file)
 endfunction()
 generate_platform_asset(font-mono.tlsf font-mono.cpp)
 generate_platform_asset(test.bmp test.cpp)
+generate_platform_asset(bitmap-4bit.bmp bitmap-4bit.cpp)
+generate_platform_asset(monochrome.bmp monochrome.cpp)
+generate_platform_asset(player-m.bmp player-m.cpp)
 
 add_library(
 	toms-lane-platform STATIC
@@ -55,6 +58,9 @@ add_library(
 add_executable(
 	toms-lane-platform-test
 	src/platform/assets/test.cpp
+	src/platform/assets/bitmap-4bit.cpp
+	src/platform/assets/monochrome.cpp
+	src/platform/assets/player-m.cpp
 	src/platform/toms-lane-platform.tests.cpp
 )
 target_link_libraries(

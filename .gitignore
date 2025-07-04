@@ -4,7 +4,7 @@ bin-*
 *.exe
 *.swp
 
-src/platform/assets
+src/platform/assets/*.cpp
 
 src/obby-1/brick.cpp
 src/obby-1/checkpoint.cpp

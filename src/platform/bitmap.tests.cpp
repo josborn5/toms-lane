@@ -97,11 +97,13 @@ static void RunBitmapWriteTest(const bitmap& bitmap)
 }
 
 static void initialize_4_bit_bitmap_test_run() {
-	tl::bitmap test_bitmap;
-	int fileReadResult = tl::file_interface_read("../src/platform/bitmap-4bit.bmp", bitmapReadMemory);
-	assert(fileReadResult == 0);
+	MemorySpace test_bitmap_memory_space;
+	test_bitmap_memory_space.content = &bitmap_4bit_bmp;
+	test_bitmap_memory_space.sizeInBytes = sizeof(unsigned char) * bitmap_4bit_bmp_len;
 
-	tl::bitmap_interface_initialize(test_bitmap, bitmapReadMemory);
+	tl::bitmap test_bitmap;
+
+	tl::bitmap_interface_initialize(test_bitmap, test_bitmap_memory_space);
 
 	assert_whole_number<uint16_t>(test_bitmap.file_header.fileType, 0x4d42);
 	assert_whole_number<int32_t>(test_bitmap.file_header.offsetToPixelDataInBytes, 118);
@@ -244,10 +246,11 @@ static void RunSmallBitmapTest()
 
 static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)
 {
-	int fileReadResult = tl::file_interface_read("../src/platform/monochrome.bmp", bitmapReadMemory);
-	assert(fileReadResult == 0);
+	MemorySpace test_bitmap_memory_space;
+	test_bitmap_memory_space.content = &monochrome_bmp;
+	test_bitmap_memory_space.sizeInBytes = sizeof(unsigned char) * monochrome_bmp_len;
 
-	tl::bitmap_interface_initialize(largeBitmap, bitmapReadMemory);
+	tl::bitmap_interface_initialize(largeBitmap, test_bitmap_memory_space);
 	assert(largeBitmap.file_header.fileType == 0x4d42);
 	assert(largeBitmap.file_header.fileSizeInBytes == 60062);
 	assert(largeBitmap.file_header.reserved1 == 0);
@@ -335,11 +338,13 @@ static void RunSmallMonochromeBitmapTestForFile(char* filepath, int side)
 
 static void RunSmallMonochromeBitmapTests()
 {
-	tl::bitmap monoBitmap;
-	int fileReadResult = tl::file_interface_read("../src/platform/player-m.bmp", bitmapReadMemory);
-	assert(fileReadResult == 0);
+	MemorySpace test_bitmap_memory_space;
+	test_bitmap_memory_space.content = &player_m_bmp;
+	test_bitmap_memory_space.sizeInBytes = player_m_bmp_len;
 
-	int bitmapLoadResult = tl::bitmap_interface_initialize(monoBitmap, bitmapReadMemory);
+	tl::bitmap monoBitmap;
+
+	int bitmapLoadResult = tl::bitmap_interface_initialize(monoBitmap, test_bitmap_memory_space);
 
 	assert(bitmapLoadResult == 0);
 
