@@ -313,13 +313,11 @@ static void AssertMonochromeBitmapSide(uint32_t* bottomLeftPixel, int length, in
 	}
 }
 
-static void RunSmallMonochromeBitmapTestForFile(char* filepath, int side)
+static void run_square_monochrome_bitmap_test(tl::MemorySpace& bitmap_memory_space, int side)
 {
 	tl::bitmap monoBitmap;
-	int fileReadResult = tl::file_interface_read(filepath, bitmapReadMemory);
-	assert(fileReadResult == 0);
 
-	int bitmapLoadResult = tl::bitmap_interface_initialize(monoBitmap, bitmapReadMemory);
+	int bitmapLoadResult = tl::bitmap_interface_initialize(monoBitmap, bitmap_memory_space);
 
 	assert(bitmapLoadResult == 0);
 	assert(monoBitmap.file_header.offsetToPixelDataInBytes == 62);
@@ -363,12 +361,30 @@ static void RunSmallMonochromeBitmapTests()
 
 	RunBitmapWriteTest(monoBitmap, test_bitmap_memory_space);
 
-	RunSmallMonochromeBitmapTestForFile("../src/platform/9x9-1bit.bmp", 9);
-	RunSmallMonochromeBitmapTestForFile("../src/platform/8x8-1bit.bmp", 8);
-	RunSmallMonochromeBitmapTestForFile("../src/platform/7x7-1bit.bmp", 7);
-	RunSmallMonochromeBitmapTestForFile("../src/platform/6x6-1bit.bmp", 6);
-	RunSmallMonochromeBitmapTestForFile("../src/platform/5x5-1bit.bmp", 5);
-	RunSmallMonochromeBitmapTestForFile("../src/platform/4x4-1bit.bmp", 4);
+	tl::MemorySpace bitmap_memory_space;
+	bitmap_memory_space.content = &__9x9_1bit_bmp;
+	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __9x9_1bit_bmp_len;
+	run_square_monochrome_bitmap_test(bitmap_memory_space, 9);
+
+	bitmap_memory_space.content = &__8x8_1bit_bmp;
+	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __8x8_1bit_bmp_len;
+	run_square_monochrome_bitmap_test(bitmap_memory_space, 8);
+
+	bitmap_memory_space.content = &__7x7_1bit_bmp;
+	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __7x7_1bit_bmp_len;
+	run_square_monochrome_bitmap_test(bitmap_memory_space, 7);
+
+	bitmap_memory_space.content = &__6x6_1bit_bmp;
+	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __6x6_1bit_bmp_len;
+	run_square_monochrome_bitmap_test(bitmap_memory_space, 6);
+
+	bitmap_memory_space.content = &__5x5_1bit_bmp;
+	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __5x5_1bit_bmp_len;
+	run_square_monochrome_bitmap_test(bitmap_memory_space, 5);
+
+	bitmap_memory_space.content = &__4x4_1bit_bmp;
+	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __4x4_1bit_bmp_len;
+	run_square_monochrome_bitmap_test(bitmap_memory_space, 4);
 }
 
 static void RunLargeBitmapTest()

@@ -45,6 +45,12 @@ generate_platform_asset(test.bmp test.cpp)
 generate_platform_asset(bitmap-4bit.bmp bitmap-4bit.cpp)
 generate_platform_asset(monochrome.bmp monochrome.cpp)
 generate_platform_asset(player-m.bmp player-m.cpp)
+generate_platform_asset(9x9-1bit.bmp 9x9-1bit.cpp)
+generate_platform_asset(8x8-1bit.bmp 8x8-1bit.cpp)
+generate_platform_asset(7x7-1bit.bmp 7x7-1bit.cpp)
+generate_platform_asset(6x6-1bit.bmp 6x6-1bit.cpp)
+generate_platform_asset(5x5-1bit.bmp 5x5-1bit.cpp)
+generate_platform_asset(4x4-1bit.bmp 4x4-1bit.cpp)
 
 add_library(
 	toms-lane-platform STATIC
@@ -57,16 +63,21 @@ add_library(
 
 add_executable(
 	toms-lane-platform-test
+	src/platform/toms-lane-platform.tests.cpp
 	src/platform/assets/test.cpp
 	src/platform/assets/bitmap-4bit.cpp
 	src/platform/assets/monochrome.cpp
 	src/platform/assets/player-m.cpp
-	src/platform/toms-lane-platform.tests.cpp
+	src/platform/assets/9x9-1bit.cpp
+	src/platform/assets/8x8-1bit.cpp
+	src/platform/assets/7x7-1bit.cpp
+	src/platform/assets/6x6-1bit.cpp
+	src/platform/assets/5x5-1bit.cpp
+	src/platform/assets/4x4-1bit.cpp
 )
 target_link_libraries(
 	toms-lane-platform-test
 	toms-lane-platform
-	toms-lane-win32-application
 )
 
 
