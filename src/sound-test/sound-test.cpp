@@ -17,6 +17,8 @@ HINSTANCE tl::instance_handle_get()
 
 int UpdateSound(const tl::SoundBuffer& soundBuffer)
 {
+	tl::console_interface_write("### hello from callback!!!\n");
+
 	double toneHz = 440.0;
 	double pi = 3.14159;
 	double max16BitValue = 32767;
@@ -38,6 +40,8 @@ int UpdateSound(const tl::SoundBuffer& soundBuffer)
 int CALLBACK WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR commandLine, int showCode)
 {
 	_instance = instance;
+
+	tl::console_interface_open();
 
 	tl::sound_interface_initialize(
 		&UpdateSound,
