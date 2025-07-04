@@ -44,10 +44,11 @@ static void InitializeMemory()
 
 static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 {
-	int fileReadResult = tl::file_interface_read("../src/platform/test.bmp", bitmapReadMemory);
-	assert(fileReadResult == 0);
+	MemorySpace test_bitmap_memory_space;
+	test_bitmap_memory_space.content = &test_bmp;
+	test_bitmap_memory_space.sizeInBytes = sizeof(unsigned char) * test_bmp_len;
 
-	tl::bitmap_interface_initialize(testBitmap, bitmapReadMemory);
+	tl::bitmap_interface_initialize(testBitmap, test_bitmap_memory_space);
 
 	assert(testBitmap.file_header.fileType == 0x4d42);
 	assert(testBitmap.file_header.fileSizeInBytes == smallBitmapFileSizeInBytes );

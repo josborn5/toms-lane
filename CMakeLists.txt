@@ -32,12 +32,12 @@ target_link_libraries(
 
 
 function(generate_platform_asset input_file output_file)
-	file(REMOVE "${CMAKE_SOURCE_DIR}/src/platform/${output_file}")
+	file(REMOVE "${CMAKE_SOURCE_DIR}/src/platform/assets/${output_file}")
 	add_custom_command(
-		OUTPUT "${CMAKE_SOURCE_DIR}/src/platform/${output_file}"
+		OUTPUT "${CMAKE_SOURCE_DIR}/src/platform/assets/${output_file}"
 		COMMAND xxd -i "${input_file}" > "${output_file}"
-		DEPENDS "${CMAKE_SOURCE_DIR}/src/platform/${input_file}"
-		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/platform"
+		DEPENDS "${CMAKE_SOURCE_DIR}/src/platform/assets/${input_file}"
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/platform/assets"
 	)
 endfunction()
 generate_platform_asset(font-mono.tlsf font-mono.cpp)
@@ -46,7 +46,7 @@ generate_platform_asset(test.bmp test.cpp)
 add_library(
 	toms-lane-platform STATIC
 	src/platform/toms-lane-platform.cpp
-	src/platform/font-mono.cpp
+	src/platform/assets/font-mono.cpp
 	src/platform/font.cpp
 	src/platform/transform.cpp
 )
@@ -54,6 +54,7 @@ add_library(
 
 add_executable(
 	toms-lane-platform-test
+	src/platform/assets/test.cpp
 	src/platform/toms-lane-platform.tests.cpp
 )
 target_link_libraries(
