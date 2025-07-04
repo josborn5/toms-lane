@@ -28,7 +28,7 @@ static void InitializeMemory()
 	bitmapReadMemory.sizeInBytes = 1024 * 60;
 	bitmapReadMemory.content = malloc(bitmapReadMemory.sizeInBytes);
 	bitmapWriteMemory.sizeInBytes = 1024 * 60;
-	bitmapReadMemory.content = malloc(bitmapWriteMemory.sizeInBytes);
+	bitmapWriteMemory.content = malloc(bitmapWriteMemory.sizeInBytes);
 
 	renderBuffer.width = 12;
 	renderBuffer.height = 8;
