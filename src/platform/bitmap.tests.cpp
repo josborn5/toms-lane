@@ -42,9 +42,8 @@ static void InitializeMemory()
 	renderBuffer.depth = (float*)renderBufferDepth.content;
 }
 
-static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
+static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap, tl::MemorySpace& test_bitmap_memory_space)
 {
-	MemorySpace test_bitmap_memory_space;
 	test_bitmap_memory_space.content = &test_bmp;
 	test_bitmap_memory_space.sizeInBytes = sizeof(unsigned char) * test_bmp_len;
 
@@ -74,12 +73,12 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap)
 	assert(testBitmap.color_table.size == 0);
 }
 
-static void RunBitmapWriteTest(const bitmap& bitmap)
+static void RunBitmapWriteTest(const bitmap& bitmap, const MemorySpace& reference_memory)
 {
 	int writeResult = tl::bitmap_interface_write(bitmap, bitmapWriteMemory);
 	assert(writeResult == tl::bitmap_write_success);
 
-	uint8_t* readMemory = (uint8_t*)bitmapReadMemory.content;
+	uint8_t* readMemory = (uint8_t*)reference_memory.content;
 	uint8_t* writeMemory = (uint8_t*)bitmapWriteMemory.content;
 
 	const int fileHeaderSizeInBytes = 14;
@@ -140,7 +139,7 @@ static void initialize_4_bit_bitmap_test_run() {
 	assert_whole_number<uint32_t>(test_bitmap.color_table.content[10], 0x00FF00);
 	assert_whole_number<uint32_t>(test_bitmap.color_table.content[12], 0x0000FF);
 
-	RunBitmapWriteTest(test_bitmap);
+	RunBitmapWriteTest(test_bitmap, test_bitmap_memory_space);
 }
 
 static void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
@@ -237,9 +236,10 @@ static void RunBitmapReadFromBadMemoryTests(bitmap& bitmap)
 static void RunSmallBitmapTest()
 {
 	tl::bitmap smallBitmap;
-	RunInitializeSmallBitmapTest(smallBitmap);
+	MemorySpace small_bitmap_memory_space;
+	RunInitializeSmallBitmapTest(smallBitmap, small_bitmap_memory_space);
 	RunSmallBitmapRenderTest(smallBitmap);
-	RunBitmapWriteTest(smallBitmap);
+	RunBitmapWriteTest(smallBitmap, small_bitmap_memory_space);
 	RunBitmapWriteToSmallMemoryTest(smallBitmap);
 	RunBitmapReadFromBadMemoryTests(smallBitmap);
 }
@@ -361,7 +361,7 @@ static void RunSmallMonochromeBitmapTests()
 	assert(*fourthRowLeft == white);
 	assert(*(fourthRowLeft + 1) == white);
 
-	RunBitmapWriteTest(monoBitmap);
+	RunBitmapWriteTest(monoBitmap, test_bitmap_memory_space);
 
 	RunSmallMonochromeBitmapTestForFile("../src/platform/9x9-1bit.bmp", 9);
 	RunSmallMonochromeBitmapTestForFile("../src/platform/8x8-1bit.bmp", 8);
@@ -382,8 +382,9 @@ static void RunBitmapReinitializeTest()
 {
 	// TODO: maybe this is a sign of a bad interface... just return a new bitmap value and deal with the copy overhead.
 	tl::bitmap bitmap;
+	tl::MemorySpace bitmap_memory_space;
 	RunInitializeLargeBitmapTest(bitmap);
-	RunInitializeSmallBitmapTest(bitmap);
+	RunInitializeSmallBitmapTest(bitmap, bitmap_memory_space);
 }
 
 void RunBitmapTests()
