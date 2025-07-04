@@ -31,16 +31,17 @@ target_link_libraries(
 )
 
 
-function(generate_platform_asset name)
-	file(REMOVE "${CMAKE_SOURCE_DIR}/src/platform/${name}.cpp")
+function(generate_platform_asset input_file output_file)
+	file(REMOVE "${CMAKE_SOURCE_DIR}/src/platform/${output_file}")
 	add_custom_command(
-		OUTPUT "${CMAKE_SOURCE_DIR}/src/platform/${name}.cpp"
-		COMMAND xxd -i "${name}.tlsf" > "${name}.cpp"
-		DEPENDS "${CMAKE_SOURCE_DIR}/src/platform/${name}.tlsf"
+		OUTPUT "${CMAKE_SOURCE_DIR}/src/platform/${output_file}"
+		COMMAND xxd -i "${input_file}" > "${output_file}"
+		DEPENDS "${CMAKE_SOURCE_DIR}/src/platform/${input_file}"
 		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/platform"
 	)
 endfunction()
-generate_platform_asset(font-mono)
+generate_platform_asset(font-mono.tlsf font-mono.cpp)
+generate_platform_asset(test.bmp test.cpp)
 
 add_library(
 	toms-lane-platform STATIC
