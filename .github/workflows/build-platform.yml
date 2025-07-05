@@ -7,7 +7,23 @@ jobs:
     - uses: actions/checkout@v4
 
     - shell: bash
+      name: compile & link
       run: |
         cmake -S . -B ./cmake-build
         cmake --build ./cmake-build
+
+    - shell: bash
+      name: test win32
+      run: |
+        ./cmake-build/toms-lane-win32-application-tests.exe
+
+    - shell: bash
+      name: test platform
+      run: |
+        ./cmake-build/toms-lane-platform-test.exe
+
+    - shell: bash
+      name: test sprite-editor
+      run: |
+        ./cmake-build/sprite-editor-tests.exe
 
