@@ -9,21 +9,20 @@ jobs:
     - shell: bash
       name: compile & link
       run: |
-        cmake -S . -B ./cmake-build
-        cmake --build ./cmake-build
+        .compile.bat
 
     - shell: bash
       name: test win32
       run: |
-        ./cmake-build/toms-lane-win32-application-tests.exe
+        ./cmake-build/Debug/toms-lane-win32-application-tests.exe
 
     - shell: bash
       name: test platform
       run: |
-        ./cmake-build/toms-lane-platform-test.exe
+        ./cmake-build/Debug/toms-lane-platform-test.exe
 
     - shell: bash
       name: test sprite-editor
       run: |
-        ./cmake-build/sprite-editor-tests.exe
+        ./cmake-build/Debug/sprite-editor-tests.exe
 
