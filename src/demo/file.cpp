@@ -18,16 +18,15 @@ namespace tl
 
 		array<Vec4<T>> heapVertices = array<Vec4<T>>(transient);
 
-		while (!objFile.eof())
+		std::string line;
+		while (std::getline(objFile, line))
 		{
 			char junk;
-			std::string line;
-			std::getline(objFile, line);
 
 			std::strstream stringStream;
 			stringStream << line;
 
-			if (line[0] == 'v')
+			if (line[0] == 'v' && line[1] == ' ')
 			{
 				tl::Vec4<T> vertex;
 				// expect line to have syntax 'v x y z' where x, y & z are the ordinals of the point position
@@ -36,7 +35,7 @@ namespace tl
 				heapVertices.append(vertex);
 			}
 
-			if (line[0] == 'f')
+			if (line[0] == 'f' && line[1] == ' ')
 			{
 				int points[3];
 				stringStream >> junk >> points[0] >> points[1] >> points[2];
