@@ -6,8 +6,6 @@ bin-*
 
 src/platform/assets/*.cpp
 src/obby-1/assets/*.cpp
-
-src/obby-2/background.cpp
-src/obby-2/obby2-player.cpp
+src/obby-2/assets/*.cpp
 
 cmake-build/
