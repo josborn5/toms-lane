@@ -184,7 +184,7 @@ add_library(
 	obby-2
 	src/obby-2/obby-2.cpp
 	src/obby-2/assets/background.cpp
-	src/obby-2/asests/obby2-player.cpp
+	src/obby-2/assets/obby2-player.cpp
 )
 add_executable(
 	obby-2-win32 WIN32
