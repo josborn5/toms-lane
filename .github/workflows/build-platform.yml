@@ -9,7 +9,7 @@ jobs:
     - shell: bash
       name: compile & link
       run: |
-        .compile.bat
+        ./compile.bat
 
     - shell: bash
       name: test win32
