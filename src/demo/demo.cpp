@@ -165,9 +165,7 @@ void TransformAndRenderMesh(
 			tl::Vec3<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
 
 			// Super rough, take the depth as the average z value
-			// For whatever reason, the z values are inverted for the teapot. i.e. closer triangles have a lower Z value.
-			// As an ultra-hack I'm doing 10 minus the z-value to invert them.
-			T z = (T)10 - ((draw.p[0].z + draw.p[1].z + draw.p[2].z) / (T)3);
+			T z = (draw.p[0].z + draw.p[1].z + draw.p[2].z) / (T)3;
 			FillTriangleInPixels(renderBuffer, draw.color, p0Int, p1Int, p2Int, z);
 		}
 	}
