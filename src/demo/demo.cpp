@@ -4,11 +4,10 @@
 #include "./file.cpp"
 
 template<typename T>
-void TransformAndRenderMesh(
+static void TransformAndRenderMesh(
 	const tl::RenderBuffer &renderBuffer,
 	const tl::array<tl::Triangle4d<T>> &mesh,
 	const tl::Camera<T> &camera,
-	const tl::Matrix4x4<T>& transformMatrix,
 	const tl::Matrix4x4<T>& projectionMatrix,
 	const tl::MemorySpace& transient
 ) {
@@ -33,24 +32,19 @@ void TransformAndRenderMesh(
 	for (int h = 0; h < mesh.length(); h += 1)
 	{
 		tl::Triangle4d<T> tri = mesh.get(h);
-		tl::Triangle4d<T> transformed;
 		tl::Triangle4d<T> viewed;
 		tl::Triangle4d<T> projected;
 
-		// Transform the triangle in the mesh
-		MultiplyVectorWithMatrix(tri.p[0], transformed.p[0], transformMatrix);
-		MultiplyVectorWithMatrix(tri.p[1], transformed.p[1], transformMatrix);
-		MultiplyVectorWithMatrix(tri.p[2], transformed.p[2], transformMatrix);
-
 		// Work out the normal of the triangle
-		tl::Vec4<T> line1 = SubtractVectors(transformed.p[1], transformed.p[0]);
-		tl::Vec4<T> line2 = SubtractVectors(transformed.p[2], transformed.p[0]);
+		tl::Vec4<T> line1 = SubtractVectors(tri.p[1], tri.p[0]);
+		tl::Vec4<T> line2 = SubtractVectors(tri.p[2], tri.p[0]);
 		tl::Vec4<T> normal = UnitVector(CrossProduct(line1, line2));
 
-		tl::Vec4<T> fromCameraToTriangle = SubtractVectors(transformed.p[0], camera.position);
+		tl::Vec4<T> fromCameraToTriangle = SubtractVectors(tri.p[0], camera.position);
 		T dot = DotProduct(normal, fromCameraToTriangle);
 
-		if (dot >= (T)0)
+
+		if (dot <= (T)0)
 		{
 			tl::Vec4<T> lightDirection = { (T)0, (T)0, (T)1 };
 			tl::Vec4<T> normalizedLightDirection = UnitVector(lightDirection);
@@ -59,9 +53,9 @@ void TransformAndRenderMesh(
 			uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
 
 			// Convert the triangle position from world space to view space
-			MultiplyVectorWithMatrix(transformed.p[0], viewed.p[0], viewMatrix);
-			MultiplyVectorWithMatrix(transformed.p[1], viewed.p[1], viewMatrix);
-			MultiplyVectorWithMatrix(transformed.p[2], viewed.p[2], viewMatrix);
+			MultiplyVectorWithMatrix(tri.p[0], viewed.p[0], viewMatrix);
+			MultiplyVectorWithMatrix(tri.p[1], viewed.p[1], viewMatrix);
+			MultiplyVectorWithMatrix(tri.p[2], viewed.p[2], viewMatrix);
 
 			// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
 			tl::Triangle4d<T> clipped[2];
@@ -449,9 +443,6 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	theta += dt;
 
-	tl::Matrix4x4<float> worldMatrix;
-	worldMatrix = tl::MakeIdentityMatrix<float>();
-
 	// Final bounds check on the camera
 	camera.position.x = Clamp(min.x, camera.position.x, max.x);
 	camera.position.y = Clamp(min.y, camera.position.y, max.y);
@@ -459,7 +450,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	tl::MemorySpace transientMemory = gameMemory.transient;
 
-	TransformAndRenderMesh(renderBuffer, meshArray, camera, worldMatrix, projectionMatrix, transientMemory);
+	TransformAndRenderMesh(renderBuffer, meshArray, camera, projectionMatrix, transientMemory);
 
 
 	// Show info about z-position
