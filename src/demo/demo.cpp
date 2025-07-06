@@ -3,6 +3,175 @@
 #include "../tl-library.hpp"
 #include "./file.cpp"
 
+template<typename T>
+void TransformAndRenderMesh(
+	const tl::RenderBuffer &renderBuffer,
+	const tl::array<tl::Triangle4d<T>> &mesh,
+	const tl::Camera<T> &camera,
+	const tl::Matrix4x4<T>& transformMatrix,
+	const tl::Matrix4x4<T>& projectionMatrix,
+	const tl::MemorySpace& transient
+) {
+	const int RED = 0;
+	const int GREEN = 255;
+	const int BLUE = 0;
+
+	// Camera matrix
+	tl::Vec4<T> target = AddVectors(camera.position, camera.direction);
+	tl::Matrix4x4<T> cameraMatrix = PointAt(camera.position, target, camera.up);
+
+	// View matrix
+	tl::Matrix4x4<T> viewMatrix = LookAt(cameraMatrix);
+
+	tl::array<tl::Triangle4d<T>> trianglesToDrawArray = tl::array<tl::Triangle4d<T>>(transient);
+
+	tl::Plane<T> bottomOfScreen = { (T)0, (T)0, (T)0,						(T)0, (T)1, (T)0 };
+	tl::Plane<T> topOfScreen = { (T)0, (T)(renderBuffer.height - 1), (T)0,	(T)0, (T)-1, (T)0 };
+	tl::Plane<T> leftOfScreen = { (T)0, (T)0, (T)0,							(T)1, (T)0, (T)0 };
+	tl::Plane<T> rightOfScreen = { (T)(renderBuffer.width - 1), (T)0, (T)0,	(T)-1, (T)0, (T)0 };
+
+	for (int h = 0; h < mesh.length(); h += 1)
+	{
+		tl::Triangle4d<T> tri = mesh.get(h);
+		tl::Triangle4d<T> transformed;
+		tl::Triangle4d<T> viewed;
+		tl::Triangle4d<T> projected;
+
+		// Transform the triangle in the mesh
+		MultiplyVectorWithMatrix(tri.p[0], transformed.p[0], transformMatrix);
+		MultiplyVectorWithMatrix(tri.p[1], transformed.p[1], transformMatrix);
+		MultiplyVectorWithMatrix(tri.p[2], transformed.p[2], transformMatrix);
+
+		// Work out the normal of the triangle
+		tl::Vec4<T> line1 = SubtractVectors(transformed.p[1], transformed.p[0]);
+		tl::Vec4<T> line2 = SubtractVectors(transformed.p[2], transformed.p[0]);
+		tl::Vec4<T> normal = UnitVector(CrossProduct(line1, line2));
+
+		tl::Vec4<T> fromCameraToTriangle = SubtractVectors(transformed.p[0], camera.position);
+		T dot = DotProduct(normal, fromCameraToTriangle);
+
+		if (dot >= (T)0)
+		{
+			tl::Vec4<T> lightDirection = { (T)0, (T)0, (T)1 };
+			tl::Vec4<T> normalizedLightDirection = UnitVector(lightDirection);
+			T shade = DotProduct(normal, normalizedLightDirection);
+
+			uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
+
+			// Convert the triangle position from world space to view space
+			MultiplyVectorWithMatrix(transformed.p[0], viewed.p[0], viewMatrix);
+			MultiplyVectorWithMatrix(transformed.p[1], viewed.p[1], viewMatrix);
+			MultiplyVectorWithMatrix(transformed.p[2], viewed.p[2], viewMatrix);
+
+			// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
+			tl::Triangle4d<T> clipped[2];
+			tl::Plane<T> inFrontOfScreen = { (T)0, (T)0, (T)0.1,	 (T)0, (T)0, (T)1 };
+			int clippedTriangleCount = ClipTriangleAgainstPlane(inFrontOfScreen, viewed, clipped[0], clipped[1]);
+
+			for (int i = 0; i < clippedTriangleCount; i += 1)
+			{
+				// Project each triangle in 3D space onto the 2D space triangle to render
+				Project3DPointTo2D(clipped[i].p[0], projected.p[0], projectionMatrix);
+				Project3DPointTo2D(clipped[i].p[1], projected.p[1], projectionMatrix);
+				Project3DPointTo2D(clipped[i].p[2], projected.p[2], projectionMatrix);
+
+				// Scale to view
+				const float sf = 500.0f;
+				tl::Triangle4d<T> triToRender = projected;
+				triToRender.p[0].x *= sf;
+				triToRender.p[0].y *= sf;
+				triToRender.p[1].x *= sf;
+				triToRender.p[1].y *= sf;
+				triToRender.p[2].x *= sf;
+				triToRender.p[2].y *= sf;
+
+				const T translateX = (T)0.5 * (T)renderBuffer.width;
+				const T translateY = (T)0.5 * (T)renderBuffer.height;
+				triToRender.p[0].x += translateX; triToRender.p[0].y += translateY;
+				triToRender.p[1].x += translateX; triToRender.p[1].y += translateY;
+				triToRender.p[2].x += translateX; triToRender.p[2].y += translateY;
+
+				triToRender.color = triangleColor;
+
+				trianglesToDrawArray.append(triToRender);
+			}
+		}
+	}
+
+	tl::MemorySpace remainingTransient = trianglesToDrawArray.sizeToCurrentLength();
+
+	for (int n = 0; n < trianglesToDrawArray.length(); n += 1)
+	{
+		tl::Triangle4d<T> triToRender = trianglesToDrawArray.get(n);
+		tl::Triangle4d<T> clipped[2];
+
+		tl::queue<tl::Triangle4d<T>> triangleQueue = tl::queue<tl::Triangle4d<T>>(remainingTransient);
+		if (triangleQueue.enqueue(triToRender) != 0) throw; // TODO: don't throw, handle gracefully
+
+		int newTriangles = 1;
+
+		// Clip against each screen edge
+		for (int edge = 0; edge < 4; edge += 1)
+		{
+			int trianglesToAdd = 0;
+			while (newTriangles > 0)
+			{
+				tl::Triangle4d<T> test = triangleQueue.dequeue();
+				newTriangles -= 1;
+
+				switch (edge)
+				{
+					case 0:
+					{
+						trianglesToAdd = ClipTriangleAgainstPlane(bottomOfScreen, test, clipped[0], clipped[1]);
+						break;
+					}
+					case 1:
+					{
+						trianglesToAdd = ClipTriangleAgainstPlane(topOfScreen, test, clipped[0], clipped[1]);
+						break;
+					}
+					case 2:
+					{
+						trianglesToAdd = ClipTriangleAgainstPlane(leftOfScreen, test, clipped[0], clipped[1]);
+						break;
+					}
+					case 3:
+					{
+						trianglesToAdd = ClipTriangleAgainstPlane(rightOfScreen, test, clipped[0], clipped[1]);
+						break;
+					}
+				}
+
+				for (int i = 0; i < trianglesToAdd; i += 1)
+				{
+					triangleQueue.enqueue(clipped[i]);
+				}
+			}
+
+			newTriangles = triangleQueue.length();
+		}
+
+		for (int i = 0; i < triangleQueue.length(); i += 1)
+		{
+			tl::Triangle4d<T> draw = triangleQueue.content[i];
+			// Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
+			// Vec2<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
+			// Vec2<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
+			// DrawTriangleInPixels(renderBuffer, 0xFFFFFF, p0Int, p1Int, p2Int);
+
+			tl::Vec3<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
+			tl::Vec3<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
+			tl::Vec3<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
+
+			// Super rough, take the depth as the average z value
+			// For whatever reason, the z values are inverted for the teapot. i.e. closer triangles have a lower Z value.
+			// As an ultra-hack I'm doing 10 minus the z-value to invert them.
+			T z = (T)10 - ((draw.p[0].z + draw.p[1].z + draw.p[2].z) / (T)3);
+			FillTriangleInPixels(renderBuffer, draw.color, p0Int, p1Int, p2Int, z);
+		}
+	}
+}
 tl::Camera<float> camera;
 tl::array<tl::Triangle4d<float>> meshArray = tl::array<tl::Triangle4d<float>>();
 tl::Matrix4x4<float> projectionMatrix;
@@ -292,7 +461,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	tl::MemorySpace transientMemory = gameMemory.transient;
 
-	tl::TransformAndRenderMesh(renderBuffer, meshArray, camera, worldMatrix, projectionMatrix, transientMemory);
+	TransformAndRenderMesh(renderBuffer, meshArray, camera, worldMatrix, projectionMatrix, transientMemory);
 
 
 	// Show info about z-position
