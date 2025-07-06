@@ -3,6 +3,9 @@
 #include "../tl-library.hpp"
 #include "./file.cpp"
 
+
+static bool wireframe = false;
+
 template<typename T>
 static void TransformAndRenderMesh(
 	const tl::RenderBuffer &renderBuffer,
@@ -149,41 +152,45 @@ static void TransformAndRenderMesh(
 		for (int i = 0; i < triangleQueue.length(); i += 1)
 		{
 			tl::Triangle4d<T> draw = triangleQueue.content[i];
-			// Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
-			// Vec2<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
-			// Vec2<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
-			// DrawTriangleInPixels(renderBuffer, 0xFFFFFF, p0Int, p1Int, p2Int);
+			if (wireframe) {
+				tl::Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
+				tl::Vec2<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
+				tl::Vec2<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
+				DrawTriangleInPixels(renderBuffer, 0xFFFFFF, p0Int, p1Int, p2Int);
 
-			tl::Vec3<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
-			tl::Vec3<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
-			tl::Vec3<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
+			} else {
+				tl::Vec3<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
+				tl::Vec3<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
+				tl::Vec3<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
 
-			// Super rough, take the depth as the average z value
-			T z = (draw.p[0].z + draw.p[1].z + draw.p[2].z) / (T)3;
-			FillTriangleInPixels(renderBuffer, draw.color, p0Int, p1Int, p2Int, z);
+				// Super rough, take the depth as the average z value
+				T z = (draw.p[0].z + draw.p[1].z + draw.p[2].z) / (T)3;
+				FillTriangleInPixels(renderBuffer, draw.color, p0Int, p1Int, p2Int, z);
+			}
 		}
 	}
 }
-tl::Camera<float> camera;
-tl::array<tl::Triangle4d<float>> meshArray = tl::array<tl::Triangle4d<float>>();
-tl::Matrix4x4<float> projectionMatrix;
+static tl::Camera<float> camera;
+static tl::array<tl::Triangle4d<float>> meshArray = tl::array<tl::Triangle4d<float>>();
+static tl::Matrix4x4<float> projectionMatrix;
 
-float theta = 0.0f;
-float cameraYaw = 0.0f;
-float positionIncrement = 0.1f;
+static float theta = 0.0f;
+static float cameraYaw = 0.0f;
+static float positionIncrement = 0.1f;
 
-tl::Vec3<float> max = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
-tl::Vec3<float> min = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
-tl::Vec3<float> startPosition = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
-tl::Vec3<float> startDirection = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
-tl::Vec3<float> meshCenter = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+static tl::Vec3<float> max = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+static tl::Vec3<float> min = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+static tl::Vec3<float> startPosition = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+static tl::Vec3<float> startDirection = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+static tl::Vec3<float> meshCenter = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 
-tl::Rect<float> map;
-tl::Matrix2x3<float> mapProjectionMatrix;
+static tl::Rect<float> map;
+static tl::Matrix2x3<float> mapProjectionMatrix;
 
-tl::GameMemory appMemory;
+static tl::GameMemory appMemory;
 
-bool isStarted = false;
+static bool isStarted = false;
+
 
 tl::Matrix2x3<float> GenerateProjectionMatrix(const tl::Rect<float> &from, const tl::Rect<float> &to)
 {
@@ -384,6 +391,11 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	if (input.buttons[tl::KEY_R].isDown)
 	{
 		isStarted = false;
+	}
+
+	if (input.buttons[tl::KEY_F].isDown)
+	{
+		wireframe = !wireframe;
 	}
 
 	float yawIncrement = 0.05f;
