@@ -5,6 +5,7 @@
 
 
 static bool wireframe = false;
+static bool is_teapot = true;
 
 template<typename T>
 static void TransformAndRenderMesh(
@@ -172,6 +173,7 @@ static void TransformAndRenderMesh(
 }
 static tl::Camera<float> camera;
 static tl::array<tl::Triangle4d<float>> meshArray = tl::array<tl::Triangle4d<float>>();
+
 static tl::Matrix4x4<float> projectionMatrix;
 
 static float theta = 0.0f;
@@ -230,45 +232,7 @@ static T Clamp(T min, T value, T max)
 }
 template float Clamp(float min, float value, float max);
 
-static int Initialize(const tl::GameMemory& gameMemory)
-{
-	tl::MemorySpace transientMemory = gameMemory.transient;
-	tl::MemorySpace permanentMemory = gameMemory.permanent;
-	tl::font_interface_initialize();
-
-	meshArray.initialize(permanentMemory);
-
-	// EXE must be run as admin in order to have read permission for the file. need to figure out how to fix this.
-	if (!tl::ReadObjFileToArray4("teapot.obj", meshArray, transientMemory))
-	{
-		// Fall back to cube if file cannot be read
-		// Using a clockwise winding convention
-		// SOUTH
-		meshArray.append({ 0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f });
-		meshArray.append({ 0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f });
-
-		// EAST
-		meshArray.append({ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f });
-		meshArray.append({ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f, 1.0f });
-
-		// NORTH
-		meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f });
-		meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f });
-
-		// WEST
-		meshArray.append({ 0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f });
-		meshArray.append({ 0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f });
-
-		// TOP
-		meshArray.append({ 0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f });
-		meshArray.append({ 0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f });
-
-		// BOTTOM
-		meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f });
-		meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f });
-		positionIncrement = 0.1f;
-	}
-
+static void reset_world_to_mesh() {
 	for (int i = 0; i < meshArray.length(); i += 1)
 	{
 		tl::Triangle4d<float> tri = meshArray.get(i);
@@ -334,6 +298,54 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	topDownWorld.position = tl::Vec2<float> { meshCenter.z, meshCenter.y };
 	topDownWorld.halfSize = tl::Vec2<float> { (0.5f * (max.z - min.z)), (0.5f * (max.y - min.y)) };
 	mapProjectionMatrix = GenerateProjectionMatrix(topDownWorld, map);
+}
+
+static void reset_mesh_to_teapot() {
+	meshArray.clear();
+	tl::MemorySpace temp = appMemory.transient; // make a copy of the transient memory so it can be modified
+	tl::ReadObjFileToArray4("teapot.obj", meshArray, temp);
+
+	reset_world_to_mesh();
+}
+
+static void reset_mesh_to_cube() {
+	meshArray.clear();
+	// Using a clockwise winding convention
+	// SOUTH
+	meshArray.append({ 0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f });
+	meshArray.append({ 0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f });
+
+	// EAST
+	meshArray.append({ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f });
+	meshArray.append({ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f, 1.0f });
+
+	// NORTH
+	meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f });
+	meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f });
+
+	// WEST
+	meshArray.append({ 0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f });
+	meshArray.append({ 0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f });
+
+	// TOP
+	meshArray.append({ 0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f });
+	meshArray.append({ 0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f });
+
+	// BOTTOM
+	meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f });
+	meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f });
+
+	reset_world_to_mesh();
+}
+
+static int Initialize(const tl::GameMemory& gameMemory)
+{
+	tl::MemorySpace transientMemory = gameMemory.transient;
+	tl::font_interface_initialize();
+
+	meshArray.initialize(gameMemory.permanent);
+
+	reset_mesh_to_teapot();
 
 	return 0;
 }
@@ -380,7 +392,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 			0x999999
 		);
 
-		if (input.buttons[tl::KEY_S].isDown)
+		if (input.buttons[tl::KEY_S].keyUp)
 		{
 			isStarted = true;
 			ResetCamera();
@@ -388,14 +400,25 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		return 0;
 	}
 
-	if (input.buttons[tl::KEY_R].isDown)
+	if (input.buttons[tl::KEY_R].keyUp)
 	{
 		isStarted = false;
+		return 0;
 	}
 
-	if (input.buttons[tl::KEY_F].isDown)
-	{
+	if (input.buttons[tl::KEY_F].keyUp) {
 		wireframe = !wireframe;
+	}
+
+	if (input.buttons[tl::KEY_G].keyUp) {
+		is_teapot = !is_teapot;
+		if (is_teapot) {
+			reset_mesh_to_teapot();
+		}
+		else {
+			reset_mesh_to_cube();
+		}
+		return 0;
 	}
 
 	float yawIncrement = 0.05f;
@@ -448,7 +471,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		camera.position.y += positionIncrement;
 	}
 
-	if (input.buttons[tl::KEY_C].isDown)
+	if (input.buttons[tl::KEY_C].keyUp)
 	{
 		ResetCamera();
 	}
