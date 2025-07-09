@@ -6,6 +6,7 @@
 
 static bool wireframe = false;
 static bool is_teapot = true;
+static float field_of_view_deg = 0.0f;
 
 template<typename T>
 static void TransformAndRenderMesh(
@@ -232,6 +233,10 @@ static T Clamp(T min, T value, T max)
 }
 template float Clamp(float min, float value, float max);
 
+static void set_projection_matrix() {
+	projectionMatrix = tl::MakeProjectionMatrix(field_of_view_deg, 1.0f, 0.1f, 1000.0f);
+}
+
 static void reset_world_to_mesh() {
 	for (int i = 0; i < meshArray.length(); i += 1)
 	{
@@ -282,8 +287,7 @@ static void reset_world_to_mesh() {
 	max.x += 2.0f * depth.x;
 	min.x -= 2.0f * depth.x;
 
-	// Initialize the projection matrix
-	projectionMatrix = tl::MakeProjectionMatrix(90.0f, 1.0f, 0.1f, 1000.0f);
+	set_projection_matrix();
 
 	// Initialize the map
 	map.position = { 1100.0f, 75.0f };
@@ -356,6 +360,8 @@ static void ResetCamera()
 	camera.position = { startPosition.x, startPosition.y, startPosition.z };
 	camera.direction = { startDirection.x, startDirection.y, startDirection.z };
 	cameraYaw = 0.0f;
+	field_of_view_deg = 90.0f;
+	set_projection_matrix();
 }
 
 static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
@@ -469,6 +475,15 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	else if (input.buttons[tl::KEY_UP].isDown)
 	{
 		camera.position.y += positionIncrement;
+	}
+
+	else if (input.buttons[tl::KEY_J].isDown) {
+		field_of_view_deg += 0.25f;
+		set_projection_matrix();
+	}
+	else if (input.buttons[tl::KEY_K].isDown) {
+		field_of_view_deg -= 0.25f;
+		set_projection_matrix();
 	}
 
 	if (input.buttons[tl::KEY_C].keyUp)
