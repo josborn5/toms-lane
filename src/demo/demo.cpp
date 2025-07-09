@@ -7,6 +7,7 @@
 static bool wireframe = false;
 static bool is_teapot = true;
 static float field_of_view_deg = 0.0f;
+static float near_plane = 0.0f;
 
 template<typename T>
 static void TransformAndRenderMesh(
@@ -234,7 +235,7 @@ static T Clamp(T min, T value, T max)
 template float Clamp(float min, float value, float max);
 
 static void set_projection_matrix() {
-	projectionMatrix = tl::MakeProjectionMatrix(field_of_view_deg, 1.0f, 0.1f, 1000.0f);
+	projectionMatrix = tl::MakeProjectionMatrix(field_of_view_deg, 1.0f, near_plane, 1000.0f);
 }
 
 static void reset_world_to_mesh() {
@@ -361,6 +362,7 @@ static void ResetCamera()
 	camera.direction = { startDirection.x, startDirection.y, startDirection.z };
 	cameraYaw = 0.0f;
 	field_of_view_deg = 90.0f;
+	near_plane = 0.1f;
 	set_projection_matrix();
 }
 
@@ -483,6 +485,15 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 	else if (input.buttons[tl::KEY_K].isDown) {
 		field_of_view_deg -= 0.25f;
+		set_projection_matrix();
+	}
+
+	else if (input.buttons[tl::KEY_V].isDown) {
+		near_plane += 0.1f;
+		set_projection_matrix();
+	}
+	else if (input.buttons[tl::KEY_B].isDown) {
+		near_plane -= 0.1f;
 		set_projection_matrix();
 	}
 
