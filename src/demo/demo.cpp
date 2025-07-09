@@ -521,13 +521,14 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	charFoot.position = { 100.0f, infoHeight };
 	charFoot.halfSize = { 4.0f, 0.4f * fontSize };
 
-	tl::font_interface_render_chars(renderBuffer, "MAX", charFoot, 0xAAAAAA);
+	tl::font_interface_render_chars(renderBuffer, "FOV", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)max.x, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)field_of_view_deg, charFoot, 0xAAAAAA);
+
 	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)max.y, charFoot, 0xAAAAAA);
+	tl::font_interface_render_chars(renderBuffer, "NEAR PLANE", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)max.z, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)(10.0f * near_plane), charFoot, 0xAAAAAA);
 
 	charFoot.position = { 200.0f, infoHeight };
 	tl::font_interface_render_chars(renderBuffer, "MIN", charFoot, 0xAAAAAA);
