@@ -168,7 +168,7 @@ static void TransformAndRenderMesh(
 
 				// Super rough, take the depth as the average z value
 				T z = (draw.p[0].z + draw.p[1].z + draw.p[2].z) / (T)3;
-				FillTriangleInPixels(renderBuffer, draw.color, p0Int, p1Int, p2Int, z);
+				FillTriangleInPixels(renderBuffer, draw.color, p0Int, p1Int, p2Int);
 			}
 		}
 	}

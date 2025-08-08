@@ -46,7 +46,7 @@ void Run4x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2
 	renderBuffer.pixels = &pixelArray[1];	// Use the second element in pixelArray so we can tell if the zero-th element ever gets accessed.
 	renderBuffer.depth = &depthArray[1];	// Use the second element in depthArray so we can tell if the zero-th element ever gets accessed.
 
-	tl::FillTriangleInPixels(renderBuffer, FILLED, p0, p1, p2, 1.0f);
+	tl::FillTriangleInPixels(renderBuffer, FILLED, p0, p1, p2);
 
 	assert(pixelArray[0] == EMPTY);	// Should NEVER get written to
 
@@ -87,7 +87,7 @@ void Run6x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2
 	renderBuffer.pixels = &pixelArray[1];	// Use the second element in pixelArray so we can tell if the zero-th element ever gets accessed.
 	renderBuffer.depth = &depthArray[1];
 
-	tl::FillTriangleInPixels(renderBuffer, FILLED, p0, p1, p2, 1.0f);
+	tl::FillTriangleInPixels(renderBuffer, FILLED, p0, p1, p2);
 
 	assert(pixelArray[0] == EMPTY);	// Should NEVER get written to
 

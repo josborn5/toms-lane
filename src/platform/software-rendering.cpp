@@ -60,39 +60,6 @@ namespace tl
 	 *	|---|---|---|
 	 *	0   1   2   3	position ordinals
 	 *
-	 * x1, x2 & y parameters are the pixel and NOT the position ordinals
-	 */
-	static void DrawHorizontalLineInPixels(const RenderBuffer &renderBuffer, uint32_t color, int x0, int x1, int y, float z)
-	{
-		const int* startX = &x0;
-		const int* endX = &x1;
-		if (x1 < x0)
-		{
-			tl::swap(x0, x1);
-		}
-
-		int positionStartOfRow = renderBuffer.width * y;
-		int positionOfX0InRow = positionStartOfRow + *startX;
-		uint32_t* pixelPointer = renderBuffer.pixels + positionOfX0InRow;
-		float* depthPointer = renderBuffer.depth + positionOfX0InRow;
-		for (int i = *startX; i <= *endX; i += 1)
-		{
-			if (*depthPointer < z)
-			{
-				*depthPointer = z;
-				*pixelPointer = color;
-			}
-			pixelPointer++;
-			depthPointer++;
-		}
-	}
-
-	/**
-	 *	|---|---|---|
-	 *	| 0 | 1 | 2 |	pixel ordinals
-	 *	|---|---|---|
-	 *	0   1   2   3	position ordinals
-	 *
 	 * x, y0 & y1 parameters are the pixel and NOT the position ordinals
 	 */
 	void DrawVerticalLineInPixels(const RenderBuffer &renderBuffer, uint32_t color, int x, int y0, int y1)
@@ -323,7 +290,7 @@ namespace tl
 	 *	   \ /	  +ve y (if +ve y is up, this is actually a flat bottom triangle)
 	 *	    p2
 	 */
-	void FillFlatTopTriangle(const RenderBuffer &renderBuffer, uint32_t color, const Vec3<int> &p0, const Vec3<int> &p1, const Vec3<int> &p2, float z)
+	void FillFlatTopTriangle(const RenderBuffer &renderBuffer, uint32_t color, const Vec3<int> &p0, const Vec3<int> &p1, const Vec3<int> &p2)
 	{
 		// LINE 0-->2
 		bool p2IsRightOfP0 = (p0.x < p2.x);
@@ -360,7 +327,7 @@ namespace tl
 		for (int y = p0.y; y <= p2.y; y += 1)
 		{
 			// draw scanline to fill in triangle between x0 & x1
-			DrawHorizontalLineInPixels(renderBuffer, color, x0, x1, y, z);
+			DrawHorizontalLineInPixels(renderBuffer, color, x0, x1, y);
 
 			// Loop through the x0 / acc0 evaluation until acc0 is +ve.
 			// acc0 turning +ve is the indication we should plot.
@@ -429,7 +396,7 @@ namespace tl
 	 *	 /      \	  +ve y (if +ve y is up, this is actually a flat top triangle)
 	 *	p1------p2
 	 */
-	void FillFlatBottomTriangle(const RenderBuffer &renderBuffer, uint32_t color, const Vec3<int> &p0, const Vec3<int> &p1, const Vec3<int> &p2, float z)
+	void FillFlatBottomTriangle(const RenderBuffer &renderBuffer, uint32_t color, const Vec3<int> &p0, const Vec3<int> &p1, const Vec3<int> &p2)
 	{
 		// LINE 0-->1
 		bool p1IsLeftOfP0 = (p1.x < p0.x);
@@ -487,7 +454,7 @@ namespace tl
 			}
 
 			// draw scanline to fill in triangle between x0 & x1
-			DrawHorizontalLineInPixels(renderBuffer, color, x0, x1, y, z);
+			DrawHorizontalLineInPixels(renderBuffer, color, x0, x1, y);
 
 			// line p0 --> p1: decide to increment x0 or not for current y
 			if (isLongDimension0X)
@@ -529,10 +496,10 @@ namespace tl
 		}
 
 		// draw final scanline to fill in triangle between x0 & x1
-		DrawHorizontalLineInPixels(renderBuffer, color, p1.x, p2.x, p1.y, z);
+		DrawHorizontalLineInPixels(renderBuffer, color, p1.x, p2.x, p1.y);
 	}
 
-	void FillTriangleInPixels(const RenderBuffer &renderBuffer, uint32_t color, const Vec3<int> &p0, const Vec3<int> &p1, const Vec3<int> &p2, float z)
+	void FillTriangleInPixels(const RenderBuffer &renderBuffer, uint32_t color, const Vec3<int> &p0, const Vec3<int> &p1, const Vec3<int> &p2)
 	{
 		const Vec3<int>* pp0 = &p0;
 		const Vec3<int>* pp1 = &p1;
@@ -566,7 +533,7 @@ namespace tl
 			{
 				tl::swap(pp0, pp1);
 			}
-			FillFlatTopTriangle(renderBuffer, color, *pp0, *pp1, *pp2, z);
+			FillFlatTopTriangle(renderBuffer, color, *pp0, *pp1, *pp2);
 		}
 		else if (pp1->y == pp2->y) // natural flat bottom
 		{
@@ -575,7 +542,7 @@ namespace tl
 			{
 				tl::swap(pp1, pp2);
 			}
-			FillFlatBottomTriangle(renderBuffer, color, *pp0, *pp1, *pp2, z);
+			FillFlatBottomTriangle(renderBuffer, color, *pp0, *pp1, *pp2);
 		}
 		else // general triangle
 		{
@@ -643,7 +610,7 @@ namespace tl
 				}
 
 				// draw scanline to fill in triangle between x0 & x1
-				DrawHorizontalLineInPixels(renderBuffer, color, x0, x1, y, z);
+				DrawHorizontalLineInPixels(renderBuffer, color, x0, x1, y);
 
 				// line p0 --> p1: decide to increment x0 or not for current y
 				if (isLongDimension0X)
@@ -688,12 +655,12 @@ namespace tl
 			if (pp1xIsLessThanPp2X) // pp1->y is the leftPoint. i.e. Right major triangle
 			{
 				Vec3<int> intermediatePoint = { x1, pp1->y, 0 };
-				FillFlatTopTriangle(renderBuffer, color, *pp1, intermediatePoint, *pp2, z);
+				FillFlatTopTriangle(renderBuffer, color, *pp1, intermediatePoint, *pp2);
 			}
 			else	// pp1->y is the rightPoint. i.e. Left major triangle
 			{
 				Vec3<int> intermediatePoint = { x0, pp1->y, 0 };
-				FillFlatTopTriangle(renderBuffer, color, intermediatePoint, *pp1, *pp2, z);
+				FillFlatTopTriangle(renderBuffer, color, intermediatePoint, *pp1, *pp2);
 			}
 		}
 	}
