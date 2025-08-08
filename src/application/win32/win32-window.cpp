@@ -41,10 +41,6 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 	{
 		VirtualFree(globalRenderBuffer.pixels, 0, MEM_RELEASE);
 	}
-	if (globalRenderBuffer.depth)
-	{
-		VirtualFree(globalRenderBuffer.depth, 0, MEM_RELEASE);
-	}
 
 	if (memory_context == NULL)
 	{
@@ -63,9 +59,6 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 	int bitmapMemorySize = bitmapPixelCount * globalRenderBuffer.bytesPerPixel;
 	globalRenderBuffer.pitch = globalRenderBuffer.width * globalRenderBuffer.bytesPerPixel;
 	globalRenderBuffer.pixels = (uint32_t *)VirtualAlloc(0, bitmapMemorySize, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
-
-	int depthBufferMemorySize = bitmapPixelCount * sizeof(float);
-	globalRenderBuffer.depth = (float *)VirtualAlloc(0, depthBufferMemorySize, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
 
 	HDC window_context = GetDC(globalWindow);
 	memory_context = CreateCompatibleDC(window_context);

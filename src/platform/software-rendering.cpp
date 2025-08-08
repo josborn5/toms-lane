@@ -676,7 +676,6 @@ namespace tl
 	void ClearScreen(const RenderBuffer &renderBuffer, uint32_t color)
 	{
 		uint32_t* pixel = renderBuffer.pixels;
-		float* depth = renderBuffer.depth;
 
 		for (int y = 0; y < renderBuffer.height; y += 1)
 		{
@@ -684,9 +683,6 @@ namespace tl
 			{
 				*pixel = color;
 				pixel++;
-
-				*depth = 0.0f;;
-				depth++;
 			}
 		}
 	}

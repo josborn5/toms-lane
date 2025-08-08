@@ -14,7 +14,6 @@ static const int smallBitmapFileSizeInBytes = 342;
 static MemorySpace bitmapReadMemory;
 static MemorySpace bitmapWriteMemory;
 static MemorySpace renderBufferPixels;
-static MemorySpace renderBufferDepth;
 static RenderBuffer renderBuffer;
 
 template<typename T>
@@ -36,10 +35,7 @@ static void InitializeMemory()
 
 	renderBufferPixels.sizeInBytes = sizeof(unsigned int) * renderBuffer.width * renderBuffer.height;
 	renderBufferPixels.content = malloc(renderBufferPixels.sizeInBytes);
-	renderBufferDepth.sizeInBytes = sizeof(float) * renderBuffer.width * renderBuffer.height;
-	renderBufferDepth.content = malloc(renderBufferDepth.sizeInBytes);
 	renderBuffer.pixels = (unsigned int*)renderBufferPixels.content;
-	renderBuffer.depth = (float*)renderBufferDepth.content;
 }
 
 static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap, tl::MemorySpace& test_bitmap_memory_space)
