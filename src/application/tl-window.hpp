@@ -11,8 +11,7 @@ namespace tl
 		int width;
 		int height;
 		int pitch;
-		int bytesPerPixel; // = 4;
-		float* depth;
+		int bytesPerPixel;
 	};
 
 	struct WindowSettings
