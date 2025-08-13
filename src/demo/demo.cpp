@@ -8,6 +8,8 @@ static bool wireframe = false;
 static bool is_teapot = true;
 static float field_of_view_deg = 0.0f;
 static float near_plane = 0.0f;
+static float* screen_depth_buffer = nullptr;
+static unsigned int screen_depth_buffer_size = 1280 * 700;
 
 template<typename T>
 static void TransformAndRenderMesh(
@@ -20,6 +22,12 @@ static void TransformAndRenderMesh(
 	const int RED = 0;
 	const int GREEN = 255;
 	const int BLUE = 0;
+
+	// Clear depth buffer
+	float* depth_copy = screen_depth_buffer;
+	for (unsigned int i = 0; i < screen_depth_buffer_size; i += 1) {
+		depth_copy[i] = 0.0f;
+	}
 
 	// Camera matrix
 	tl::Vec4<T> target = AddVectors(camera.position, camera.direction);
@@ -155,6 +163,15 @@ static void TransformAndRenderMesh(
 		for (int i = 0; i < triangleQueue.length(); i += 1)
 		{
 			tl::Triangle4d<T> draw = triangleQueue.content[i];
+
+			// Super rough, take the depth as the average z value
+			int p0_screen_index = (renderBuffer.width * (int)draw.p[0].y) + (int)draw.p[0].x;
+			float existing_depth_at_p0 = screen_depth_buffer[p0_screen_index];
+
+			if (draw.p[0].z < existing_depth_at_p0) {
+				continue;
+			}
+
 			if (wireframe) {
 				tl::Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
 				tl::Vec2<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
@@ -166,8 +183,6 @@ static void TransformAndRenderMesh(
 				tl::Vec3<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
 				tl::Vec3<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
 
-				// Super rough, take the depth as the average z value
-				T z = (draw.p[0].z + draw.p[1].z + draw.p[2].z) / (T)3;
 				FillTriangleInPixels(renderBuffer, draw.color, p0Int, p1Int, p2Int);
 			}
 		}
@@ -348,7 +363,12 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	tl::MemorySpace transientMemory = gameMemory.transient;
 	tl::font_interface_initialize();
 
-	meshArray.initialize(gameMemory.permanent);
+	tl::MemorySpace perm = gameMemory.permanent;
+	screen_depth_buffer = (float*)gameMemory.permanent.content;
+	perm.content = (float*)perm.content + screen_depth_buffer_size;
+	perm.sizeInBytes -= (sizeof(float) * screen_depth_buffer_size);
+
+	meshArray.initialize(perm);
 
 	reset_mesh_to_teapot();
 
@@ -611,8 +631,8 @@ int demo_main()
 	}
 
 	tl::InitializeMemory(
-		100,
-		100,
+		10,
+		10,
 		appMemory
 	);
 
