@@ -59,9 +59,10 @@ namespace tl
 	template<typename T>
 	struct Camera
 	{
-		Vec4<T> position;
-		Vec4<T> direction;
-		Vec4<T> up;
+		Vec4<T> position = {0};
+		Vec4<T> direction = {0};
+		Vec4<T> up = {0};
+		Rect<T> viewport = {0};
 	};
 
 	template<typename T>
