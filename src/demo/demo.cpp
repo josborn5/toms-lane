@@ -166,12 +166,11 @@ static unsigned int screen_depth_buffer_size = 1280 * 700;
 static float camera_z = -1000.0f;
 static float camera_z_min = 1000.0f;
 
-template<typename T>
 static void TransformAndRenderMesh(
 	const tl::RenderBuffer& renderBuffer,
 	const tl::array<Triangle4d>& mesh,
 	const Camera& camera,
-	const tl::Matrix4x4<T>& projectionMatrix,
+	const tl::Matrix4x4<float>& projectionMatrix,
 	const tl::MemorySpace& transient
 ) {
 	const int RED = 0;
@@ -188,18 +187,18 @@ static void TransformAndRenderMesh(
 	}
 
 	// Camera matrix
-	tl::Vec4<T> target = AddVectors(camera.position, camera.direction);
-	tl::Matrix4x4<T> cameraMatrix = PointAt(camera.position, target, camera.up);
+	tl::Vec4<float> target = AddVectors(camera.position, camera.direction);
+	tl::Matrix4x4<float> cameraMatrix = PointAt(camera.position, target, camera.up);
 
 	// View matrix
-	tl::Matrix4x4<T> viewMatrix = LookAt(cameraMatrix);
+	tl::Matrix4x4<float> viewMatrix = LookAt(cameraMatrix);
 
 	tl::array<Triangle4d> trianglesToDrawArray = tl::array<Triangle4d>(transient);
 
-	Plane bottomOfScreen = { (T)0, (T)0, (T)0,						(T)0, (T)1, (T)0 };
-	Plane topOfScreen = { (T)0, (T)(renderBuffer.height - 1), (T)0,	(T)0, (T)-1, (T)0 };
-	Plane leftOfScreen = { (T)0, (T)0, (T)0,							(T)1, (T)0, (T)0 };
-	Plane rightOfScreen = { (T)(renderBuffer.width - 1), (T)0, (T)0,	(T)-1, (T)0, (T)0 };
+	Plane bottomOfScreen = { 0.0f, 0.0f, 0.0f,                             0.0f,  1.0f, 0.0f };
+	Plane topOfScreen =    { 0.0f, (float)(renderBuffer.height - 1), 0.0f, 0.0f, -1.0f, 0.0f };
+	Plane leftOfScreen =   { 0.0f, 0.0f, 0.0f,                             1.0f,  0.0f, 0.0f };
+	Plane rightOfScreen =  { (float)(renderBuffer.width - 1), 0.0f, 0.0f, -1.0f,  0.0f, 0.0f };
 
 	for (int h = 0; h < mesh.length(); h += 1)
 	{
@@ -208,19 +207,19 @@ static void TransformAndRenderMesh(
 		Triangle4d projected;
 
 		// Work out the normal of the triangle
-		tl::Vec4<T> line1 = SubtractVectors(tri.p[1], tri.p[0]);
-		tl::Vec4<T> line2 = SubtractVectors(tri.p[2], tri.p[0]);
-		tl::Vec4<T> normal = UnitVector(CrossProduct(line1, line2));
+		tl::Vec4<float> line1 = SubtractVectors(tri.p[1], tri.p[0]);
+		tl::Vec4<float> line2 = SubtractVectors(tri.p[2], tri.p[0]);
+		tl::Vec4<float> normal = UnitVector(CrossProduct(line1, line2));
 
-		tl::Vec4<T> fromCameraToTriangle = SubtractVectors(tri.p[0], camera.position);
-		T dot = DotProduct(normal, fromCameraToTriangle);
+		tl::Vec4<float> fromCameraToTriangle = SubtractVectors(tri.p[0], camera.position);
+		float dot = DotProduct(normal, fromCameraToTriangle);
 
 
-		if (dot <= (T)0)
+		if (dot <= 0.0f)
 		{
-			tl::Vec4<T> lightDirection = { (T)0, (T)0, (T)1 };
-			tl::Vec4<T> normalizedLightDirection = UnitVector(lightDirection);
-			T shade = DotProduct(normal, normalizedLightDirection);
+			tl::Vec4<float> lightDirection = { 0.0f, 0.0f, 1.0f };
+			tl::Vec4<float> normalizedLightDirection = UnitVector(lightDirection);
+			float shade = DotProduct(normal, normalizedLightDirection);
 
 			uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
 
@@ -231,7 +230,7 @@ static void TransformAndRenderMesh(
 
 			// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
 			Triangle4d clipped[2];
-			Plane inFrontOfScreen = { (T)0, (T)0, (T)0.1,	 (T)0, (T)0, (T)1 };
+			Plane inFrontOfScreen = { 0.0f, 0.0f, 0.1f,	 0.0f, 0.0f, 1.0f };
 			int clippedTriangleCount = ClipTriangleAgainstPlane(inFrontOfScreen, viewed, clipped[0], clipped[1]);
 
 			for (int i = 0; i < clippedTriangleCount; i += 1)
@@ -251,8 +250,8 @@ static void TransformAndRenderMesh(
 				triToRender.p[2].x *= sf;
 				triToRender.p[2].y *= sf;
 
-				const T translateX = (T)0.5 * (T)renderBuffer.width;
-				const T translateY = (T)0.5 * (T)renderBuffer.height;
+				const float translateX = (float)0.5 * (float)renderBuffer.width;
+				const float translateY = (float)0.5 * (float)renderBuffer.height;
 				triToRender.p[0].x += translateX; triToRender.p[0].y += translateY;
 				triToRender.p[1].x += translateX; triToRender.p[1].y += translateY;
 				triToRender.p[2].x += translateX; triToRender.p[2].y += translateY;
