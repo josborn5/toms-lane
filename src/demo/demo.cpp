@@ -12,9 +12,16 @@ struct Camera
 	tl::Rect<float> viewport = {0};
 };
 
+struct Plane
+{
+	tl::Vec3<float> position;
+	tl::Vec3<float> normal;
+};
+
+
 
 tl::Vec4<float> IntersectPlane(
-	const tl::Plane<float>& plane,
+	const Plane& plane,
 	const tl::Vec4<float>& lineStart,
 	const tl::Vec4<float>& lineEnd
 )
@@ -50,7 +57,7 @@ float ShortestDistanceFromPointToPlane(
 }
 
 int ClipTriangleAgainstPlane(
-	const tl::Plane<float>& plane,
+	const Plane& plane,
 	Triangle4d& inputTriangle,
 	Triangle4d& outputTriangle1,
 	Triangle4d& outputTriangle2
@@ -189,10 +196,10 @@ static void TransformAndRenderMesh(
 
 	tl::array<Triangle4d> trianglesToDrawArray = tl::array<Triangle4d>(transient);
 
-	tl::Plane<T> bottomOfScreen = { (T)0, (T)0, (T)0,						(T)0, (T)1, (T)0 };
-	tl::Plane<T> topOfScreen = { (T)0, (T)(renderBuffer.height - 1), (T)0,	(T)0, (T)-1, (T)0 };
-	tl::Plane<T> leftOfScreen = { (T)0, (T)0, (T)0,							(T)1, (T)0, (T)0 };
-	tl::Plane<T> rightOfScreen = { (T)(renderBuffer.width - 1), (T)0, (T)0,	(T)-1, (T)0, (T)0 };
+	Plane bottomOfScreen = { (T)0, (T)0, (T)0,						(T)0, (T)1, (T)0 };
+	Plane topOfScreen = { (T)0, (T)(renderBuffer.height - 1), (T)0,	(T)0, (T)-1, (T)0 };
+	Plane leftOfScreen = { (T)0, (T)0, (T)0,							(T)1, (T)0, (T)0 };
+	Plane rightOfScreen = { (T)(renderBuffer.width - 1), (T)0, (T)0,	(T)-1, (T)0, (T)0 };
 
 	for (int h = 0; h < mesh.length(); h += 1)
 	{
@@ -224,7 +231,7 @@ static void TransformAndRenderMesh(
 
 			// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
 			Triangle4d clipped[2];
-			tl::Plane<T> inFrontOfScreen = { (T)0, (T)0, (T)0.1,	 (T)0, (T)0, (T)1 };
+			Plane inFrontOfScreen = { (T)0, (T)0, (T)0.1,	 (T)0, (T)0, (T)1 };
 			int clippedTriangleCount = ClipTriangleAgainstPlane(inFrontOfScreen, viewed, clipped[0], clipped[1]);
 
 			for (int i = 0; i < clippedTriangleCount; i += 1)

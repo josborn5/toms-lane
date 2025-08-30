@@ -35,13 +35,6 @@ namespace tl
 	};
 
 	template<typename T>
-	struct Plane
-	{
-		Vec3<T> position;
-		Vec3<T> normal;
-	};
-
-	template<typename T>
 	Matrix4x4<T> MakeIdentityMatrix();
 
 
