@@ -4,6 +4,16 @@
 #include "./file.cpp"
 
 
+struct Camera
+{
+	tl::Vec4<float> position = {0};
+	tl::Vec4<float> direction = {0};
+	tl::Vec4<float> up = {0};
+	tl::Rect<float> viewport = {0};
+};
+
+
+
 static bool wireframe = false;
 static bool is_teapot = true;
 static float field_of_view_deg = 0.0f;
@@ -18,7 +28,7 @@ template<typename T>
 static void TransformAndRenderMesh(
 	const tl::RenderBuffer &renderBuffer,
 	const tl::array<tl::Triangle4d<T>> &mesh,
-	const tl::Camera<T> &camera,
+	const Camera &camera,
 	const tl::Matrix4x4<T>& projectionMatrix,
 	const tl::MemorySpace& transient
 ) {
@@ -203,7 +213,7 @@ static void TransformAndRenderMesh(
 		}
 	}
 }
-static tl::Camera<float> camera;
+static Camera camera;
 static tl::array<tl::Triangle4d<float>> meshArray = tl::array<tl::Triangle4d<float>>();
 
 static tl::Matrix4x4<float> projectionMatrix;
@@ -464,7 +474,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		return 0;
 	}
 
-	float yawIncrement = 0.05f;
+	const float yawIncrement = 0.05f;
 
 	// First process any change in yaw and update the camera direction
 	if (input.buttons[tl::KEY_D].isDown)
