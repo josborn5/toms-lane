@@ -35,13 +35,6 @@ namespace tl
 	};
 
 	template<typename T>
-	struct Triangle4d
-	{
-		Vec4<T> p[3];
-		unsigned int color;
-	};
-
-	template<typename T>
 	struct Plane
 	{
 		Vec3<T> position;

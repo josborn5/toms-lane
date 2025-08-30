@@ -50,10 +50,10 @@ float ShortestDistanceFromPointToPlane(
 }
 
 int ClipTriangleAgainstPlane(
-	const tl::Plane<float> &plane,
-	tl::Triangle4d<float> &inputTriangle,
-	tl::Triangle4d<float> &outputTriangle1,
-	tl::Triangle4d<float> &outputTriangle2
+	const tl::Plane<float>& plane,
+	Triangle4d& inputTriangle,
+	Triangle4d& outputTriangle1,
+	Triangle4d& outputTriangle2
 )
 {
 	tl::Vec3<float> unitNormalToPlane = UnitVector(plane.normal);
@@ -161,9 +161,9 @@ static float camera_z_min = 1000.0f;
 
 template<typename T>
 static void TransformAndRenderMesh(
-	const tl::RenderBuffer &renderBuffer,
-	const tl::array<tl::Triangle4d<T>> &mesh,
-	const Camera &camera,
+	const tl::RenderBuffer& renderBuffer,
+	const tl::array<Triangle4d>& mesh,
+	const Camera& camera,
 	const tl::Matrix4x4<T>& projectionMatrix,
 	const tl::MemorySpace& transient
 ) {
@@ -187,7 +187,7 @@ static void TransformAndRenderMesh(
 	// View matrix
 	tl::Matrix4x4<T> viewMatrix = LookAt(cameraMatrix);
 
-	tl::array<tl::Triangle4d<T>> trianglesToDrawArray = tl::array<tl::Triangle4d<T>>(transient);
+	tl::array<Triangle4d> trianglesToDrawArray = tl::array<Triangle4d>(transient);
 
 	tl::Plane<T> bottomOfScreen = { (T)0, (T)0, (T)0,						(T)0, (T)1, (T)0 };
 	tl::Plane<T> topOfScreen = { (T)0, (T)(renderBuffer.height - 1), (T)0,	(T)0, (T)-1, (T)0 };
@@ -196,9 +196,9 @@ static void TransformAndRenderMesh(
 
 	for (int h = 0; h < mesh.length(); h += 1)
 	{
-		tl::Triangle4d<T> tri = mesh.get(h);
-		tl::Triangle4d<T> viewed;
-		tl::Triangle4d<T> projected;
+		Triangle4d tri = mesh.get(h);
+		Triangle4d viewed;
+		Triangle4d projected;
 
 		// Work out the normal of the triangle
 		tl::Vec4<T> line1 = SubtractVectors(tri.p[1], tri.p[0]);
@@ -223,7 +223,7 @@ static void TransformAndRenderMesh(
 			MultiplyVectorWithMatrix(tri.p[2], viewed.p[2], viewMatrix);
 
 			// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
-			tl::Triangle4d<T> clipped[2];
+			Triangle4d clipped[2];
 			tl::Plane<T> inFrontOfScreen = { (T)0, (T)0, (T)0.1,	 (T)0, (T)0, (T)1 };
 			int clippedTriangleCount = ClipTriangleAgainstPlane(inFrontOfScreen, viewed, clipped[0], clipped[1]);
 
@@ -236,7 +236,7 @@ static void TransformAndRenderMesh(
 
 				// Scale to view
 				const float sf = 500.0f;
-				tl::Triangle4d<T> triToRender = projected;
+				Triangle4d triToRender = projected;
 				triToRender.p[0].x *= sf;
 				triToRender.p[0].y *= sf;
 				triToRender.p[1].x *= sf;
@@ -261,10 +261,10 @@ static void TransformAndRenderMesh(
 
 	for (int n = 0; n < trianglesToDrawArray.length(); n += 1)
 	{
-		tl::Triangle4d<T> triToRender = trianglesToDrawArray.get(n);
-		tl::Triangle4d<T> clipped[2];
+		Triangle4d triToRender = trianglesToDrawArray.get(n);
+		Triangle4d clipped[2];
 
-		tl::queue<tl::Triangle4d<T>> triangleQueue = tl::queue<tl::Triangle4d<T>>(remainingTransient);
+		tl::queue<Triangle4d> triangleQueue = tl::queue<Triangle4d>(remainingTransient);
 		if (triangleQueue.enqueue(triToRender) != 0) throw; // TODO: don't throw, handle gracefully
 
 		int newTriangles = 1;
@@ -275,7 +275,7 @@ static void TransformAndRenderMesh(
 			int trianglesToAdd = 0;
 			while (newTriangles > 0)
 			{
-				tl::Triangle4d<T> test = triangleQueue.dequeue();
+				Triangle4d test = triangleQueue.dequeue();
 				newTriangles -= 1;
 
 				switch (edge)
@@ -313,7 +313,7 @@ static void TransformAndRenderMesh(
 
 		for (int i = 0; i < triangleQueue.length(); i += 1)
 		{
-			tl::Triangle4d<T> draw = triangleQueue.content[i];
+			Triangle4d draw = triangleQueue.content[i];
 
 			float provisional = 100.0f * draw.p[0].z;
 			if (provisional > camera_z) {
@@ -349,7 +349,7 @@ static void TransformAndRenderMesh(
 	}
 }
 static Camera camera;
-static tl::array<tl::Triangle4d<float>> meshArray = tl::array<tl::Triangle4d<float>>();
+static tl::array<Triangle4d> meshArray = tl::array<Triangle4d>();
 
 static tl::Matrix4x4<float> projectionMatrix;
 
@@ -416,7 +416,7 @@ static void set_projection_matrix() {
 static void reset_world_to_mesh() {
 	for (int i = 0; i < meshArray.length(); i += 1)
 	{
-		tl::Triangle4d<float> tri = meshArray.get(i);
+		Triangle4d tri = meshArray.get(i);
 		if (tri.p[0].x > max.x) max.x = tri.p[0].x;
 		if (tri.p[0].x < min.x) min.x = tri.p[0].x;
 		if (tri.p[0].y > max.y) max.y = tri.p[0].y;
@@ -483,7 +483,7 @@ static void reset_world_to_mesh() {
 static void reset_mesh_to_teapot() {
 	meshArray.clear();
 	tl::MemorySpace temp = appMemory.transient; // make a copy of the transient memory so it can be modified
-	tl::ReadObjFileToArray4("teapot.obj", meshArray, temp);
+	ReadObjFileToArray4("teapot.obj", meshArray, temp);
 
 	reset_world_to_mesh();
 }
