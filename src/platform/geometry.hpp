@@ -60,13 +60,6 @@ namespace tl
 	template<typename T>
 	Matrix4x4<T> MakeIdentityMatrix();
 
-	template<typename T>
-	Matrix4x4<T> MakeTranslationMatrix
-	(
-		T dispX,
-		T dispY,
-		T dispZ
-	);
 
 
 	/**
@@ -101,14 +94,6 @@ namespace tl
 		const Plane<T> &plane,
 		const Vec4<T> &lineStart,
 		const Vec4<T> lineEnd
-	);
-
-	template<typename T>
-	T ShortestDistanceFromPointToPlane
-	(
-		const Vec4<T> &point,
-		const Vec3<T> &planeP,
-		const Vec3<T> &unitNormalToPlane
 	);
 
 	template<typename T>
