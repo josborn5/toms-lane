@@ -13,6 +13,26 @@ struct Camera
 };
 
 
+tl::Matrix4x4<float> MakeProjectionMatrix(
+	float fieldOfVewDeg,
+	float aspectRatio,
+	float nearPlane,
+	float farPlane
+)
+{
+	float inverseTangent = 1.0f / tanf(fieldOfVewDeg * 0.5f * 3.14159f / 180.0f);
+
+	tl::Matrix4x4<float> matrix;
+	matrix.m[0][0] = aspectRatio * inverseTangent;
+	matrix.m[1][1] = inverseTangent;
+	matrix.m[2][2] = farPlane / (farPlane - nearPlane);
+	matrix.m[3][2] = (-farPlane * nearPlane) / (farPlane - nearPlane);
+	matrix.m[2][3] = 1.0f;
+	matrix.m[3][3] = 0.0f;
+
+	return matrix;
+}
+
 
 static bool wireframe = false;
 static bool is_teapot = true;
@@ -275,7 +295,7 @@ static T Clamp(T min, T value, T max)
 template float Clamp(float min, float value, float max);
 
 static void set_projection_matrix() {
-	projectionMatrix = tl::MakeProjectionMatrix(field_of_view_deg, 1.0f, near_plane, 1000.0f);
+	projectionMatrix = MakeProjectionMatrix(field_of_view_deg, 1.0f, near_plane, 1000.0f);
 }
 
 static void reset_world_to_mesh() {

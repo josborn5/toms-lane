@@ -96,14 +96,6 @@ namespace tl
 		Triangle4d<T> &outputTriangle2
 	);
 
-	Matrix4x4<float> MakeProjectionMatrix
-	(
-		float fieldOfVewDeg,
-		float aspectRatio,
-		float nearPlane,
-		float farPlane
-	);
-
 	void SetZAxisRotationMatrix(float theta, Matrix4x4<float> &matrix);
 
 	Matrix4x4<float> MakeZAxisRotationMatrix(float theta);

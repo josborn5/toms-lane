@@ -4,26 +4,6 @@
 
 namespace tl
 {
-	Matrix4x4<float> MakeProjectionMatrix(
-		float fieldOfVewDeg,
-		float aspectRatio,
-		float nearPlane,
-		float farPlane
-	)
-	{
-		float inverseTangent = 1.0f / tanf(fieldOfVewDeg * 0.5f * 3.14159f / 180.0f);
-
-		Matrix4x4<float> matrix;
-		matrix.m[0][0] = aspectRatio * inverseTangent;
-		matrix.m[1][1] = inverseTangent;
-		matrix.m[2][2] = farPlane / (farPlane - nearPlane);
-		matrix.m[3][2] = (-farPlane * nearPlane) / (farPlane - nearPlane);
-		matrix.m[2][3] = 1.0f;
-		matrix.m[3][3] = 0.0f;
-
-		return matrix;
-	}
-
 	void SetZAxisRotationMatrix(float theta, Matrix4x4<float> &matrix)
 	{
 		float cos = cosf(theta);
