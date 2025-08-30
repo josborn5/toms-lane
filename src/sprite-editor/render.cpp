@@ -419,13 +419,7 @@ static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const Edit
 	const uint32_t commandBackgroundColor = 0x111111;
 	const uint32_t commandTextColor = 0xFFFFFF;
 	tl::DrawRect(renderBuffer, commandBackgroundColor, commandTextRect);
-/*	float dx = tl::font_interface_render_chars(
-		renderBuffer,
-		state.commandBuffer,
-		commandCharFootprint,
-		commandTextColor
-	);
-*/
+
 	tl::text_interface_render(
 		state.commandBuffer,
 		commandTextColor,
@@ -437,16 +431,6 @@ static void RenderCommandBuffer(const tl::RenderBuffer& renderBuffer, const Edit
 
 	cursorTime += dt;
 
-/*	if (state.mode == Command)
-	{
-		tl::Rect<float> cursorFootprint = tl::CopyRect(commandCharFootprint);
-		cursorFootprint.position.x += dx;
-		if (cursorTime <= 0.75f)
-		{
-			tl::DrawRect(renderBuffer, commandTextColor, cursorFootprint);
-		}
-	}
-*/
 	if (cursorTime > 1.2f)
 	{
 		cursorTime = 0.0f;

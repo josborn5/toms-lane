@@ -47,19 +47,19 @@ int Initialize()
 	baseRect.position = { halfWidth, 0.0f };
 
 	Tile leftGrass = Tile();
-	leftGrass.rect = tl::CopyRect(baseRect);
+	leftGrass.rect = baseRect;
 	leftGrass.color = 0x00FF00;
 	gameState.tiles[0] = leftGrass;
 
 	Tile road = Tile();
 	baseRect.position.x += tileSpacing;
-	road.rect = tl::CopyRect(baseRect);
+	road.rect = baseRect;
 	road.color = 0x111111;
 	gameState.tiles[1] = road;
 
 	Tile rightGrass = Tile();
 	baseRect.position.x += tileSpacing;
-	rightGrass.rect = tl::CopyRect(baseRect);
+	rightGrass.rect = baseRect;
 	rightGrass.color = 0x00FF00;
 	gameState.tiles[2] = rightGrass;
 

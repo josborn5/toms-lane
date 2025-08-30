@@ -42,22 +42,4 @@ void RunGeometryTests()
 	assert(result.x == 0.0f);
 	assert(result.y == 1.0f);
 	assert(result.z == 0.0f);
-
-	// CopyRect
-	tl::Rect<float> original;
-	original.position = { 1.0f, 2.0f };
-	original.halfSize = { 3.0f, 4.0f };
-	original.velocity = { 5.0f, 6.0f };
-	tl::Rect<float> copy = CopyRect(original);
-
-	assert(copy.position.x == original.position.x);
-	assert(copy.position.y == original.position.y);
-	assert(copy.halfSize.x == original.halfSize.x);
-	assert(copy.halfSize.y == original.halfSize.y);
-	assert(copy.velocity.x == original.velocity.x);
-	assert(copy.velocity.y == original.velocity.y);
-
-	original.position.x += 1.0f;
-
-	assert(copy.position.x != original.position.x);
 }

@@ -436,7 +436,9 @@ static void UpdateGameState(
 		state->player,
 		dt
 	);
-	tl::Rect<float> currentPlayerState = CopyRect(state->player);
+	tl::Rect<float> currentPlayerState;
+	currentPlayerState.position = state->player.position;
+	currentPlayerState.halfSize = state->player.halfSize;
 	currentPlayerState.velocity = currentPlayerVelocity;
 
 	float checkTime = dt;
@@ -490,23 +492,23 @@ static void UpdateGameState(
 		}
 	}
 
-	tl::Rect<float> newPlayerState = CopyRect(currentPlayerState);
-	newPlayerState.position.x = currentPlayerState.position.x + (currentPlayerState.velocity.x * dt);
-	newPlayerState.position.y = currentPlayerState.position.y + (currentPlayerState.velocity.y * dt);
+	tl::Vec2<float> newPlayerPosition;
+	newPlayerPosition.x = currentPlayerState.position.x + (currentPlayerState.velocity.x * dt);
+	newPlayerPosition.y = currentPlayerState.position.y + (currentPlayerState.velocity.y * dt);
 
-	newPlayerState.position.x = ClampFloat(minPlayerX, newPlayerState.position.x, maxPlayerX);
-	newPlayerState.position.y = ClampFloat(minPlayerY, newPlayerState.position.y, newPlayerState.position.y);
+	newPlayerPosition.x = ClampFloat(minPlayerX, newPlayerPosition.x, maxPlayerX);
+	newPlayerPosition.y = ClampFloat(minPlayerY, newPlayerPosition.y, newPlayerPosition.y);
 
-	if (newPlayerState.position.y <= minPlayerY)
+	if (newPlayerPosition.y <= minPlayerY)
 	{
 		state->mode = GameOver;
 		state->lives -= 1;
 	}
 
-	state->player.position.x = newPlayerState.position.x;
-	state->player.position.y = newPlayerState.position.y;
-	state->player.velocity.x = newPlayerState.velocity.x;
-	state->player.velocity.y = newPlayerState.velocity.y;
+	state->player.position.x = newPlayerPosition.x;
+	state->player.position.y = newPlayerPosition.y;
+	state->player.velocity.x = currentPlayerState.velocity.x;
+	state->player.velocity.y = currentPlayerState.velocity.y;
 
 	state->camera.position.x = state->player.position.x;
 }

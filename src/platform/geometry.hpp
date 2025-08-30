@@ -34,14 +34,6 @@ namespace tl
 		}
 	};
 
-	Rect<float> CopyRect(const Rect<float>& original);
-
-	template<typename T>
-	struct Triangle2d
-	{
-		Vec2<T> p[3];
-	};
-
 	template<typename T>
 	struct Triangle4d
 	{
