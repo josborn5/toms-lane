@@ -28,18 +28,4 @@ void RunGeometryTests()
 	assert(objectPositionInViewSpace.z == 0.0f);
 	assert(objectPositionInViewSpace.y == 0.0f);
 	assert(objectPositionInViewSpace.x == -1.0f);
-
-
-	// IntersectPlane test
-	tl::Plane<float> plane;
-	plane.position = { 0.0f, 1.0f, 0.0f };
-	plane.normal = { 0.0f, -1.0f, 0.0f };
-	tl::Vec4<float> lineStart = { 0.0f, 0.0f, 0.0f, 1.0f };
-	tl::Vec4<float> lineEnd = { 0.0f, 2.0f, 0.0f, 1.0f };
-
-	tl::Vec4<float> result = tl::IntersectPlane(plane, lineStart, lineEnd);
-
-	assert(result.x == 0.0f);
-	assert(result.y == 1.0f);
-	assert(result.z == 0.0f);
 }

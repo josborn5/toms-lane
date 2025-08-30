@@ -79,23 +79,6 @@ namespace tl
 	template<typename T>
 	Matrix4x4<T> LookAt(Matrix4x4<T> const &pointAt);
 
-	template<typename T>
-	Vec4<T> IntersectPlane
-	(
-		const Plane<T> &plane,
-		const Vec4<T> &lineStart,
-		const Vec4<T> lineEnd
-	);
-
-	template<typename T>
-	int ClipTriangleAgainstPlane
-	(
-		const Plane<T> &plane,
-		Triangle4d<T> &inputTriangle,
-		Triangle4d<T> &outputTriangle1,
-		Triangle4d<T> &outputTriangle2
-	);
-
 	void SetZAxisRotationMatrix(float theta, Matrix4x4<float> &matrix);
 
 	Matrix4x4<float> MakeZAxisRotationMatrix(float theta);
