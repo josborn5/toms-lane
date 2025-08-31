@@ -11,7 +11,7 @@ struct Camera
 	tl::Vec4<float> up = {0};
 
 	float yaw = 0.0f;
-	float field_of_view_in_deg = 0.0f;
+	float field_of_view_deg = 0.0f;
 	float near_plane = 0.0f;
 	float far_plane = 0.0f;
 };
@@ -164,8 +164,6 @@ tl::Matrix4x4<float> MakeProjectionMatrix(
 
 static bool wireframe = false;
 static bool is_teapot = true;
-static float field_of_view_deg = 0.0f;
-static float far_plane = 0.0f;
 static float* screen_depth_buffer = nullptr;
 static unsigned int screen_depth_buffer_size = screen_width * 700;
 
@@ -422,7 +420,7 @@ static T Clamp(T min, T value, T max)
 template float Clamp(float min, float value, float max);
 
 static void set_projection_matrix() {
-	projectionMatrix = MakeProjectionMatrix(field_of_view_deg, aspect_ratio, camera.near_plane, far_plane);
+	projectionMatrix = MakeProjectionMatrix(camera.field_of_view_deg, aspect_ratio, camera.near_plane, camera.far_plane);
 }
 
 static void reset_world_to_mesh() {
@@ -479,8 +477,8 @@ static void reset_world_to_mesh() {
 	// 	 |             |    |------|    |
 	//   |-------------|----------------|----> z
 	//   0
-	far_plane = max.z - min.z;
-	camera.near_plane = 0.1f * far_plane;
+	camera.far_plane = max.z - min.z;
+	camera.near_plane = 0.1f * camera.far_plane;
 
 
 	set_projection_matrix();
@@ -561,7 +559,7 @@ static void ResetCamera()
 	camera.position = { startPosition.x, startPosition.y, startPosition.z };
 	camera.direction = { startDirection.x, startDirection.y, startDirection.z };
 	cameraYaw = 0.0f;
-	field_of_view_deg = 60.0f;
+	camera.field_of_view_deg = 60.0f;
 	set_projection_matrix();
 }
 
@@ -679,11 +677,17 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 
 	else if (input.buttons[tl::KEY_J].isDown) {
-		field_of_view_deg += 0.25f;
+		camera.field_of_view_deg += 0.25f;
+		if (camera.field_of_view_deg > 170.0f) {
+			camera.field_of_view_deg = 170.0f;
+		}
 		set_projection_matrix();
 	}
 	else if (input.buttons[tl::KEY_K].isDown) {
-		field_of_view_deg -= 0.25f;
+		camera.field_of_view_deg -= 0.25f;
+		if (camera.field_of_view_deg < 10.0f) {
+			camera.field_of_view_deg = 10.0f;
+		}
 		set_projection_matrix();
 	}
 
@@ -725,7 +729,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	tl::font_interface_render_chars(renderBuffer, "FOV", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)field_of_view_deg, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)camera.field_of_view_deg, charFoot, 0xAAAAAA);
 
 	charFoot.position.y -= fontSize;
 	tl::font_interface_render_chars(renderBuffer, "NEAR PLANE", charFoot, 0xAAAAAA);
