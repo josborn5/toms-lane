@@ -18,7 +18,9 @@ struct Plane
 	tl::Vec3<float> normal;
 };
 
-
+const unsigned int screen_width = 1280;
+const unsigned int screen_height = 720;
+constexpr float aspect_ratio = (float)screen_width / (float)screen_height;
 
 tl::Vec4<float> IntersectPlane(
 	const Plane& plane,
@@ -160,8 +162,9 @@ static bool wireframe = false;
 static bool is_teapot = true;
 static float field_of_view_deg = 0.0f;
 static float near_plane = 0.0f;
+static float far_plane = 0.0f;
 static float* screen_depth_buffer = nullptr;
-static unsigned int screen_depth_buffer_size = 1280 * 700;
+static unsigned int screen_depth_buffer_size = screen_width * 700;
 
 static float camera_z = -1000.0f;
 static float camera_z_min = 1000.0f;
@@ -416,7 +419,7 @@ static T Clamp(T min, T value, T max)
 template float Clamp(float min, float value, float max);
 
 static void set_projection_matrix() {
-	projectionMatrix = MakeProjectionMatrix(field_of_view_deg, 1.0f, near_plane, 1000.0f);
+	projectionMatrix = MakeProjectionMatrix(field_of_view_deg, aspect_ratio, near_plane, far_plane);
 }
 
 static void reset_world_to_mesh() {
@@ -468,6 +471,14 @@ static void reset_world_to_mesh() {
 	min.y -= 2.0f * depth.y;
 	max.x += 2.0f * depth.x;
 	min.x -= 2.0f * depth.x;
+
+	// camera         near   object    far
+	// 	 |             |    |------|    |
+	//   |-------------|----------------|----> z
+	//   0
+	far_plane = max.z - min.z;
+	near_plane = 0.1f * far_plane;
+
 
 	set_projection_matrix();
 
@@ -548,7 +559,6 @@ static void ResetCamera()
 	camera.direction = { startDirection.x, startDirection.y, startDirection.z };
 	cameraYaw = 0.0f;
 	field_of_view_deg = 90.0f;
-	near_plane = 0.1f;
 	set_projection_matrix();
 }
 
@@ -783,12 +793,12 @@ int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::Rende
 
 int demo_main()
 {
-	const int targetFPS = 60;
+	const int targetFPS = 120;
 
 	tl::WindowSettings settings;
 	settings.title = "Demo";
-	settings.width = 1280;
-	settings.height = 720;
+	settings.width = screen_width;
+	settings.height = screen_height;
 
 	int windowOpenResult = tl::OpenWindow(settings);
 	if (windowOpenResult != 0)
