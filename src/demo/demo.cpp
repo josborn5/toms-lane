@@ -364,7 +364,6 @@ static tl::array<Triangle4d> meshArray = tl::array<Triangle4d>();
 static tl::Matrix4x4<float> projectionMatrix;
 
 static float theta = 0.0f;
-static float cameraYaw = 0.0f;
 static float positionIncrement = 0.1f;
 
 static tl::Vec3<float> max = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
@@ -558,7 +557,7 @@ static void ResetCamera()
 	camera.up = { 0.0f, 1.0f, 0.0f };
 	camera.position = { startPosition.x, startPosition.y, startPosition.z };
 	camera.direction = { startDirection.x, startDirection.y, startDirection.z };
-	cameraYaw = 0.0f;
+	camera.yaw = 0.0f;
 	camera.field_of_view_deg = 60.0f;
 	set_projection_matrix();
 }
@@ -631,16 +630,22 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	// First process any change in yaw and update the camera direction
 	if (input.buttons[tl::KEY_D].isDown)
 	{
-		cameraYaw -= yawIncrement;
+		camera.yaw -= yawIncrement;
+		if (camera.yaw < 0.0f) {
+			camera.yaw += 360.0f;
+		}
 	}
 	else if (input.buttons[tl::KEY_A].isDown)
 	{
-		cameraYaw += yawIncrement;
+		camera.yaw += yawIncrement;
+		if (camera.yaw > 360.0f) {
+			camera.yaw -= 360.0f;
+		}
 	}
 
 	// Apply the camera yaw to the camera.direction vector
 	tl::Vec4<float> target = { 0.0f, 0.0f, 1.0f };
-	tl::Matrix4x4<float> cameraYawMatrix = tl::MakeYAxisRotationMatrix(cameraYaw);
+	tl::Matrix4x4<float> cameraYawMatrix = tl::MakeYAxisRotationMatrix(camera.yaw);
 	tl::MultiplyVectorWithMatrix(target, camera.direction, cameraYawMatrix);
 
 	// Next process any forwards or backwards movement
