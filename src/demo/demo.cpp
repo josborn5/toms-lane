@@ -9,7 +9,11 @@ struct Camera
 	tl::Vec4<float> position = {0};
 	tl::Vec4<float> direction = {0};
 	tl::Vec4<float> up = {0};
-	tl::Rect<float> viewport = {0};
+
+	float yaw = 0.0f;
+	float field_of_view_in_deg = 0.0f;
+	float near_plane = 0.0f;
+	float far_plane = 0.0f;
 };
 
 struct Plane
@@ -161,7 +165,6 @@ tl::Matrix4x4<float> MakeProjectionMatrix(
 static bool wireframe = false;
 static bool is_teapot = true;
 static float field_of_view_deg = 0.0f;
-static float near_plane = 0.0f;
 static float far_plane = 0.0f;
 static float* screen_depth_buffer = nullptr;
 static unsigned int screen_depth_buffer_size = screen_width * 700;
@@ -419,7 +422,7 @@ static T Clamp(T min, T value, T max)
 template float Clamp(float min, float value, float max);
 
 static void set_projection_matrix() {
-	projectionMatrix = MakeProjectionMatrix(field_of_view_deg, aspect_ratio, near_plane, far_plane);
+	projectionMatrix = MakeProjectionMatrix(field_of_view_deg, aspect_ratio, camera.near_plane, far_plane);
 }
 
 static void reset_world_to_mesh() {
@@ -477,7 +480,7 @@ static void reset_world_to_mesh() {
 	//   |-------------|----------------|----> z
 	//   0
 	far_plane = max.z - min.z;
-	near_plane = 0.1f * far_plane;
+	camera.near_plane = 0.1f * far_plane;
 
 
 	set_projection_matrix();
@@ -558,7 +561,7 @@ static void ResetCamera()
 	camera.position = { startPosition.x, startPosition.y, startPosition.z };
 	camera.direction = { startDirection.x, startDirection.y, startDirection.z };
 	cameraYaw = 0.0f;
-	field_of_view_deg = 90.0f;
+	field_of_view_deg = 60.0f;
 	set_projection_matrix();
 }
 
@@ -685,11 +688,14 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 
 	else if (input.buttons[tl::KEY_V].isDown) {
-		near_plane += 0.1f;
+		camera.near_plane += 0.1f;
 		set_projection_matrix();
 	}
 	else if (input.buttons[tl::KEY_B].isDown) {
-		near_plane -= 0.1f;
+		camera.near_plane -= 0.1f;
+		if (camera.near_plane < 0.0f) {
+			camera.near_plane = 0.0f;
+		}
 		set_projection_matrix();
 	}
 
@@ -724,7 +730,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	charFoot.position.y -= fontSize;
 	tl::font_interface_render_chars(renderBuffer, "NEAR PLANE", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)(10.0f * near_plane), charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)(10.0f * camera.near_plane), charFoot, 0xAAAAAA);
 
 	charFoot.position = { 200.0f, infoHeight };
 	tl::font_interface_render_chars(renderBuffer, "MIN", charFoot, 0xAAAAAA);
