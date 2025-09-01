@@ -48,6 +48,7 @@ static float theta = 0.0f;
 static float positionIncrement = 0.1f;
 
 static tl::Rect<float> map;
+static float world_to_map_scale_factor = 0.0f;
 static tl::Matrix2x3<float> mapProjectionMatrix;
 
 static tl::GameMemory appMemory;
@@ -497,14 +498,15 @@ static void reset_world_to_mesh() {
 	map.halfSize = { 100.0f, 50.0f };
 
 	// Initialize the projection matrix for world to map
-	tl::Rect<float> topDownWorld = tl::Rect<float>();
+	tl::Rect<float> top_down_world = tl::Rect<float>();
 
 	// Using a top down projection for the map view.
 	// So depth (z) in the world --> horizontal (x) on the screen map.
 	// Left/right in the world (x) --> vertical (y) on the screen map.
-	topDownWorld.position = tl::Vec2<float> { world.position.z, world.position.x };
-	topDownWorld.halfSize = tl::Vec2<float> { world.half_size.z, world.half_size.x };
-	mapProjectionMatrix = GenerateProjectionMatrix(topDownWorld, map);
+	top_down_world.position = tl::Vec2<float> { world.position.z, world.position.x };
+	top_down_world.halfSize = tl::Vec2<float> { world.half_size.z, world.half_size.x };
+	world_to_map_scale_factor = world.half_size.z / top_down_world.halfSize.x;
+	mapProjectionMatrix = GenerateProjectionMatrix(top_down_world, map);
 
 	ResetCamera();
 }
@@ -776,8 +778,8 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	tl::Vec2<float> mapCameraPointPosition = Transform2DVector(topDownPointPosition, mapProjectionMatrix);
 
 	tl::Rect<float> mesh_footprint;
-	mesh_footprint.position = Transform2DVector(tl::Vec2<float> { mesh.position.y, mesh.position.z }, mapProjectionMatrix);
-	mesh_footprint.halfSize = { 20.0f, 20.0f };
+	mesh_footprint.position = Transform2DVector(tl::Vec2<float> { mesh.position.z, mesh.position.x }, mapProjectionMatrix);
+	mesh_footprint.halfSize = { world_to_map_scale_factor * mesh.half_size.z, world_to_map_scale_factor * mesh.half_size.x };
 
 	tl::DrawRect(renderBuffer, 0x00AA00, mesh_footprint);
 
