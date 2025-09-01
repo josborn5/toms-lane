@@ -502,8 +502,8 @@ static void reset_world_to_mesh() {
 	// Using a top down projection for the map view.
 	// So depth (z) in the world --> horizontal (x) on the screen map.
 	// Left/right in the world (x) --> vertical (y) on the screen map.
-	topDownWorld.position = tl::Vec2<float> { world.position.z, world.position.y };
-	topDownWorld.halfSize = tl::Vec2<float> { world.half_size.z, world.half_size.y };
+	topDownWorld.position = tl::Vec2<float> { world.position.z, world.position.x };
+	topDownWorld.halfSize = tl::Vec2<float> { world.half_size.z, world.half_size.x };
 	mapProjectionMatrix = GenerateProjectionMatrix(topDownWorld, map);
 
 	ResetCamera();
@@ -774,6 +774,12 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		pointPosition.x
 	};
 	tl::Vec2<float> mapCameraPointPosition = Transform2DVector(topDownPointPosition, mapProjectionMatrix);
+
+	tl::Rect<float> mesh_footprint;
+	mesh_footprint.position = Transform2DVector(tl::Vec2<float> { mesh.position.y, mesh.position.z }, mapProjectionMatrix);
+	mesh_footprint.halfSize = { 20.0f, 20.0f };
+
+	tl::DrawRect(renderBuffer, 0x00AA00, mesh_footprint);
 
 	mapCameraPosition = Transform2DVector(topDownCameraPosition, mapProjectionMatrix);
 	tl::DrawCircle(renderBuffer, 0x993333, mapCameraPosition, 10.0f);
