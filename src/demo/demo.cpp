@@ -494,8 +494,13 @@ static void reset_world_to_mesh() {
 	set_projection_matrix();
 
 	// Initialize the map
-	map.position = { 1100.0f, 75.0f };
-	map.halfSize = { 100.0f, 50.0f };
+	world_to_map_scale_factor = 0.05f * (float)screen_width / world.half_size.z;
+	map.halfSize = { world_to_map_scale_factor * world.half_size.z, world_to_map_scale_factor * world.half_size.x };
+	const float map_margin_in_pixels = 50.0f;
+	map.position = {
+		(float)screen_width - map.halfSize.x - map_margin_in_pixels,
+		map.halfSize.y + map_margin_in_pixels
+	};
 
 	// Initialize the projection matrix for world to map
 	tl::Rect<float> top_down_world = tl::Rect<float>();
@@ -505,7 +510,7 @@ static void reset_world_to_mesh() {
 	// Left/right in the world (x) --> vertical (y) on the screen map.
 	top_down_world.position = tl::Vec2<float> { world.position.z, world.position.x };
 	top_down_world.halfSize = tl::Vec2<float> { world.half_size.z, world.half_size.x };
-	world_to_map_scale_factor = world.half_size.z / top_down_world.halfSize.x;
+	world_to_map_scale_factor = map.halfSize.x / top_down_world.halfSize.x;
 	mapProjectionMatrix = GenerateProjectionMatrix(top_down_world, map);
 
 	ResetCamera();
