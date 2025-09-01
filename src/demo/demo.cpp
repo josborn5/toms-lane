@@ -36,9 +36,6 @@ static bool is_teapot = true;
 static float* screen_depth_buffer = nullptr;
 static unsigned int screen_depth_buffer_size = screen_width * 700;
 
-static float camera_z = -1000.0f;
-static float camera_z_min = 1000.0f;
-
 static cuboid world;
 static cuboid mesh;
 
@@ -49,8 +46,6 @@ static tl::Matrix4x4<float> projectionMatrix;
 
 static float theta = 0.0f;
 static float positionIncrement = 0.1f;
-
-static tl::Vec3<float> startDirection = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 
 static tl::Rect<float> map;
 static tl::Matrix2x3<float> mapProjectionMatrix;
@@ -208,9 +203,6 @@ static void TransformAndRenderMesh(
 	const int GREEN = 255;
 	const int BLUE = 0;
 
-	camera_z = -1000.0f;
-	camera_z_min = 1000.0f;
-
 	// Clear depth buffer
 	float* depth_copy = screen_depth_buffer;
 	for (unsigned int i = 0; i < screen_depth_buffer_size; i += 1) {
@@ -351,15 +343,6 @@ static void TransformAndRenderMesh(
 		for (int i = 0; i < triangleQueue.length(); i += 1)
 		{
 			Triangle4d draw = triangleQueue.content[i];
-
-			float provisional = 100.0f * draw.p[0].z;
-			if (provisional > camera_z) {
-				camera_z = provisional;
-			}
-
-			if (provisional < camera_z_min) {
-				camera_z_min = provisional;
-			}
 
 			// Super rough, take the depth as the average z value
 			int p0_screen_index = (renderBuffer.width * (int)draw.p[0].y) + (int)draw.p[0].x;
@@ -773,12 +756,6 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	tl::font_interface_render_chars(renderBuffer, "MESH", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
 	tl::font_interface_render_int(renderBuffer, meshArray.length(), charFoot, 0xAAAAAA);
-
-	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)camera_z, charFoot, 0xAAAAAA);
-
-	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)camera_z_min, charFoot, 0xAAAAAA);
 
 	// Draw the map
 	tl::DrawRect(renderBuffer, 0x333399, map);
