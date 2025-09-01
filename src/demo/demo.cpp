@@ -45,7 +45,7 @@ static tl::array<Triangle4d> meshArray = tl::array<Triangle4d>();
 static tl::Matrix4x4<float> projectionMatrix;
 
 static float theta = 0.0f;
-static float positionIncrement = 0.1f;
+static float positionIncrement = 0.0f;
 
 static tl::Rect<float> map;
 static float world_to_map_scale_factor = 0.0f;
@@ -482,6 +482,8 @@ static void reset_world_to_mesh() {
 	world.half_size.x = 2.0f * mesh.half_size.x;
 	world.half_size.y = 2.0f * mesh.half_size.y;
 	world.half_size.z = 2.0f * mesh.half_size.z;
+
+	positionIncrement = 0.01f * world.half_size.x;
 
 	// camera         near   object    far
 	// 	 |             |    |------|    |
