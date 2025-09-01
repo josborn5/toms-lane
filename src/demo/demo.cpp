@@ -50,7 +50,6 @@ static tl::Matrix4x4<float> projectionMatrix;
 static float theta = 0.0f;
 static float positionIncrement = 0.1f;
 
-static tl::Vec3<float> startPosition = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 static tl::Vec3<float> startDirection = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
 
 static tl::Rect<float> map;
@@ -429,6 +428,22 @@ static void set_projection_matrix() {
 	projectionMatrix = MakeProjectionMatrix(camera.field_of_view_deg, aspect_ratio, camera.near_plane, camera.far_plane);
 }
 
+static void ResetCamera()
+{
+	camera.up = { 0.0f, 1.0f, 0.0f, 0.0f };
+	// Start position is centered in x & y directions and stepped back in the z direction.
+	camera.position = {
+		world.position.x,
+		world.position.y,
+		world.position.z - world.half_size.z,
+		0.0f
+	};
+	camera.direction = tl::SubtractVectors(tl::Vec4<float> { mesh.position.x, mesh.position.y, mesh.position.z, 0.0f }, camera.position);
+	camera.yaw = 0.0f;
+	camera.field_of_view_deg = 60.0f;
+	set_projection_matrix();
+}
+
 static void reset_world_to_mesh() {
 	tl::Vec4<float> first_triangle_vertice = meshArray.get(0).p[0];
 	tl::Vec3<float> max = {
@@ -476,13 +491,6 @@ static void reset_world_to_mesh() {
 	mesh.position.y = 0.5f * (max.y + min.y);
 	mesh.position.z = 0.5f * (max.z + min.z);
 
-	// Start position is centered in x & y directions and stepped back in the z direction.
-	startPosition.z = min.z - mesh.half_size.z;
-	startPosition.y = mesh.position.y;
-	startPosition.x = mesh.position.x;
-
-	startDirection = tl::SubtractVectors(mesh.position, startPosition);
-
 	// set the bounds of the camera
 	world.position.x = mesh.position.x;
 	world.position.y = mesh.position.y;
@@ -514,6 +522,8 @@ static void reset_world_to_mesh() {
 	topDownWorld.position = tl::Vec2<float> { world.position.z, world.position.y };
 	topDownWorld.halfSize = tl::Vec2<float> { world.half_size.z, world.half_size.y };
 	mapProjectionMatrix = GenerateProjectionMatrix(topDownWorld, map);
+
+	ResetCamera();
 }
 
 static void reset_mesh_to_teapot() {
@@ -569,16 +579,6 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	reset_mesh_to_teapot();
 
 	return 0;
-}
-
-static void ResetCamera()
-{
-	camera.up = { 0.0f, 1.0f, 0.0f };
-	camera.position = { startPosition.x, startPosition.y, startPosition.z };
-	camera.direction = { startDirection.x, startDirection.y, startDirection.z };
-	camera.yaw = 0.0f;
-	camera.field_of_view_deg = 60.0f;
-	set_projection_matrix();
 }
 
 static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
