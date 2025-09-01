@@ -479,9 +479,10 @@ static void reset_world_to_mesh() {
 	world.position.x = mesh.position.x;
 	world.position.y = mesh.position.y;
 	world.position.z = mesh.position.z;
-	world.half_size.x = 2.0f * mesh.half_size.x;
-	world.half_size.y = 2.0f * mesh.half_size.y;
-	world.half_size.z = 2.0f * mesh.half_size.z;
+	const float space_around_mesh_scale_factor = 4.0f;
+	world.half_size.x = space_around_mesh_scale_factor * mesh.half_size.x;
+	world.half_size.y = space_around_mesh_scale_factor * mesh.half_size.y;
+	world.half_size.z = space_around_mesh_scale_factor * mesh.half_size.z;
 
 	positionIncrement = 0.01f * world.half_size.x;
 
@@ -636,7 +637,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		return 0;
 	}
 
-	const float yawIncrement = 0.05f;
+	const float yawIncrement = 0.02f;
 
 	// First process any change in yaw and update the camera direction
 	if (input.buttons[tl::KEY_D].isDown)
