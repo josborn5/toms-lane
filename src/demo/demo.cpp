@@ -4,6 +4,11 @@
 #include "./file.cpp"
 
 
+struct cuboid {
+	tl::Vec3<float> position = {0};
+	tl::Vec3<float> half_size = {0};
+};
+
 struct Camera
 {
 	tl::Vec4<float> position = {0};
@@ -25,6 +30,37 @@ struct Plane
 const unsigned int screen_width = 1280;
 const unsigned int screen_height = 720;
 constexpr float aspect_ratio = (float)screen_width / (float)screen_height;
+
+static bool wireframe = false;
+static bool is_teapot = true;
+static float* screen_depth_buffer = nullptr;
+static unsigned int screen_depth_buffer_size = screen_width * 700;
+
+static float camera_z = -1000.0f;
+static float camera_z_min = 1000.0f;
+
+static cuboid world;
+static cuboid mesh;
+
+static Camera camera;
+static tl::array<Triangle4d> meshArray = tl::array<Triangle4d>();
+
+static tl::Matrix4x4<float> projectionMatrix;
+
+static float theta = 0.0f;
+static float positionIncrement = 0.1f;
+
+static tl::Vec3<float> startPosition = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+static tl::Vec3<float> startDirection = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
+
+static tl::Rect<float> map;
+static tl::Matrix2x3<float> mapProjectionMatrix;
+
+static tl::GameMemory appMemory;
+
+static bool isStarted = false;
+
+
 
 tl::Vec4<float> IntersectPlane(
 	const Plane& plane,
@@ -161,14 +197,6 @@ tl::Matrix4x4<float> MakeProjectionMatrix(
 	return matrix;
 }
 
-
-static bool wireframe = false;
-static bool is_teapot = true;
-static float* screen_depth_buffer = nullptr;
-static unsigned int screen_depth_buffer_size = screen_width * 700;
-
-static float camera_z = -1000.0f;
-static float camera_z_min = 1000.0f;
 
 static void TransformAndRenderMesh(
 	const tl::RenderBuffer& renderBuffer,
@@ -358,27 +386,6 @@ static void TransformAndRenderMesh(
 		}
 	}
 }
-static Camera camera;
-static tl::array<Triangle4d> meshArray = tl::array<Triangle4d>();
-
-static tl::Matrix4x4<float> projectionMatrix;
-
-static float theta = 0.0f;
-static float positionIncrement = 0.1f;
-
-static tl::Vec3<float> max = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
-static tl::Vec3<float> min = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
-static tl::Vec3<float> startPosition = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
-static tl::Vec3<float> startDirection = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
-static tl::Vec3<float> meshCenter = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
-
-static tl::Rect<float> map;
-static tl::Matrix2x3<float> mapProjectionMatrix;
-
-static tl::GameMemory appMemory;
-
-static bool isStarted = false;
-
 
 tl::Matrix2x3<float> GenerateProjectionMatrix(const tl::Rect<float> &from, const tl::Rect<float> &to)
 {
@@ -423,6 +430,18 @@ static void set_projection_matrix() {
 }
 
 static void reset_world_to_mesh() {
+	tl::Vec4<float> first_triangle_vertice = meshArray.get(0).p[0];
+	tl::Vec3<float> max = {
+		first_triangle_vertice.x,
+		first_triangle_vertice.y,
+		first_triangle_vertice.z
+	};
+	tl::Vec3<float> min = {
+		first_triangle_vertice.x,
+		first_triangle_vertice.y,
+		first_triangle_vertice.z
+	};
+
 	for (int i = 0; i < meshArray.length(); i += 1)
 	{
 		Triangle4d tri = meshArray.get(i);
@@ -449,34 +468,34 @@ static void reset_world_to_mesh() {
 	}
 
 	tl::Vec3<float> depth = tl::Vec3<float> { 0.0f, 0.0f, 0.0f };
-	depth.z = max.z - min.z;
-	depth.y = max.y - min.y;
-	depth.x = max.x - min.x;
+	mesh.half_size.x = 0.5f * (max.x - min.x);
+	mesh.half_size.y = 0.5f * (max.y - min.y);
+	mesh.half_size.z = 0.5f * (max.z - min.z);
 
-	meshCenter.x = 0.5f * (max.x + min.x);
-	meshCenter.y = 0.5f * (max.y + min.y);
-	meshCenter.z = 0.5f * (max.z + min.z);
+	mesh.position.x = 0.5f * (max.x + min.x);
+	mesh.position.y = 0.5f * (max.y + min.y);
+	mesh.position.z = 0.5f * (max.z + min.z);
 
 	// Start position is centered in x & y directions and stepped back in the z direction.
-	startPosition.z = min.z - depth.z;
-	startPosition.y = meshCenter.y;
-	startPosition.x = meshCenter.x;
+	startPosition.z = min.z - mesh.half_size.z;
+	startPosition.y = mesh.position.y;
+	startPosition.x = mesh.position.x;
 
-	startDirection = tl::SubtractVectors(meshCenter, startPosition);
+	startDirection = tl::SubtractVectors(mesh.position, startPosition);
 
 	// set the bounds of the camera
-	max.z += 2.0f * depth.z;
-	min.z -= 2.0f * depth.z;
-	max.y += 2.0f * depth.y;
-	min.y -= 2.0f * depth.y;
-	max.x += 2.0f * depth.x;
-	min.x -= 2.0f * depth.x;
+	world.position.x = mesh.position.x;
+	world.position.y = mesh.position.y;
+	world.position.z = mesh.position.z;
+	world.half_size.x = 2.0f * mesh.half_size.x;
+	world.half_size.y = 2.0f * mesh.half_size.y;
+	world.half_size.z = 2.0f * mesh.half_size.z;
 
 	// camera         near   object    far
 	// 	 |             |    |------|    |
 	//   |-------------|----------------|----> z
 	//   0
-	camera.far_plane = max.z - min.z;
+	camera.far_plane = 2.0f * world.half_size.z; // should pick maximum length dimension
 	camera.near_plane = 0.1f * camera.far_plane;
 
 
@@ -492,8 +511,8 @@ static void reset_world_to_mesh() {
 	// Using a top down projection for the map view.
 	// So depth (z) in the world --> horizontal (x) on the screen map.
 	// Left/right in the world (x) --> vertical (y) on the screen map.
-	topDownWorld.position = tl::Vec2<float> { meshCenter.z, meshCenter.y };
-	topDownWorld.halfSize = tl::Vec2<float> { (0.5f * (max.z - min.z)), (0.5f * (max.y - min.y)) };
+	topDownWorld.position = tl::Vec2<float> { world.position.z, world.position.y };
+	topDownWorld.halfSize = tl::Vec2<float> { world.half_size.z, world.half_size.y };
 	mapProjectionMatrix = GenerateProjectionMatrix(topDownWorld, map);
 }
 
@@ -716,9 +735,9 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	theta += dt;
 
 	// Final bounds check on the camera
-	camera.position.x = Clamp(min.x, camera.position.x, max.x);
-	camera.position.y = Clamp(min.y, camera.position.y, max.y);
-	camera.position.z = Clamp(min.z, camera.position.z, max.z);
+	camera.position.x = Clamp(world.position.x - world.half_size.x, camera.position.x, world.position.x + world.half_size.x);
+	camera.position.y = Clamp(world.position.y - world.half_size.y, camera.position.y, world.position.y + world.half_size.y);
+	camera.position.z = Clamp(world.position.z - world.half_size.z, camera.position.z, world.position.z + world.half_size.z);
 
 	tl::MemorySpace transientMemory = gameMemory.transient;
 
@@ -742,15 +761,6 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	tl::font_interface_render_int(renderBuffer, (int)(10.0f * camera.near_plane), charFoot, 0xAAAAAA);
 
 	charFoot.position = { 200.0f, infoHeight };
-	tl::font_interface_render_chars(renderBuffer, "MIN", charFoot, 0xAAAAAA);
-	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)min.x, charFoot, 0xAAAAAA);
-	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)min.y, charFoot, 0xAAAAAA);
-	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)min.z, charFoot, 0xAAAAAA);
-
-	charFoot.position = { 300.0f, infoHeight };
 	tl::font_interface_render_chars(renderBuffer, "POS", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
 	tl::font_interface_render_int(renderBuffer, (int)camera.position.x, charFoot, 0xAAAAAA);
@@ -759,7 +769,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	charFoot.position.y -= fontSize;
 	tl::font_interface_render_int(renderBuffer, (int)camera.position.z, charFoot, 0xAAAAAA);
 
-	charFoot.position = { 400.0f, infoHeight };
+	charFoot.position = { 300.0f, infoHeight };
 	tl::font_interface_render_chars(renderBuffer, "MESH", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
 	tl::font_interface_render_int(renderBuffer, meshArray.length(), charFoot, 0xAAAAAA);
@@ -780,7 +790,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		camera.position.x
 	};
 
-	float pointerScale = 0.1f * (max.z - min.z);
+	float pointerScale = 0.1f * world.half_size.z;
 	tl::Vec4<float> pointPosition = tl::AddVectors(camera.position, tl::MultiplyVectorByScalar(camera.direction, pointerScale));
 	tl::Vec2<float> topDownPointPosition = {
 		pointPosition.z,
