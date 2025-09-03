@@ -182,8 +182,8 @@ tl::Matrix4x4<float> MakeProjectionMatrix(
 	float inverseTangent = 1.0f / tanf(fieldOfVewDeg * 0.5f * 3.14159f / 180.0f);
 
 	tl::Matrix4x4<float> matrix;
-	matrix.m[0][0] = aspectRatio * inverseTangent;
-	matrix.m[1][1] = inverseTangent;
+	matrix.m[0][0] = inverseTangent;
+	matrix.m[1][1] = aspectRatio * inverseTangent;
 	matrix.m[2][2] = farPlane / (farPlane - nearPlane);
 	matrix.m[3][2] = (-farPlane * nearPlane) / (farPlane - nearPlane);
 	matrix.m[2][3] = 1.0f;
@@ -265,14 +265,13 @@ static void TransformAndRenderMesh(
 				Project3DPointTo2D(clipped[i].p[2], projected.p[2], projectionMatrix);
 
 				// Scale to view
-				const float sf = 500.0f;
 				Triangle4d triToRender = projected;
-				triToRender.p[0].x *= sf;
-				triToRender.p[0].y *= sf;
-				triToRender.p[1].x *= sf;
-				triToRender.p[1].y *= sf;
-				triToRender.p[2].x *= sf;
-				triToRender.p[2].y *= sf;
+				triToRender.p[0].x *= (float)screen_width;
+				triToRender.p[0].y *= (float)screen_height;
+				triToRender.p[1].x *= (float)screen_width;
+				triToRender.p[1].y *= (float)screen_height;
+				triToRender.p[2].x *= (float)screen_width;
+				triToRender.p[2].y *= (float)screen_height;
 
 				const float translateX = (float)0.5 * (float)renderBuffer.width;
 				const float translateY = (float)0.5 * (float)renderBuffer.height;
@@ -424,7 +423,7 @@ static void ResetCamera()
 	};
 	camera.direction = tl::SubtractVectors(tl::Vec4<float> { mesh.position.x, mesh.position.y, mesh.position.z, 0.0f }, camera.position);
 	camera.yaw = 0.0f;
-	camera.field_of_view_deg = 60.0f;
+	camera.field_of_view_deg = 75.0f;
 	set_projection_matrix();
 }
 
@@ -479,7 +478,7 @@ static void reset_world_to_mesh() {
 	world.position.x = mesh.position.x;
 	world.position.y = mesh.position.y;
 	world.position.z = mesh.position.z;
-	const float space_around_mesh_scale_factor = 4.0f;
+	const float space_around_mesh_scale_factor = 8.0f;
 	world.half_size.x = space_around_mesh_scale_factor * mesh.half_size.x;
 	world.half_size.y = space_around_mesh_scale_factor * mesh.half_size.y;
 	world.half_size.z = space_around_mesh_scale_factor * mesh.half_size.z;
