@@ -254,6 +254,9 @@ static void TransformAndRenderMesh(
 
 			// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
 			Triangle4d clipped[2];
+
+			// TODO: remove these hard coded z values - they need to relate to
+			// near & far values used to generate the projection matric
 			Plane inFrontOfScreen = { 0.0f, 0.0f, 0.1f,	 0.0f, 0.0f, 1.0f };
 			int clippedTriangleCount = ClipTriangleAgainstPlane(inFrontOfScreen, viewed, clipped[0], clipped[1]);
 
