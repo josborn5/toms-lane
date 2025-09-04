@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <math.h>
 #include "../tl-application.hpp"
 #include "../tl-library.hpp"
@@ -190,6 +191,19 @@ tl::Matrix4x4<float> MakeProjectionMatrix(
 	return matrix;
 }
 
+static int compare_triangle_depth(const void* a, const void* b) {
+	// super rough, take the depth of first point in the triangle
+	// higher z value means further away, so place before
+	if (((Triangle4d*)a)->p[0].z > ((Triangle4d*)b)->p[0].z) {
+		return -1;
+	}
+
+	if (((Triangle4d*)a)->p[0].z < ((Triangle4d*)b)->p[0].z) {
+		return 1;
+	}
+
+	return 0;
+}
 
 static void TransformAndRenderMesh(
 	const tl::RenderBuffer& renderBuffer,
@@ -284,6 +298,9 @@ static void TransformAndRenderMesh(
 	}
 
 	tl::MemorySpace remainingTransient = trianglesToDrawArray.sizeToCurrentLength();
+
+	// sort the triangles back to front
+	qsort(trianglesToDrawArray.head_pointer(), trianglesToDrawArray.length(), sizeof(Triangle4d), compare_triangle_depth);
 
 	for (int n = 0; n < trianglesToDrawArray.length(); n += 1)
 	{
@@ -794,7 +811,7 @@ int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::Rende
 
 int demo_main()
 {
-	const int targetFPS = 120;
+	const int targetFPS = 60;
 
 	tl::WindowSettings settings;
 	settings.title = "Demo";

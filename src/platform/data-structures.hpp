@@ -121,6 +121,10 @@ namespace tl
 				return &_content[_length - 1];
 			}
 
+			T* head_pointer() {
+				return _content;
+			}
+
 			int delete_from(unsigned int inclusive_start_index, unsigned int inclusive_end_index)
 			{
 				if (inclusive_start_index >= _length ||
