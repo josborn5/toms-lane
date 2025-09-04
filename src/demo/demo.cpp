@@ -200,9 +200,9 @@ static void TransformAndRenderMesh(
 	const tl::Matrix4x4<float>& projectionMatrix,
 	const tl::MemorySpace& transient
 ) {
-	const int RED = 0;
-	const int GREEN = 255;
-	const int BLUE = 0;
+	const int RED = 0xFF;
+	const int GREEN = 0xAA;
+	const int BLUE = 0x88;
 
 	// Clear depth buffer
 	float* depth_copy = screen_depth_buffer;
@@ -241,9 +241,9 @@ static void TransformAndRenderMesh(
 
 		if (dot <= 0.0f)
 		{
-			tl::Vec4<float> lightDirection = { 0.0f, 0.0f, 1.0f };
+			tl::Vec4<float> lightDirection = { 0.0f, 0.0f, -1.0f, 0.0f };
 			tl::Vec4<float> normalizedLightDirection = UnitVector(lightDirection);
-			float shade = DotProduct(normal, normalizedLightDirection);
+			float shade = 0.5f + (0.5f * DotProduct(normal, normalizedLightDirection));
 
 			uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
 
