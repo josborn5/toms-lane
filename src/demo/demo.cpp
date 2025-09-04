@@ -33,8 +33,6 @@ constexpr float aspect_ratio = (float)screen_width / (float)screen_height;
 
 static bool wireframe = false;
 static bool is_teapot = true;
-static float* screen_depth_buffer = nullptr;
-static unsigned int screen_depth_buffer_size = screen_width * 700;
 
 static cuboid world;
 static cuboid mesh;
@@ -204,12 +202,6 @@ static void TransformAndRenderMesh(
 	const int GREEN = 0xAA;
 	const int BLUE = 0x88;
 
-	// Clear depth buffer
-	float* depth_copy = screen_depth_buffer;
-	for (unsigned int i = 0; i < screen_depth_buffer_size; i += 1) {
-		depth_copy[i] = 0.0f;
-	}
-
 	// Camera matrix
 	tl::Vec4<float> target = AddVectors(camera.position, camera.direction);
 	tl::Matrix4x4<float> cameraMatrix = PointAt(camera.position, target, camera.up);
@@ -348,14 +340,6 @@ static void TransformAndRenderMesh(
 		for (int i = 0; i < triangleQueue.length(); i += 1)
 		{
 			Triangle4d draw = triangleQueue.content[i];
-
-			// Super rough, take the depth as the average z value
-			int p0_screen_index = (renderBuffer.width * (int)draw.p[0].y) + (int)draw.p[0].x;
-			float existing_depth_at_p0 = screen_depth_buffer[p0_screen_index];
-
-			if (draw.p[0].z < existing_depth_at_p0) {
-				continue;
-			}
 
 			if (wireframe) {
 				tl::Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
@@ -566,12 +550,7 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	tl::MemorySpace transientMemory = gameMemory.transient;
 	tl::font_interface_initialize();
 
-	tl::MemorySpace perm = gameMemory.permanent;
-	screen_depth_buffer = (float*)gameMemory.permanent.content;
-	perm.content = (float*)perm.content + screen_depth_buffer_size;
-	perm.sizeInBytes -= (sizeof(float) * screen_depth_buffer_size);
-
-	meshArray.initialize(perm);
+	meshArray.initialize(gameMemory.permanent);
 
 	reset_mesh_to_teapot();
 
