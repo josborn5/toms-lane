@@ -230,62 +230,64 @@ static void TransformAndRenderMesh(
 		Triangle4d viewed;
 		Triangle4d projected;
 
-		// Work out the normal of the triangle
+		// Skip any triangles angled away from the camera
 		tl::Vec4<float> line1 = SubtractVectors(tri.p[1], tri.p[0]);
 		tl::Vec4<float> line2 = SubtractVectors(tri.p[2], tri.p[0]);
 		tl::Vec4<float> normal = UnitVector(CrossProduct(line1, line2));
 
 		tl::Vec4<float> fromCameraToTriangle = SubtractVectors(tri.p[0], camera.position);
 		float dot = DotProduct(normal, fromCameraToTriangle);
-
-
-		if (dot <= 0.0f)
+		if (dot > 0.0f)
 		{
-			tl::Vec4<float> lightDirection = { 0.0f, 0.0f, -1.0f, 0.0f };
-			tl::Vec4<float> normalizedLightDirection = UnitVector(lightDirection);
-			float shade = 0.5f + (0.5f * DotProduct(normal, normalizedLightDirection));
+			continue;
+		}
 
-			uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
+		// Convert the triangle position from world space to view space
+		MultiplyVectorWithMatrix(tri.p[0], viewed.p[0], viewMatrix);
+		MultiplyVectorWithMatrix(tri.p[1], viewed.p[1], viewMatrix);
+		MultiplyVectorWithMatrix(tri.p[2], viewed.p[2], viewMatrix);
 
-			// Convert the triangle position from world space to view space
-			MultiplyVectorWithMatrix(tri.p[0], viewed.p[0], viewMatrix);
-			MultiplyVectorWithMatrix(tri.p[1], viewed.p[1], viewMatrix);
-			MultiplyVectorWithMatrix(tri.p[2], viewed.p[2], viewMatrix);
+		const tl::Vec4<float> lightDirection = { 0.0f, 0.0f, -1.0f, 0.0f };
+		tl::Vec4<float> normalizedLightDirection = UnitVector(lightDirection);
+		float shade = 0.5f + (0.5f * DotProduct(normal, normalizedLightDirection));
 
-			// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
-			Triangle4d clipped[2];
+		uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
 
-			// TODO: remove these hard coded z values - they need to relate to
-			// near & far values used to generate the projection matric
-			Plane inFrontOfScreen = { 0.0f, 0.0f, 0.1f,	 0.0f, 0.0f, 1.0f };
-			int clippedTriangleCount = ClipTriangleAgainstPlane(inFrontOfScreen, viewed, clipped[0], clipped[1]);
+		// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
+		Triangle4d clipped[2];
 
-			for (int i = 0; i < clippedTriangleCount; i += 1)
-			{
-				// Project each triangle in 3D space onto the 2D space triangle to render
-				Project3DPointTo2D(clipped[i].p[0], projected.p[0], projectionMatrix);
-				Project3DPointTo2D(clipped[i].p[1], projected.p[1], projectionMatrix);
-				Project3DPointTo2D(clipped[i].p[2], projected.p[2], projectionMatrix);
+		// TODO: remove these hard coded z values - they need to relate to
+		// near & far values used to generate the projection matric
+		Plane inFrontOfScreen;
+		inFrontOfScreen.position = { 0.0f, 0.0f, camera.near_plane };
+		inFrontOfScreen.normal = { 0.0f, 0.0f, 1.0f };
+		int clippedTriangleCount = ClipTriangleAgainstPlane(inFrontOfScreen, viewed, clipped[0], clipped[1]);
 
-				// Scale to view
-				Triangle4d triToRender = projected;
-				triToRender.p[0].x *= (float)screen_width;
-				triToRender.p[0].y *= (float)screen_height;
-				triToRender.p[1].x *= (float)screen_width;
-				triToRender.p[1].y *= (float)screen_height;
-				triToRender.p[2].x *= (float)screen_width;
-				triToRender.p[2].y *= (float)screen_height;
+		for (int i = 0; i < clippedTriangleCount; i += 1)
+		{
+			// Project each triangle in 3D space onto the 2D space triangle to render
+			Project3DPointTo2D(clipped[i].p[0], projected.p[0], projectionMatrix);
+			Project3DPointTo2D(clipped[i].p[1], projected.p[1], projectionMatrix);
+			Project3DPointTo2D(clipped[i].p[2], projected.p[2], projectionMatrix);
 
-				const float translateX = (float)0.5 * (float)renderBuffer.width;
-				const float translateY = (float)0.5 * (float)renderBuffer.height;
-				triToRender.p[0].x += translateX; triToRender.p[0].y += translateY;
-				triToRender.p[1].x += translateX; triToRender.p[1].y += translateY;
-				triToRender.p[2].x += translateX; triToRender.p[2].y += translateY;
+			// Scale to view
+			Triangle4d triToRender = projected;
+			triToRender.p[0].x *= (float)screen_width;
+			triToRender.p[0].y *= (float)screen_height;
+			triToRender.p[1].x *= (float)screen_width;
+			triToRender.p[1].y *= (float)screen_height;
+			triToRender.p[2].x *= (float)screen_width;
+			triToRender.p[2].y *= (float)screen_height;
 
-				triToRender.color = triangleColor;
+			const float translateX = (float)0.5 * (float)renderBuffer.width;
+			const float translateY = (float)0.5 * (float)renderBuffer.height;
+			triToRender.p[0].x += translateX; triToRender.p[0].y += translateY;
+			triToRender.p[1].x += translateX; triToRender.p[1].y += translateY;
+			triToRender.p[2].x += translateX; triToRender.p[2].y += translateY;
 
-				trianglesToDrawArray.append(triToRender);
-			}
+			triToRender.color = triangleColor;
+
+			trianglesToDrawArray.append(triToRender);
 		}
 	}
 
