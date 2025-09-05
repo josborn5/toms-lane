@@ -502,8 +502,11 @@ static void reset_world_to_mesh() {
 	set_projection_matrix();
 
 	// Initialize the map
-	world_to_map_scale_factor = 0.05f * (float)screen_width / world.half_size.z;
-	map.halfSize = { world_to_map_scale_factor * world.half_size.z, world_to_map_scale_factor * world.half_size.x };
+	float map_half_width = 0.05f * (float)screen_width;
+	map.halfSize = {
+		map_half_width,
+		map_half_width * world.half_size.x / world.half_size.z
+	};
 	const float map_margin_in_pixels = 50.0f;
 	map.position = {
 		(float)screen_width - map.halfSize.x - map_margin_in_pixels,
@@ -770,7 +773,6 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	// Draw the map
 	tl::DrawRect(renderBuffer, 0x333399, map);
 
-
 	tl::Vec2<float> mapCameraPosition;
 	tl::Vec2<float> topDownCameraPosition = {
 		camera.position.z,
@@ -788,6 +790,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	tl::Rect<float> mesh_footprint;
 	mesh_footprint.position = Transform2DVector(tl::Vec2<float> { mesh.position.z, mesh.position.x }, mapProjectionMatrix);
 	mesh_footprint.halfSize = { world_to_map_scale_factor * mesh.half_size.z, world_to_map_scale_factor * mesh.half_size.x };
+
 
 	tl::DrawRect(renderBuffer, 0x00AA00, mesh_footprint);
 
