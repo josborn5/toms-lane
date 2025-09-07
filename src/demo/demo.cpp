@@ -54,6 +54,11 @@ static tl::GameMemory appMemory;
 
 static bool isStarted = false;
 
+static float deg_to_rad(float degrees) {
+	constexpr float pi_over_180 = 3.14159f / 180.0f;
+	return degrees * pi_over_180;
+}
+
 tl::Vec4<float> IntersectPlane(
 	const Plane& plane,
 	const tl::Vec4<float>& lineStart,
@@ -183,7 +188,7 @@ tl::Matrix4x4<float> MakeProjectionMatrix(
 	float farPlane
 )
 {
-	float inverseTangent = 1.0f / tanf(fieldOfVewDeg * 0.5f * 3.14159f / 180.0f);
+	float inverseTangent = 1.0f / tanf(deg_to_rad(0.5f * fieldOfVewDeg));
 
 	tl::Matrix4x4<float> matrix;
 	matrix.m[0][0] = inverseTangent;
@@ -426,7 +431,7 @@ static void set_projection_matrix() {
 static void update_camera_direction() {
 	// Apply the camera yaw to the camera.direction vector
 	tl::Vec4<float> target = { 0.0f, 0.0f, 1.0f };
-	tl::Matrix4x4<float> cameraYawMatrix = tl::MakeYAxisRotationMatrix(camera.yaw);
+	tl::Matrix4x4<float> cameraYawMatrix = tl::MakeYAxisRotationMatrix(deg_to_rad(camera.yaw));
 	tl::MultiplyVectorWithMatrix(target, camera.direction, cameraYawMatrix);
 }
 
@@ -440,12 +445,18 @@ static void ResetCamera()
 		world.position.z - world.half_size.z,
 		0.0f
 	};
-	camera.direction = tl::SubtractVectors(tl::Vec4<float> { mesh.position.x, mesh.position.y, mesh.position.z, 0.0f }, camera.position);
 	camera.yaw = 0.0f;
-	camera.field_of_view_deg = 75.0f;
-	set_projection_matrix();
-
 	update_camera_direction();
+	camera.field_of_view_deg = 75.0f;
+
+	// camera         near   object    far
+	// 	 |             |    |------|    |
+	//   |-------------|----------------|----> z
+	//   0
+	camera.far_plane = 2.0f * world.half_size.z; // should pick maximum length dimension
+	camera.near_plane = 0.1f * camera.far_plane;
+
+	set_projection_matrix();
 }
 
 static void reset_world_to_mesh() {
@@ -505,16 +516,6 @@ static void reset_world_to_mesh() {
 	world.half_size.z = space_around_mesh_scale_factor * mesh.half_size.z;
 
 	positionIncrement = 0.01f * world.half_size.x;
-
-	// camera         near   object    far
-	// 	 |             |    |------|    |
-	//   |-------------|----------------|----> z
-	//   0
-	camera.far_plane = 2.0f * world.half_size.z; // should pick maximum length dimension
-	camera.near_plane = 0.1f * camera.far_plane;
-
-
-	set_projection_matrix();
 
 	// Initialize the map
 	float map_half_width = 0.05f * (float)screen_width;
@@ -593,9 +594,9 @@ static int Initialize(const tl::GameMemory& gameMemory)
 }
 
 
-static const float yawIncrement = 0.02f;
+static const float yaw_increment_in_degrees = 0.5f;
 static void increment_camera_yaw() {
-	camera.yaw += yawIncrement;
+	camera.yaw += yaw_increment_in_degrees;
 	if (camera.yaw > 360.0f) {
 		camera.yaw -= 360.0f;
 	}
@@ -603,7 +604,7 @@ static void increment_camera_yaw() {
 }
 
 static void decrement_camera_yaw() {
-	camera.yaw -= yawIncrement;
+	camera.yaw -= yaw_increment_in_degrees;
 	if (camera.yaw < 0.0f) {
 		camera.yaw += 360.0f;
 	}
