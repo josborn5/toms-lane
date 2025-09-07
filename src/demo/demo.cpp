@@ -177,8 +177,14 @@ void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) 
 	tl::Vec4<float> near_plane_center_from_position = MultiplyVectorByScalar(tl::UnitVector(camera.direction), camera.near_plane);
 	tl::Vec4<float> near_plane_center = tl::AddVectors(camera.position, near_plane_center_from_position);
 
+	tl::Vec4<float> unit_normal_to_direction = tl::UnitVector(tl::CrossProduct(camera.direction, camera.up));
+	float opp = camera.near_plane * tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
+	tl::Vec4<float> near_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, opp);
+	tl::Vec4<float> near_plane_right = tl::AddVectors(near_plane_center, near_plane_right_from_center);
+	tl::Vec4<float> near_plane_left = tl::SubtractVectors(near_plane_center, near_plane_right_from_center);
 
-	p1 = Transform2DVector(tl::Vec2<float>{ near_plane_center.z, near_plane_center.x }, mapProjectionMatrix);
+	p1 = Transform2DVector(tl::Vec2<float>{ near_plane_left.z, near_plane_left.x }, mapProjectionMatrix);
+	p2 = Transform2DVector(tl::Vec2<float>{ near_plane_right.z, near_plane_right.x }, mapProjectionMatrix);
 }
 
 tl::Matrix4x4<float> MakeProjectionMatrix(
@@ -802,17 +808,33 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		camera.position.x
 	};
 
-	tl::Vec2<float> mapCameraPointPosition;
-	get_camera_near_plane_map_coords(mapCameraPointPosition, tl::Vec2<float>{ 0.0f, 0.0f });
+	tl::Vec2<float> camera_near_plane_right;
+	tl::Vec2<float> camera_near_plane_left;
+	get_camera_near_plane_map_coords(camera_near_plane_left, camera_near_plane_right);
 
 	tl::Vec2<float> mapCameraPosition;
 	mapCameraPosition = Transform2DVector(topDownCameraPosition, mapProjectionMatrix);
 	tl::DrawCircle(renderBuffer, 0x993333, mapCameraPosition, 5.0f);
+
 	tl::DrawLineInPixels(
 		renderBuffer,
 		0x993333,
 		mapCameraPosition,
-		mapCameraPointPosition
+		camera_near_plane_left
+	);
+
+	tl::DrawLineInPixels(
+		renderBuffer,
+		0x993333,
+		mapCameraPosition,
+		camera_near_plane_right
+	);
+
+	tl::DrawLineInPixels(
+		renderBuffer,
+		0x993333,
+		camera_near_plane_left,
+		camera_near_plane_right
 	);
 
 	return 0;
