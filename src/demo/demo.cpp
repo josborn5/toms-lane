@@ -43,7 +43,6 @@ static tl::array<Triangle4d> meshArray = tl::array<Triangle4d>();
 
 static tl::Matrix4x4<float> projectionMatrix;
 
-static float theta = 0.0f;
 static float positionIncrement = 0.0f;
 
 static tl::Rect<float> map;
@@ -740,8 +739,6 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	{
 		ResetCamera();
 	}
-
-	theta += dt;
 
 	// Final bounds check on the camera
 	camera.position.x = Clamp(world.position.x - world.half_size.x, camera.position.x, world.position.x + world.half_size.x);
