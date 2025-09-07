@@ -490,7 +490,7 @@ static void ResetCamera()
 	// 	 |             |    |------|    |
 	//   |-------------|----------------|----> z
 	//   0
-	camera.far_plane = 2.0f * world.half_size.z; // should pick maximum length dimension
+	camera.far_plane = 1.0f * world.half_size.z;
 	camera.near_plane = 0.1f * camera.far_plane;
 
 	set_projection_matrix();
