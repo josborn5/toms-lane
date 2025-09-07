@@ -187,6 +187,37 @@ void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) 
 	p2 = Transform2DVector(tl::Vec2<float>{ near_plane_right.z, near_plane_right.x }, mapProjectionMatrix);
 }
 
+void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>& near_2, tl::Vec2<float>& far_1, tl::Vec2<float>& far_2) {
+	tl::Vec4<float> unit_direction = tl::UnitVector(camera.direction);
+	tl::Vec4<float> unit_normal_to_direction = tl::UnitVector(tl::CrossProduct(camera.direction, camera.up));
+	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
+
+	tl::Vec4<float> near_plane_center_from_position = MultiplyVectorByScalar(unit_direction, camera.near_plane);
+	tl::Vec4<float> near_plane_center = tl::AddVectors(camera.position, near_plane_center_from_position);
+
+	float near_opp = camera.near_plane * tan_half_fov;
+	tl::Vec4<float> near_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, near_opp);
+	tl::Vec4<float> near_plane_right = tl::AddVectors(near_plane_center, near_plane_right_from_center);
+	tl::Vec4<float> near_plane_left = tl::SubtractVectors(near_plane_center, near_plane_right_from_center);
+
+
+	tl::Vec4<float> far_plane_center_from_position = MultiplyVectorByScalar(unit_direction, camera.far_plane);
+	tl::Vec4<float> far_plane_center = tl::AddVectors(camera.position, far_plane_center_from_position);
+
+	float far_opp = camera.far_plane * tan_half_fov;
+	tl::Vec4<float> far_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, far_opp);
+	tl::Vec4<float> far_plane_right = tl::AddVectors(far_plane_center, far_plane_right_from_center);
+	tl::Vec4<float> far_plane_left = tl::SubtractVectors(far_plane_center, far_plane_right_from_center);
+
+
+	near_1 = Transform2DVector(tl::Vec2<float>{ near_plane_left.z, near_plane_left.x }, mapProjectionMatrix);
+	near_2 = Transform2DVector(tl::Vec2<float>{ near_plane_right.z, near_plane_right.x }, mapProjectionMatrix);
+	far_1 = Transform2DVector(tl::Vec2<float>{ far_plane_left.z, far_plane_left.x }, mapProjectionMatrix);
+	far_2 = Transform2DVector(tl::Vec2<float>{ far_plane_right.z, far_plane_right.x }, mapProjectionMatrix);
+}
+
+
+
 tl::Matrix4x4<float> MakeProjectionMatrix(
 	float fieldOfVewDeg,
 	float aspectRatio,
@@ -808,9 +839,8 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		camera.position.x
 	};
 
-	tl::Vec2<float> camera_near_plane_right;
-	tl::Vec2<float> camera_near_plane_left;
-	get_camera_near_plane_map_coords(camera_near_plane_left, camera_near_plane_right);
+	tl::Vec2<float> camera_near_plane_right, camera_near_plane_left, camera_far_plane_right, camera_far_plane_left;
+	get_camera_plane_map_coords(camera_near_plane_right, camera_near_plane_left, camera_far_plane_right, camera_far_plane_left);
 
 	tl::Vec2<float> mapCameraPosition;
 	mapCameraPosition = Transform2DVector(topDownCameraPosition, mapProjectionMatrix);
@@ -820,14 +850,14 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		renderBuffer,
 		0x993333,
 		mapCameraPosition,
-		camera_near_plane_left
+		camera_far_plane_left
 	);
 
 	tl::DrawLineInPixels(
 		renderBuffer,
 		0x993333,
 		mapCameraPosition,
-		camera_near_plane_right
+		camera_far_plane_right
 	);
 
 	tl::DrawLineInPixels(
@@ -835,6 +865,13 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		0x993333,
 		camera_near_plane_left,
 		camera_near_plane_right
+	);
+
+	tl::DrawLineInPixels(
+		renderBuffer,
+		0x993333,
+		camera_far_plane_left,
+		camera_far_plane_right
 	);
 
 	return 0;
