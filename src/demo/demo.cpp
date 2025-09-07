@@ -28,6 +28,7 @@ struct Plane
 	tl::Vec3<float> normal;
 };
 
+
 const unsigned int screen_width = 1280;
 const unsigned int screen_height = 720;
 constexpr float aspect_ratio = (float)screen_width / (float)screen_height;
@@ -52,8 +53,6 @@ static tl::Matrix2x3<float> mapProjectionMatrix;
 static tl::GameMemory appMemory;
 
 static bool isStarted = false;
-
-
 
 tl::Vec4<float> IntersectPlane(
 	const Plane& plane,
@@ -169,6 +168,13 @@ int ClipTriangleAgainstPlane(
 	return 0;
 }
 
+void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) {
+	tl::Vec4<float> near_plane_center_from_position = MultiplyVectorByScalar(tl::UnitVector(camera.direction), camera.near_plane);
+	tl::Vec4<float> near_plane_center = tl::AddVectors(camera.position, near_plane_center_from_position);
+
+
+	p1 = Transform2DVector(tl::Vec2<float>{ near_plane_center.z, near_plane_center.x }, mapProjectionMatrix);
+}
 
 tl::Matrix4x4<float> MakeProjectionMatrix(
 	float fieldOfVewDeg,
@@ -784,29 +790,23 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	// Draw the map
 	tl::DrawRect(renderBuffer, 0x333399, map);
 
-	tl::Vec2<float> mapCameraPosition;
+	tl::Rect<float> mesh_footprint;
+	mesh_footprint.position = Transform2DVector(tl::Vec2<float> { mesh.position.z, mesh.position.x }, mapProjectionMatrix);
+	mesh_footprint.halfSize = { world_to_map_scale_factor * mesh.half_size.z, world_to_map_scale_factor * mesh.half_size.x };
+	tl::DrawRect(renderBuffer, 0x00AA00, mesh_footprint);
+
+
 	tl::Vec2<float> topDownCameraPosition = {
 		camera.position.z,
 		camera.position.x
 	};
 
-	float pointerScale = 0.1f * world.half_size.z;
-	tl::Vec4<float> pointPosition = tl::AddVectors(camera.position, tl::MultiplyVectorByScalar(camera.direction, pointerScale));
-	tl::Vec2<float> topDownPointPosition = {
-		pointPosition.z,
-		pointPosition.x
-	};
-	tl::Vec2<float> mapCameraPointPosition = Transform2DVector(topDownPointPosition, mapProjectionMatrix);
+	tl::Vec2<float> mapCameraPointPosition;
+	get_camera_near_plane_map_coords(mapCameraPointPosition, tl::Vec2<float>{ 0.0f, 0.0f });
 
-	tl::Rect<float> mesh_footprint;
-	mesh_footprint.position = Transform2DVector(tl::Vec2<float> { mesh.position.z, mesh.position.x }, mapProjectionMatrix);
-	mesh_footprint.halfSize = { world_to_map_scale_factor * mesh.half_size.z, world_to_map_scale_factor * mesh.half_size.x };
-
-
-	tl::DrawRect(renderBuffer, 0x00AA00, mesh_footprint);
-
+	tl::Vec2<float> mapCameraPosition;
 	mapCameraPosition = Transform2DVector(topDownCameraPosition, mapProjectionMatrix);
-	tl::DrawCircle(renderBuffer, 0x993333, mapCameraPosition, 10.0f);
+	tl::DrawCircle(renderBuffer, 0x993333, mapCameraPosition, 5.0f);
 	tl::DrawLineInPixels(
 		renderBuffer,
 		0x993333,
