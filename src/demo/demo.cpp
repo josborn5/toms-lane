@@ -191,13 +191,14 @@ tl::Matrix4x4<float> MakeProjectionMatrix(
 }
 
 static int compare_triangle_depth(const void* a, const void* b) {
-	// super rough, take the depth of first point in the triangle
-	// higher z value means further away, so place before
-	if (((Triangle4d*)a)->p[0].z > ((Triangle4d*)b)->p[0].z) {
+	float a_depth_sum = ((Triangle4d*)a)->p[0].z + ((Triangle4d*)a)->p[1].z + ((Triangle4d*)a)->p[2].z;
+	float b_depth_sum = ((Triangle4d*)b)->p[0].z + ((Triangle4d*)b)->p[1].z + ((Triangle4d*)b)->p[2].z;
+
+	if (a_depth_sum > b_depth_sum) {
 		return -1;
 	}
 
-	if (((Triangle4d*)a)->p[0].z < ((Triangle4d*)b)->p[0].z) {
+	if (a_depth_sum < b_depth_sum) {
 		return 1;
 	}
 
