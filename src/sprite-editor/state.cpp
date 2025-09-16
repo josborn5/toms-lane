@@ -17,6 +17,7 @@ static operation_executor the_undo;
 static clipboard the_clipboard;
 
 static tl::MemorySpace fileReadMemory;
+static tl::MemorySpace base_sprite_memory;
 static tl::MemorySpace paletteMemory;
 static tl::MemorySpace tempMemory;
 static uint32_t currentColor = 0;
@@ -407,8 +408,22 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 
 	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
 	fileReadMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
-	state.canvas_color_table.init(tl::CarveMemorySpace(color_table_size_in_bytes, working));
-	state.canvas.init(working); // left over memory goes to main sprite
+
+	tl::MemorySpace color_table_memory = tl::CarveMemorySpace(color_table_size_in_bytes, working);
+
+	state.canvas_color_table.init(color_table_memory);
+
+	// carve the remaining space in two:
+	// 1 - for the base sprite memory
+	// (prior to doing operations)
+	// 2 - final sprite memory to render
+	// (after doing operations)
+	uint64_t sprite_memory_size_in_bytes = working.sizeInBytes / 2;
+
+	base_sprite_memory = tl::CarveMemorySpace(sprite_memory_size_in_bytes, working);
+
+	state.canvas.init(working);
+
 	tempMemory = gameMemory.transient;
 
 	state.canvas.p_color_table = &state.canvas_color_table;

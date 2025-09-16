@@ -42,7 +42,7 @@ int sprite_editor_main(char* commandLine)
 	}
 
 	tl::InitializeMemory(
-		5,
+		8,
 		1,
 		appMemory
 	);
