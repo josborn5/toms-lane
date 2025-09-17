@@ -324,6 +324,23 @@ static void update_filepath(char* source)
 	}
 }
 
+int copy_sprite_data(const SpriteC& source, tl::MemorySpace& target) {
+	size_t space_needed_in_bytes = source.pixel_count() * sizeof(uint32_t);
+	if (target.sizeInBytes < space_needed_in_bytes) {
+		return -1;
+	}
+
+	uint32_t* target_pointer = (uint32_t*)target.content;
+
+	for (unsigned int i = 0; i < source.pixel_count(); i += 1) {
+		uint32_t to_copy = source.get_pixel_data(i);
+		*target_pointer = to_copy;
+		target_pointer++;
+	}
+
+	return 0;
+}
+
 static int Initialize(char* commandLine)
 {
 	if (*commandLine)
@@ -388,6 +405,8 @@ static int Initialize(char* commandLine)
 	state.pixels.reset_items();
 	state.color_table.size();
 	state.color_table.reset_items();
+
+	copy_sprite_data(*state.pixels.sprite, base_sprite_memory);
 
 	return 0;
 }
