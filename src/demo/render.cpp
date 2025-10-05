@@ -18,20 +18,19 @@ void DrawTriangleInPixels(const tl::RenderBuffer& renderBuffer, uint32_t color, 
  */
 static void DrawHorizontalLineInPixels(const tl::RenderBuffer& renderBuffer, uint32_t color, int x0, int x1, int y)
 {
-	const int* startX = &x0;
-	const int* endX = &x1;
-	if (x1 < x0)
-	{
-		tl::swap(x0, x1);
+	int start_x = x0;
+	int end_x = x1;
+	if (x0 > x1) {
+		start_x = x1;
+		end_x = x0;
 	}
-
-	int positionStartOfRow = renderBuffer.width * y;
-	int positionOfX0InRow = positionStartOfRow + *startX;
-	uint32_t* pixelPointer = renderBuffer.pixels + positionOfX0InRow;
-	for (int i = *startX; i <= *endX; i += 1)
+	int start_row_position = renderBuffer.width * y;
+	int start_position = start_row_position + start_x;
+	uint32_t* pixel = renderBuffer.pixels + start_position;
+	for (int i = start_x; i <= end_x; i += 1)
 	{
-		*pixelPointer = color;
-		pixelPointer++;
+		*pixel = color;
+		pixel++;
 	}
 }
 
