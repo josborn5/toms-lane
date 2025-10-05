@@ -44,9 +44,6 @@ namespace tl
 	// Circles
 	void DrawCircle(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<float>& center, float radius);
 
-	// Triangles
-	void FillTriangleInPixels(const RenderBuffer &renderBuffer, uint32_t color, const Vec3<int> &p0, const Vec3<int> &p1, const Vec3<int> &p2);
-
 	void ClearScreen(const RenderBuffer &renderBuffer, uint32_t color);
 
 	uint32_t GetColorFromRGB(int red, int green, int blue);

@@ -204,8 +204,17 @@ add_library(
 	src/demo/render.cpp
 )
 add_executable(
+	demo-tests
+	src/demo/render.tests.cpp
+)
+add_executable(
 	demo-win32 WIN32
 	src/demo/demo-win32.cpp
+)
+target_link_libraries(
+	demo-tests
+	demo
+	toms-lane-platform
 )
 target_link_libraries(
 	demo-win32
