@@ -666,13 +666,6 @@ namespace tl
 	}
 
 
-	void DrawTriangleInPixels(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<int> &p0, const Vec2<int> &p1, const Vec2<int> &p2)
-	{
-		DrawLineInPixels(renderBuffer, color, p0, p1);
-		DrawLineInPixels(renderBuffer, color, p1, p2);
-		DrawLineInPixels(renderBuffer, color, p2, p0);
-	}
-
 	void ClearScreen(const RenderBuffer &renderBuffer, uint32_t color)
 	{
 		uint32_t* pixel = renderBuffer.pixels;

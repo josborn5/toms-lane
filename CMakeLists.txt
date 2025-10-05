@@ -201,6 +201,7 @@ target_link_libraries(
 add_library(
 	demo
 	src/demo/demo.cpp
+	src/demo/render.cpp
 )
 add_executable(
 	demo-win32 WIN32

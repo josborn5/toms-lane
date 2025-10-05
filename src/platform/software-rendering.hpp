@@ -46,7 +46,6 @@ namespace tl
 
 	// Triangles
 	void FillTriangleInPixels(const RenderBuffer &renderBuffer, uint32_t color, const Vec3<int> &p0, const Vec3<int> &p1, const Vec3<int> &p2);
-	void DrawTriangleInPixels(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<int> &p0, const Vec2<int> &p1, const Vec2<int> &p2);
 
 	void ClearScreen(const RenderBuffer &renderBuffer, uint32_t color);
 
