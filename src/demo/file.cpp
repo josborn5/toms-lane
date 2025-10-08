@@ -1,7 +1,6 @@
-#include <fstream>
 #include <strstream>
 #include <string>
-#include <iostream>
+#include <stdio.h>
 #include "../tl-library.hpp"
 
 struct Triangle4d
@@ -10,20 +9,24 @@ struct Triangle4d
 	unsigned int color;
 };
 
-bool ReadObjFileToArray4(std::string const &filename, tl::array<Triangle4d>& triangles, tl::MemorySpace& transient)
+
+
+bool ReadObjFileToArray4(const char* filename, tl::array<Triangle4d>& triangles, tl::MemorySpace& transient)
 {
-	std::ifstream objFile;
-	objFile.open(filename, std::ios::in);
-	if (!objFile.is_open())
-	{
+	std::FILE* file_pointer = fopen(filename, "r");
+
+	if (file_pointer == nullptr) {
 		return false;
 	}
 
-	tl::array<tl::Vec4<float>> heapVertices = tl::array<tl::Vec4<float>>(transient);
+	const unsigned int string_buffer_size = 256;
+	char string_buffer[string_buffer_size];
 
-	std::string line;
-	while (std::getline(objFile, line))
-	{
+	tl::array<tl::Vec4<float>> heapVertices = tl::array<tl::Vec4<float>>(transient);
+	while (fgets(string_buffer, string_buffer_size, file_pointer)) {
+
+		std::string line = std::string(string_buffer);
+
 		char junk;
 
 		std::strstream stringStream;
@@ -53,7 +56,7 @@ bool ReadObjFileToArray4(std::string const &filename, tl::array<Triangle4d>& tri
 		}
 	}
 
-	objFile.close();
+	fclose(file_pointer);
 
 	return true;
 }
