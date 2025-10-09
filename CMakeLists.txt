@@ -202,6 +202,7 @@ add_library(
 	demo
 	src/demo/demo.cpp
 	src/demo/render.cpp
+	src/demo/file.cpp
 )
 add_executable(
 	demo-tests

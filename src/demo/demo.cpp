@@ -1,9 +1,11 @@
 #include <stdlib.h>
+#include <strstream>
+#include <string>
 #include <math.h>
 #include "../tl-application.hpp"
 #include "../tl-library.hpp"
 #include "./render.hpp"
-#include "./file.cpp"
+#include "./file.hpp"
 
 
 struct cuboid {
@@ -29,6 +31,11 @@ struct Plane
 	tl::Vec3<float> normal;
 };
 
+struct Triangle4d
+{
+	tl::Vec4<float> p[3];
+	unsigned int color;
+};
 
 const unsigned int screen_width = 1280;
 const unsigned int screen_height = 720;
@@ -581,10 +588,57 @@ static void reset_world_to_mesh() {
 	ResetCamera();
 }
 
+static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& triangles, tl::MemorySpace& transient)
+{
+	void* asset = asset_interface_open(filename);
+	if (asset == nullptr) {
+		return;
+	}
+
+	const unsigned int string_buffer_size = 256;
+	char string_buffer[string_buffer_size];
+
+	tl::array<tl::Vec4<float>> heapVertices = tl::array<tl::Vec4<float>>(transient);
+	while (asset_interface_read_line(asset, string_buffer, string_buffer_size)) {
+
+		std::string line = std::string(string_buffer);
+
+		char junk;
+
+		std::strstream stringStream;
+		stringStream << line;
+
+		if (line[0] == 'v' && line[1] == ' ')
+		{
+			tl::Vec4<float> vertex;
+			// expect line to have syntax 'v x y z' where x, y & z are the ordinals of the point position
+			stringStream >> junk >> vertex.x >> vertex.y >> vertex.z;
+			vertex.w = 1.0f;
+			heapVertices.append(vertex);
+		}
+
+		if (line[0] == 'f' && line[1] == ' ')
+		{
+			int points[3];
+			stringStream >> junk >> points[0] >> points[1] >> points[2];
+			// expect line to have syntax 'f 1 2 3' where 1, 2 & 3 are the 1-indexed positions of the points in the file
+			Triangle4d newTriangle = {
+				heapVertices.get(points[0] - 1),
+				heapVertices.get(points[1] - 1),
+				heapVertices.get(points[2] - 1)
+			};
+
+			triangles.append(newTriangle);
+		}
+	}
+
+	asset_interface_close(asset);
+}
+
 static void reset_mesh_to_teapot() {
 	meshArray.clear();
 	tl::MemorySpace temp = appMemory.transient; // make a copy of the transient memory so it can be modified
-	ReadObjFileToArray4("teapot.obj", meshArray, temp);
+	load_asset_to_array("teapot.obj", meshArray, temp);
 
 	reset_world_to_mesh();
 }
