@@ -9,13 +9,22 @@ struct Triangle4d
 	unsigned int color;
 };
 
+void* asset_interface_load(const char* filename) {
+	return (void*)fopen(filename, "r");
+}
 
+char* asset_interface_read_line(const void* asset, char* string_buffer, unsigned int string_buffer_size) {
+	return fgets(string_buffer, string_buffer_size, (std::FILE*)asset);
+}
+
+void asset_interface_unload(void* asset) {
+	fclose((std::FILE*)asset);
+}
 
 bool ReadObjFileToArray4(const char* filename, tl::array<Triangle4d>& triangles, tl::MemorySpace& transient)
 {
-	std::FILE* file_pointer = fopen(filename, "r");
-
-	if (file_pointer == nullptr) {
+	void* asset = asset_interface_load(filename);
+	if (asset == nullptr) {
 		return false;
 	}
 
@@ -23,7 +32,7 @@ bool ReadObjFileToArray4(const char* filename, tl::array<Triangle4d>& triangles,
 	char string_buffer[string_buffer_size];
 
 	tl::array<tl::Vec4<float>> heapVertices = tl::array<tl::Vec4<float>>(transient);
-	while (fgets(string_buffer, string_buffer_size, file_pointer)) {
+	while (asset_interface_read_line(asset, string_buffer, string_buffer_size)) {
 
 		std::string line = std::string(string_buffer);
 
@@ -56,7 +65,7 @@ bool ReadObjFileToArray4(const char* filename, tl::array<Triangle4d>& triangles,
 		}
 	}
 
-	fclose(file_pointer);
+	asset_interface_unload(asset);
 
 	return true;
 }
