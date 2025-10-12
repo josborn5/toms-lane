@@ -249,15 +249,3 @@ target_link_libraries(
 )
 
 
-######## driving ########
-add_executable(
-	driving WIN32
-	src/driving/driving.cpp
-)
-target_link_libraries(
-	driving
-	toms-lane-platform
-	toms-lane-win32-application
-)
-configure_file(src/driving/test.bmp Debug/test.bmp COPYONLY)
-
