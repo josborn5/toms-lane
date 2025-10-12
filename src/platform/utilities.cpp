@@ -125,20 +125,6 @@ namespace tl
 		return IntToCharString(from, target);
 	}
 
-	char* CopyToChar(char* from, char* to, const char endChar)
-	{
-		while (*from && *from != endChar)
-		{
-			*to = *from;
-
-			from++;
-			to++;
-		}
-		*to = '\0';
-
-		return from;
-	}
-
 	char* CopyToEndOfNumberChar(char* from, char* to)
 	{
 		while (*from && *from >= '0' && *from <= '9')

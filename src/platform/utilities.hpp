@@ -18,7 +18,6 @@ namespace tl
 	int IntToCharString(int from, MemorySpace to);
 	int IntToCharString(int from, char* to);
 
-	char* CopyToChar(char* from, char* to, const char toChar);
 	char* CopyToEndOfNumberChar(char* from, char* to);
 	char* GetNextNumberChar(char* from);
 }
