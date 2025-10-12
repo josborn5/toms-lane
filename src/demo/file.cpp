@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "../tl-library.hpp"
 
 void* asset_interface_open(const char* filename) {
 	return (void*)fopen(filename, "r");
@@ -12,5 +11,4 @@ char* asset_interface_read_line(const void* asset, char* string_buffer, unsigned
 void asset_interface_close(void* asset) {
 	fclose((FILE*)asset);
 }
-
 

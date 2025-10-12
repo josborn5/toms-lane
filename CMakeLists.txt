@@ -198,11 +198,24 @@ target_link_libraries(
 )
 
 ######## demo ########
+function(generate_demo_asset name)
+	file(REMOVE "${CMAKE_SOURCE_DIR}/src/demo/assets/${name}.cpp")
+	add_custom_command(
+		OUTPUT "${CMAKE_SOURCE_DIR}/src/demo/assets/${name}.cpp"
+		COMMAND xxd -i "${name}" > "${name}.cpp"
+		DEPENDS "${CMAKE_SOURCE_DIR}/src/demo/assets/${name}"
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/demo/assets"
+	)
+endfunction()
+
+generate_demo_asset("teapot.obj")
+
 add_library(
 	demo
 	src/demo/demo.cpp
 	src/demo/render.cpp
-	src/demo/file.cpp
+	src/demo/asset.cpp
+	src/demo/assets/teapot.obj.cpp
 )
 add_executable(
 	demo-tests
@@ -223,8 +236,6 @@ target_link_libraries(
 	toms-lane-platform
 	toms-lane-win32-application
 )
-configure_file(src/demo/teapot.obj Debug/teapot.obj COPYONLY)
-
 
 
 ######## sound-test ########
