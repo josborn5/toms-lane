@@ -1,13 +1,2 @@
-call "%~dp0../../compile.bat"
+call "%~dp0../../build-scripts/build-or-test.bat" demo-win32.exe demo-tests.exe %1
 
-SET TEST=%1
-if "%TEST%"=="-dt" (
-	SET TEST=-t
-)
-
-if "%TEST%"=="-t" (
-	call %~dp0../../build-scripts/run.bat "%~dp0../../cmake-build/Debug/demo-tests.exe" %1
-) else (
-
-	call %~dp0../../build-scripts/run.bat "%~dp0../../cmake-build/Debug/demo-win32.exe" %1
-)

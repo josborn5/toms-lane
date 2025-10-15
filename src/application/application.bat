@@ -5,5 +5,5 @@ if "%1"=="-d" (
 	SET CONFIG=Debug
 )
 
-"%~dp0../../cmake-build/%CONFIG%/obby-1-win32.exe"
+"%~dp0../../cmake-build/%CONFIG%/toms-lane-win32-application-tests.exe"
 

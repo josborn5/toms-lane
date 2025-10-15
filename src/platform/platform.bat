@@ -1,6 +1,9 @@
-call "%~dp0../../compile.bat"
+call "%~dp0../../compile.bat" %1
 
-pushd "%~dp0/../../cmake-build/Debug"
-	call "toms-lane-platform-test.exe"
-popd
+SET CONFIG=Release
+if "%1"=="-d" (
+	SET CONFIG=Debug
+)
+
+"%~dp0../../cmake-build/%CONFIG%/toms-lane-platform-test.exe"
 
