@@ -364,7 +364,7 @@ static void TransformAndRenderMesh(
 		Triangle4d clipped[2];
 
 		tl::queue<Triangle4d> triangleQueue = tl::queue<Triangle4d>(remainingTransient);
-		if (triangleQueue.enqueue(triToRender) != 0) throw; // TODO: don't throw, handle gracefully
+		if (triangleQueue.enqueue(triToRender) != 0) continue;
 
 		int newTriangles = 1;
 
