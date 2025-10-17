@@ -374,8 +374,9 @@ static void TransformAndRenderMesh(
 			int trianglesToAdd = 0;
 			while (newTriangles > 0)
 			{
-				Triangle4d test = triangleQueue.dequeue();
 				newTriangles -= 1;
+				tl::operation<Triangle4d> dequeue_op = triangleQueue.dequeue();
+				Triangle4d test = dequeue_op.value;
 
 				switch (edge)
 				{

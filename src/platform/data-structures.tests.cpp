@@ -214,23 +214,23 @@ void RunQueueTests()
 	assert(queue1.length() == 4);
 	assert(queue1.capacity() == 4);
 
-	int first = queue1.dequeue();
-	assert(first == 1);
+	tl::operation<int> first = queue1.dequeue();
+	assert(first.value == 1);
 	assert(queue1.length() == 3);
 	assert(queue1.capacity() == 3);
 
-	int second = queue1.dequeue();
-	assert(second == 2);
+	tl::operation<int> second = queue1.dequeue();
+	assert(second.value == 2);
 	assert(queue1.length() == 2);
 	assert(queue1.capacity() == 2);
 
-	int third = queue1.dequeue();
-	assert(third == 3);
+	tl::operation<int> third = queue1.dequeue();
+	assert(third.value == 3);
 	assert(queue1.length() == 1);
 	assert(queue1.capacity() == 1);
 
-	int fourth = queue1.dequeue();
-	assert(fourth == 4);
+	tl::operation<int> fourth = queue1.dequeue();
+	assert(fourth.value == 4);
 	assert(queue1.length() == 0);
 	assert(queue1.capacity() == 0);
 

@@ -260,18 +260,21 @@ namespace tl
 				return 1;
 			}
 
-			T dequeue()
+			operation<T> dequeue()
 			{
+				operation<T> dequeue_op;
+				dequeue_op.result = -1;
 				if (_length > 0)
 				{
-					T headItem = *content;
+					T head_item = *content;
 					content++;
 					_length -= 1;
 					_capacity -= 1; // TODO: Convert this to a tail reference and connect to the enqueue check
 
-					return headItem;
+					dequeue_op.value = head_item;
+					dequeue_op.result = 0;
 				}
-				throw;
+				return dequeue_op;
 			}
 	};
 }
