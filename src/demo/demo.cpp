@@ -293,12 +293,12 @@ static void TransformAndRenderMesh(
 		Triangle4d projected;
 
 		// Skip any triangles angled away from the camera
-		tl::Vec4<float> line1 = SubtractVectors(tri.p[1], tri.p[0]);
-		tl::Vec4<float> line2 = SubtractVectors(tri.p[2], tri.p[0]);
-		tl::Vec4<float> normal = UnitVector(CrossProduct(line1, line2));
+		tl::Vec4<float> triangle_edge_1 = SubtractVectors(tri.p[1], tri.p[0]);
+		tl::Vec4<float> triangle_edge_2 = SubtractVectors(tri.p[2], tri.p[0]);
+		tl::Vec4<float> triangle_normal = UnitVector(CrossProduct(triangle_edge_1, triangle_edge_2));
 
-		tl::Vec4<float> fromCameraToTriangle = SubtractVectors(tri.p[0], camera.position);
-		float dot = DotProduct(normal, fromCameraToTriangle);
+		tl::Vec4<float> camera_to_triangle = SubtractVectors(tri.p[0], camera.position);
+		float dot = DotProduct(triangle_normal, camera_to_triangle);
 		if (dot > 0.0f)
 		{
 			continue;
@@ -311,15 +311,13 @@ static void TransformAndRenderMesh(
 
 		const tl::Vec4<float> lightDirection = { 0.0f, 0.0f, -1.0f, 0.0f };
 		tl::Vec4<float> normalizedLightDirection = UnitVector(lightDirection);
-		float shade = 0.5f + (0.5f * DotProduct(normal, normalizedLightDirection));
+		float shade = 0.5f + (0.5f * DotProduct(triangle_normal, normalizedLightDirection));
 
 		uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
 
 		// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
 		Triangle4d clipped[2];
 
-		// TODO: remove these hard coded z values - they need to relate to
-		// near & far values used to generate the projection matric
 		Plane inFrontOfScreen;
 		inFrontOfScreen.position = { 0.0f, 0.0f, camera.near_plane };
 		inFrontOfScreen.normal = { 0.0f, 0.0f, 1.0f };
