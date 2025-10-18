@@ -62,6 +62,8 @@ static tl::GameMemory appMemory;
 
 static bool isStarted = false;
 
+static unsigned int rendered_triangle_count = 0;
+
 static float deg_to_rad(float degrees) {
 	constexpr float pi_over_180 = 3.14159f / 180.0f;
 	return degrees * pi_over_180;
@@ -272,6 +274,8 @@ static void TransformAndRenderMesh(
 	const int GREEN = 0xAA;
 	const int BLUE = 0x88;
 
+	rendered_triangle_count = 0;
+
 	// Camera matrix
 	tl::Vec4<float> target = AddVectors(camera.position, camera.direction);
 	tl::Matrix4x4<float> cameraMatrix = PointAt(camera.position, target, camera.up);
@@ -316,19 +320,19 @@ static void TransformAndRenderMesh(
 		uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
 
 		// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
-		Triangle4d clipped[2];
+		Triangle4d near_plane_clipped[2];
 
-		Plane inFrontOfScreen;
-		inFrontOfScreen.position = { 0.0f, 0.0f, camera.near_plane };
-		inFrontOfScreen.normal = { 0.0f, 0.0f, 1.0f };
-		int clippedTriangleCount = ClipTriangleAgainstPlane(inFrontOfScreen, viewed, clipped[0], clipped[1]);
+		Plane near_clipping_plane;
+		near_clipping_plane.position = { 0.0f, 0.0f, camera.near_plane };
+		near_clipping_plane.normal = { 0.0f, 0.0f, 1.0f };
+		int near_plane_clipped_triangle_count = ClipTriangleAgainstPlane(near_clipping_plane, viewed, near_plane_clipped[0], near_plane_clipped[1]);
 
-		for (int i = 0; i < clippedTriangleCount; i += 1)
+		for (int i = 0; i < near_plane_clipped_triangle_count; i += 1)
 		{
 			// Project each triangle in 3D space onto the 2D space triangle to render
-			Project3DPointTo2D(clipped[i].p[0], projected.p[0], projectionMatrix);
-			Project3DPointTo2D(clipped[i].p[1], projected.p[1], projectionMatrix);
-			Project3DPointTo2D(clipped[i].p[2], projected.p[2], projectionMatrix);
+			Project3DPointTo2D(near_plane_clipped[i].p[0], projected.p[0], projectionMatrix);
+			Project3DPointTo2D(near_plane_clipped[i].p[1], projected.p[1], projectionMatrix);
+			Project3DPointTo2D(near_plane_clipped[i].p[2], projected.p[2], projectionMatrix);
 
 			// Scale to view
 			Triangle4d triToRender = projected;
@@ -411,6 +415,7 @@ static void TransformAndRenderMesh(
 
 		for (int i = 0; i < triangleQueue.length(); i += 1)
 		{
+			rendered_triangle_count += 1;
 			Triangle4d draw = triangleQueue.content[i];
 
 			if (wireframe) {
@@ -878,6 +883,10 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	tl::font_interface_render_chars(renderBuffer, "MESH", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
 	tl::font_interface_render_int(renderBuffer, meshArray.length(), charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::font_interface_render_chars(renderBuffer, "RENDER COUNT", charFoot, 0xAAAAAA);
+	charFoot.position.y -= fontSize;
+	tl::font_interface_render_int(renderBuffer, rendered_triangle_count , charFoot, 0xAAAAAA);
 
 	// Draw the map
 	tl::DrawRect(renderBuffer, 0x333399, map);
