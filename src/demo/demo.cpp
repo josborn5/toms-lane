@@ -71,7 +71,7 @@ static float deg_to_rad(float degrees) {
 	return degrees * pi_over_180;
 }
 
-tl::Vec4<float> IntersectPlane(
+static tl::Vec4<float> IntersectPlane(
 	const Plane& plane,
 	const tl::Vec4<float>& lineStart,
 	const tl::Vec4<float>& lineEnd
@@ -93,7 +93,7 @@ tl::Vec4<float> IntersectPlane(
 	return tl::AddVectors(lineStart, lineToIntersect);
 }
 
-float ShortestDistanceFromPointToPlane(
+static float ShortestDistanceFromPointToPlane(
 	const tl::Vec4<float>& point,
 	const tl::Vec3<float>& planeP,
 	const tl::Vec3<float>& unitNormalToPlane
@@ -107,7 +107,7 @@ float ShortestDistanceFromPointToPlane(
 	return distance;
 }
 
-int ClipTriangleAgainstPlane(
+static int ClipTriangleAgainstPlane(
 	const Plane& plane,
 	Triangle4d& inputTriangle,
 	Triangle4d& outputTriangle1,
@@ -185,9 +185,14 @@ int ClipTriangleAgainstPlane(
 	return 0;
 }
 
-void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) {
+static void get_camera_near_plane_position(const Camera& camera, tl::Vec4<float>& position) {
 	tl::Vec4<float> near_plane_center_from_position = MultiplyVectorByScalar(tl::UnitVector(camera.direction), camera.near_plane);
-	tl::Vec4<float> near_plane_center = tl::AddVectors(camera.position, near_plane_center_from_position);
+	position = tl::AddVectors(camera.position, near_plane_center_from_position);
+}
+
+static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) {
+	tl::Vec4<float> near_plane_center;
+	get_camera_near_plane_position(camera, near_plane_center);
 
 	tl::Vec4<float> unit_normal_to_direction = tl::UnitVector(tl::CrossProduct(camera.direction, camera.up));
 	float opp = camera.near_plane * tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
@@ -199,7 +204,7 @@ void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) 
 	p2 = Transform2DVector(tl::Vec2<float>{ near_plane_right.z, near_plane_right.x }, mapProjectionMatrix);
 }
 
-void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>& near_2, tl::Vec2<float>& far_1, tl::Vec2<float>& far_2) {
+static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>& near_2, tl::Vec2<float>& far_1, tl::Vec2<float>& far_2) {
 	tl::Vec4<float> unit_direction = tl::UnitVector(camera.direction);
 	tl::Vec4<float> unit_normal_to_direction = tl::UnitVector(tl::CrossProduct(camera.direction, camera.up));
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
@@ -230,7 +235,7 @@ void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>& near_
 
 
 
-tl::Matrix4x4<float> MakeProjectionMatrix(
+static tl::Matrix4x4<float> MakeProjectionMatrix(
 	float fieldOfVewDeg,
 	float aspectRatio,
 	float nearPlane,
