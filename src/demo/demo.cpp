@@ -316,6 +316,14 @@ static void TransformAndRenderMesh(
 			continue;
 		}
 
+		// TODO: Clip here before doing any more triangle operations
+		tl::Vec4<float> near_plane_position;
+		get_camera_near_plane_position(camera, near_plane_position);
+		Plane near_plane;
+		near_plane.position = { near_plane_position.x, near_plane_position.y, near_plane_position.z };
+		near_plane.normal = { camera.direction.x, camera.direction.y, camera.direction.z };
+
+
 		viewed_triangle_count += 1;
 		// Convert the triangle position from world space to view space
 		MultiplyVectorWithMatrix(tri.p[0], viewed.p[0], viewMatrix);
