@@ -63,6 +63,8 @@ static tl::GameMemory appMemory;
 static bool isStarted = false;
 
 static unsigned int rendered_triangle_count = 0;
+static unsigned int projected_triangle_count = 0;
+static unsigned int viewed_triangle_count = 0;
 
 static float deg_to_rad(float degrees) {
 	constexpr float pi_over_180 = 3.14159f / 180.0f;
@@ -275,6 +277,8 @@ static void TransformAndRenderMesh(
 	const int BLUE = 0x88;
 
 	rendered_triangle_count = 0;
+	projected_triangle_count = 0;
+	viewed_triangle_count = 0;
 
 	// Camera matrix
 	tl::Vec4<float> target = AddVectors(camera.position, camera.direction);
@@ -294,7 +298,6 @@ static void TransformAndRenderMesh(
 	{
 		Triangle4d tri = mesh.get(h);
 		Triangle4d viewed;
-		Triangle4d projected;
 
 		// Skip any triangles angled away from the camera
 		tl::Vec4<float> triangle_edge_1 = SubtractVectors(tri.p[1], tri.p[0]);
@@ -308,6 +311,7 @@ static void TransformAndRenderMesh(
 			continue;
 		}
 
+		viewed_triangle_count += 1;
 		// Convert the triangle position from world space to view space
 		MultiplyVectorWithMatrix(tri.p[0], viewed.p[0], viewMatrix);
 		MultiplyVectorWithMatrix(tri.p[1], viewed.p[1], viewMatrix);
@@ -327,8 +331,10 @@ static void TransformAndRenderMesh(
 		near_clipping_plane.normal = { 0.0f, 0.0f, 1.0f };
 		int near_plane_clipped_triangle_count = ClipTriangleAgainstPlane(near_clipping_plane, viewed, near_plane_clipped[0], near_plane_clipped[1]);
 
+		Triangle4d projected;
 		for (int i = 0; i < near_plane_clipped_triangle_count; i += 1)
 		{
+			projected_triangle_count += 1;
 			// Project each triangle in 3D space onto the 2D space triangle to render
 			Project3DPointTo2D(near_plane_clipped[i].p[0], projected.p[0], projectionMatrix);
 			Project3DPointTo2D(near_plane_clipped[i].p[1], projected.p[1], projectionMatrix);
@@ -881,12 +887,26 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	charFoot.position = { 300.0f, infoHeight };
 	tl::font_interface_render_chars(renderBuffer, "MESH", charFoot, 0xAAAAAA);
-	charFoot.position.y -= fontSize;
+	charFoot.position.x = 400.0f;
 	tl::font_interface_render_int(renderBuffer, meshArray.length(), charFoot, 0xAAAAAA);
+
 	charFoot.position.y -= fontSize;
-	tl::font_interface_render_chars(renderBuffer, "RENDER COUNT", charFoot, 0xAAAAAA);
+	charFoot.position.x = 300.0f;
+	tl::font_interface_render_chars(renderBuffer, "VIEWED", charFoot, 0xAAAAAA);
+	charFoot.position.x = 400.0f;
+	tl::font_interface_render_int(renderBuffer, viewed_triangle_count, charFoot, 0xAAAAAA);
+
 	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, rendered_triangle_count , charFoot, 0xAAAAAA);
+	charFoot.position.x = 300.0f;
+	tl::font_interface_render_chars(renderBuffer, "PROJECTED", charFoot, 0xAAAAAA);
+	charFoot.position.x = 400.0f;
+	tl::font_interface_render_int(renderBuffer, projected_triangle_count, charFoot, 0xAAAAAA);
+
+	charFoot.position.y -= fontSize;
+	charFoot.position.x = 300.0f;
+	tl::font_interface_render_chars(renderBuffer, "RENDERED", charFoot, 0xAAAAAA);
+	charFoot.position.x = 400.0f;
+	tl::font_interface_render_int(renderBuffer, rendered_triangle_count, charFoot, 0xAAAAAA);
 
 	// Draw the map
 	tl::DrawRect(renderBuffer, 0x333399, map);
