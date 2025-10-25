@@ -136,6 +136,16 @@ namespace tl
 		};
 	}
 	template Vec4<float> CrossProduct(const Vec4<float> &v1, const Vec4<float> &v2);
+	template<typename T>
+	Vec3<T> CrossProduct(const Vec3<T> &v1, const Vec3<T> &v2)
+	{
+		return Vec3<T>{
+			(v1.y * v2.z) - (v1.z * v2.y),
+			(v1.z * v2.x) - (v1.x * v2.z),
+			(v1.x * v2.y) - (v1.y * v2.x)
+		};
+	}
+	template Vec3<float> CrossProduct(const Vec3<float> &v1, const Vec3<float> &v2);
 
 	template<typename T>
 	float Length(const Vec4<T> &in)

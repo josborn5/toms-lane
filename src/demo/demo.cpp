@@ -270,6 +270,34 @@ static int compare_triangle_depth(const void* a, const void* b) {
 	return 0;
 }
 
+static void point_at(
+	const tl::Vec3<float>& position,
+	const tl::Vec3<float>& target,
+	const tl::Vec3<float>& up,
+	tl::Matrix4x4<float>& output_matrix
+)
+{
+	// Vector from the position to the target is the new forward direction
+	tl::Vec3<float> forward_unit = tl::SubtractVectors(target, position);
+	forward_unit = tl::UnitVector(forward_unit);
+
+	// Calculate the new up direction of the new forward direction
+	float newUpScalar = tl::DotProduct(up, forward_unit);
+	tl::Vec3<float> newUpTemp = tl::MultiplyVectorByScalar(forward_unit, newUpScalar);
+	tl::Vec3<float> upUnit = tl::SubtractVectors(up, newUpTemp);
+	upUnit = tl::UnitVector(upUnit);
+
+	// Calculate the new right direction for the new up & forward directions
+	tl::Vec3<float> rightUnit = tl::CrossProduct(upUnit, forward_unit);
+
+	// Construct the new transformation matrix
+	output_matrix.m[0][0] = rightUnit.x;	output_matrix.m[0][1] = rightUnit.y;	output_matrix.m[0][2] = rightUnit.z;	output_matrix.m[0][3] = 0;
+	output_matrix.m[1][0] = upUnit.x;		output_matrix.m[1][1] = upUnit.y;		output_matrix.m[1][2] = upUnit.z;		output_matrix.m[1][3] = 0;
+	output_matrix.m[2][0] = forward_unit.x;	output_matrix.m[2][1] = forward_unit.y;	output_matrix.m[2][2] = forward_unit.z;	output_matrix.m[2][3] = 0;
+	output_matrix.m[3][0] = position.x;		output_matrix.m[3][1] = position.y;		output_matrix.m[3][2] = position.z;		output_matrix.m[3][3] = 1;
+}
+
+
 static void TransformAndRenderMesh(
 	const tl::RenderBuffer& renderBuffer,
 	const tl::array<Triangle4d>& mesh,
@@ -287,10 +315,16 @@ static void TransformAndRenderMesh(
 
 	// Camera matrix
 	tl::Vec4<float> target = AddVectors(camera.position, camera.direction);
-	tl::Matrix4x4<float> cameraMatrix = PointAt(camera.position, target, camera.up);
 
+	tl::Matrix4x4<float> camera_matrix;
+	point_at(
+		tl::Vec3<float> { camera.position.x, camera.position.y, camera.position.z },
+		tl::Vec3<float> { target.x, target.y, target.z },
+		tl::Vec3<float> { camera.up.x, camera.up.y, camera.up.z },
+		camera_matrix
+	);
 	// View matrix
-	tl::Matrix4x4<float> viewMatrix = LookAt(cameraMatrix);
+	tl::Matrix4x4<float> viewMatrix = LookAt(camera_matrix);
 
 	tl::array<Triangle4d> trianglesToDrawArray = tl::array<Triangle4d>(transient);
 
@@ -302,7 +336,6 @@ static void TransformAndRenderMesh(
 	for (int h = 0; h < mesh.length(); h += 1)
 	{
 		Triangle4d tri = mesh.get(h);
-		Triangle4d viewed;
 
 		// Skip any triangles angled away from the camera
 		tl::Vec4<float> triangle_edge_1 = SubtractVectors(tri.p[1], tri.p[0]);
@@ -334,6 +367,7 @@ static void TransformAndRenderMesh(
 
 		viewed_triangle_count += 1;
 		// Convert the triangle position from world space to view space
+		Triangle4d viewed;
 		MultiplyVectorWithMatrix(tri.p[0], viewed.p[0], viewMatrix);
 		MultiplyVectorWithMatrix(tri.p[1], viewed.p[1], viewMatrix);
 		MultiplyVectorWithMatrix(tri.p[2], viewed.p[2], viewMatrix);

@@ -66,6 +66,8 @@ namespace tl
 
 	template<typename T>
 	Vec4<T> CrossProduct(const Vec4<T> &v1, const Vec4<T> &v2);
+	template<typename T>
+	Vec3<T> CrossProduct(const Vec3<T> &v1, const Vec3<T> &v2);
 
 	template<typename T>
 	Vec4<T> UnitVector(const Vec4<T> &in);
