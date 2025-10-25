@@ -307,22 +307,30 @@ static void TransformAndRenderMesh(
 		// Skip any triangles angled away from the camera
 		tl::Vec4<float> triangle_edge_1 = SubtractVectors(tri.p[1], tri.p[0]);
 		tl::Vec4<float> triangle_edge_2 = SubtractVectors(tri.p[2], tri.p[0]);
-		tl::Vec4<float> triangle_normal = UnitVector(CrossProduct(triangle_edge_1, triangle_edge_2));
+		tl::Vec4<float> unit_triangle_normal = UnitVector(CrossProduct(triangle_edge_1, triangle_edge_2));
 
 		tl::Vec4<float> camera_to_triangle = SubtractVectors(tri.p[0], camera.position);
-		float dot = DotProduct(triangle_normal, camera_to_triangle);
+		float dot = tl::DotProduct(unit_triangle_normal, camera_to_triangle);
 		if (dot > 0.0f)
 		{
 			continue;
 		}
 
+		const tl::Vec4<float> inverse_unit_light_direction = { 0.0f, 0.0f, -1.0f, 0.0f };
+		// range of triangle_face_to_light is from +1 (directly facing the light) to -1 (facing directly away from the light)
+		float triangle_face_to_light = tl::DotProduct(unit_triangle_normal, inverse_unit_light_direction);
+		float normalized_triangle_face_to_light = 0.5f * (triangle_face_to_light + 1.0f);
+		float shade = 0.2f + (0.8f * normalized_triangle_face_to_light);
+
+		uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
+
 		// TODO: Clip here before doing any more triangle operations
+		Triangle4d near_plane_clipped[2];
 		tl::Vec4<float> near_plane_position;
 		get_camera_near_plane_position(camera, near_plane_position);
 		Plane near_plane;
 		near_plane.position = { near_plane_position.x, near_plane_position.y, near_plane_position.z };
 		near_plane.normal = { camera.direction.x, camera.direction.y, camera.direction.z };
-
 
 		viewed_triangle_count += 1;
 		// Convert the triangle position from world space to view space
@@ -330,24 +338,16 @@ static void TransformAndRenderMesh(
 		MultiplyVectorWithMatrix(tri.p[1], viewed.p[1], viewMatrix);
 		MultiplyVectorWithMatrix(tri.p[2], viewed.p[2], viewMatrix);
 
-		const tl::Vec4<float> lightDirection = { 0.0f, 0.0f, -1.0f, 0.0f };
-		tl::Vec4<float> normalizedLightDirection = UnitVector(lightDirection);
-		float shade = 0.5f + (0.5f * DotProduct(triangle_normal, normalizedLightDirection));
-
-		uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
-
 		// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
-		Triangle4d near_plane_clipped[2];
-
 		Plane near_clipping_plane;
 		near_clipping_plane.position = { 0.0f, 0.0f, camera.near_plane };
 		near_clipping_plane.normal = { 0.0f, 0.0f, 1.0f };
 		int near_plane_clipped_triangle_count = ClipTriangleAgainstPlane(near_clipping_plane, viewed, near_plane_clipped[0], near_plane_clipped[1]);
 
-		Triangle4d projected;
 		for (int i = 0; i < near_plane_clipped_triangle_count; i += 1)
 		{
 			projected_triangle_count += 1;
+			Triangle4d projected;
 			// Project each triangle in 3D space onto the 2D space triangle to render
 			Project3DPointTo2D(near_plane_clipped[i].p[0], projected.p[0], projectionMatrix);
 			Project3DPointTo2D(near_plane_clipped[i].p[1], projected.p[1], projectionMatrix);
@@ -669,27 +669,27 @@ static void reset_mesh_to_teapot() {
 static void reset_mesh_to_cube() {
 	meshArray.clear();
 	// Using a clockwise winding convention
-	// SOUTH
+	// -ve z face
 	meshArray.append({ 0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f });
 	meshArray.append({ 0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f });
 
-	// EAST
+	// +ve x face
 	meshArray.append({ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f });
 	meshArray.append({ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f, 1.0f });
 
-	// NORTH
+	// +ve z face
 	meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f });
 	meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f });
 
-	// WEST
+	// -ve x face
 	meshArray.append({ 0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f });
 	meshArray.append({ 0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f });
 
-	// TOP
+	// +ve y face
 	meshArray.append({ 0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f });
 	meshArray.append({ 0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f });
 
-	// BOTTOM
+	// -ve y face
 	meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f });
 	meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f });
 
