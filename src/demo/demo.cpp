@@ -185,20 +185,28 @@ static int ClipTriangleAgainstPlane(
 	return 0;
 }
 
-static void get_camera_near_plane_position(const Camera& camera, tl::Vec4<float>& position) {
+static void get_camera_near_plane_position(const Camera& camera, tl::Vec3<float>& position) {
 	tl::Vec4<float> near_plane_center_from_position = MultiplyVectorByScalar(tl::UnitVector(camera.direction), camera.near_plane);
-	position = tl::AddVectors(camera.position, near_plane_center_from_position);
+	tl::Vec4<float> temp = tl::AddVectors(camera.position, near_plane_center_from_position);
+	position.x = temp.x;
+	position.y = temp.y;
+	position.z = temp.z;
 }
 
 static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) {
-	tl::Vec4<float> near_plane_center;
+	tl::Vec3<float> near_plane_center;
 	get_camera_near_plane_position(camera, near_plane_center);
 
-	tl::Vec4<float> unit_normal_to_direction = tl::UnitVector(tl::CrossProduct(camera.direction, camera.up));
+	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
+		tl::CrossProduct(
+			tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z },
+			tl::Vec3<float>{ camera.up.x, camera.up.y, camera.up.z }
+		)
+	);
 	float opp = camera.near_plane * tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
-	tl::Vec4<float> near_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, opp);
-	tl::Vec4<float> near_plane_right = tl::AddVectors(near_plane_center, near_plane_right_from_center);
-	tl::Vec4<float> near_plane_left = tl::SubtractVectors(near_plane_center, near_plane_right_from_center);
+	tl::Vec3<float> near_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, opp);
+	tl::Vec3<float> near_plane_right = tl::AddVectors(near_plane_center, near_plane_right_from_center);
+	tl::Vec3<float> near_plane_left = tl::SubtractVectors(near_plane_center, near_plane_right_from_center);
 
 	p1 = Transform2DVector(tl::Vec2<float>{ near_plane_left.z, near_plane_left.x }, mapProjectionMatrix);
 	p2 = Transform2DVector(tl::Vec2<float>{ near_plane_right.z, near_plane_right.x }, mapProjectionMatrix);
@@ -386,7 +394,7 @@ static void TransformAndRenderMesh(
 
 		// TODO: Clip here before doing any more triangle operations
 		Triangle4d near_plane_clipped[2];
-		tl::Vec4<float> near_plane_position;
+		tl::Vec3<float> near_plane_position;
 		get_camera_near_plane_position(camera, near_plane_position);
 		Plane near_plane;
 		near_plane.position = { near_plane_position.x, near_plane_position.y, near_plane_position.z };
