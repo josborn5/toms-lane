@@ -213,27 +213,37 @@ static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float
 }
 
 static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>& near_2, tl::Vec2<float>& far_1, tl::Vec2<float>& far_2) {
-	tl::Vec4<float> unit_direction = tl::UnitVector(camera.direction);
-	tl::Vec4<float> unit_normal_to_direction = tl::UnitVector(tl::CrossProduct(camera.direction, camera.up));
+	tl::Vec3<float> unit_direction = tl::UnitVector(
+		tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z });
+	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
+		tl::CrossProduct(
+			tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z },
+			tl::Vec3<float>{ camera.up.x, camera.up.y, camera.up.z }
+		)
+	);
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 
-	tl::Vec4<float> near_plane_center_from_position = MultiplyVectorByScalar(unit_direction, camera.near_plane);
-	tl::Vec4<float> near_plane_center = tl::AddVectors(camera.position, near_plane_center_from_position);
+	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(unit_direction, camera.near_plane);
+	tl::Vec3<float> near_plane_center = tl::AddVectors(
+		tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+		near_plane_center_from_position);
 
 	float near_opp = camera.near_plane * tan_half_fov;
-	tl::Vec4<float> near_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, near_opp);
-	tl::Vec4<float> near_plane_right = tl::AddVectors(near_plane_center, near_plane_right_from_center);
-	tl::Vec4<float> near_plane_left = tl::SubtractVectors(near_plane_center, near_plane_right_from_center);
+	tl::Vec3<float> near_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, near_opp);
+	tl::Vec3<float> near_plane_right = tl::AddVectors(near_plane_center, near_plane_right_from_center);
+	tl::Vec3<float> near_plane_left = tl::SubtractVectors(near_plane_center, near_plane_right_from_center);
 
 
-	tl::Vec4<float> far_plane_center_from_position = MultiplyVectorByScalar(unit_direction, camera.far_plane);
-	tl::Vec4<float> far_plane_center = tl::AddVectors(camera.position, far_plane_center_from_position);
+	tl::Vec3<float> far_plane_center_from_position = MultiplyVectorByScalar(
+		unit_direction, camera.far_plane);
+	tl::Vec3<float> far_plane_center = tl::AddVectors(
+		tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+		far_plane_center_from_position);
 
 	float far_opp = camera.far_plane * tan_half_fov;
-	tl::Vec4<float> far_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, far_opp);
-	tl::Vec4<float> far_plane_right = tl::AddVectors(far_plane_center, far_plane_right_from_center);
-	tl::Vec4<float> far_plane_left = tl::SubtractVectors(far_plane_center, far_plane_right_from_center);
-
+	tl::Vec3<float> far_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, far_opp);
+	tl::Vec3<float> far_plane_right = tl::AddVectors(far_plane_center, far_plane_right_from_center);
+	tl::Vec3<float> far_plane_left = tl::SubtractVectors(far_plane_center, far_plane_right_from_center);
 
 	near_1 = Transform2DVector(tl::Vec2<float>{ near_plane_left.z, near_plane_left.x }, mapProjectionMatrix);
 	near_2 = Transform2DVector(tl::Vec2<float>{ near_plane_right.z, near_plane_right.x }, mapProjectionMatrix);
