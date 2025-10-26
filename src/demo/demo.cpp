@@ -15,9 +15,9 @@ struct cuboid {
 
 struct Camera
 {
-	tl::Vec4<float> position = {0};
-	tl::Vec4<float> direction = {0};
-	tl::Vec4<float> up = {0};
+	tl::Vec3<float> position = {0};
+	tl::Vec3<float> direction = {0};
+	tl::Vec3<float> up = {0};
 
 	float yaw = 0.0f;
 	float field_of_view_deg = 0.0f;
@@ -635,13 +635,12 @@ static void update_camera_direction() {
 
 static void ResetCamera()
 {
-	camera.up = { 0.0f, 1.0f, 0.0f, 0.0f };
+	camera.up = { 0.0f, 1.0f, 0.0f };
 	// Start position is centered in x & y directions and stepped back in the z direction.
 	camera.position = {
 		world.position.x,
 		world.position.y,
-		world.position.z - world.half_size.z,
-		0.0f
+		world.position.z - world.half_size.z
 	};
 	camera.yaw = 0.0f;
 	update_camera_direction();
