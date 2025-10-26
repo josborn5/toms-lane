@@ -896,8 +896,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	// Next process any forwards or backwards movement
 	tl::Vec3<float> cameraPositionForwardBack = MultiplyVectorByScalar(
-		tl::Vec3<float>{
-			camera.direction.x, camera.direction.y, camera.direction.z },
+		tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z },
 		positionIncrement);
 	if (input.buttons[tl::KEY_S].isDown)
 	{
@@ -921,15 +920,30 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 
 	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced
-	tl::Vec4<float> rawCameraPositionStrafe = CrossProduct(camera.up, camera.direction);
-	tl::Vec4<float> cameraPositionStrafe = MultiplyVectorByScalar(rawCameraPositionStrafe, positionIncrement);
+	tl::Vec3<float> rawCameraPositionStrafe = CrossProduct(
+		tl::Vec3<float>{ camera.up.x, camera.up.y, camera.up.z },
+		tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z }
+	);
+	tl::Vec3<float> cameraPositionStrafe = MultiplyVectorByScalar(rawCameraPositionStrafe, positionIncrement);
 	if (input.buttons[tl::KEY_LEFT].isDown)
 	{
-		camera.position = SubtractVectors(camera.position, cameraPositionStrafe);
+		tl::Vec3<float> temp = SubtractVectors(
+			tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+			cameraPositionStrafe
+		);
+		camera.position.x = temp.x;
+		camera.position.y = temp.y;
+		camera.position.z = temp.z;
 	}
 	else if (input.buttons[tl::KEY_RIGHT].isDown)
 	{
-		camera.position = AddVectors(camera.position, cameraPositionStrafe);
+		tl::Vec3<float> temp = AddVectors(
+			tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+			cameraPositionStrafe
+		);
+		camera.position.x = temp.x;
+		camera.position.y = temp.y;
+		camera.position.z = temp.z;
 	}
 
 	// Simply move the camera position vertically with up/down keypress
