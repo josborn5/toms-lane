@@ -186,11 +186,14 @@ static int ClipTriangleAgainstPlane(
 }
 
 static void get_camera_near_plane_position(const Camera& camera, tl::Vec3<float>& position) {
-	tl::Vec4<float> near_plane_center_from_position = MultiplyVectorByScalar(tl::UnitVector(camera.direction), camera.near_plane);
-	tl::Vec4<float> temp = tl::AddVectors(camera.position, near_plane_center_from_position);
-	position.x = temp.x;
-	position.y = temp.y;
-	position.z = temp.z;
+	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
+		tl::UnitVector(
+			tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z }
+		),
+		camera.near_plane);
+	position = tl::AddVectors(
+		tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+		near_plane_center_from_position);
 }
 
 static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) {
