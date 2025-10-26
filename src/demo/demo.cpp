@@ -383,18 +383,29 @@ static void TransformAndRenderMesh(
 		Triangle4d tri = mesh.get(h);
 
 		// Skip any triangles angled away from the camera
-		tl::Vec4<float> triangle_edge_1 = SubtractVectors(tri.p[1], tri.p[0]);
-		tl::Vec4<float> triangle_edge_2 = SubtractVectors(tri.p[2], tri.p[0]);
-		tl::Vec4<float> unit_triangle_normal = UnitVector(CrossProduct(triangle_edge_1, triangle_edge_2));
+		tl::Vec3<float> triangle_edge_1 = SubtractVectors(
+			tl::Vec3<float>{ tri.p[1].x, tri.p[1].y, tri.p[1].z },
+			tl::Vec3<float>{ tri.p[0].x, tri.p[0].y, tri.p[0].z }
+		);
+		tl::Vec3<float> triangle_edge_2 = SubtractVectors(
+			tl::Vec3<float>{ tri.p[2].x, tri.p[2].y, tri.p[2].z },
+			tl::Vec3<float>{ tri.p[0].x, tri.p[0].y, tri.p[0].z }
+		);
+		tl::Vec3<float> unit_triangle_normal = UnitVector(
+			CrossProduct(triangle_edge_1, triangle_edge_2)
+		);
 
-		tl::Vec4<float> camera_to_triangle = SubtractVectors(tri.p[0], camera.position);
+		tl::Vec3<float> camera_to_triangle = SubtractVectors(
+			tl::Vec3<float>{ tri.p[0].x, tri.p[0].y, tri.p[0].z },
+			tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z }
+		);
 		float dot = tl::DotProduct(unit_triangle_normal, camera_to_triangle);
 		if (dot > 0.0f)
 		{
 			continue;
 		}
 
-		const tl::Vec4<float> inverse_unit_light_direction = { 0.0f, 0.0f, -1.0f, 0.0f };
+		const tl::Vec3<float> inverse_unit_light_direction = { 0.0f, 0.0f, -1.0f };
 		// range of triangle_face_to_light is from +1 (directly facing the light) to -1 (facing directly away from the light)
 		float triangle_face_to_light = tl::DotProduct(unit_triangle_normal, inverse_unit_light_direction);
 		float normalized_triangle_face_to_light = 0.5f * (triangle_face_to_light + 1.0f);
