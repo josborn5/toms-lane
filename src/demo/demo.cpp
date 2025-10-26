@@ -198,9 +198,7 @@ static int ClipTriangleAgainstPlane(
 
 static void get_camera_near_plane_position(const Camera& camera, tl::Vec3<float>& position) {
 	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
-		tl::UnitVector(
-			tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z }
-		),
+		tl::UnitVector(camera.direction),
 		camera.near_plane);
 	position = tl::AddVectors(
 		tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
@@ -213,7 +211,7 @@ static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float
 
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
 		tl::CrossProduct(
-			tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z },
+			camera.direction,
 			tl::Vec3<float>{ camera.up.x, camera.up.y, camera.up.z }
 		)
 	);
@@ -227,11 +225,10 @@ static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float
 }
 
 static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>& near_2, tl::Vec2<float>& far_1, tl::Vec2<float>& far_2) {
-	tl::Vec3<float> unit_direction = tl::UnitVector(
-		tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z });
+	tl::Vec3<float> unit_direction = tl::UnitVector(camera.direction);
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
 		tl::CrossProduct(
-			tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z },
+			camera.direction,
 			tl::Vec3<float>{ camera.up.x, camera.up.y, camera.up.z }
 		)
 	);
@@ -374,7 +371,7 @@ static void TransformAndRenderMesh(
 	// Camera matrix
 	tl::Vec3<float> target = AddVectors(
 		tl::Vec3<float> { camera.position.x, camera.position.y, camera.position.z },
-		tl::Vec3<float> { camera.direction.x, camera.direction.y, camera.direction.z }
+		camera.direction
 	);
 
 	tl::Matrix4x4<float> camera_matrix;
@@ -436,7 +433,7 @@ static void TransformAndRenderMesh(
 		get_camera_near_plane_position(camera, near_plane_position);
 		Plane near_plane;
 		near_plane.position = { near_plane_position.x, near_plane_position.y, near_plane_position.z };
-		near_plane.normal = { camera.direction.x, camera.direction.y, camera.direction.z };
+		near_plane.normal = camera.direction;
 
 		viewed_triangle_count += 1;
 		// Convert the triangle position from world space to view space
@@ -622,15 +619,11 @@ static void update_camera_direction() {
 	y_axis_rotation_matrix.element[2][1] = 0.0f;
 	y_axis_rotation_matrix.element[2][2] = cos;
 
-	tl::Vec3<float> temp;
 	matrix3x3_dot_vect3(
 		y_axis_rotation_matrix,
 		tl::Vec3<float>{ 0.0f, 0.0f, 1.0f },
-		temp
+		camera.direction
 	);
-	camera.direction.x = temp.x;
-	camera.direction.y = temp.y;
-	camera.direction.z = temp.z;
 }
 
 static void ResetCamera()
@@ -929,7 +922,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	// Next process any forwards or backwards movement
 	tl::Vec3<float> cameraPositionForwardBack = MultiplyVectorByScalar(
-		tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z },
+		camera.direction,
 		positionIncrement);
 	if (input.buttons[tl::KEY_S].isDown)
 	{
@@ -955,7 +948,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced
 	tl::Vec3<float> rawCameraPositionStrafe = CrossProduct(
 		tl::Vec3<float>{ camera.up.x, camera.up.y, camera.up.z },
-		tl::Vec3<float>{ camera.direction.x, camera.direction.y, camera.direction.z }
+		camera.direction
 	);
 	tl::Vec3<float> cameraPositionStrafe = MultiplyVectorByScalar(rawCameraPositionStrafe, positionIncrement);
 	if (input.buttons[tl::KEY_LEFT].isDown)
