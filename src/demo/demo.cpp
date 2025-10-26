@@ -37,6 +37,17 @@ struct Triangle4d
 	unsigned int color;
 };
 
+struct matrix3x3
+{
+	float element[3][3]; // row then col index
+};
+
+static void matrix3x3_dot_vect3(const matrix3x3& matrix, const tl::Vec3<float>& input, tl::Vec3<float>& output) {
+	output.x = (matrix.element[0][0] * input.x) + (matrix.element[0][1] * input.y) + (matrix.element[0][2] * input.z);
+	output.y = (matrix.element[1][0] * input.x) + (matrix.element[1][1] * input.y) + (matrix.element[1][2] * input.z);
+	output.z = (matrix.element[2][0] * input.x) + (matrix.element[2][1] * input.y) + (matrix.element[2][2] * input.z);
+}
+
 const unsigned int screen_width = 1280;
 const unsigned int screen_height = 720;
 constexpr float aspect_ratio = (float)screen_width / (float)screen_height;
@@ -595,8 +606,31 @@ static void set_projection_matrix() {
 static void update_camera_direction() {
 	// Apply the camera yaw to the camera.direction vector
 	tl::Vec4<float> target = { 0.0f, 0.0f, 1.0f };
-	tl::Matrix4x4<float> cameraYawMatrix = tl::MakeYAxisRotationMatrix(deg_to_rad(camera.yaw));
-	tl::MultiplyVectorWithMatrix(target, camera.direction, cameraYawMatrix);
+
+	float yaw_in_radians = deg_to_rad(camera.yaw);
+	float cos = cosf(yaw_in_radians);
+	float sin = sinf(yaw_in_radians);
+
+	matrix3x3 y_axis_rotation_matrix;
+	y_axis_rotation_matrix.element[0][0] = cos;
+	y_axis_rotation_matrix.element[0][1] = 0.0f;
+	y_axis_rotation_matrix.element[0][2] = sin;
+	y_axis_rotation_matrix.element[1][0] = 0.0f;
+	y_axis_rotation_matrix.element[1][1] = 1.0f;
+	y_axis_rotation_matrix.element[1][2] = 0.0f;
+	y_axis_rotation_matrix.element[2][0] = -sin;
+	y_axis_rotation_matrix.element[2][1] = 0.0f;
+	y_axis_rotation_matrix.element[2][2] = cos;
+
+	tl::Vec3<float> temp;
+	matrix3x3_dot_vect3(
+		y_axis_rotation_matrix,
+		tl::Vec3<float>{ 0.0f, 0.0f, 1.0f },
+		temp
+	);
+	camera.direction.x = temp.x;
+	camera.direction.y = temp.y;
+	camera.direction.z = temp.z;
 }
 
 static void ResetCamera()
