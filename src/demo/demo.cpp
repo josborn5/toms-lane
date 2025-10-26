@@ -207,6 +207,15 @@ static void get_camera_near_plane_position(const Camera& camera, tl::Vec3<float>
 		near_plane_center_from_position);
 }
 
+static void get_camera_far_plane_position(const Camera& camera, tl::Vec3<float>& position) {
+	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
+		tl::UnitVector(camera.direction),
+		camera.far_plane);
+	position = tl::AddVectors(
+		camera.position,
+		near_plane_center_from_position);
+}
+
 static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) {
 	tl::Vec3<float> near_plane_center;
 	get_camera_near_plane_position(camera, near_plane_center);
@@ -410,49 +419,59 @@ static void TransformAndRenderMesh(
 
 		uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
 
-		// TODO: Clip here before doing any more triangle operations
-		Triangle4d near_plane_clipped[2];
 		tl::Vec3<float> near_plane_position;
 		get_camera_near_plane_position(camera, near_plane_position);
 		Plane near_plane;
 		near_plane.position = near_plane_position;
-		near_plane.normal = tl::UnitVector(camera.direction);
+		near_plane.normal = camera.direction;
 
+		tl::Vec3<float> far_plane_position;
+		get_camera_far_plane_position(camera, far_plane_position);
+		Plane far_plane;
+		far_plane.position = far_plane_position;
+		far_plane.normal = tl::Vec3<float>{ -camera.direction.x, -camera.direction.y, -camera.direction.z };
+
+		Triangle4d near_plane_clipped[2];
 		int near_plane_clipped_triangle_count = ClipTriangleAgainstPlane(near_plane, tri, near_plane_clipped[0], near_plane_clipped[1]);
 		for (int i = 0; i < near_plane_clipped_triangle_count; i += 1)
 		{
-			viewed_triangle_count += 1;
-			// Convert the triangle position from world space to view space
-			Triangle4d viewed;
-			MultiplyVectorWithMatrix(near_plane_clipped[i].p[0], viewed.p[0], viewMatrix);
-			MultiplyVectorWithMatrix(near_plane_clipped[i].p[1], viewed.p[1], viewMatrix);
-			MultiplyVectorWithMatrix(near_plane_clipped[i].p[2], viewed.p[2], viewMatrix);
+			Triangle4d far_plane_clipped[2];
+			int far_plane_clipped_triangle_count = ClipTriangleAgainstPlane(far_plane, near_plane_clipped[i], far_plane_clipped[0], far_plane_clipped[1]);
+			for (int j = 0; j < far_plane_clipped_triangle_count; j += 1)
+			{
+				viewed_triangle_count += 1;
+				// Convert the triangle position from world space to view space
+				Triangle4d viewed;
+				MultiplyVectorWithMatrix(far_plane_clipped[j].p[0], viewed.p[0], viewMatrix);
+				MultiplyVectorWithMatrix(far_plane_clipped[j].p[1], viewed.p[1], viewMatrix);
+				MultiplyVectorWithMatrix(far_plane_clipped[j].p[2], viewed.p[2], viewMatrix);
 
-			projected_triangle_count += 1;
-			Triangle4d projected;
-			// Project each triangle in 3D space onto the 2D space triangle to render
-			Project3DPointTo2D(viewed.p[0], projected.p[0], projectionMatrix);
-			Project3DPointTo2D(viewed.p[1], projected.p[1], projectionMatrix);
-			Project3DPointTo2D(viewed.p[2], projected.p[2], projectionMatrix);
+				projected_triangle_count += 1;
+				Triangle4d projected;
+				// Project each triangle in 3D space onto the 2D space triangle to render
+				Project3DPointTo2D(viewed.p[0], projected.p[0], projectionMatrix);
+				Project3DPointTo2D(viewed.p[1], projected.p[1], projectionMatrix);
+				Project3DPointTo2D(viewed.p[2], projected.p[2], projectionMatrix);
 
-			// Scale to view
-			Triangle4d triToRender = projected;
-			triToRender.p[0].x *= (float)screen_width;
-			triToRender.p[0].y *= (float)screen_height;
-			triToRender.p[1].x *= (float)screen_width;
-			triToRender.p[1].y *= (float)screen_height;
-			triToRender.p[2].x *= (float)screen_width;
-			triToRender.p[2].y *= (float)screen_height;
+				// Scale to view
+				Triangle4d triToRender = projected;
+				triToRender.p[0].x *= (float)screen_width;
+				triToRender.p[0].y *= (float)screen_height;
+				triToRender.p[1].x *= (float)screen_width;
+				triToRender.p[1].y *= (float)screen_height;
+				triToRender.p[2].x *= (float)screen_width;
+				triToRender.p[2].y *= (float)screen_height;
 
-			const float translateX = (float)0.5 * (float)renderBuffer.width;
-			const float translateY = (float)0.5 * (float)renderBuffer.height;
-			triToRender.p[0].x += translateX; triToRender.p[0].y += translateY;
-			triToRender.p[1].x += translateX; triToRender.p[1].y += translateY;
-			triToRender.p[2].x += translateX; triToRender.p[2].y += translateY;
+				const float translateX = (float)0.5 * (float)renderBuffer.width;
+				const float translateY = (float)0.5 * (float)renderBuffer.height;
+				triToRender.p[0].x += translateX; triToRender.p[0].y += translateY;
+				triToRender.p[1].x += translateX; triToRender.p[1].y += translateY;
+				triToRender.p[2].x += translateX; triToRender.p[2].y += translateY;
 
-			triToRender.color = triangleColor;
+				triToRender.color = triangleColor;
 
-			trianglesToDrawArray.append(triToRender);
+				trianglesToDrawArray.append(triToRender);
+			}
 		}
 	}
 
