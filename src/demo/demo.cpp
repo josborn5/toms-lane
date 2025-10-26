@@ -307,15 +307,12 @@ static int compare_triangle_depth(const void* a, const void* b) {
 * | Tx | Ty | Tz | 1 |
 */
 static void point_at(
-	const tl::Vec3<float>& position,
-	const tl::Vec3<float>& target,
+	const Camera& camera,
 	const tl::Vec3<float>& up,
 	tl::Matrix4x4<float>& output_matrix
 )
 {
-	// Vector from the position to the target is the new forward direction
-	tl::Vec3<float> forward_unit = tl::SubtractVectors(target, position);
-	forward_unit = tl::UnitVector(forward_unit);
+	tl::Vec3<float> forward_unit = tl::UnitVector(camera.direction);
 
 	// Calculate the new up direction of the new forward direction
 	float newUpScalar = tl::DotProduct(up, forward_unit);
@@ -330,7 +327,7 @@ static void point_at(
 	output_matrix.m[0][0] = rightUnit.x;	output_matrix.m[0][1] = rightUnit.y;	output_matrix.m[0][2] = rightUnit.z;	output_matrix.m[0][3] = 0;
 	output_matrix.m[1][0] = upUnit.x;		output_matrix.m[1][1] = upUnit.y;		output_matrix.m[1][2] = upUnit.z;		output_matrix.m[1][3] = 0;
 	output_matrix.m[2][0] = forward_unit.x;	output_matrix.m[2][1] = forward_unit.y;	output_matrix.m[2][2] = forward_unit.z;	output_matrix.m[2][3] = 0;
-	output_matrix.m[3][0] = position.x;		output_matrix.m[3][1] = position.y;		output_matrix.m[3][2] = position.z;		output_matrix.m[3][3] = 1;
+	output_matrix.m[3][0] = camera.position.x;		output_matrix.m[3][1] = camera.position.y;		output_matrix.m[3][2] = camera.position.z;		output_matrix.m[3][3] = 1;
 }
 
 /**
@@ -368,16 +365,9 @@ static void TransformAndRenderMesh(
 	projected_triangle_count = 0;
 	viewed_triangle_count = 0;
 
-	// Camera matrix
-	tl::Vec3<float> target = AddVectors(
-		camera.position,
-		camera.direction
-	);
-
 	tl::Matrix4x4<float> camera_matrix;
 	point_at(
-		camera.position,
-		target,
+		camera,
 		camera.up,
 		camera_matrix
 	);
