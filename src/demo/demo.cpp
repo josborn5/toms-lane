@@ -308,26 +308,18 @@ static int compare_triangle_depth(const void* a, const void* b) {
 */
 static void point_at(
 	const Camera& camera,
-	const tl::Vec3<float>& up,
 	tl::Matrix4x4<float>& output_matrix
 )
 {
 	tl::Vec3<float> forward_unit = tl::UnitVector(camera.direction);
-
-	// Calculate the new up direction of the new forward direction
-	float newUpScalar = tl::DotProduct(up, forward_unit);
-	tl::Vec3<float> newUpTemp = tl::MultiplyVectorByScalar(forward_unit, newUpScalar);
-	tl::Vec3<float> upUnit = tl::SubtractVectors(up, newUpTemp);
-	upUnit = tl::UnitVector(upUnit);
-
-	// Calculate the new right direction for the new up & forward directions
-	tl::Vec3<float> rightUnit = tl::CrossProduct(upUnit, forward_unit);
+	tl::Vec3<float> up_unit = tl::UnitVector(camera.up);
+	tl::Vec3<float> right_unit = tl::CrossProduct(up_unit, forward_unit);
 
 	// Construct the new transformation matrix
-	output_matrix.m[0][0] = rightUnit.x;	output_matrix.m[0][1] = rightUnit.y;	output_matrix.m[0][2] = rightUnit.z;	output_matrix.m[0][3] = 0;
-	output_matrix.m[1][0] = upUnit.x;		output_matrix.m[1][1] = upUnit.y;		output_matrix.m[1][2] = upUnit.z;		output_matrix.m[1][3] = 0;
-	output_matrix.m[2][0] = forward_unit.x;	output_matrix.m[2][1] = forward_unit.y;	output_matrix.m[2][2] = forward_unit.z;	output_matrix.m[2][3] = 0;
-	output_matrix.m[3][0] = camera.position.x;		output_matrix.m[3][1] = camera.position.y;		output_matrix.m[3][2] = camera.position.z;		output_matrix.m[3][3] = 1;
+	output_matrix.m[0][0] = right_unit.x;		output_matrix.m[0][1] = right_unit.y;		output_matrix.m[0][2] = right_unit.z;		output_matrix.m[0][3] = 0.0f;
+	output_matrix.m[1][0] = up_unit.x;			output_matrix.m[1][1] = up_unit.y;			output_matrix.m[1][2] = up_unit.z;			output_matrix.m[1][3] = 0.0f;
+	output_matrix.m[2][0] = forward_unit.x;		output_matrix.m[2][1] = forward_unit.y;		output_matrix.m[2][2] = forward_unit.z;		output_matrix.m[2][3] = 0.0f;
+	output_matrix.m[3][0] = camera.position.x;	output_matrix.m[3][1] = camera.position.y;	output_matrix.m[3][2] = camera.position.z;	output_matrix.m[3][3] = 1.0f;
 }
 
 /**
@@ -368,7 +360,6 @@ static void TransformAndRenderMesh(
 	tl::Matrix4x4<float> camera_matrix;
 	point_at(
 		camera,
-		camera.up,
 		camera_matrix
 	);
 	// View matrix
