@@ -413,7 +413,7 @@ static void TransformAndRenderMesh(
 		tl::Vec3<float> near_plane_position;
 		get_camera_near_plane_position(camera, near_plane_position);
 		Plane near_plane;
-		near_plane.position = { near_plane_position.x, near_plane_position.y, near_plane_position.z };
+		near_plane.position = near_plane_position;
 		near_plane.normal = camera.direction;
 
 		viewed_triangle_count += 1;
@@ -679,9 +679,14 @@ static void reset_world_to_mesh() {
 	world.position.y = mesh.position.y;
 	world.position.z = mesh.position.z;
 	const float space_around_mesh_scale_factor = 8.0f;
-	world.half_size.x = space_around_mesh_scale_factor * mesh.half_size.x;
-	world.half_size.y = space_around_mesh_scale_factor * mesh.half_size.y;
-	world.half_size.z = space_around_mesh_scale_factor * mesh.half_size.z;
+
+	float max_mesh_half_size = (mesh.half_size.x > mesh.half_size.y)
+		? ((mesh.half_size.x > mesh.half_size.z) ? mesh.half_size.x : mesh.half_size.z)
+		: ((mesh.half_size.y > mesh.half_size.z) ? mesh.half_size.y : mesh.half_size.z);
+
+	world.half_size.x = space_around_mesh_scale_factor * max_mesh_half_size;
+	world.half_size.y = space_around_mesh_scale_factor * max_mesh_half_size;
+	world.half_size.z = space_around_mesh_scale_factor * max_mesh_half_size;
 
 	positionIncrement = 0.01f * world.half_size.x;
 
