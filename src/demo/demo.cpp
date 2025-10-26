@@ -581,7 +581,7 @@ tl::Matrix2x3<float> GenerateProjectionMatrix(const tl::Rect<float> &from, const
 	tl::Matrix2x3<float> transformMatrix = tl::Matrix2x3<float>();
 	transformMatrix.m[0][0] = toXGrad;
 	transformMatrix.m[0][2] = toXOffset;
-	transformMatrix.m[1][1] = toYGrad;
+	transformMatrix.m[1][1] = -toYGrad;
 	transformMatrix.m[1][2] = toYOffset;
 
 	return transformMatrix;
