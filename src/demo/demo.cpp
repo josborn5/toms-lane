@@ -201,7 +201,7 @@ static void get_camera_near_plane_position(const Camera& camera, tl::Vec3<float>
 		tl::UnitVector(camera.direction),
 		camera.near_plane);
 	position = tl::AddVectors(
-		tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+		camera.position,
 		near_plane_center_from_position);
 }
 
@@ -212,7 +212,7 @@ static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
 		tl::CrossProduct(
 			camera.direction,
-			tl::Vec3<float>{ camera.up.x, camera.up.y, camera.up.z }
+			camera.up
 		)
 	);
 	float opp = camera.near_plane * tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
@@ -229,14 +229,14 @@ static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
 		tl::CrossProduct(
 			camera.direction,
-			tl::Vec3<float>{ camera.up.x, camera.up.y, camera.up.z }
+			camera.up
 		)
 	);
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 
 	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(unit_direction, camera.near_plane);
 	tl::Vec3<float> near_plane_center = tl::AddVectors(
-		tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+		camera.position,
 		near_plane_center_from_position);
 
 	float near_opp = camera.near_plane * tan_half_fov;
@@ -248,7 +248,7 @@ static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>
 	tl::Vec3<float> far_plane_center_from_position = MultiplyVectorByScalar(
 		unit_direction, camera.far_plane);
 	tl::Vec3<float> far_plane_center = tl::AddVectors(
-		tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+		camera.position,
 		far_plane_center_from_position);
 
 	float far_opp = camera.far_plane * tan_half_fov;
@@ -370,15 +370,15 @@ static void TransformAndRenderMesh(
 
 	// Camera matrix
 	tl::Vec3<float> target = AddVectors(
-		tl::Vec3<float> { camera.position.x, camera.position.y, camera.position.z },
+		camera.position,
 		camera.direction
 	);
 
 	tl::Matrix4x4<float> camera_matrix;
 	point_at(
-		tl::Vec3<float> { camera.position.x, camera.position.y, camera.position.z },
-		tl::Vec3<float> { target.x, target.y, target.z },
-		tl::Vec3<float> { camera.up.x, camera.up.y, camera.up.z },
+		camera.position,
+		target,
+		camera.up,
 		camera_matrix
 	);
 	// View matrix
@@ -411,7 +411,7 @@ static void TransformAndRenderMesh(
 
 		tl::Vec3<float> camera_to_triangle = SubtractVectors(
 			tl::Vec3<float>{ tri.p[0].x, tri.p[0].y, tri.p[0].z },
-			tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z }
+			camera.position
 		);
 		float dot = tl::DotProduct(unit_triangle_normal, camera_to_triangle);
 		if (dot > 0.0f)
@@ -926,50 +926,38 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		positionIncrement);
 	if (input.buttons[tl::KEY_S].isDown)
 	{
-		tl::Vec3<float> temp = SubtractVectors(
-			tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+		camera.position = SubtractVectors(
+			camera.position,
 			cameraPositionForwardBack
 		);
-		camera.position.x = temp.x;
-		camera.position.y = temp.y;
-		camera.position.z = temp.z;
 	}
 	else if (input.buttons[tl::KEY_W].isDown)
 	{
-		tl::Vec3<float> temp = AddVectors(
-			tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+		camera.position = AddVectors(
+			camera.position,
 			cameraPositionForwardBack
 		);
-		camera.position.x = temp.x;
-		camera.position.y = temp.y;
-		camera.position.z = temp.z;
 	}
 
 	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced
 	tl::Vec3<float> rawCameraPositionStrafe = CrossProduct(
-		tl::Vec3<float>{ camera.up.x, camera.up.y, camera.up.z },
+		camera.up,
 		camera.direction
 	);
 	tl::Vec3<float> cameraPositionStrafe = MultiplyVectorByScalar(rawCameraPositionStrafe, positionIncrement);
 	if (input.buttons[tl::KEY_LEFT].isDown)
 	{
-		tl::Vec3<float> temp = SubtractVectors(
-			tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+		camera.position = SubtractVectors(
+			camera.position,
 			cameraPositionStrafe
 		);
-		camera.position.x = temp.x;
-		camera.position.y = temp.y;
-		camera.position.z = temp.z;
 	}
 	else if (input.buttons[tl::KEY_RIGHT].isDown)
 	{
-		tl::Vec3<float> temp = AddVectors(
-			tl::Vec3<float>{ camera.position.x, camera.position.y, camera.position.z },
+		camera.position = AddVectors(
+			camera.position,
 			cameraPositionStrafe
 		);
-		camera.position.x = temp.x;
-		camera.position.y = temp.y;
-		camera.position.z = temp.z;
 	}
 
 	// Simply move the camera position vertically with up/down keypress
