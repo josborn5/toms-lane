@@ -361,7 +361,10 @@ static void TransformAndRenderMesh(
 	viewed_triangle_count = 0;
 
 	// Camera matrix
-	tl::Vec4<float> target = AddVectors(camera.position, camera.direction);
+	tl::Vec3<float> target = AddVectors(
+		tl::Vec3<float> { camera.position.x, camera.position.y, camera.position.z },
+		tl::Vec3<float> { camera.direction.x, camera.direction.y, camera.direction.z }
+	);
 
 	tl::Matrix4x4<float> camera_matrix;
 	point_at(
