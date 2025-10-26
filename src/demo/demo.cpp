@@ -601,10 +601,7 @@ static void set_projection_matrix() {
 }
 
 static void update_camera_direction() {
-	// Apply the camera yaw to the camera.direction vector
-	tl::Vec4<float> target = { 0.0f, 0.0f, 1.0f };
-
-	float yaw_in_radians = deg_to_rad(camera.yaw);
+	float yaw_in_radians = deg_to_rad(-camera.yaw);
 	float cos = cosf(yaw_in_radians);
 	float sin = sinf(yaw_in_radians);
 
