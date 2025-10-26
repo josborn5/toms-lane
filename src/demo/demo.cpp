@@ -101,7 +101,9 @@ static tl::Vec4<float> IntersectPlane(
 	float t = (planeD - ad) / (bd - ad);
 	tl::Vec4<float> lineStartToEnd = tl::SubtractVectors(lineEnd, lineStart);
 	tl::Vec4<float> lineToIntersect = tl::MultiplyVectorByScalar(lineStartToEnd, t);
-	return tl::AddVectors(lineStart, lineToIntersect);
+	tl::Vec4<float> return_temp = tl::AddVectors(lineStart, lineToIntersect);
+	return_temp.w = 1.0f;
+	return return_temp;
 }
 
 static float ShortestDistanceFromPointToPlane(
@@ -414,29 +416,24 @@ static void TransformAndRenderMesh(
 		get_camera_near_plane_position(camera, near_plane_position);
 		Plane near_plane;
 		near_plane.position = near_plane_position;
-		near_plane.normal = camera.direction;
+		near_plane.normal = tl::UnitVector(camera.direction);
 
-		viewed_triangle_count += 1;
-		// Convert the triangle position from world space to view space
-		Triangle4d viewed;
-		MultiplyVectorWithMatrix(tri.p[0], viewed.p[0], viewMatrix);
-		MultiplyVectorWithMatrix(tri.p[1], viewed.p[1], viewMatrix);
-		MultiplyVectorWithMatrix(tri.p[2], viewed.p[2], viewMatrix);
-
-		// Clip the triangles before they get projected. Define a plane just in fron of the camera to clip against
-		Plane near_clipping_plane;
-		near_clipping_plane.position = { 0.0f, 0.0f, camera.near_plane };
-		near_clipping_plane.normal = { 0.0f, 0.0f, 1.0f };
-		int near_plane_clipped_triangle_count = ClipTriangleAgainstPlane(near_clipping_plane, viewed, near_plane_clipped[0], near_plane_clipped[1]);
-
+		int near_plane_clipped_triangle_count = ClipTriangleAgainstPlane(near_plane, tri, near_plane_clipped[0], near_plane_clipped[1]);
 		for (int i = 0; i < near_plane_clipped_triangle_count; i += 1)
 		{
+			viewed_triangle_count += 1;
+			// Convert the triangle position from world space to view space
+			Triangle4d viewed;
+			MultiplyVectorWithMatrix(near_plane_clipped[i].p[0], viewed.p[0], viewMatrix);
+			MultiplyVectorWithMatrix(near_plane_clipped[i].p[1], viewed.p[1], viewMatrix);
+			MultiplyVectorWithMatrix(near_plane_clipped[i].p[2], viewed.p[2], viewMatrix);
+
 			projected_triangle_count += 1;
 			Triangle4d projected;
 			// Project each triangle in 3D space onto the 2D space triangle to render
-			Project3DPointTo2D(near_plane_clipped[i].p[0], projected.p[0], projectionMatrix);
-			Project3DPointTo2D(near_plane_clipped[i].p[1], projected.p[1], projectionMatrix);
-			Project3DPointTo2D(near_plane_clipped[i].p[2], projected.p[2], projectionMatrix);
+			Project3DPointTo2D(viewed.p[0], projected.p[0], projectionMatrix);
+			Project3DPointTo2D(viewed.p[1], projected.p[1], projectionMatrix);
+			Project3DPointTo2D(viewed.p[2], projected.p[2], projectionMatrix);
 
 			// Scale to view
 			Triangle4d triToRender = projected;
