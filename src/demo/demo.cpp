@@ -431,47 +431,83 @@ static void TransformAndRenderMesh(
 		far_plane.position = far_plane_position;
 		far_plane.normal = tl::Vec3<float>{ -camera.direction.x, -camera.direction.y, -camera.direction.z };
 
-		Triangle4d near_plane_clipped[2];
-		int near_plane_clipped_triangle_count = ClipTriangleAgainstPlane(near_plane, tri, near_plane_clipped[0], near_plane_clipped[1]);
-		for (int i = 0; i < near_plane_clipped_triangle_count; i += 1)
+		Triangle4d queue_data[18]; // 3 * 6 sides of view frustrum to clip
+		tl::MemorySpace queue_data_space;
+		queue_data_space.content = queue_data;
+		queue_data_space.sizeInBytes = 18 * sizeof(Triangle4d);
+		tl::queue<Triangle4d> triangle_queue = tl::queue<Triangle4d>(queue_data_space);
+		triangle_queue.enqueue(tri);
+
+		Triangle4d clipped[2];
+		int new_triangles = 1;
+		for (int plane_index = 0; plane_index < 2; plane_index += 1)
 		{
-			Triangle4d far_plane_clipped[2];
-			int far_plane_clipped_triangle_count = ClipTriangleAgainstPlane(far_plane, near_plane_clipped[i], far_plane_clipped[0], far_plane_clipped[1]);
-			for (int j = 0; j < far_plane_clipped_triangle_count; j += 1)
+			int triangles_to_add = 0;
+			while (new_triangles > 0)
 			{
-				viewed_triangle_count += 1;
-				// Convert the triangle position from world space to view space
-				Triangle4d viewed;
-				MultiplyVectorWithMatrix(far_plane_clipped[j].p[0], viewed.p[0], viewMatrix);
-				MultiplyVectorWithMatrix(far_plane_clipped[j].p[1], viewed.p[1], viewMatrix);
-				MultiplyVectorWithMatrix(far_plane_clipped[j].p[2], viewed.p[2], viewMatrix);
+				new_triangles -= 1;
+				tl::operation<Triangle4d> dequeue_op = triangle_queue.dequeue();
+				Triangle4d to_clip = dequeue_op.value;
 
-				projected_triangle_count += 1;
-				Triangle4d projected;
-				// Project each triangle in 3D space onto the 2D space triangle to render
-				Project3DPointTo2D(viewed.p[0], projected.p[0], projectionMatrix);
-				Project3DPointTo2D(viewed.p[1], projected.p[1], projectionMatrix);
-				Project3DPointTo2D(viewed.p[2], projected.p[2], projectionMatrix);
+				switch (plane_index)
+				{
+					case 0:
+					{
+						triangles_to_add = ClipTriangleAgainstPlane(near_plane, to_clip, clipped[0], clipped[1]);
+						break;
+					}
+					case 1:
+					{
+						triangles_to_add = ClipTriangleAgainstPlane(far_plane, to_clip, clipped[0], clipped[1]);
+						break;
+					}
+				}
 
-				// Scale to view
-				Triangle4d triToRender = projected;
-				triToRender.p[0].x *= (float)screen_width;
-				triToRender.p[0].y *= (float)screen_height;
-				triToRender.p[1].x *= (float)screen_width;
-				triToRender.p[1].y *= (float)screen_height;
-				triToRender.p[2].x *= (float)screen_width;
-				triToRender.p[2].y *= (float)screen_height;
-
-				const float translateX = (float)0.5 * (float)renderBuffer.width;
-				const float translateY = (float)0.5 * (float)renderBuffer.height;
-				triToRender.p[0].x += translateX; triToRender.p[0].y += translateY;
-				triToRender.p[1].x += translateX; triToRender.p[1].y += translateY;
-				triToRender.p[2].x += translateX; triToRender.p[2].y += translateY;
-
-				triToRender.color = triangleColor;
-
-				trianglesToDrawArray.append(triToRender);
+				for (int i = 0; i < triangles_to_add; i += 1)
+				{
+					triangle_queue.enqueue(clipped[i]);
+				}
 			}
+
+			new_triangles = triangle_queue.length();
+		}
+
+		for (int i = 0; i < triangle_queue.length(); i += 1)
+		{
+			Triangle4d to_transform = triangle_queue.content[i];
+
+			viewed_triangle_count += 1;
+			// Convert the triangle position from world space to view space
+			Triangle4d viewed;
+			MultiplyVectorWithMatrix(to_transform.p[0], viewed.p[0], viewMatrix);
+			MultiplyVectorWithMatrix(to_transform.p[1], viewed.p[1], viewMatrix);
+			MultiplyVectorWithMatrix(to_transform.p[2], viewed.p[2], viewMatrix);
+
+			projected_triangle_count += 1;
+			Triangle4d projected;
+			// Project each triangle in 3D space onto the 2D space triangle to render
+			Project3DPointTo2D(viewed.p[0], projected.p[0], projectionMatrix);
+			Project3DPointTo2D(viewed.p[1], projected.p[1], projectionMatrix);
+			Project3DPointTo2D(viewed.p[2], projected.p[2], projectionMatrix);
+
+			// Scale to view
+			Triangle4d triToRender = projected;
+			triToRender.p[0].x *= (float)screen_width;
+			triToRender.p[0].y *= (float)screen_height;
+			triToRender.p[1].x *= (float)screen_width;
+			triToRender.p[1].y *= (float)screen_height;
+			triToRender.p[2].x *= (float)screen_width;
+			triToRender.p[2].y *= (float)screen_height;
+
+			const float translateX = (float)0.5 * (float)renderBuffer.width;
+			const float translateY = (float)0.5 * (float)renderBuffer.height;
+			triToRender.p[0].x += translateX; triToRender.p[0].y += translateY;
+			triToRender.p[1].x += translateX; triToRender.p[1].y += translateY;
+			triToRender.p[2].x += translateX; triToRender.p[2].y += translateY;
+
+			triToRender.color = triangleColor;
+
+			trianglesToDrawArray.append(triToRender);
 		}
 	}
 
