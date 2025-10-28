@@ -19,6 +19,8 @@ struct Camera
 	tl::Vec3<float> direction = {0};
 	tl::Vec3<float> up = {0};
 
+	tl::Vec3<float> unit_direction = {0};
+
 	float yaw = 0.0f;
 	float field_of_view_deg = 0.0f;
 	float near_plane = 0.0f;
@@ -200,7 +202,7 @@ static int ClipTriangleAgainstPlane(
 
 static void get_camera_near_plane_position(const Camera& camera, tl::Vec3<float>& position) {
 	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
-		tl::UnitVector(camera.direction),
+		camera.unit_direction,
 		camera.near_plane);
 	position = tl::AddVectors(
 		camera.position,
@@ -209,7 +211,7 @@ static void get_camera_near_plane_position(const Camera& camera, tl::Vec3<float>
 
 static void get_camera_far_plane_position(const Camera& camera, tl::Vec3<float>& position) {
 	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
-		tl::UnitVector(camera.direction),
+		camera.unit_direction,
 		camera.far_plane);
 	position = tl::AddVectors(
 		camera.position,
@@ -236,7 +238,6 @@ static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float
 }
 
 static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>& near_2, tl::Vec2<float>& far_1, tl::Vec2<float>& far_2) {
-	tl::Vec3<float> unit_direction = tl::UnitVector(camera.direction);
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
 		tl::CrossProduct(
 			camera.direction,
@@ -245,7 +246,7 @@ static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>
 	);
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 
-	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(unit_direction, camera.near_plane);
+	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(camera.unit_direction, camera.near_plane);
 	tl::Vec3<float> near_plane_center = tl::AddVectors(
 		camera.position,
 		near_plane_center_from_position);
@@ -257,7 +258,7 @@ static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>
 
 
 	tl::Vec3<float> far_plane_center_from_position = MultiplyVectorByScalar(
-		unit_direction, camera.far_plane);
+		camera.unit_direction, camera.far_plane);
 	tl::Vec3<float> far_plane_center = tl::AddVectors(
 		camera.position,
 		far_plane_center_from_position);
@@ -322,7 +323,7 @@ static void point_at(
 	tl::Matrix4x4<float>& output_matrix
 )
 {
-	tl::Vec3<float> forward_unit = tl::UnitVector(camera.direction);
+	tl::Vec3<float> forward_unit = camera.unit_direction;
 	tl::Vec3<float> up_unit = tl::UnitVector(camera.up);
 	tl::Vec3<float> right_unit = tl::CrossProduct(up_unit, forward_unit);
 
@@ -654,6 +655,8 @@ static void update_camera_direction() {
 		tl::Vec3<float>{ 0.0f, 0.0f, 1.0f },
 		camera.direction
 	);
+
+	camera.unit_direction = tl::UnitVector(camera.direction);
 }
 
 static void ResetCamera()
