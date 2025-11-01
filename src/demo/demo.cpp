@@ -9,6 +9,11 @@
 #include "./camera.hpp"
 
 
+struct cuboid {
+	tl::Vec3<float> position = {0};
+	tl::Vec3<float> half_size = {0};
+};
+
 struct Plane
 {
 	tl::Vec3<float> position;
@@ -579,6 +584,24 @@ static T Clamp(T min, T value, T max)
 }
 template float Clamp(float min, float value, float max);
 
+static void reset_camera_in_world() {
+	// Start position is centered in x & y directions and stepped back in the z direction.
+	tl::Vec3<float> position = {
+		world.position.x,
+		world.position.y,
+		world.position.z - world.half_size.z
+	};
+
+	float field_of_view_in_deg = 75.0f;
+
+	// camera         near   object    far
+	// 	 |             |    |------|    |
+	//   |-------------|----------------|----> z
+	//   0
+	float far_plane = world.half_size.z;
+	float near_plane = 0.1f * far_plane;
+	camera_reset(position, field_of_view_in_deg, near_plane, far_plane);
+}
 
 static void reset_world_to_mesh() {
 	tl::Vec4<float> first_triangle_vertice = meshArray.get(0).p[0];
@@ -666,7 +689,7 @@ static void reset_world_to_mesh() {
 	world_to_map_scale_factor = map.halfSize.x / top_down_world.halfSize.x;
 	mapProjectionMatrix = GenerateProjectionMatrix(top_down_world, map);
 
-	reset_camera(world);
+	reset_camera_in_world();
 }
 
 static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& triangles, tl::MemorySpace& transient)
@@ -805,7 +828,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		if (input.buttons[tl::KEY_S].keyUp)
 		{
 			isStarted = true;
-			reset_camera(world);
+			reset_camera_in_world();
 		}
 		return 0;
 	}
@@ -886,7 +909,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	if (input.buttons[tl::KEY_C].keyUp)
 	{
-		reset_camera(world);
+		reset_camera_in_world();
 	}
 
 	// Final bounds check on the camera

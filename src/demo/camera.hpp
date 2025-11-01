@@ -3,11 +3,6 @@
 
 #include "../tl-library.hpp"
 
-struct cuboid {
-	tl::Vec3<float> position = {0};
-	tl::Vec3<float> half_size = {0};
-};
-
 struct Camera
 {
 	tl::Vec3<float> position = {0};
@@ -23,7 +18,11 @@ struct Camera
 };
 
 
-void reset_camera(const cuboid& world);
+void camera_reset(
+	const tl::Vec3<float>& position,
+	float field_of_view_in_deg,
+	float near_plane,
+	float far_plane);
 
 const tl::Matrix4x4<float>& get_projection_matrix();
 

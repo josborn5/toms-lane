@@ -79,24 +79,20 @@ static void set_projection_matrix(const Camera& camera) {
 	projectionMatrix = MakeProjectionMatrix(camera.field_of_view_deg, aspect_ratio, camera.near_plane, camera.far_plane);
 }
 
-void reset_camera(const cuboid& world) {
+void camera_reset(
+	const tl::Vec3<float>& position,
+	float field_of_view_in_deg,
+	float near_plane,
+	float far_plane
+) {
 	camera.up = { 0.0f, 1.0f, 0.0f };
-	// Start position is centered in x & y directions and stepped back in the z direction.
-	camera.position = {
-		world.position.x,
-		world.position.y,
-		world.position.z - world.half_size.z
-	};
+	camera.position = position;
 	camera.yaw = 0.0f;
 	update_camera_direction(camera);
-	camera.field_of_view_deg = 75.0f;
+	camera.field_of_view_deg = field_of_view_in_deg;
 
-	// camera         near   object    far
-	// 	 |             |    |------|    |
-	//   |-------------|----------------|----> z
-	//   0
-	camera.far_plane = 1.0f * world.half_size.z;
-	camera.near_plane = 0.1f * camera.far_plane;
+	camera.near_plane = near_plane;
+	camera.far_plane = far_plane;
 
 	set_projection_matrix(camera);
 }
