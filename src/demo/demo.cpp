@@ -786,14 +786,22 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 
 
-	static const float yaw_increment_in_degrees = 0.5f;
+	static const float rotation_increment_in_degrees = 0.5f;
 	// First process any change in yaw and update the camera direction
 	if (input.buttons[tl::KEY_D].isDown) {
-		camera_increment_yaw(-yaw_increment_in_degrees);
+		camera_increment_yaw(-rotation_increment_in_degrees);
 	}
 	else if (input.buttons[tl::KEY_A].isDown) {
-		camera_increment_yaw(yaw_increment_in_degrees);
+		camera_increment_yaw(rotation_increment_in_degrees);
 	}
+
+	if (input.buttons[tl::KEY_SHIFT].isDown && input.buttons[tl::KEY_UP].isDown) {
+		camera_increment_pitch(rotation_increment_in_degrees);
+	}
+	else if (input.buttons[tl::KEY_SHIFT].isDown && input.buttons[tl::KEY_DOWN].isDown) {
+		camera_increment_pitch(-rotation_increment_in_degrees);
+	}
+
 
 	// Next process any forwards or backwards movement
 	if (input.buttons[tl::KEY_S].isDown)
@@ -815,11 +823,11 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 
 	// Simply move the camera position vertically with up/down keypress
-	if (input.buttons[tl::KEY_DOWN].isDown)
+	if (input.buttons[tl::KEY_DOWN].isDown && !input.buttons[tl::KEY_SHIFT].isDown)
 	{
 		camera_increment_up(-positionIncrement);
 	}
-	else if (input.buttons[tl::KEY_UP].isDown)
+	else if (input.buttons[tl::KEY_UP].isDown && !input.buttons[tl::KEY_SHIFT].isDown)
 	{
 		camera_increment_up(positionIncrement);
 	}

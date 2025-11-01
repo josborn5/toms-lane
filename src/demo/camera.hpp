@@ -32,6 +32,8 @@ struct Camera
 	tl::Vec3<float> unit_direction = {0};
 
 	float yaw = 0.0f;
+	float pitch = 0.0f;
+
 	float field_of_view_deg = 0.0f;
 	float near_plane = 0.0f;
 	float far_plane = 0.0f;
@@ -49,6 +51,8 @@ void camera_reset(
 const tl::Matrix4x4<float>& get_projection_matrix();
 
 void camera_increment_yaw(float delta_angle_in_deg);
+
+void camera_increment_pitch(float delta_angle_in_deg);
 
 void camera_increment_direction(float delta_z);
 

@@ -28,6 +28,29 @@ static float deg_to_rad(float degrees) {
 	return degrees * pi_over_180;
 }
 
+static void rotate_around_x_axis(const tl::Vec3<float>& in, float angle_in_deg, tl::Vec3<float>& out) {
+	float angle_in_radians = deg_to_rad(angle_in_deg);
+	float cos = cosf(angle_in_radians);
+	float sin = sinf(angle_in_radians);
+
+	matrix3x3 x_axis_rotation_matrix;
+	x_axis_rotation_matrix.element[0][0] = 1.0f;
+	x_axis_rotation_matrix.element[0][1] = 0.0f;
+	x_axis_rotation_matrix.element[0][2] = 0.0f;
+	x_axis_rotation_matrix.element[1][0] = 0.0f;
+	x_axis_rotation_matrix.element[1][1] = cos;
+	x_axis_rotation_matrix.element[1][2] = -sin;
+	x_axis_rotation_matrix.element[2][0] = 0.0f;
+	x_axis_rotation_matrix.element[2][1] = sin;
+	x_axis_rotation_matrix.element[2][2] = cos;
+
+	matrix3x3_dot_vect3(
+		x_axis_rotation_matrix,
+		in,
+		out
+	);
+}
+
 static void update_camera_direction(Camera& camera) {
 	float yaw_in_radians = deg_to_rad(-camera.yaw);
 	float cos = cosf(yaw_in_radians);
@@ -46,7 +69,7 @@ static void update_camera_direction(Camera& camera) {
 
 	matrix3x3_dot_vect3(
 		y_axis_rotation_matrix,
-		tl::Vec3<float>{ 0.0f, 0.0f, 1.0f },
+		{ 0.0f, 0.0f, 1.0f },
 		camera.direction
 	);
 
@@ -148,6 +171,46 @@ static void set_view_frustrum() {
 	tl::Vec3<float> far_plane_position;
 	get_camera_far_plane_position(camera, camera.view_frustrum.far_plane_position);
 	camera.view_frustrum.far_plane_normal = tl::Vec3<float>{ -camera.unit_direction.x, -camera.unit_direction.y, -camera.unit_direction.z };
+
+	tl::Vec3<float> unit_up = tl::UnitVector(camera.up);
+
+	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
+	float near_opp = camera.near_plane * tan_half_fov;
+	float far_opp = camera.far_plane * tan_half_fov;
+
+	camera.view_frustrum.up_plane_position = tl::AddVectors(
+		camera.view_frustrum.near_plane_position,
+		tl::MultiplyVectorByScalar(unit_up, near_opp)
+	);
+
+	tl::Vec3<float> camera_right = CrossProduct(
+		camera.up,
+		camera.direction
+	);
+
+	camera.view_frustrum.up_plane_normal = camera.up;
+	rotate_around_x_axis(
+		camera_right,
+		0.5f * camera.field_of_view_deg,
+		camera.view_frustrum.up_plane_normal
+	);
+
+	camera.view_frustrum.down_plane_position = tl::AddVectors(
+		camera.view_frustrum.near_plane_position,
+		tl::MultiplyVectorByScalar(unit_up, -near_opp)
+	);
+
+	camera.view_frustrum.down_plane_normal = tl::Vec3<float> {
+		-camera.up.x,
+		-camera.up.y,
+		-camera.up.z
+	};
+	rotate_around_x_axis(
+		camera_right,
+		-0.5f * camera.field_of_view_deg,
+		camera.view_frustrum.down_plane_normal
+	);
+
 }
 
 
@@ -159,7 +222,10 @@ void camera_reset(
 ) {
 	camera.up = { 0.0f, 1.0f, 0.0f };
 	camera.position = position;
+
 	camera.yaw = 0.0f;
+	camera.pitch = 0.0f;
+
 	update_camera_direction(camera);
 	camera.field_of_view_deg = field_of_view_in_deg;
 
@@ -180,6 +246,27 @@ void camera_increment_yaw(float delta_angle) {
 		camera.yaw -= 360.0f;
 	}
 	update_camera_direction(camera);
+	set_view_frustrum();
+}
+
+void camera_increment_pitch(float delta_angle_in_deg) {
+	camera.pitch += delta_angle_in_deg;
+	if (camera.pitch > 360.0f) {
+		camera.pitch -= 360.0f;
+	}
+
+	rotate_around_x_axis(
+		{ 0.0f, 0.0f, 1.0f },
+		camera.pitch,
+		camera.direction
+	);
+	rotate_around_x_axis(
+		{ 0.0f, 1.0f, 0.0f },
+		camera.pitch,
+		camera.up
+	);
+
+	set_projection_matrix(camera);
 	set_view_frustrum();
 }
 
