@@ -147,3 +147,17 @@ void camera_increment_up(float delta_up, Camera& camera) {
 	);
 }
 
+
+void camera_set_fov(float fov_in_deg, Camera& camera) {
+	camera.field_of_view_deg = fov_in_deg;
+
+	if (camera.field_of_view_deg < 1.0f) {
+		camera.field_of_view_deg = 1.0f;
+	}
+	else if (camera.field_of_view_deg > 179.0f) {
+		camera.field_of_view_deg = 179.0f;
+	}
+
+	set_projection_matrix(camera);
+}
+

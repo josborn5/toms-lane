@@ -29,13 +29,15 @@ void reset_camera(const cuboid& world, Camera& camera);
 
 const tl::Matrix4x4<float>& get_projection_matrix();
 
-void camera_increment_yaw(float delta_angle, Camera& camera);
+void camera_increment_yaw(float delta_angle_in_deg, Camera& camera);
 
 void camera_increment_direction(float delta_z, Camera& camera);
 
 void camera_increment_strafe(float delta_x, Camera& camera);
 
 void camera_increment_up(float delta_up, Camera& camera);
+
+void camera_set_fov(float fov_in_deg, Camera& camera);
 
 #endif
 

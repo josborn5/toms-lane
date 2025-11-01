@@ -869,18 +869,10 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 
 	else if (input.buttons[tl::KEY_J].isDown) {
-		camera.field_of_view_deg += 0.25f;
-		if (camera.field_of_view_deg > 170.0f) {
-			camera.field_of_view_deg = 170.0f;
-		}
-		set_projection_matrix(camera);
+		camera_set_fov(camera.field_of_view_deg + 0.25f, camera);
 	}
 	else if (input.buttons[tl::KEY_K].isDown) {
-		camera.field_of_view_deg -= 0.25f;
-		if (camera.field_of_view_deg < 10.0f) {
-			camera.field_of_view_deg = 10.0f;
-		}
-		set_projection_matrix(camera);
+		camera_set_fov(camera.field_of_view_deg - 0.25f, camera);
 	}
 
 	else if (input.buttons[tl::KEY_V].isDown) {
