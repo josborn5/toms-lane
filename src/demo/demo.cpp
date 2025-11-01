@@ -265,48 +265,6 @@ static int compare_triangle_depth(const void* a, const void* b) {
 	return 0;
 }
 
-/**
-* Structure of the PointAt Matrix:
-* | Ax | Ay | Az | 0 |
-* | Bx | By | Bz | 0 |
-* | Cx | Cy | Cz | 0 |
-* | Tx | Ty | Tz | 1 |
-*/
-static void point_at(
-	const Camera& camera,
-	tl::Matrix4x4<float>& output_matrix
-)
-{
-	tl::Vec3<float> forward_unit = camera.unit_direction;
-	tl::Vec3<float> up_unit = tl::UnitVector(camera.up);
-	tl::Vec3<float> right_unit = tl::CrossProduct(up_unit, forward_unit);
-
-	// Construct the new transformation matrix
-	output_matrix.m[0][0] = right_unit.x;		output_matrix.m[0][1] = right_unit.y;		output_matrix.m[0][2] = right_unit.z;		output_matrix.m[0][3] = 0.0f;
-	output_matrix.m[1][0] = up_unit.x;			output_matrix.m[1][1] = up_unit.y;			output_matrix.m[1][2] = up_unit.z;			output_matrix.m[1][3] = 0.0f;
-	output_matrix.m[2][0] = forward_unit.x;		output_matrix.m[2][1] = forward_unit.y;		output_matrix.m[2][2] = forward_unit.z;		output_matrix.m[2][3] = 0.0f;
-	output_matrix.m[3][0] = camera.position.x;	output_matrix.m[3][1] = camera.position.y;	output_matrix.m[3][2] = camera.position.z;	output_matrix.m[3][3] = 1.0f;
-}
-
-/**
-* Structure of the LookAt Matrix:
-* |  Ax  |  Bx  |  Cx  | 0 |
-* |  Ay  |  By  |  Cy  | 0 |
-* |  Az  |  Bz  |  Cz  | 0 |
-* | -T.A | -T.B | -T.C | 1 |
-*/
-static void look_at(const tl::Matrix4x4<float>& pointAt, tl::Matrix4x4<float>& lookAt)
-{
-	float tDotA = (pointAt.m[3][0] * pointAt.m[0][0]) + (pointAt.m[3][1] * pointAt.m[0][1]) + (pointAt.m[3][2] * pointAt.m[0][2]);
-	float tDotB = (pointAt.m[3][0] * pointAt.m[1][0]) + (pointAt.m[3][1] * pointAt.m[1][1]) + (pointAt.m[3][2] * pointAt.m[1][2]);
-	float tDotC = (pointAt.m[3][0] * pointAt.m[2][0]) + (pointAt.m[3][1] * pointAt.m[2][1]) + (pointAt.m[3][2] * pointAt.m[2][2]);
-
-	lookAt.m[0][0] = pointAt.m[0][0];	lookAt.m[0][1] = pointAt.m[1][0];	lookAt.m[0][2] = pointAt.m[2][0];	lookAt.m[0][3] = 0.0f;
-	lookAt.m[1][0] = pointAt.m[0][1];	lookAt.m[1][1] = pointAt.m[1][1];	lookAt.m[1][2] = pointAt.m[2][1];	lookAt.m[1][3] = 0.0f;
-	lookAt.m[2][0] = pointAt.m[0][2];	lookAt.m[2][1] = pointAt.m[1][2];	lookAt.m[2][2] = pointAt.m[2][2];	lookAt.m[2][3] = 0.0f;
-	lookAt.m[3][0] = -tDotA;			lookAt.m[3][1] = -tDotB;			lookAt.m[3][2] = -tDotC;			lookAt.m[3][3] = 1.0f;
-}
-
 
 static void TransformAndRenderMesh(
 	const tl::RenderBuffer& renderBuffer,
@@ -323,14 +281,8 @@ static void TransformAndRenderMesh(
 	projected_triangle_count = 0;
 	viewed_triangle_count = 0;
 
-	tl::Matrix4x4<float> camera_matrix;
-	point_at(
-		camera,
-		camera_matrix
-	);
-	// View matrix
 	tl::Matrix4x4<float> viewMatrix;
-	look_at(camera_matrix, viewMatrix);
+	camera_fill_view_matrix(viewMatrix);
 
 	tl::array<Triangle4d> trianglesToDrawArray = tl::array<Triangle4d>(transient);
 

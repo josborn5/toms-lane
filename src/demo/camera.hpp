@@ -40,6 +40,8 @@ void camera_set_near_plane(float near_plane);
 
 void camera_set_position(const tl::Vec3<float>& position);
 
+void camera_fill_view_matrix(tl::Matrix4x4<float>& view_matrix);
+
 const Camera& camera_get();
 
 #endif
