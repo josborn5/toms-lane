@@ -30,7 +30,6 @@ static bool is_teapot = true;
 static cuboid world;
 static cuboid mesh;
 
-static Camera camera;
 static tl::array<Triangle4d> meshArray = tl::array<Triangle4d>();
 
 static float positionIncrement = 0.0f;
@@ -187,6 +186,7 @@ static void get_camera_far_plane_position(const Camera& camera, tl::Vec3<float>&
 }
 
 static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) {
+	const Camera& camera = camera_get();
 	tl::Vec3<float> near_plane_center;
 	get_camera_near_plane_position(camera, near_plane_center);
 
@@ -206,6 +206,7 @@ static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float
 }
 
 static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>& near_2, tl::Vec2<float>& far_1, tl::Vec2<float>& far_2) {
+	const Camera& camera = camera_get();
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
 		tl::CrossProduct(
 			camera.direction,
@@ -665,7 +666,7 @@ static void reset_world_to_mesh() {
 	world_to_map_scale_factor = map.halfSize.x / top_down_world.halfSize.x;
 	mapProjectionMatrix = GenerateProjectionMatrix(top_down_world, map);
 
-	reset_camera(world, camera);
+	reset_camera(world);
 }
 
 static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& triangles, tl::MemorySpace& transient)
@@ -768,6 +769,7 @@ static int Initialize(const tl::GameMemory& gameMemory)
 
 static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
+	const Camera& camera = camera_get();
 	const uint32_t BACKGROUND_COLOR = 0x000000;
 	tl::ClearScreen(renderBuffer, BACKGROUND_COLOR);
 	if (!isStarted)
@@ -803,7 +805,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		if (input.buttons[tl::KEY_S].keyUp)
 		{
 			isStarted = true;
-			reset_camera(world, camera);
+			reset_camera(world);
 		}
 		return 0;
 	}
@@ -833,64 +835,64 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	static const float yaw_increment_in_degrees = 0.5f;
 	// First process any change in yaw and update the camera direction
 	if (input.buttons[tl::KEY_D].isDown) {
-		camera_increment_yaw(-yaw_increment_in_degrees, camera);
+		camera_increment_yaw(-yaw_increment_in_degrees);
 	}
 	else if (input.buttons[tl::KEY_A].isDown) {
-		camera_increment_yaw(yaw_increment_in_degrees, camera);
+		camera_increment_yaw(yaw_increment_in_degrees);
 	}
 
 	// Next process any forwards or backwards movement
 	if (input.buttons[tl::KEY_S].isDown)
 	{
-		camera_increment_direction(-positionIncrement, camera);
+		camera_increment_direction(-positionIncrement);
 	}
 	else if (input.buttons[tl::KEY_W].isDown)
 	{
-		camera_increment_direction(positionIncrement, camera);
+		camera_increment_direction(positionIncrement);
 	}
 
 	if (input.buttons[tl::KEY_LEFT].isDown)
 	{
-		camera_increment_strafe(-positionIncrement, camera);
+		camera_increment_strafe(-positionIncrement);
 	}
 	else if (input.buttons[tl::KEY_RIGHT].isDown)
 	{
-		camera_increment_strafe(positionIncrement, camera);
+		camera_increment_strafe(positionIncrement);
 	}
 
 	// Simply move the camera position vertically with up/down keypress
 	if (input.buttons[tl::KEY_DOWN].isDown)
 	{
-		camera_increment_up(-positionIncrement, camera);
+		camera_increment_up(-positionIncrement);
 	}
 	else if (input.buttons[tl::KEY_UP].isDown)
 	{
-		camera_increment_up(positionIncrement, camera);
+		camera_increment_up(positionIncrement);
 	}
 
 	else if (input.buttons[tl::KEY_J].isDown) {
-		camera_set_fov(camera.field_of_view_deg + 0.25f, camera);
+		camera_set_fov(camera.field_of_view_deg + 0.25f);
 	}
 	else if (input.buttons[tl::KEY_K].isDown) {
-		camera_set_fov(camera.field_of_view_deg - 0.25f, camera);
+		camera_set_fov(camera.field_of_view_deg - 0.25f);
 	}
 
 	else if (input.buttons[tl::KEY_V].isDown) {
-		camera_set_near_plane(camera.near_plane + 0.1f, camera);
+		camera_set_near_plane(camera.near_plane + 0.1f);
 	}
 	else if (input.buttons[tl::KEY_B].isDown) {
-		camera_set_near_plane(camera.near_plane - 0.1f, camera);
+		camera_set_near_plane(camera.near_plane - 0.1f);
 	}
 
 	if (input.buttons[tl::KEY_C].keyUp)
 	{
-		reset_camera(world, camera);
+		reset_camera(world);
 	}
 
 	// Final bounds check on the camera
-	camera.position.x = Clamp(world.position.x - world.half_size.x, camera.position.x, world.position.x + world.half_size.x);
-	camera.position.y = Clamp(world.position.y - world.half_size.y, camera.position.y, world.position.y + world.half_size.y);
-	camera.position.z = Clamp(world.position.z - world.half_size.z, camera.position.z, world.position.z + world.half_size.z);
+//	camera.position.x = Clamp(world.position.x - world.half_size.x, camera.position.x, world.position.x + world.half_size.x);
+//	camera.position.y = Clamp(world.position.y - world.half_size.y, camera.position.y, world.position.y + world.half_size.y);
+//	camera.position.z = Clamp(world.position.z - world.half_size.z, camera.position.z, world.position.z + world.half_size.z);
 
 	tl::MemorySpace transientMemory = gameMemory.transient;
 

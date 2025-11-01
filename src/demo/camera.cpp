@@ -5,6 +5,8 @@ const unsigned int screen_width = 1280;
 const unsigned int screen_height = 720;
 constexpr float aspect_ratio = (float)screen_width / (float)screen_height;
 
+static Camera camera;
+
 struct matrix3x3
 {
 	float element[3][3]; // row then col index
@@ -77,7 +79,7 @@ static void set_projection_matrix(const Camera& camera) {
 	projectionMatrix = MakeProjectionMatrix(camera.field_of_view_deg, aspect_ratio, camera.near_plane, camera.far_plane);
 }
 
-void reset_camera(const cuboid& world, Camera& camera) {
+void reset_camera(const cuboid& world) {
 	camera.up = { 0.0f, 1.0f, 0.0f };
 	// Start position is centered in x & y directions and stepped back in the z direction.
 	camera.position = {
@@ -103,7 +105,7 @@ const tl::Matrix4x4<float>& get_projection_matrix() {
 	return projectionMatrix;
 }
 
-void camera_increment_yaw(float delta_angle, Camera& camera) {
+void camera_increment_yaw(float delta_angle) {
 	camera.yaw += delta_angle;
 	if (camera.yaw > 360.0f) {
 		camera.yaw -= 360.0f;
@@ -111,7 +113,7 @@ void camera_increment_yaw(float delta_angle, Camera& camera) {
 	update_camera_direction(camera);
 }
 
-void camera_increment_direction(float delta_z, Camera& camera) {
+void camera_increment_direction(float delta_z) {
 	tl::Vec3<float> cameraPositionForwardBack = MultiplyVectorByScalar(
 		camera.direction,
 		delta_z);
@@ -122,7 +124,7 @@ void camera_increment_direction(float delta_z, Camera& camera) {
 	);
 }
 
-void camera_increment_strafe(float delta_x, Camera& camera) {
+void camera_increment_strafe(float delta_x) {
 	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced
 	tl::Vec3<float> rawCameraPositionStrafe = CrossProduct(
 		camera.up,
@@ -136,7 +138,7 @@ void camera_increment_strafe(float delta_x, Camera& camera) {
 	);
 }
 
-void camera_increment_up(float delta_up, Camera& camera) {
+void camera_increment_up(float delta_up) {
 	tl::Vec3<float> camera_position_delta = MultiplyVectorByScalar(
 		camera.up,
 		delta_up);
@@ -148,7 +150,7 @@ void camera_increment_up(float delta_up, Camera& camera) {
 }
 
 
-void camera_set_fov(float fov_in_deg, Camera& camera) {
+void camera_set_fov(float fov_in_deg) {
 	camera.field_of_view_deg = fov_in_deg;
 
 	if (camera.field_of_view_deg < 1.0f) {
@@ -161,7 +163,7 @@ void camera_set_fov(float fov_in_deg, Camera& camera) {
 	set_projection_matrix(camera);
 }
 
-void camera_set_near_plane(float near_plane, Camera& camera) {
+void camera_set_near_plane(float near_plane) {
 	camera.near_plane = near_plane;
 	if (camera.near_plane < 0.0f) {
 		camera.near_plane = 0.0f;
@@ -171,5 +173,9 @@ void camera_set_near_plane(float near_plane, Camera& camera) {
 	}
 
 	set_projection_matrix(camera);
+}
+
+const Camera& camera_get() {
+	return camera;
 }
 
