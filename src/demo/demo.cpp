@@ -789,10 +789,10 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	static const float rotation_increment_in_degrees = 0.5f;
 	// First process any change in yaw and update the camera direction
 	if (input.buttons[tl::KEY_D].isDown) {
-		camera_increment_yaw(-rotation_increment_in_degrees);
+		camera_increment_yaw(rotation_increment_in_degrees);
 	}
 	else if (input.buttons[tl::KEY_A].isDown) {
-		camera_increment_yaw(rotation_increment_in_degrees);
+		camera_increment_yaw(-rotation_increment_in_degrees);
 	}
 
 	if (input.buttons[tl::KEY_SHIFT].isDown && input.buttons[tl::KEY_UP].isDown) {

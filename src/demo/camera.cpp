@@ -29,9 +29,9 @@ static float deg_to_rad(float degrees) {
 }
 
 static void rotate_around_x_axis(const tl::Vec3<float>& in, float angle_in_deg, tl::Vec3<float>& out) {
-	float angle_in_radians = deg_to_rad(angle_in_deg);
-	float cos = cosf(angle_in_radians);
-	float sin = sinf(angle_in_radians);
+	float pitch_in_radians = deg_to_rad(angle_in_deg);
+	float cos = cosf(pitch_in_radians);
+	float sin = sinf(pitch_in_radians);
 
 	matrix3x3 x_axis_rotation_matrix;
 	x_axis_rotation_matrix.element[0][0] = 1.0f;
@@ -51,8 +51,8 @@ static void rotate_around_x_axis(const tl::Vec3<float>& in, float angle_in_deg, 
 	);
 }
 
-static void update_camera_direction(Camera& camera) {
-	float yaw_in_radians = deg_to_rad(-camera.yaw);
+static void rotate_around_y_axis(const tl::Vec3<float>& in, float angle_in_deg, tl::Vec3<float>& out) {
+	float yaw_in_radians = deg_to_rad(angle_in_deg);
 	float cos = cosf(yaw_in_radians);
 	float sin = sinf(yaw_in_radians);
 
@@ -72,10 +72,7 @@ static void update_camera_direction(Camera& camera) {
 		{ 0.0f, 0.0f, 1.0f },
 		camera.direction
 	);
-
-	camera.unit_direction = tl::UnitVector(camera.direction);
 }
-
 
 
 static tl::Matrix4x4<float> MakeProjectionMatrix(
@@ -213,6 +210,33 @@ static void set_view_frustrum() {
 
 }
 
+static void update_for_rotation() {
+	// set camera direction
+	rotate_around_x_axis(
+		{ 0.0f, 0.0f, 1.0f },
+		camera.pitch,
+		camera.direction
+	);
+	rotate_around_y_axis(
+		camera.direction,
+		camera.yaw,
+		camera.direction
+	);
+	camera.unit_direction = tl::UnitVector(camera.direction);
+
+	// set camera up
+	rotate_around_x_axis(
+		{ 0.0f, 1.0f, 0.0f },
+		camera.pitch,
+		camera.up
+	);
+	rotate_around_y_axis(
+		camera.up,
+		camera.yaw,
+		camera.up
+	);
+}
+
 
 void camera_reset(
 	const tl::Vec3<float>& position,
@@ -226,9 +250,9 @@ void camera_reset(
 	camera.yaw = 0.0f;
 	camera.pitch = 0.0f;
 
-	update_camera_direction(camera);
-	camera.field_of_view_deg = field_of_view_in_deg;
+	update_for_rotation();
 
+	camera.field_of_view_deg = field_of_view_in_deg;
 	camera.near_plane = near_plane;
 	camera.far_plane = far_plane;
 
@@ -245,7 +269,7 @@ void camera_increment_yaw(float delta_angle) {
 	if (camera.yaw > 360.0f) {
 		camera.yaw -= 360.0f;
 	}
-	update_camera_direction(camera);
+	update_for_rotation();
 	set_view_frustrum();
 }
 
@@ -255,18 +279,7 @@ void camera_increment_pitch(float delta_angle_in_deg) {
 		camera.pitch -= 360.0f;
 	}
 
-	rotate_around_x_axis(
-		{ 0.0f, 0.0f, 1.0f },
-		camera.pitch,
-		camera.direction
-	);
-	rotate_around_x_axis(
-		{ 0.0f, 1.0f, 0.0f },
-		camera.pitch,
-		camera.up
-	);
-
-	set_projection_matrix(camera);
+	update_for_rotation();
 	set_view_frustrum();
 }
 
