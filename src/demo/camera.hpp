@@ -29,5 +29,10 @@ void reset_camera(const cuboid& world, Camera& camera);
 
 const tl::Matrix4x4<float>& get_projection_matrix();
 
+void increment_camera_yaw(Camera& camera);
+
+void decrement_camera_yaw(Camera& camera);
+
+
 #endif
 

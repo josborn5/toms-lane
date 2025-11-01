@@ -103,3 +103,22 @@ const tl::Matrix4x4<float>& get_projection_matrix() {
 	return projectionMatrix;
 }
 
+static const float yaw_increment_in_degrees = 0.5f;
+void increment_camera_yaw(Camera& camera) {
+	camera.yaw += yaw_increment_in_degrees;
+	if (camera.yaw > 360.0f) {
+		camera.yaw -= 360.0f;
+	}
+	update_camera_direction(camera);
+}
+
+void decrement_camera_yaw(Camera& camera) {
+	camera.yaw -= yaw_increment_in_degrees;
+	if (camera.yaw < 0.0f) {
+		camera.yaw += 360.0f;
+	}
+	update_camera_direction(camera);
+}
+
+
+

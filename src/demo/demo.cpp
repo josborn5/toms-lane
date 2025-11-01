@@ -21,17 +21,6 @@ struct Triangle4d
 	unsigned int color;
 };
 
-struct matrix3x3
-{
-	float element[3][3]; // row then col index
-};
-
-static void matrix3x3_dot_vect3(const matrix3x3& matrix, const tl::Vec3<float>& input, tl::Vec3<float>& output) {
-	output.x = (matrix.element[0][0] * input.x) + (matrix.element[0][1] * input.y) + (matrix.element[0][2] * input.z);
-	output.y = (matrix.element[1][0] * input.x) + (matrix.element[1][1] * input.y) + (matrix.element[1][2] * input.z);
-	output.z = (matrix.element[2][0] * input.x) + (matrix.element[2][1] * input.y) + (matrix.element[2][2] * input.z);
-}
-
 const unsigned int screen_width = 1280;
 const unsigned int screen_height = 720;
 
@@ -589,31 +578,6 @@ static T Clamp(T min, T value, T max)
 }
 template float Clamp(float min, float value, float max);
 
-static void update_camera_direction() {
-	float yaw_in_radians = deg_to_rad(-camera.yaw);
-	float cos = cosf(yaw_in_radians);
-	float sin = sinf(yaw_in_radians);
-
-	matrix3x3 y_axis_rotation_matrix;
-	y_axis_rotation_matrix.element[0][0] = cos;
-	y_axis_rotation_matrix.element[0][1] = 0.0f;
-	y_axis_rotation_matrix.element[0][2] = sin;
-	y_axis_rotation_matrix.element[1][0] = 0.0f;
-	y_axis_rotation_matrix.element[1][1] = 1.0f;
-	y_axis_rotation_matrix.element[1][2] = 0.0f;
-	y_axis_rotation_matrix.element[2][0] = -sin;
-	y_axis_rotation_matrix.element[2][1] = 0.0f;
-	y_axis_rotation_matrix.element[2][2] = cos;
-
-	matrix3x3_dot_vect3(
-		y_axis_rotation_matrix,
-		tl::Vec3<float>{ 0.0f, 0.0f, 1.0f },
-		camera.direction
-	);
-
-	camera.unit_direction = tl::UnitVector(camera.direction);
-}
-
 
 static void reset_world_to_mesh() {
 	tl::Vec4<float> first_triangle_vertice = meshArray.get(0).p[0];
@@ -802,23 +766,6 @@ static int Initialize(const tl::GameMemory& gameMemory)
 }
 
 
-static const float yaw_increment_in_degrees = 0.5f;
-static void increment_camera_yaw() {
-	camera.yaw += yaw_increment_in_degrees;
-	if (camera.yaw > 360.0f) {
-		camera.yaw -= 360.0f;
-	}
-	update_camera_direction();
-}
-
-static void decrement_camera_yaw() {
-	camera.yaw -= yaw_increment_in_degrees;
-	if (camera.yaw < 0.0f) {
-		camera.yaw += 360.0f;
-	}
-	update_camera_direction();
-}
-
 static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
 	const uint32_t BACKGROUND_COLOR = 0x000000;
@@ -885,10 +832,10 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	// First process any change in yaw and update the camera direction
 	if (input.buttons[tl::KEY_D].isDown) {
-		decrement_camera_yaw();
+		decrement_camera_yaw(camera);
 	}
 	else if (input.buttons[tl::KEY_A].isDown) {
-		increment_camera_yaw();
+		increment_camera_yaw(camera);
 	}
 
 	// Next process any forwards or backwards movement
