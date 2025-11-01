@@ -215,6 +215,7 @@ add_library(
 	src/demo/demo.cpp
 	src/demo/render.cpp
 	src/demo/asset.cpp
+	src/demo/camera.cpp
 	src/demo/assets/teapot.obj.cpp
 )
 add_executable(

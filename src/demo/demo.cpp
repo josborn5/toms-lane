@@ -6,26 +6,8 @@
 #include "../tl-library.hpp"
 #include "./render.hpp"
 #include "./file.hpp"
+#include "./camera.hpp"
 
-
-struct cuboid {
-	tl::Vec3<float> position = {0};
-	tl::Vec3<float> half_size = {0};
-};
-
-struct Camera
-{
-	tl::Vec3<float> position = {0};
-	tl::Vec3<float> direction = {0};
-	tl::Vec3<float> up = {0};
-
-	tl::Vec3<float> unit_direction = {0};
-
-	float yaw = 0.0f;
-	float field_of_view_deg = 0.0f;
-	float near_plane = 0.0f;
-	float far_plane = 0.0f;
-};
 
 struct Plane
 {
@@ -52,7 +34,6 @@ static void matrix3x3_dot_vect3(const matrix3x3& matrix, const tl::Vec3<float>& 
 
 const unsigned int screen_width = 1280;
 const unsigned int screen_height = 720;
-constexpr float aspect_ratio = (float)screen_width / (float)screen_height;
 
 static bool wireframe = false;
 static bool is_teapot = true;
@@ -62,8 +43,6 @@ static cuboid mesh;
 
 static Camera camera;
 static tl::array<Triangle4d> meshArray = tl::array<Triangle4d>();
-
-static tl::Matrix4x4<float> projectionMatrix;
 
 static float positionIncrement = 0.0f;
 
@@ -275,26 +254,6 @@ static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>
 }
 
 
-
-static tl::Matrix4x4<float> MakeProjectionMatrix(
-	float fieldOfVewDeg,
-	float aspectRatio,
-	float nearPlane,
-	float farPlane
-)
-{
-	float inverseTangent = 1.0f / tanf(deg_to_rad(0.5f * fieldOfVewDeg));
-
-	tl::Matrix4x4<float> matrix;
-	matrix.m[0][0] = inverseTangent;
-	matrix.m[1][1] = aspectRatio * inverseTangent;
-	matrix.m[2][2] = farPlane / (farPlane - nearPlane);
-	matrix.m[3][2] = (-farPlane * nearPlane) / (farPlane - nearPlane);
-	matrix.m[2][3] = 1.0f;
-	matrix.m[3][3] = 0.0f;
-
-	return matrix;
-}
 
 static int compare_triangle_depth(const void* a, const void* b) {
 	float a_depth_sum = ((Triangle4d*)a)->p[0].z + ((Triangle4d*)a)->p[1].z + ((Triangle4d*)a)->p[2].z;
@@ -630,10 +589,6 @@ static T Clamp(T min, T value, T max)
 }
 template float Clamp(float min, float value, float max);
 
-static void set_projection_matrix() {
-	projectionMatrix = MakeProjectionMatrix(camera.field_of_view_deg, aspect_ratio, camera.near_plane, camera.far_plane);
-}
-
 static void update_camera_direction() {
 	float yaw_in_radians = deg_to_rad(-camera.yaw);
 	float cos = cosf(yaw_in_radians);
@@ -659,28 +614,6 @@ static void update_camera_direction() {
 	camera.unit_direction = tl::UnitVector(camera.direction);
 }
 
-static void ResetCamera()
-{
-	camera.up = { 0.0f, 1.0f, 0.0f };
-	// Start position is centered in x & y directions and stepped back in the z direction.
-	camera.position = {
-		world.position.x,
-		world.position.y,
-		world.position.z - world.half_size.z
-	};
-	camera.yaw = 0.0f;
-	update_camera_direction();
-	camera.field_of_view_deg = 75.0f;
-
-	// camera         near   object    far
-	// 	 |             |    |------|    |
-	//   |-------------|----------------|----> z
-	//   0
-	camera.far_plane = 1.0f * world.half_size.z;
-	camera.near_plane = 0.1f * camera.far_plane;
-
-	set_projection_matrix();
-}
 
 static void reset_world_to_mesh() {
 	tl::Vec4<float> first_triangle_vertice = meshArray.get(0).p[0];
@@ -768,7 +701,7 @@ static void reset_world_to_mesh() {
 	world_to_map_scale_factor = map.halfSize.x / top_down_world.halfSize.x;
 	mapProjectionMatrix = GenerateProjectionMatrix(top_down_world, map);
 
-	ResetCamera();
+	reset_camera(world, camera);
 }
 
 static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& triangles, tl::MemorySpace& transient)
@@ -923,7 +856,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		if (input.buttons[tl::KEY_S].keyUp)
 		{
 			isStarted = true;
-			ResetCamera();
+			reset_camera(world, camera);
 		}
 		return 0;
 	}
@@ -1013,31 +946,31 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		if (camera.field_of_view_deg > 170.0f) {
 			camera.field_of_view_deg = 170.0f;
 		}
-		set_projection_matrix();
+		set_projection_matrix(camera);
 	}
 	else if (input.buttons[tl::KEY_K].isDown) {
 		camera.field_of_view_deg -= 0.25f;
 		if (camera.field_of_view_deg < 10.0f) {
 			camera.field_of_view_deg = 10.0f;
 		}
-		set_projection_matrix();
+		set_projection_matrix(camera);
 	}
 
 	else if (input.buttons[tl::KEY_V].isDown) {
 		camera.near_plane += 0.1f;
-		set_projection_matrix();
+		set_projection_matrix(camera);
 	}
 	else if (input.buttons[tl::KEY_B].isDown) {
 		camera.near_plane -= 0.1f;
 		if (camera.near_plane < 0.0f) {
 			camera.near_plane = 0.0f;
 		}
-		set_projection_matrix();
+		set_projection_matrix(camera);
 	}
 
 	if (input.buttons[tl::KEY_C].keyUp)
 	{
-		ResetCamera();
+		reset_camera(world, camera);
 	}
 
 	// Final bounds check on the camera
@@ -1047,7 +980,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	tl::MemorySpace transientMemory = gameMemory.transient;
 
-	TransformAndRenderMesh(renderBuffer, meshArray, camera, projectionMatrix, transientMemory);
+	TransformAndRenderMesh(renderBuffer, meshArray, camera, get_projection_matrix(), transientMemory);
 
 
 	// Show info about z-position
