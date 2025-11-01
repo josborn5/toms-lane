@@ -103,24 +103,15 @@ const tl::Matrix4x4<float>& get_projection_matrix() {
 	return projectionMatrix;
 }
 
-static const float yaw_increment_in_degrees = 0.5f;
-void increment_camera_yaw(Camera& camera) {
-	camera.yaw += yaw_increment_in_degrees;
+void yaw_camera(float delta_angle, Camera& camera) {
+	camera.yaw += delta_angle;
 	if (camera.yaw > 360.0f) {
 		camera.yaw -= 360.0f;
 	}
 	update_camera_direction(camera);
 }
 
-void decrement_camera_yaw(Camera& camera) {
-	camera.yaw -= yaw_increment_in_degrees;
-	if (camera.yaw < 0.0f) {
-		camera.yaw += 360.0f;
-	}
-	update_camera_direction(camera);
-}
-
-void move_camera_z(float delta_z, Camera& camera) {
+void move_camera_forwards(float delta_z, Camera& camera) {
 	tl::Vec3<float> cameraPositionForwardBack = MultiplyVectorByScalar(
 		camera.direction,
 		delta_z);
@@ -130,4 +121,19 @@ void move_camera_z(float delta_z, Camera& camera) {
 		cameraPositionForwardBack
 	);
 }
+
+void strafe_camera(float delta_x, Camera& camera) {
+	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced
+	tl::Vec3<float> rawCameraPositionStrafe = CrossProduct(
+		camera.up,
+		camera.direction
+	);
+	tl::Vec3<float> cameraPositionStrafe = MultiplyVectorByScalar(rawCameraPositionStrafe, delta_x);
+
+	camera.position = AddVectors(
+		camera.position,
+		cameraPositionStrafe
+	);
+}
+
 

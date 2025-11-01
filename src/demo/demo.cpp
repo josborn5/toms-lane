@@ -830,43 +830,32 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 
 
+	static const float yaw_increment_in_degrees = 0.5f;
 	// First process any change in yaw and update the camera direction
 	if (input.buttons[tl::KEY_D].isDown) {
-		decrement_camera_yaw(camera);
+		yaw_camera(-yaw_increment_in_degrees, camera);
 	}
 	else if (input.buttons[tl::KEY_A].isDown) {
-		increment_camera_yaw(camera);
+		yaw_camera(yaw_increment_in_degrees, camera);
 	}
 
 	// Next process any forwards or backwards movement
 	if (input.buttons[tl::KEY_S].isDown)
 	{
-		move_camera_z(-positionIncrement, camera);
+		move_camera_forwards(-positionIncrement, camera);
 	}
 	else if (input.buttons[tl::KEY_W].isDown)
 	{
-		move_camera_z(positionIncrement, camera);
+		move_camera_forwards(positionIncrement, camera);
 	}
 
-	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced
-	tl::Vec3<float> rawCameraPositionStrafe = CrossProduct(
-		camera.up,
-		camera.direction
-	);
-	tl::Vec3<float> cameraPositionStrafe = MultiplyVectorByScalar(rawCameraPositionStrafe, positionIncrement);
 	if (input.buttons[tl::KEY_LEFT].isDown)
 	{
-		camera.position = SubtractVectors(
-			camera.position,
-			cameraPositionStrafe
-		);
+		strafe_camera(-positionIncrement, camera);
 	}
 	else if (input.buttons[tl::KEY_RIGHT].isDown)
 	{
-		camera.position = AddVectors(
-			camera.position,
-			cameraPositionStrafe
-		);
+		strafe_camera(positionIncrement, camera);
 	}
 
 	// Simply move the camera position vertically with up/down keypress
