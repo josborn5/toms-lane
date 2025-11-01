@@ -839,22 +839,13 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 
 	// Next process any forwards or backwards movement
-	tl::Vec3<float> cameraPositionForwardBack = MultiplyVectorByScalar(
-		camera.direction,
-		positionIncrement);
 	if (input.buttons[tl::KEY_S].isDown)
 	{
-		camera.position = SubtractVectors(
-			camera.position,
-			cameraPositionForwardBack
-		);
+		move_camera_z(-positionIncrement, camera);
 	}
 	else if (input.buttons[tl::KEY_W].isDown)
 	{
-		camera.position = AddVectors(
-			camera.position,
-			cameraPositionForwardBack
-		);
+		move_camera_z(positionIncrement, camera);
 	}
 
 	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced

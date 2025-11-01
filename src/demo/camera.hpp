@@ -33,6 +33,8 @@ void increment_camera_yaw(Camera& camera);
 
 void decrement_camera_yaw(Camera& camera);
 
+void move_camera_z(float delta_z, Camera& camera);
+
 
 #endif
 

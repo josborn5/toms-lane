@@ -120,5 +120,14 @@ void decrement_camera_yaw(Camera& camera) {
 	update_camera_direction(camera);
 }
 
+void move_camera_z(float delta_z, Camera& camera) {
+	tl::Vec3<float> cameraPositionForwardBack = MultiplyVectorByScalar(
+		camera.direction,
+		delta_z);
 
+	camera.position = AddVectors(
+		camera.position,
+		cameraPositionForwardBack
+	);
+}
 
