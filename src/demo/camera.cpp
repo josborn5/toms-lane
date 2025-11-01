@@ -73,7 +73,7 @@ static tl::Matrix4x4<float> MakeProjectionMatrix(
 	return matrix;
 }
 
-void set_projection_matrix(const Camera& camera) {
+static void set_projection_matrix(const Camera& camera) {
 	projectionMatrix = MakeProjectionMatrix(camera.field_of_view_deg, aspect_ratio, camera.near_plane, camera.far_plane);
 }
 
@@ -156,6 +156,18 @@ void camera_set_fov(float fov_in_deg, Camera& camera) {
 	}
 	else if (camera.field_of_view_deg > 179.0f) {
 		camera.field_of_view_deg = 179.0f;
+	}
+
+	set_projection_matrix(camera);
+}
+
+void camera_set_near_plane(float near_plane, Camera& camera) {
+	camera.near_plane = near_plane;
+	if (camera.near_plane < 0.0f) {
+		camera.near_plane = 0.0f;
+	}
+	else if (camera.far_plane < camera.near_plane) {
+		camera.near_plane = camera.far_plane;
 	}
 
 	set_projection_matrix(camera);

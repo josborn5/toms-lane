@@ -876,15 +876,10 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 
 	else if (input.buttons[tl::KEY_V].isDown) {
-		camera.near_plane += 0.1f;
-		set_projection_matrix(camera);
+		camera_set_near_plane(camera.near_plane + 0.1f, camera);
 	}
 	else if (input.buttons[tl::KEY_B].isDown) {
-		camera.near_plane -= 0.1f;
-		if (camera.near_plane < 0.0f) {
-			camera.near_plane = 0.0f;
-		}
-		set_projection_matrix(camera);
+		camera_set_near_plane(camera.near_plane - 0.1f, camera);
 	}
 
 	if (input.buttons[tl::KEY_C].keyUp)
