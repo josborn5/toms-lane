@@ -39,6 +39,8 @@ void camera_set_fov(float fov_in_deg);
 
 void camera_set_near_plane(float near_plane);
 
+void camera_set_position(const tl::Vec3<float>& position);
+
 const Camera& camera_get();
 
 #endif

@@ -890,9 +890,11 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 
 	// Final bounds check on the camera
-//	camera.position.x = Clamp(world.position.x - world.half_size.x, camera.position.x, world.position.x + world.half_size.x);
-//	camera.position.y = Clamp(world.position.y - world.half_size.y, camera.position.y, world.position.y + world.half_size.y);
-//	camera.position.z = Clamp(world.position.z - world.half_size.z, camera.position.z, world.position.z + world.half_size.z);
+	tl::Vec3<float> camera_position = camera.position;
+	camera_position.x = Clamp(world.position.x - world.half_size.x, camera_position.x, world.position.x + world.half_size.x);
+	camera_position.y = Clamp(world.position.y - world.half_size.y, camera_position.y, world.position.y + world.half_size.y);
+	camera_position.z = Clamp(world.position.z - world.half_size.z, camera_position.z, world.position.z + world.half_size.z);
+	camera_set_position(camera_position);
 
 	tl::MemorySpace transientMemory = gameMemory.transient;
 

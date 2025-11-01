@@ -175,6 +175,10 @@ void camera_set_near_plane(float near_plane) {
 	set_projection_matrix(camera);
 }
 
+void camera_set_position(const tl::Vec3<float>& position) {
+	camera.position = position;
+}
+
 const Camera& camera_get() {
 	return camera;
 }
