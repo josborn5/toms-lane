@@ -172,28 +172,9 @@ static int ClipTriangleAgainstPlane(
 	return 0;
 }
 
-static void get_camera_near_plane_position(const Camera& camera, tl::Vec3<float>& position) {
-	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
-		camera.unit_direction,
-		camera.near_plane);
-	position = tl::AddVectors(
-		camera.position,
-		near_plane_center_from_position);
-}
-
-static void get_camera_far_plane_position(const Camera& camera, tl::Vec3<float>& position) {
-	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
-		camera.unit_direction,
-		camera.far_plane);
-	position = tl::AddVectors(
-		camera.position,
-		near_plane_center_from_position);
-}
 
 static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) {
 	const Camera& camera = camera_get();
-	tl::Vec3<float> near_plane_center;
-	get_camera_near_plane_position(camera, near_plane_center);
 
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
 		tl::CrossProduct(
@@ -203,8 +184,10 @@ static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float
 	);
 	float opp = camera.near_plane * tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 	tl::Vec3<float> near_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, opp);
-	tl::Vec3<float> near_plane_right = tl::AddVectors(near_plane_center, near_plane_right_from_center);
-	tl::Vec3<float> near_plane_left = tl::SubtractVectors(near_plane_center, near_plane_right_from_center);
+	tl::Vec3<float> near_plane_right = tl::AddVectors(
+		camera.view_frustrum.near_plane_position, near_plane_right_from_center);
+	tl::Vec3<float> near_plane_left = tl::SubtractVectors(
+		camera.view_frustrum.near_plane_position, near_plane_right_from_center);
 
 	p1 = Transform2DVector(tl::Vec2<float>{ near_plane_left.z, near_plane_left.x }, mapProjectionMatrix);
 	p2 = Transform2DVector(tl::Vec2<float>{ near_plane_right.z, near_plane_right.x }, mapProjectionMatrix);
@@ -326,17 +309,13 @@ static void TransformAndRenderMesh(
 
 		uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
 
-		tl::Vec3<float> near_plane_position;
-		get_camera_near_plane_position(camera, near_plane_position);
 		Plane near_plane;
-		near_plane.position = near_plane_position;
-		near_plane.normal = camera.direction;
+		near_plane.position = camera.view_frustrum.near_plane_position;
+		near_plane.normal = camera.view_frustrum.near_plane_normal;
 
-		tl::Vec3<float> far_plane_position;
-		get_camera_far_plane_position(camera, far_plane_position);
 		Plane far_plane;
-		far_plane.position = far_plane_position;
-		far_plane.normal = tl::Vec3<float>{ -camera.direction.x, -camera.direction.y, -camera.direction.z };
+		far_plane.position = camera.view_frustrum.far_plane_position;
+		far_plane.normal = camera.view_frustrum.far_plane_normal;
 
 		Triangle4d queue_data[18]; // 3 * 6 sides of view frustrum to clip
 		tl::MemorySpace queue_data_space;

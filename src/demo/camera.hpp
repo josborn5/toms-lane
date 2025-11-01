@@ -3,6 +3,26 @@
 
 #include "../tl-library.hpp"
 
+struct view_frustrum {
+	tl::Vec3<float> near_plane_normal = {0};
+	tl::Vec3<float> near_plane_position = {0};
+
+	tl::Vec3<float> far_plane_normal = {0};
+	tl::Vec3<float> far_plane_position = {0};
+
+	tl::Vec3<float> up_plane_normal = {0};
+	tl::Vec3<float> up_plane_position = {0};
+
+	tl::Vec3<float> down_plane_normal = {0};
+	tl::Vec3<float> down_plane_position = {0};
+
+	tl::Vec3<float> left_plane_normal = {0};
+	tl::Vec3<float> left_plane_position = {0};
+
+	tl::Vec3<float> right_plane_normal = {0};
+	tl::Vec3<float> right_plane_position = {0};
+};
+
 struct Camera
 {
 	tl::Vec3<float> position = {0};
@@ -15,6 +35,8 @@ struct Camera
 	float field_of_view_deg = 0.0f;
 	float near_plane = 0.0f;
 	float far_plane = 0.0f;
+
+	view_frustrum view_frustrum = {0};
 };
 
 

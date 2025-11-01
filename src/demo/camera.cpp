@@ -121,7 +121,34 @@ static void look_at(const tl::Matrix4x4<float>& pointAt, tl::Matrix4x4<float>& l
 	lookAt.m[3][0] = -tDotA;			lookAt.m[3][1] = -tDotB;			lookAt.m[3][2] = -tDotC;			lookAt.m[3][3] = 1.0f;
 }
 
+static void get_camera_near_plane_position(const Camera& camera, tl::Vec3<float>& position) {
+	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
+		camera.unit_direction,
+		camera.near_plane);
+	position = tl::AddVectors(
+		camera.position,
+		near_plane_center_from_position);
+}
 
+static void get_camera_far_plane_position(const Camera& camera, tl::Vec3<float>& position) {
+	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
+		camera.unit_direction,
+		camera.far_plane);
+	position = tl::AddVectors(
+		camera.position,
+		near_plane_center_from_position);
+}
+
+
+
+static void set_view_frustrum() {
+	get_camera_near_plane_position(camera, camera.view_frustrum.near_plane_position);
+	camera.view_frustrum.near_plane_normal = camera.unit_direction;
+
+	tl::Vec3<float> far_plane_position;
+	get_camera_far_plane_position(camera, camera.view_frustrum.far_plane_position);
+	camera.view_frustrum.far_plane_normal = tl::Vec3<float>{ -camera.unit_direction.x, -camera.unit_direction.y, -camera.unit_direction.z };
+}
 
 
 void camera_reset(
@@ -140,6 +167,7 @@ void camera_reset(
 	camera.far_plane = far_plane;
 
 	set_projection_matrix(camera);
+	set_view_frustrum();
 }
 
 const tl::Matrix4x4<float>& get_projection_matrix() {
@@ -152,6 +180,7 @@ void camera_increment_yaw(float delta_angle) {
 		camera.yaw -= 360.0f;
 	}
 	update_camera_direction(camera);
+	set_view_frustrum();
 }
 
 void camera_increment_direction(float delta_z) {
@@ -163,6 +192,7 @@ void camera_increment_direction(float delta_z) {
 		camera.position,
 		cameraPositionForwardBack
 	);
+	set_view_frustrum();
 }
 
 void camera_increment_strafe(float delta_x) {
@@ -177,6 +207,7 @@ void camera_increment_strafe(float delta_x) {
 		camera.position,
 		cameraPositionStrafe
 	);
+	set_view_frustrum();
 }
 
 void camera_increment_up(float delta_up) {
@@ -188,6 +219,7 @@ void camera_increment_up(float delta_up) {
 		camera.position,
 		camera_position_delta
 	);
+	set_view_frustrum();
 }
 
 
@@ -202,6 +234,7 @@ void camera_set_fov(float fov_in_deg) {
 	}
 
 	set_projection_matrix(camera);
+	set_view_frustrum();
 }
 
 void camera_set_near_plane(float near_plane) {
@@ -214,10 +247,12 @@ void camera_set_near_plane(float near_plane) {
 	}
 
 	set_projection_matrix(camera);
+	set_view_frustrum();
 }
 
 void camera_set_position(const tl::Vec3<float>& position) {
 	camera.position = position;
+	set_view_frustrum();
 }
 
 
