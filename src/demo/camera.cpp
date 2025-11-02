@@ -265,7 +265,15 @@ const tl::Matrix4x4<float>& get_projection_matrix() {
 }
 
 void camera_increment_yaw(float delta_angle) {
-	camera.yaw += delta_angle;
+	// delta_angle is in local co-ordinate system.
+	// need to convert the delta angle to world co-ordinate system
+	// before applying to the camera pitch, yaw & roll values
+
+	float cos_pitch = cosf(deg_to_rad(camera.pitch));
+	float delta_yaw = cos_pitch * delta_angle;
+
+	camera.yaw += delta_yaw;
+
 	if (camera.yaw > 360.0f) {
 		camera.yaw -= 360.0f;
 	}
@@ -274,6 +282,10 @@ void camera_increment_yaw(float delta_angle) {
 }
 
 void camera_increment_pitch(float delta_angle_in_deg) {
+	// delta_angle is in local co-ordinate system.
+	// need to convert the delta angle to world co-ordinate system
+	// before applying to the camera pitch, yaw & roll values
+
 	camera.pitch += delta_angle_in_deg;
 	if (camera.pitch > 360.0f) {
 		camera.pitch -= 360.0f;
