@@ -69,8 +69,8 @@ static void rotate_around_y_axis(const tl::Vec3<float>& in, float angle_in_deg, 
 
 	matrix3x3_dot_vect3(
 		y_axis_rotation_matrix,
-		{ 0.0f, 0.0f, 1.0f },
-		camera.direction
+		in,
+		out
 	);
 }
 
@@ -285,7 +285,7 @@ void camera_increment_pitch(float delta_angle_in_deg) {
 
 void camera_increment_direction(float delta_z) {
 	tl::Vec3<float> cameraPositionForwardBack = MultiplyVectorByScalar(
-		camera.direction,
+		camera.unit_direction,
 		delta_z);
 
 	camera.position = AddVectors(
@@ -301,7 +301,9 @@ void camera_increment_strafe(float delta_x) {
 		camera.up,
 		camera.direction
 	);
-	tl::Vec3<float> cameraPositionStrafe = MultiplyVectorByScalar(rawCameraPositionStrafe, delta_x);
+	tl::Vec3<float> cameraPositionStrafe = MultiplyVectorByScalar(
+		tl::UnitVector(rawCameraPositionStrafe),
+		delta_x);
 
 	camera.position = AddVectors(
 		camera.position,
