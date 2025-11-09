@@ -83,51 +83,6 @@ static void rotate_around_x_axis(const tl::Vec3<float>& in, float angle_in_deg, 
 	);
 }
 
-static void rotate_around_y_axis(const tl::Vec3<float>& in, float angle_in_deg, tl::Vec3<float>& out) {
-	float yaw_in_radians = deg_to_rad(angle_in_deg);
-	float cos = cosf(yaw_in_radians);
-	float sin = sinf(yaw_in_radians);
-
-	matrix3x3 y_axis_rotation_matrix;
-	y_axis_rotation_matrix.element[0][0] = cos;
-	y_axis_rotation_matrix.element[0][1] = 0.0f;
-	y_axis_rotation_matrix.element[0][2] = sin;
-	y_axis_rotation_matrix.element[1][0] = 0.0f;
-	y_axis_rotation_matrix.element[1][1] = 1.0f;
-	y_axis_rotation_matrix.element[1][2] = 0.0f;
-	y_axis_rotation_matrix.element[2][0] = -sin;
-	y_axis_rotation_matrix.element[2][1] = 0.0f;
-	y_axis_rotation_matrix.element[2][2] = cos;
-
-	matrix3x3_dot_vect3(
-		y_axis_rotation_matrix,
-		in,
-		out
-	);
-}
-
-static void rotate_around_z_axis(const tl::Vec3<float>& in, float angle_in_deg, tl::Vec3<float>& out) {
-	float roll_in_radians = deg_to_rad(angle_in_deg);
-	float cos = cosf(roll_in_radians);
-	float sin = sinf(roll_in_radians);
-
-	matrix3x3 z_axis_rotation_matrix;
-	z_axis_rotation_matrix.element[0][0] = cos;
-	z_axis_rotation_matrix.element[0][1] = -sin;
-	z_axis_rotation_matrix.element[0][2] = 0.0f;
-	z_axis_rotation_matrix.element[1][0] = sin;
-	z_axis_rotation_matrix.element[1][1] = cos;
-	z_axis_rotation_matrix.element[1][2] = 0.0f;
-	z_axis_rotation_matrix.element[2][0] = 0.0f;
-	z_axis_rotation_matrix.element[2][1] = 0.0f;
-	z_axis_rotation_matrix.element[2][2] = 1.0f;
-
-	matrix3x3_dot_vect3(
-		z_axis_rotation_matrix,
-		in,
-		out
-	);
-}
 
 static tl::Matrix4x4<float> MakeProjectionMatrix(
 	float fieldOfVewDeg,
@@ -264,43 +219,6 @@ static void set_view_frustrum() {
 
 }
 
-static void update_for_rotation() {
-	// set camera direction
-	rotate_around_x_axis(
-		{ 0.0f, 0.0f, 1.0f }, // input: direction in local co-ordinate system
-		camera.pitch,
-		camera.direction
-	);
-	rotate_around_y_axis(
-		camera.direction,
-		camera.yaw,
-		camera.direction
-	);
-	rotate_around_z_axis(
-		camera.direction,
-		camera.roll,
-		camera.direction // output: direction in global co-ordinate system
-	);
-	camera.unit_direction = tl::UnitVector(camera.direction);
-
-	// set camera up
-	rotate_around_x_axis(
-		{ 0.0f, 1.0f, 0.0f }, // input: up in local co-ordinate system
-		camera.pitch,
-		camera.up
-	);
-	rotate_around_y_axis(
-		camera.up,
-		camera.yaw,
-		camera.up
-	);
-	rotate_around_z_axis(
-		camera.up,
-		camera.roll,
-		camera.up // output: up in global coordinate system
-	);
-}
-
 
 void camera_reset(
 	const tl::Vec3<float>& position,
@@ -315,7 +233,8 @@ void camera_reset(
 	camera.pitch = 0.0f;
 	camera.roll = 0.0f;
 
-	update_for_rotation();
+	camera.direction = { 0.0f, 0.0f, 1.0f };
+	camera.unit_direction = { 0.0f, 0.0f, 1.0f };
 
 	camera.field_of_view_deg = field_of_view_in_deg;
 	camera.near_plane = near_plane;
