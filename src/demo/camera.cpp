@@ -265,7 +265,7 @@ void camera_increment_pitch(float delta_angle_in_deg) {
 	tl::Vec3<float> forward_unit = camera.unit_direction;
 	tl::Vec3<float> up_unit = camera.unit_up;
 	tl::Vec3<float> right_unit = tl::CrossProduct(up_unit, forward_unit);
-	
+
 	rotate_around_unit_vector(
 		right_unit,
 		delta_angle_in_deg,
@@ -275,6 +275,25 @@ void camera_increment_pitch(float delta_angle_in_deg) {
 
 	rotate_around_unit_vector(
 		right_unit,
+		delta_angle_in_deg,
+		camera.unit_up,
+		camera.unit_up
+	);
+
+	set_view_frustrum();
+}
+
+
+void camera_increment_roll(float delta_angle_in_deg) {
+	rotate_around_unit_vector(
+		camera.unit_direction,
+		delta_angle_in_deg,
+		camera.unit_direction,
+		camera.unit_direction
+	);
+
+	rotate_around_unit_vector(
+		camera.unit_direction,
 		delta_angle_in_deg,
 		camera.unit_up,
 		camera.unit_up

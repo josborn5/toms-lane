@@ -720,6 +720,81 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	return 0;
 }
 
+static void process_input_for_camera(
+	const tl::Input& input,
+	const Camera& camera
+) {
+	static const float rotation_increment_in_degrees = 0.75f;
+	if (input.buttons[tl::KEY_D].isDown) {
+		camera_increment_yaw(rotation_increment_in_degrees);
+	}
+	else if (input.buttons[tl::KEY_A].isDown) {
+		camera_increment_yaw(-rotation_increment_in_degrees);
+	}
+
+	if (input.buttons[tl::KEY_SHIFT].isDown && input.buttons[tl::KEY_UP].isDown) {
+		camera_increment_pitch(rotation_increment_in_degrees);
+	}
+	else if (input.buttons[tl::KEY_SHIFT].isDown && input.buttons[tl::KEY_DOWN].isDown) {
+		camera_increment_pitch(-rotation_increment_in_degrees);
+	}
+
+	if (input.buttons[tl::KEY_Q].isDown) {
+		camera_increment_roll(rotation_increment_in_degrees);
+	}
+	else if (input.buttons[tl::KEY_E].isDown) {
+		camera_increment_roll(-rotation_increment_in_degrees);
+	}
+
+
+	// Next process any forwards or backwards movement
+	if (input.buttons[tl::KEY_S].isDown)
+	{
+		camera_increment_direction(-positionIncrement);
+	}
+	else if (input.buttons[tl::KEY_W].isDown)
+	{
+		camera_increment_direction(positionIncrement);
+	}
+
+	if (input.buttons[tl::KEY_LEFT].isDown)
+	{
+		camera_increment_strafe(-positionIncrement);
+	}
+	else if (input.buttons[tl::KEY_RIGHT].isDown)
+	{
+		camera_increment_strafe(positionIncrement);
+	}
+
+	// Simply move the camera position vertically with up/down keypress
+	if (input.buttons[tl::KEY_DOWN].isDown && !input.buttons[tl::KEY_SHIFT].isDown)
+	{
+		camera_increment_up(-positionIncrement);
+	}
+	else if (input.buttons[tl::KEY_UP].isDown && !input.buttons[tl::KEY_SHIFT].isDown)
+	{
+		camera_increment_up(positionIncrement);
+	}
+
+	else if (input.buttons[tl::KEY_J].isDown) {
+		camera_set_fov(camera.field_of_view_deg + 0.25f);
+	}
+	else if (input.buttons[tl::KEY_K].isDown) {
+		camera_set_fov(camera.field_of_view_deg - 0.25f);
+	}
+
+	else if (input.buttons[tl::KEY_V].isDown) {
+		camera_set_near_plane(camera.near_plane + 0.1f);
+	}
+	else if (input.buttons[tl::KEY_B].isDown) {
+		camera_set_near_plane(camera.near_plane - 0.1f);
+	}
+
+	if (input.buttons[tl::KEY_C].keyUp)
+	{
+		reset_camera_in_world();
+	}
+}
 
 static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
@@ -785,70 +860,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 		return 0;
 	}
 
-
-	static const float rotation_increment_in_degrees = 0.5f;
-	if (input.buttons[tl::KEY_D].isDown) {
-		camera_increment_yaw(rotation_increment_in_degrees);
-	}
-	else if (input.buttons[tl::KEY_A].isDown) {
-		camera_increment_yaw(-rotation_increment_in_degrees);
-	}
-
-	if (input.buttons[tl::KEY_SHIFT].isDown && input.buttons[tl::KEY_UP].isDown) {
-		camera_increment_pitch(rotation_increment_in_degrees);
-	}
-	else if (input.buttons[tl::KEY_SHIFT].isDown && input.buttons[tl::KEY_DOWN].isDown) {
-		camera_increment_pitch(-rotation_increment_in_degrees);
-	}
-
-
-	// Next process any forwards or backwards movement
-	if (input.buttons[tl::KEY_S].isDown)
-	{
-		camera_increment_direction(-positionIncrement);
-	}
-	else if (input.buttons[tl::KEY_W].isDown)
-	{
-		camera_increment_direction(positionIncrement);
-	}
-
-	if (input.buttons[tl::KEY_LEFT].isDown)
-	{
-		camera_increment_strafe(-positionIncrement);
-	}
-	else if (input.buttons[tl::KEY_RIGHT].isDown)
-	{
-		camera_increment_strafe(positionIncrement);
-	}
-
-	// Simply move the camera position vertically with up/down keypress
-	if (input.buttons[tl::KEY_DOWN].isDown && !input.buttons[tl::KEY_SHIFT].isDown)
-	{
-		camera_increment_up(-positionIncrement);
-	}
-	else if (input.buttons[tl::KEY_UP].isDown && !input.buttons[tl::KEY_SHIFT].isDown)
-	{
-		camera_increment_up(positionIncrement);
-	}
-
-	else if (input.buttons[tl::KEY_J].isDown) {
-		camera_set_fov(camera.field_of_view_deg + 0.25f);
-	}
-	else if (input.buttons[tl::KEY_K].isDown) {
-		camera_set_fov(camera.field_of_view_deg - 0.25f);
-	}
-
-	else if (input.buttons[tl::KEY_V].isDown) {
-		camera_set_near_plane(camera.near_plane + 0.1f);
-	}
-	else if (input.buttons[tl::KEY_B].isDown) {
-		camera_set_near_plane(camera.near_plane - 0.1f);
-	}
-
-	if (input.buttons[tl::KEY_C].keyUp)
-	{
-		reset_camera_in_world();
-	}
+	process_input_for_camera(input, camera);
 
 	// Final bounds check on the camera
 	tl::Vec3<float> camera_position = camera.position;

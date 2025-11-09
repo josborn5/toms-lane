@@ -50,6 +50,8 @@ void camera_increment_yaw(float delta_angle_in_deg);
 
 void camera_increment_pitch(float delta_angle_in_deg);
 
+void camera_increment_roll(float delta_angle_in_deg);
+
 void camera_increment_direction(float delta_z);
 
 void camera_increment_strafe(float delta_x);
