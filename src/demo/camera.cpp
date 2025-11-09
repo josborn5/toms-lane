@@ -49,7 +49,7 @@ static void rotate_around_unit_vector(
 	rotation_matrix.element[1][2] = (unit_vector_axis.y * unit_vector_axis.z * (1.0f - cos)) - (unit_vector_axis.x * sin);
 
 	rotation_matrix.element[2][0] = (unit_vector_axis.x * unit_vector_axis.z * (1.0f - cos)) - (unit_vector_axis.y * sin);
-	rotation_matrix.element[2][1] = (unit_vector_axis.y * unit_vector_axis.z * (1.0f - cos)) - (unit_vector_axis.x * sin);
+	rotation_matrix.element[2][1] = (unit_vector_axis.y * unit_vector_axis.z * (1.0f - cos)) + (unit_vector_axis.x * sin);
 	rotation_matrix.element[2][2] = (unit_vector_axis.z * unit_vector_axis.z * (1.0f - cos)) + cos;
 
 	matrix3x3_dot_vect3(
