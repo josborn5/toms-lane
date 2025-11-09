@@ -191,7 +191,7 @@ static void set_view_frustrum() {
 
 	tl::Vec3<float> camera_right = CrossProduct(
 		camera.up,
-		camera.direction
+		camera.unit_direction
 	);
 
 	camera.view_frustrum.up_plane_normal = camera.up;
@@ -229,7 +229,6 @@ void camera_reset(
 	camera.up = { 0.0f, 1.0f, 0.0f };
 	camera.position = position;
 
-	camera.direction = { 0.0f, 0.0f, 1.0f };
 	camera.unit_direction = { 0.0f, 0.0f, 1.0f };
 
 	camera.field_of_view_deg = field_of_view_in_deg;
@@ -251,7 +250,6 @@ void camera_increment_yaw(float delta_angle_in_deg) {
 		camera.unit_direction,
 		camera.unit_direction
 	);
-	camera.direction = camera.unit_direction;
 
 	rotate_around_unit_vector(
 		tl::UnitVector(camera.up),
@@ -274,7 +272,6 @@ void camera_increment_pitch(float delta_angle_in_deg) {
 		camera.unit_direction,
 		camera.unit_direction
 	);
-	camera.direction = camera.unit_direction;
 
 	rotate_around_unit_vector(
 		right_unit,
@@ -302,7 +299,7 @@ void camera_increment_strafe(float delta_x) {
 	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced
 	tl::Vec3<float> rawCameraPositionStrafe = CrossProduct(
 		camera.up,
-		camera.direction
+		camera.unit_direction
 	);
 	tl::Vec3<float> cameraPositionStrafe = MultiplyVectorByScalar(
 		tl::UnitVector(rawCameraPositionStrafe),

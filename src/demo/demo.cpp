@@ -178,7 +178,7 @@ static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float
 
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
 		tl::CrossProduct(
-			camera.direction,
+			camera.unit_direction,
 			camera.up
 		)
 	);
@@ -197,7 +197,7 @@ static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>
 	const Camera& camera = camera_get();
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
 		tl::CrossProduct(
-			camera.direction,
+			camera.unit_direction,
 			camera.up
 		)
 	);
