@@ -28,6 +28,38 @@ static float deg_to_rad(float degrees) {
 	return degrees * pi_over_180;
 }
 
+static void rotate_around_unit_vector(
+	const tl::Vec3<float>& unit_vector_axis,
+	float angle_in_deg,
+	const tl::Vec3<float>& rotate_in,
+	tl::Vec3<float>& rotated_out
+) {
+	// https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
+	float angle_in_radians = deg_to_rad(angle_in_deg);
+	float cos = cosf(angle_in_radians);
+	float sin = sinf(angle_in_radians);
+
+	matrix3x3 rotation_matrix;
+	rotation_matrix.element[0][0] = (unit_vector_axis.x * unit_vector_axis.x * (1.0f - cos)) + cos;
+	rotation_matrix.element[0][1] = (unit_vector_axis.x * unit_vector_axis.y * (1.0f - cos)) - (unit_vector_axis.z * sin);
+	rotation_matrix.element[0][2] = (unit_vector_axis.x * unit_vector_axis.z * (1.0f - cos)) + (unit_vector_axis.y * sin);
+
+	rotation_matrix.element[1][0] = (unit_vector_axis.x * unit_vector_axis.y * (1.0f - cos)) + (unit_vector_axis.z * sin);
+	rotation_matrix.element[1][1] = (unit_vector_axis.y * unit_vector_axis.y * (1.0f - cos)) + cos;
+	rotation_matrix.element[1][2] = (unit_vector_axis.y * unit_vector_axis.z * (1.0f - cos)) - (unit_vector_axis.x * sin);
+
+	rotation_matrix.element[2][0] = (unit_vector_axis.x * unit_vector_axis.z * (1.0f - cos)) - (unit_vector_axis.y * sin);
+	rotation_matrix.element[2][1] = (unit_vector_axis.y * unit_vector_axis.z * (1.0f - cos)) - (unit_vector_axis.x * sin);
+	rotation_matrix.element[2][2] = (unit_vector_axis.z * unit_vector_axis.z * (1.0f - cos)) + cos;
+
+	matrix3x3_dot_vect3(
+		rotation_matrix,
+		rotate_in,
+		rotated_out
+	);
+}
+
+
 static void rotate_around_x_axis(const tl::Vec3<float>& in, float angle_in_deg, tl::Vec3<float>& out) {
 	float pitch_in_radians = deg_to_rad(angle_in_deg);
 	float cos = cosf(pitch_in_radians);
@@ -298,30 +330,44 @@ const tl::Matrix4x4<float>& get_projection_matrix() {
 }
 
 void camera_increment_yaw(float delta_angle_in_deg) {
-	// delta_angle is in local co-ordinate system.
-	// need to convert the delta angle to world co-ordinate system
-	// before applying to the camera pitch, yaw & roll values
+	rotate_around_unit_vector(
+		tl::UnitVector(camera.up),
+		delta_angle_in_deg,
+		camera.unit_direction,
+		camera.unit_direction
+	);
+	camera.direction = camera.unit_direction;
 
-	camera.yaw += delta_angle_in_deg;
-	if (camera.yaw > 360.0f) {
-		camera.yaw -= 360.0f;
-	}
+	rotate_around_unit_vector(
+		tl::UnitVector(camera.up),
+		delta_angle_in_deg,
+		camera.up,
+		camera.up
+	);
 
-	update_for_rotation();
 	set_view_frustrum();
 }
 
 void camera_increment_pitch(float delta_angle_in_deg) {
-	// delta_angle is in local co-ordinate system.
-	// need to convert the delta angle to world co-ordinate system
-	// before applying to the camera pitch, yaw & roll values
+	tl::Vec3<float> forward_unit = camera.unit_direction;
+	tl::Vec3<float> up_unit = tl::UnitVector(camera.up);
+	tl::Vec3<float> right_unit = tl::CrossProduct(up_unit, forward_unit);
+	
+	rotate_around_unit_vector(
+		right_unit,
+		delta_angle_in_deg,
+		camera.unit_direction,
+		camera.unit_direction
+	);
+	camera.direction = camera.unit_direction;
 
-	camera.pitch += delta_angle_in_deg;
-	if (camera.pitch > 360.0f) {
-		camera.pitch -= 360.0f;
-	}
+	rotate_around_unit_vector(
+		right_unit,
+		delta_angle_in_deg,
+		camera.up,
+		camera.up
+	);
 
-	update_for_rotation();
 	set_view_frustrum();
 }
 
