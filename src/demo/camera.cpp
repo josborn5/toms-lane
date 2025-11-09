@@ -121,7 +121,7 @@ static void point_at(
 )
 {
 	tl::Vec3<float> forward_unit = camera.unit_direction;
-	tl::Vec3<float> up_unit = tl::UnitVector(camera.up);
+	tl::Vec3<float> up_unit = camera.unit_up;
 	tl::Vec3<float> right_unit = tl::CrossProduct(up_unit, forward_unit);
 
 	// Construct the new transformation matrix
@@ -178,7 +178,7 @@ static void set_view_frustrum() {
 	get_camera_far_plane_position(camera, camera.view_frustrum.far_plane_position);
 	camera.view_frustrum.far_plane_normal = tl::Vec3<float>{ -camera.unit_direction.x, -camera.unit_direction.y, -camera.unit_direction.z };
 
-	tl::Vec3<float> unit_up = tl::UnitVector(camera.up);
+	tl::Vec3<float> unit_up = camera.unit_up;
 
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 	float near_opp = camera.near_plane * tan_half_fov;
@@ -190,11 +190,11 @@ static void set_view_frustrum() {
 	);
 
 	tl::Vec3<float> camera_right = CrossProduct(
-		camera.up,
+		camera.unit_up,
 		camera.unit_direction
 	);
 
-	camera.view_frustrum.up_plane_normal = camera.up;
+	camera.view_frustrum.up_plane_normal = camera.unit_up;
 	rotate_around_x_axis(
 		camera_right,
 		0.5f * camera.field_of_view_deg,
@@ -207,9 +207,9 @@ static void set_view_frustrum() {
 	);
 
 	camera.view_frustrum.down_plane_normal = tl::Vec3<float> {
-		-camera.up.x,
-		-camera.up.y,
-		-camera.up.z
+		-camera.unit_up.x,
+		-camera.unit_up.y,
+		-camera.unit_up.z
 	};
 	rotate_around_x_axis(
 		camera_right,
@@ -226,7 +226,7 @@ void camera_reset(
 	float near_plane,
 	float far_plane
 ) {
-	camera.up = { 0.0f, 1.0f, 0.0f };
+	camera.unit_up = { 0.0f, 1.0f, 0.0f };
 	camera.position = position;
 
 	camera.unit_direction = { 0.0f, 0.0f, 1.0f };
@@ -245,17 +245,17 @@ const tl::Matrix4x4<float>& get_projection_matrix() {
 
 void camera_increment_yaw(float delta_angle_in_deg) {
 	rotate_around_unit_vector(
-		tl::UnitVector(camera.up),
+		camera.unit_up,
 		delta_angle_in_deg,
 		camera.unit_direction,
 		camera.unit_direction
 	);
 
 	rotate_around_unit_vector(
-		tl::UnitVector(camera.up),
+		camera.unit_up,
 		delta_angle_in_deg,
-		camera.up,
-		camera.up
+		camera.unit_up,
+		camera.unit_up
 	);
 
 	set_view_frustrum();
@@ -263,7 +263,7 @@ void camera_increment_yaw(float delta_angle_in_deg) {
 
 void camera_increment_pitch(float delta_angle_in_deg) {
 	tl::Vec3<float> forward_unit = camera.unit_direction;
-	tl::Vec3<float> up_unit = tl::UnitVector(camera.up);
+	tl::Vec3<float> up_unit = camera.unit_up;
 	tl::Vec3<float> right_unit = tl::CrossProduct(up_unit, forward_unit);
 	
 	rotate_around_unit_vector(
@@ -276,8 +276,8 @@ void camera_increment_pitch(float delta_angle_in_deg) {
 	rotate_around_unit_vector(
 		right_unit,
 		delta_angle_in_deg,
-		camera.up,
-		camera.up
+		camera.unit_up,
+		camera.unit_up
 	);
 
 	set_view_frustrum();
@@ -298,7 +298,7 @@ void camera_increment_direction(float delta_z) {
 void camera_increment_strafe(float delta_x) {
 	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced
 	tl::Vec3<float> rawCameraPositionStrafe = CrossProduct(
-		camera.up,
+		camera.unit_up,
 		camera.unit_direction
 	);
 	tl::Vec3<float> cameraPositionStrafe = MultiplyVectorByScalar(
@@ -314,7 +314,7 @@ void camera_increment_strafe(float delta_x) {
 
 void camera_increment_up(float delta_up) {
 	tl::Vec3<float> camera_position_delta = MultiplyVectorByScalar(
-		camera.up,
+		camera.unit_up,
 		delta_up);
 
 	camera.position = AddVectors(

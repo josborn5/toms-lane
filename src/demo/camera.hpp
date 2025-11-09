@@ -26,8 +26,8 @@ struct view_frustrum {
 struct Camera
 {
 	tl::Vec3<float> position = {0};
-	tl::Vec3<float> up = {0};
 
+	tl::Vec3<float> unit_up = {0};
 	tl::Vec3<float> unit_direction = {0};
 
 	float field_of_view_deg = 0.0f;

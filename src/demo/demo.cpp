@@ -179,7 +179,7 @@ static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
 		tl::CrossProduct(
 			camera.unit_direction,
-			camera.up
+			camera.unit_up
 		)
 	);
 	float opp = camera.near_plane * tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
@@ -198,7 +198,7 @@ static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
 		tl::CrossProduct(
 			camera.unit_direction,
-			camera.up
+			camera.unit_up
 		)
 	);
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
