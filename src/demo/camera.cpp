@@ -262,9 +262,9 @@ void camera_increment_yaw(float delta_angle_in_deg) {
 }
 
 void camera_increment_pitch(float delta_angle_in_deg) {
-	tl::Vec3<float> forward_unit = camera.unit_direction;
-	tl::Vec3<float> up_unit = camera.unit_up;
-	tl::Vec3<float> right_unit = tl::CrossProduct(up_unit, forward_unit);
+	tl::Vec3<float> right_unit = tl::UnitVector(
+		tl::CrossProduct(camera.unit_up, camera.unit_direction)
+	);
 
 	rotate_around_unit_vector(
 		right_unit,
