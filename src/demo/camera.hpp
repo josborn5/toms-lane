@@ -31,10 +31,6 @@ struct Camera
 
 	tl::Vec3<float> unit_direction = {0};
 
-	float yaw = 0.0f;
-	float pitch = 0.0f;
-	float roll = 0.0f;
-
 	float field_of_view_deg = 0.0f;
 	float near_plane = 0.0f;
 	float far_plane = 0.0f;

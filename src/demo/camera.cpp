@@ -229,10 +229,6 @@ void camera_reset(
 	camera.up = { 0.0f, 1.0f, 0.0f };
 	camera.position = position;
 
-	camera.yaw = 0.0f;
-	camera.pitch = 0.0f;
-	camera.roll = 0.0f;
-
 	camera.direction = { 0.0f, 0.0f, 1.0f };
 	camera.unit_direction = { 0.0f, 0.0f, 1.0f };
 
