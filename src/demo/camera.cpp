@@ -1,10 +1,6 @@
 #include "./camera.hpp"
 #include <math.h>
 
-const unsigned int screen_width = 1280;
-const unsigned int screen_height = 720;
-constexpr float aspect_ratio = (float)screen_width / (float)screen_height;
-
 static Camera camera;
 
 struct matrix3x3
@@ -81,7 +77,7 @@ static tl::Matrix4x4<float> MakeProjectionMatrix(
 }
 
 static void set_projection_matrix(const Camera& camera) {
-	projectionMatrix = MakeProjectionMatrix(camera.field_of_view_deg, aspect_ratio, camera.near_plane, camera.far_plane);
+	projectionMatrix = MakeProjectionMatrix(camera.field_of_view_deg, camera.aspect_ratio, camera.near_plane, camera.far_plane);
 }
 
 /**
@@ -199,15 +195,18 @@ static void set_view_frustrum() {
 
 
 void camera_reset(
+	float aspect_ratio,
 	const tl::Vec3<float>& position,
 	float field_of_view_in_deg,
 	float near_plane,
 	float far_plane
 ) {
-	camera.unit_up = { 0.0f, 1.0f, 0.0f };
-	camera.position = position;
+	camera.aspect_ratio = aspect_ratio;
 
+	camera.unit_up = { 0.0f, 1.0f, 0.0f };
 	camera.unit_direction = { 0.0f, 0.0f, 1.0f };
+
+	camera.position = position;
 
 	camera.field_of_view_deg = field_of_view_in_deg;
 	camera.near_plane = near_plane;

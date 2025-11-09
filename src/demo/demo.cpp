@@ -531,7 +531,13 @@ static void reset_camera_in_world() {
 	//   0
 	float far_plane = world.half_size.z;
 	float near_plane = 0.1f * far_plane;
-	camera_reset(position, field_of_view_in_deg, near_plane, far_plane);
+	camera_reset(
+		(float)screen_width / (float)screen_height,
+		position,
+		field_of_view_in_deg,
+		near_plane,
+		far_plane
+	);
 }
 
 static void reset_world_to_mesh() {

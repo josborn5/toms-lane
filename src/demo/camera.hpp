@@ -33,12 +33,14 @@ struct Camera
 	float field_of_view_deg = 0.0f;
 	float near_plane = 0.0f;
 	float far_plane = 0.0f;
+	float aspect_ratio = 1.0f;
 
 	view_frustrum view_frustrum = {0};
 };
 
 
 void camera_reset(
+	float aspect_ratio,
 	const tl::Vec3<float>& position,
 	float field_of_view_in_deg,
 	float near_plane,
