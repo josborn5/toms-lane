@@ -150,28 +150,36 @@ static void set_view_frustrum() {
 	get_camera_far_plane_position(camera, camera.view_frustrum.far_plane_position);
 	camera.view_frustrum.far_plane_normal = tl::Vec3<float>{ -camera.unit_direction.x, -camera.unit_direction.y, -camera.unit_direction.z };
 
-
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
-	float near_opp = camera.near_plane * tan_half_fov;
-	float far_opp = camera.far_plane * tan_half_fov;
+	float near_opp_vertical = camera.near_plane * tan_half_fov;
+	float near_opp_horizontal = camera.aspect_ratio * near_opp_vertical;
 
-	// calcaulte positions for the four 'pyramid' sides of the frustrum
-	camera.view_frustrum.up_plane_position = tl::AddVectors(
-		camera.view_frustrum.near_plane_position,
-		tl::MultiplyVectorByScalar(camera.unit_up, near_opp)
-	);
-
-	camera.view_frustrum.down_plane_position = tl::AddVectors(
-		camera.view_frustrum.near_plane_position,
-		tl::MultiplyVectorByScalar(camera.unit_up, -near_opp)
-	);
-
-
-	// calculate normals for the four 'pyramid' sides of the frustrum
-	camera.view_frustrum.up_plane_normal = camera.unit_up;
+	// calculate positions for the four 'pyramid' sides of the frustrum
 	tl::Vec3<float> camera_right_unit = tl::UnitVector(
 		tl::CrossProduct(camera.unit_up, camera.unit_direction)
 	);
+
+	tl::Vec3<float> up_center_position = tl::AddVectors(
+		camera.view_frustrum.near_plane_position,
+		tl::MultiplyVectorByScalar(camera.unit_up, near_opp_vertical)
+	);
+	camera.view_frustrum.top_left_corner_position = tl::AddVectors(
+		up_center_position,
+		tl::MultiplyVectorByScalar(camera_right_unit, -near_opp_horizontal)
+	);
+
+	tl::Vec3<float> bottom_center_position = tl::AddVectors(
+		camera.view_frustrum.near_plane_position,
+		tl::MultiplyVectorByScalar(camera.unit_up, -near_opp_vertical)
+	);
+	camera.view_frustrum.bottom_right_corner_position = tl::AddVectors(
+		up_center_position,
+		tl::MultiplyVectorByScalar(camera_right_unit, near_opp_horizontal)
+	);
+
+	// calculate normals for the four 'pyramid' sides of the frustrum
+	camera.view_frustrum.up_plane_normal = camera.unit_up;
+
 	rotate_around_unit_vector(
 		camera_right_unit,
 		0.5f * camera.field_of_view_deg,

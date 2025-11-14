@@ -10,17 +10,16 @@ struct view_frustrum {
 	tl::Vec3<float> far_plane_normal = {0};
 	tl::Vec3<float> far_plane_position = {0};
 
+	tl::Vec3<float> top_left_corner_position = {0};
+	tl::Vec3<float> bottom_right_corner_position = {0};
+
 	tl::Vec3<float> up_plane_normal = {0};
-	tl::Vec3<float> up_plane_position = {0};
 
 	tl::Vec3<float> down_plane_normal = {0};
-	tl::Vec3<float> down_plane_position = {0};
 
 	tl::Vec3<float> left_plane_normal = {0};
-	tl::Vec3<float> left_plane_position = {0};
 
 	tl::Vec3<float> right_plane_normal = {0};
-	tl::Vec3<float> right_plane_position = {0};
 };
 
 struct Camera
