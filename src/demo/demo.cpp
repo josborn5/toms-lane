@@ -313,7 +313,7 @@ static void TransformAndRenderMesh(
 		near_plane.normal = camera.view_frustrum.near_plane_normal;
 
 		Plane far_plane;
-		far_plane.position = camera.view_frustrum.far_plane_position;
+		far_plane.position = camera.view_frustrum.far_bottom_right_corner_position;
 		far_plane.normal = camera.view_frustrum.far_plane_normal;
 
 		Triangle4d queue_data[18]; // 3 * 6 sides of view frustrum to clip
