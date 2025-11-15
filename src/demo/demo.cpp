@@ -285,16 +285,21 @@ static void TransformAndRenderMesh(
 		far_plane.position = camera.view_frustrum.far_bottom_right_corner_position;
 		far_plane.normal = camera.view_frustrum.far_plane_normal;
 
-		Triangle4d queue_data[18]; // 3 * 6 sides of view frustrum to clip
+		Plane top_plane;
+		top_plane.position = camera.view_frustrum.near_top_left_corner_position;
+		top_plane.normal = camera.view_frustrum.up_plane_normal;
+
+		const int triangle_queue_size = 18; // 3 * 6 sides of view frustrum to clip
+		Triangle4d queue_data[triangle_queue_size];
 		tl::MemorySpace queue_data_space;
 		queue_data_space.content = queue_data;
-		queue_data_space.sizeInBytes = 18 * sizeof(Triangle4d);
+		queue_data_space.sizeInBytes = triangle_queue_size * sizeof(Triangle4d);
 		tl::queue<Triangle4d> triangle_queue = tl::queue<Triangle4d>(queue_data_space);
 		triangle_queue.enqueue(tri);
 
 		Triangle4d clipped[2];
 		int new_triangles = 1;
-		for (int plane_index = 0; plane_index < 2; plane_index += 1)
+		for (int plane_index = 0; plane_index < 3; plane_index += 1)
 		{
 			int triangles_to_add = 0;
 			while (new_triangles > 0)
@@ -313,6 +318,11 @@ static void TransformAndRenderMesh(
 					case 1:
 					{
 						triangles_to_add = ClipTriangleAgainstPlane(far_plane, to_clip, clipped[0], clipped[1]);
+						break;
+					}
+					case 2:
+					{
+						triangles_to_add = ClipTriangleAgainstPlane(top_plane, to_clip, clipped[0], clipped[1]);
 						break;
 					}
 				}
