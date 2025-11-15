@@ -173,25 +173,6 @@ static int ClipTriangleAgainstPlane(
 }
 
 
-static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float>& p2) {
-	const Camera& camera = camera_get();
-
-	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
-		tl::CrossProduct(
-			camera.unit_direction,
-			camera.unit_up
-		)
-	);
-	tl::Vec3<float> near_plane_left = camera.view_frustrum.near_top_left_corner_position;
-	float opp = camera.near_plane * tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
-	tl::Vec3<float> near_plane_right_from_left = MultiplyVectorByScalar(unit_normal_to_direction, (2.0f * opp));
-	tl::Vec3<float> near_plane_right = tl::AddVectors(
-		near_plane_left, near_plane_right_from_left);
-
-	p1 = Transform2DVector(tl::Vec2<float>{ near_plane_left.z, near_plane_left.x }, mapProjectionMatrix);
-	p2 = Transform2DVector(tl::Vec2<float>{ near_plane_right.z, near_plane_right.x }, mapProjectionMatrix);
-}
-
 static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>& near_2, tl::Vec2<float>& far_1, tl::Vec2<float>& far_2) {
 	const Camera& camera = camera_get();
 	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
@@ -207,17 +188,10 @@ static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>
 	tl::Vec3<float> near_plane_right_from_left = MultiplyVectorByScalar(unit_normal_to_direction, (2.0f * near_opp));
 	tl::Vec3<float> near_plane_right = tl::AddVectors(near_plane_left, near_plane_right_from_left);
 
-
-	tl::Vec3<float> far_plane_center_from_position = MultiplyVectorByScalar(
-		camera.unit_direction, camera.far_plane);
-	tl::Vec3<float> far_plane_center = tl::AddVectors(
-		camera.position,
-		far_plane_center_from_position);
-
 	float far_opp = camera.far_plane * tan_half_fov;
-	tl::Vec3<float> far_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, far_opp);
-	tl::Vec3<float> far_plane_right = tl::AddVectors(far_plane_center, far_plane_right_from_center);
-	tl::Vec3<float> far_plane_left = tl::SubtractVectors(far_plane_center, far_plane_right_from_center);
+	tl::Vec3<float> far_plane_right = camera.view_frustrum.far_bottom_right_corner_position;
+	tl::Vec3<float> far_plane_left_from_right = MultiplyVectorByScalar(unit_normal_to_direction, (-2.0f * far_opp));
+	tl::Vec3<float> far_plane_left = tl::AddVectors(far_plane_right, far_plane_left_from_right);
 
 	near_1 = Transform2DVector(tl::Vec2<float>{ near_plane_left.z, near_plane_left.x }, mapProjectionMatrix);
 	near_2 = Transform2DVector(tl::Vec2<float>{ near_plane_right.z, near_plane_right.x }, mapProjectionMatrix);
