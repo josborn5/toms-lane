@@ -202,15 +202,10 @@ static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>
 	);
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 
-	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(camera.unit_direction, camera.near_plane);
-	tl::Vec3<float> near_plane_center = tl::AddVectors(
-		camera.position,
-		near_plane_center_from_position);
-
 	float near_opp = camera.near_plane * tan_half_fov;
-	tl::Vec3<float> near_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, near_opp);
-	tl::Vec3<float> near_plane_right = tl::AddVectors(near_plane_center, near_plane_right_from_center);
-	tl::Vec3<float> near_plane_left = tl::SubtractVectors(near_plane_center, near_plane_right_from_center);
+	tl::Vec3<float> near_plane_left = camera.view_frustrum.near_top_left_corner_position;
+	tl::Vec3<float> near_plane_right_from_left = MultiplyVectorByScalar(unit_normal_to_direction, (2.0f * near_opp));
+	tl::Vec3<float> near_plane_right = tl::AddVectors(near_plane_left, near_plane_right_from_left);
 
 
 	tl::Vec3<float> far_plane_center_from_position = MultiplyVectorByScalar(
