@@ -182,11 +182,11 @@ static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float
 			camera.unit_up
 		)
 	);
-	float opp = camera.near_plane * tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
-	tl::Vec3<float> near_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, opp);
-	tl::Vec3<float> near_plane_right = tl::AddVectors(
-		camera.view_frustrum.near_plane_position, near_plane_right_from_center);
 	tl::Vec3<float> near_plane_left = camera.view_frustrum.near_top_left_corner_position;
+	float opp = camera.near_plane * tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
+	tl::Vec3<float> near_plane_right_from_left = MultiplyVectorByScalar(unit_normal_to_direction, (2.0f * opp));
+	tl::Vec3<float> near_plane_right = tl::AddVectors(
+		near_plane_left, near_plane_right_from_left);
 
 	p1 = Transform2DVector(tl::Vec2<float>{ near_plane_left.z, near_plane_left.x }, mapProjectionMatrix);
 	p2 = Transform2DVector(tl::Vec2<float>{ near_plane_right.z, near_plane_right.x }, mapProjectionMatrix);

@@ -146,7 +146,6 @@ static void set_view_frustrum() {
 	camera.view_frustrum.far_plane_normal = tl::Vec3<float>{ -camera.unit_direction.x, -camera.unit_direction.y, -camera.unit_direction.z };
 
 	camera.view_frustrum.near_plane_normal = camera.unit_direction;
-	camera.view_frustrum.near_plane_position = near_plane_center_position;
 
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 	float near_opp_vertical = camera.near_plane * tan_half_fov;
