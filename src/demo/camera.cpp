@@ -174,7 +174,11 @@ static void set_view_frustrum() {
 	camera.view_frustrum.near_plane_normal = camera.unit_direction;
 	camera.view_frustrum.far_plane_normal = tl::Vec3<float>{ -camera.unit_direction.x, -camera.unit_direction.y, -camera.unit_direction.z };
 
-	camera.view_frustrum.up_plane_normal = camera.unit_up;
+	camera.view_frustrum.up_plane_normal = tl::Vec3<float> {
+		-camera.unit_up.x,
+		-camera.unit_up.y,
+		-camera.unit_up.z
+	};
 	rotate_around_unit_vector(
 		camera_right_unit,
 		0.5f * camera.field_of_view_deg,
@@ -182,11 +186,7 @@ static void set_view_frustrum() {
 		camera.view_frustrum.up_plane_normal
 	);
 
-	camera.view_frustrum.down_plane_normal = tl::Vec3<float> {
-		-camera.unit_up.x,
-		-camera.unit_up.y,
-		-camera.unit_up.z
-	};
+	camera.view_frustrum.down_plane_normal = camera.unit_up;
 	rotate_around_unit_vector(
 		camera_right_unit,
 		-0.5f * camera.field_of_view_deg,
