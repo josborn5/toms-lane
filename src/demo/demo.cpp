@@ -725,6 +725,15 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	return 0;
 }
 
+static void keep_camera_in_bounds(const Camera& camera) {
+	// Final bounds check on the camera
+	tl::Vec3<float> camera_position = camera.position;
+	camera_position.x = Clamp(world.position.x - world.half_size.x, camera_position.x, world.position.x + world.half_size.x);
+	camera_position.y = Clamp(world.position.y - world.half_size.y, camera_position.y, world.position.y + world.half_size.y);
+	camera_position.z = Clamp(world.position.z - world.half_size.z, camera_position.z, world.position.z + world.half_size.z);
+	camera_set_position(camera_position);
+}
+
 static void process_input_for_camera(
 	const tl::Input& input,
 	const Camera& camera
@@ -756,29 +765,35 @@ static void process_input_for_camera(
 	if (input.buttons[tl::KEY_S].isDown)
 	{
 		camera_increment_direction(-positionIncrement);
+		keep_camera_in_bounds(camera);
 	}
 	else if (input.buttons[tl::KEY_W].isDown)
 	{
 		camera_increment_direction(positionIncrement);
+		keep_camera_in_bounds(camera);
 	}
 
 	if (input.buttons[tl::KEY_LEFT].isDown)
 	{
 		camera_increment_strafe(-positionIncrement);
+		keep_camera_in_bounds(camera);
 	}
 	else if (input.buttons[tl::KEY_RIGHT].isDown)
 	{
 		camera_increment_strafe(positionIncrement);
+		keep_camera_in_bounds(camera);
 	}
 
 	// Simply move the camera position vertically with up/down keypress
 	if (input.buttons[tl::KEY_DOWN].isDown && !input.buttons[tl::KEY_SHIFT].isDown)
 	{
 		camera_increment_up(-positionIncrement);
+		keep_camera_in_bounds(camera);
 	}
 	else if (input.buttons[tl::KEY_UP].isDown && !input.buttons[tl::KEY_SHIFT].isDown)
 	{
 		camera_increment_up(positionIncrement);
+		keep_camera_in_bounds(camera);
 	}
 
 	else if (input.buttons[tl::KEY_J].isDown) {
@@ -866,13 +881,6 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	}
 
 	process_input_for_camera(input, camera);
-
-	// Final bounds check on the camera
-	tl::Vec3<float> camera_position = camera.position;
-	camera_position.x = Clamp(world.position.x - world.half_size.x, camera_position.x, world.position.x + world.half_size.x);
-	camera_position.y = Clamp(world.position.y - world.half_size.y, camera_position.y, world.position.y + world.half_size.y);
-	camera_position.z = Clamp(world.position.z - world.half_size.z, camera_position.z, world.position.z + world.half_size.z);
-	camera_set_position(camera_position);
 
 	tl::MemorySpace transientMemory = gameMemory.transient;
 
