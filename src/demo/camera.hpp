@@ -7,7 +7,6 @@ struct view_frustrum {
 	tl::Vec3<float> near_plane_normal = {0};
 
 	tl::Vec3<float> far_plane_normal = {0};
-	tl::Vec3<float> far_plane_position = {0};
 
 	tl::Vec3<float> near_top_left_corner_position = {0};
 	tl::Vec3<float> far_bottom_right_corner_position = {0};
