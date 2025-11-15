@@ -186,8 +186,7 @@ static void get_camera_near_plane_map_coords(tl::Vec2<float>& p1, tl::Vec2<float
 	tl::Vec3<float> near_plane_right_from_center = MultiplyVectorByScalar(unit_normal_to_direction, opp);
 	tl::Vec3<float> near_plane_right = tl::AddVectors(
 		camera.view_frustrum.near_plane_position, near_plane_right_from_center);
-	tl::Vec3<float> near_plane_left = tl::SubtractVectors(
-		camera.view_frustrum.near_plane_position, near_plane_right_from_center);
+	tl::Vec3<float> near_plane_left = camera.view_frustrum.near_top_left_corner_position;
 
 	p1 = Transform2DVector(tl::Vec2<float>{ near_plane_left.z, near_plane_left.x }, mapProjectionMatrix);
 	p2 = Transform2DVector(tl::Vec2<float>{ near_plane_right.z, near_plane_right.x }, mapProjectionMatrix);
@@ -310,7 +309,7 @@ static void TransformAndRenderMesh(
 		uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
 
 		Plane near_plane;
-		near_plane.position = camera.view_frustrum.near_plane_position;
+		near_plane.position = camera.view_frustrum.near_top_left_corner_position;
 		near_plane.normal = camera.view_frustrum.near_plane_normal;
 
 		Plane far_plane;
