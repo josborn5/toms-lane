@@ -189,7 +189,7 @@ static void set_view_frustrum() {
 	camera.view_frustrum.down_plane_normal = camera.unit_up;
 	rotate_around_unit_vector(
 		camera_right_unit,
-		-0.5f * camera.field_of_view_deg,
+		0.5f * camera.field_of_view_deg,
 		camera.view_frustrum.down_plane_normal,
 		camera.view_frustrum.down_plane_normal
 	);

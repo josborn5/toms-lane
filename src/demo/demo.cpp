@@ -82,7 +82,7 @@ static tl::Vec4<float> IntersectPlane(
 
 static float ShortestDistanceFromPointToPlane(
 	const tl::Vec4<float>& point,
-	const tl::Vec3<float>& planeP,
+	const tl::Vec3<float>& plane_point,
 	const tl::Vec3<float>& unitNormalToPlane
 )
 {
@@ -90,7 +90,10 @@ static float ShortestDistanceFromPointToPlane(
 	temp_point.x = point.x;
 	temp_point.y = point.y;
 	temp_point.z = point.z;
-	float distance = tl::DotProduct(unitNormalToPlane, temp_point) - tl::DotProduct(unitNormalToPlane, planeP);
+
+	tl::Vec3<float> plane_to_point = tl::SubtractVectors<float>(temp_point, plane_point);
+
+	float distance = tl::DotProduct(unitNormalToPlane, plane_to_point);
 	return distance;
 }
 
@@ -306,6 +309,10 @@ static void TransformAndRenderMesh(
 			{
 				new_triangles -= 1;
 				tl::operation<Triangle4d> dequeue_op = triangle_queue.dequeue();
+				if (dequeue_op.result != 0)
+				{
+					return;
+				}
 				Triangle4d to_clip = dequeue_op.value;
 
 				switch (plane_index)
@@ -329,7 +336,11 @@ static void TransformAndRenderMesh(
 
 				for (int i = 0; i < triangles_to_add; i += 1)
 				{
-					triangle_queue.enqueue(clipped[i]);
+					int enqueue_result = triangle_queue.enqueue(clipped[i]);
+					if (enqueue_result != 0)
+					{
+						return;
+					}
 				}
 			}
 
