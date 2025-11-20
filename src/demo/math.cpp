@@ -13,7 +13,10 @@ float ShortestDistanceFromPointToPlane(
 
 	tl::Vec3<float> plane_to_point = tl::SubtractVectors<float>(temp_point, plane_point);
 
-	float distance = tl::DotProduct(unit_normal_to_plane, plane_to_point);
+	float distance = tl::DotProduct(
+		tl::UnitVector(unit_normal_to_plane),
+		plane_to_point
+	);
 	return distance;
 }
 
