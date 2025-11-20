@@ -1,4 +1,5 @@
 #include "./render.hpp"
+#include "./math.tests.hpp"
 #include <assert.h>
 #include <iostream>
 
@@ -730,6 +731,13 @@ int main()
 
 
 	std::cout << "Demo render tests complete!!!" << std::endl;
+
+
+	std::cout << "Running math tests" << std::endl;
+
+	run_math_tests();
+
+	std::cout << "Math tests complete!!!" << std::endl;
 
 	return 0;
 }

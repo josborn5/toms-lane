@@ -2,6 +2,10 @@
 
 void DrawTriangleInPixels(const tl::RenderBuffer& renderBuffer, uint32_t color, const tl::Vec2<int>& p0, const tl::Vec2<int>& p1, const tl::Vec2<int>& p2)
 {
+	if (p0.y < 0 || p0.y > renderBuffer.height - 1) return;
+	if (p1.y < 0 || p1.y > renderBuffer.height - 1) return;
+	if (p2.y < 0 || p2.y > renderBuffer.height - 1) return;
+
 	tl::DrawLineInPixels(renderBuffer, color, p0, p1);
 	tl::DrawLineInPixels(renderBuffer, color, p1, p2);
 	tl::DrawLineInPixels(renderBuffer, color, p2, p0);
@@ -253,6 +257,10 @@ void FillFlatBottomTriangle(const tl::RenderBuffer& renderBuffer, uint32_t color
 
 void FillTriangleInPixels(const tl::RenderBuffer& renderBuffer, uint32_t color, const tl::Vec3<int>& p0, const tl::Vec3<int>& p1, const tl::Vec3<int>& p2)
 {
+	if (p0.y < 0 || p0.y > renderBuffer.height - 1) return;
+	if (p1.y < 0 || p1.y > renderBuffer.height - 1) return;
+	if (p2.y < 0 || p2.y > renderBuffer.height - 1) return;
+
 	const tl::Vec3<int>* pp0 = &p0;
 	const tl::Vec3<int>* pp1 = &p1;
 	const tl::Vec3<int>* pp2 = &p2;

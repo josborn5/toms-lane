@@ -216,11 +216,13 @@ add_library(
 	src/demo/render.cpp
 	src/demo/asset.cpp
 	src/demo/camera.cpp
+	src/demo/math.cpp
 	src/demo/assets/teapot.obj.cpp
 )
 add_executable(
 	demo-tests
 	src/demo/render.tests.cpp
+	src/demo/math.tests.cpp
 )
 add_executable(
 	demo-win32 WIN32

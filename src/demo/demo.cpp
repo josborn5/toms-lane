@@ -7,7 +7,7 @@
 #include "./render.hpp"
 #include "./file.hpp"
 #include "./camera.hpp"
-
+#include "./math.hpp"
 
 struct cuboid {
 	tl::Vec3<float> position = {0};
@@ -78,23 +78,6 @@ static tl::Vec4<float> IntersectPlane(
 	tl::Vec4<float> return_temp = tl::AddVectors(lineStart, lineToIntersect);
 	return_temp.w = 1.0f;
 	return return_temp;
-}
-
-static float ShortestDistanceFromPointToPlane(
-	const tl::Vec4<float>& point,
-	const tl::Vec3<float>& plane_point,
-	const tl::Vec3<float>& unitNormalToPlane
-)
-{
-	tl::Vec3<float> temp_point;
-	temp_point.x = point.x;
-	temp_point.y = point.y;
-	temp_point.z = point.z;
-
-	tl::Vec3<float> plane_to_point = tl::SubtractVectors<float>(temp_point, plane_point);
-
-	float distance = tl::DotProduct(unitNormalToPlane, plane_to_point);
-	return distance;
 }
 
 static int ClipTriangleAgainstPlane(
