@@ -13,6 +13,13 @@ void run_math_tests() {
 	assert(actual_distance == 2.0f);
 
 	actual_distance = ShortestDistanceFromPointToPlane(
+		{ 1.0f, 0.0f, 0.0f, 0.0f },
+		{ -1.0f, 100.0f, 100.0f },
+		{ 1.0f, 0.0f, 0.0f}
+	);
+	assert(actual_distance == 2.0f);
+
+	actual_distance = ShortestDistanceFromPointToPlane(
 		{ 0.0f, 0.0f, 0.0f, 0.0f },
 		{ 0.0f, 0.0f, 0.0f },
 		{ 1.0f, 0.0f, 0.0f}
@@ -64,5 +71,26 @@ void run_math_tests() {
 		tl::Vec3<float>{ -1.0f, -1.0f, -1.0f }
 	);
 	assert(actual_distance < 0.0f);
+
+	actual_distance = ShortestDistanceFromPointToPlane(
+		{ 1.0f, 0.0f, 0.0f, 0.0f },
+		{ -1.0f, 0.0f, 0.0f },
+		tl::UnitVector(tl::Vec3<float>{ 1.0f, 0.1f, 0.1f })
+	);
+	assert(actual_distance > 0.0f);
+
+	actual_distance = ShortestDistanceFromPointToPlane(
+		{ 0.0f, 0.0f, 0.0f, 0.0f },
+		{ -1.0f, 10.0f, 10.0f },
+		tl::UnitVector(tl::Vec3<float>{ 1.0f, 0.1f, 0.1f })
+	);
+	assert(actual_distance < 0.0f);
+
+	actual_distance = ShortestDistanceFromPointToPlane(
+		{ 0.0f, 0.0f, 0.0f, 0.0f },
+		{ -1.0f, 10.0f, 10.0f },
+		tl::UnitVector(tl::Vec3<float>{ 1.0f, -0.1f, -0.1f })
+	);
+	assert(actual_distance > 0.0f);
 }
 
