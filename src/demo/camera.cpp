@@ -65,7 +65,7 @@ static tl::Matrix4x4<float> MakeProjectionMatrix(
 {
 	float inverseTangent = 1.0f / tanf(deg_to_rad(0.5f * fieldOfVewDeg));
 
-	tl::Matrix4x4<float> matrix;
+	tl::Matrix4x4<float> matrix = { 0 };
 	matrix.m[0][0] = inverseTangent;
 	matrix.m[1][1] = aspectRatio * inverseTangent;
 	matrix.m[2][2] = farPlane / (farPlane - nearPlane);
@@ -137,8 +137,8 @@ static void set_view_frustrum() {
 		camera.position,
 		near_plane_center_from_position);
 
-	float near_opp_vertical = camera.near_plane * tan_half_fov;
-	float near_opp_horizontal = /* camera.aspect_ratio * */ near_opp_vertical;
+	float near_opp_horizontal = camera.near_plane * tan_half_fov;
+	float near_opp_vertical = near_opp_horizontal / camera.aspect_ratio;
 
 	tl::Vec3<float> near_up_center_position = tl::AddVectors(
 		near_plane_center_position,
@@ -157,8 +157,8 @@ static void set_view_frustrum() {
 		camera.position,
 		far_plane_center_from_position);
 
-	float far_opp_vertical = camera.far_plane * tan_half_fov;
-	float far_opp_horizontal = /* camera.aspect_ratio * */ far_opp_vertical;
+	float far_opp_horizontal = camera.far_plane * tan_half_fov;
+	float far_opp_vertical = far_opp_horizontal / camera.aspect_ratio;
 
 	// calculate positions for the four 'pyramid' sides of the frustrum
 	tl::Vec3<float> far_bottom_center_position = tl::AddVectors(
