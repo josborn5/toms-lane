@@ -67,6 +67,13 @@ static void set_projection_matrix(const Camera& camera) {
 	projectionMatrix.m[3][3] = 0.0f;
 }
 
+static tl::Vec3<float> get_unit_right(const Camera& camera) {
+	tl::Vec3<float> camera_right_unit = tl::UnitVector(
+		tl::CrossProduct(camera.unit_up, camera.unit_direction) // argument order is important. right unit is in +ve x-axis direction
+	);
+	return camera_right_unit;
+}
+
 /**
 * Structure of the PointAt Matrix:
 * | Ax | Ay | Az | 0 |
@@ -81,7 +88,7 @@ static void point_at(
 {
 	tl::Vec3<float> forward_unit = camera.unit_direction;
 	tl::Vec3<float> up_unit = camera.unit_up;
-	tl::Vec3<float> right_unit = tl::CrossProduct(up_unit, forward_unit);
+	tl::Vec3<float> right_unit = get_unit_right(camera);
 
 	// Construct the new transformation matrix
 	output_matrix.m[0][0] = right_unit.x;		output_matrix.m[0][1] = right_unit.y;		output_matrix.m[0][2] = right_unit.z;		output_matrix.m[0][3] = 0.0f;
@@ -111,9 +118,7 @@ static void look_at(const tl::Matrix4x4<float>& pointAt, tl::Matrix4x4<float>& l
 
 static void set_view_frustrum() {
 
-	tl::Vec3<float> camera_right_unit = tl::UnitVector(
-		tl::CrossProduct(camera.unit_up, camera.unit_direction) // argument order is important. right unit is in +ve x-axis direction
-	);
+	tl::Vec3<float> camera_right_unit = get_unit_right(camera);
 
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 
@@ -244,9 +249,7 @@ void camera_increment_yaw(float delta_angle_in_deg) {
 }
 
 void camera_increment_pitch(float delta_angle_in_deg) {
-	tl::Vec3<float> right_unit = tl::UnitVector(
-		tl::CrossProduct(camera.unit_up, camera.unit_direction)
-	);
+	tl::Vec3<float> right_unit = get_unit_right(camera);
 
 	rotate_around_unit_vector(
 		right_unit,
@@ -298,12 +301,10 @@ void camera_increment_direction(float delta_z) {
 
 void camera_increment_strafe(float delta_x) {
 	// Strafing - use the cross product between the camera direction and up to get a normal vector to the direction being faced
-	tl::Vec3<float> rawCameraPositionStrafe = CrossProduct(
-		camera.unit_up,
-		camera.unit_direction
-	);
+	tl::Vec3<float> right_unit = get_unit_right(camera);
+
 	tl::Vec3<float> cameraPositionStrafe = MultiplyVectorByScalar(
-		tl::UnitVector(rawCameraPositionStrafe),
+		right_unit,
 		delta_x);
 
 	camera.position = AddVectors(
