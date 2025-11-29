@@ -812,12 +812,17 @@ static void process_input_for_camera(
 	}
 
 	if (input.buttons[tl::KEY_V].isDown) {
-		if (input.buttons[tl::KEY_SHIFT].isDown) {
-			camera_set_fov(camera.field_of_view_deg - 0.25f);
-		}
-		else {
-			camera_set_fov(camera.field_of_view_deg + 0.25f);
-		}
+		float new_camera_fov = (input.buttons[tl::KEY_SHIFT].isDown)
+			? camera.field_of_view_deg - 0.25f
+			: camera.field_of_view_deg + 0.25f;
+
+		camera_reset(
+			camera.aspect_ratio,
+			camera.position,
+			new_camera_fov,
+			camera.near_plane,
+			camera.far_plane
+		);
 		return;
 	}
 

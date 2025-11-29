@@ -52,8 +52,6 @@ void camera_increment_strafe(float delta_x);
 
 void camera_increment_up(float delta_up);
 
-void camera_set_fov(float fov_in_deg);
-
 void camera_set_near_plane(float near_plane);
 
 void camera_set_position(const tl::Vec3<float>& position);

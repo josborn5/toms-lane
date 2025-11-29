@@ -203,6 +203,16 @@ static void set_view_frustrum() {
 	);
 }
 
+static void camera_set_fov(Camera& camera, float fov_in_deg) {
+	camera.field_of_view_deg = fov_in_deg;
+
+	if (camera.field_of_view_deg < 1.0f) {
+		camera.field_of_view_deg = 1.0f;
+	}
+	else if (camera.field_of_view_deg > 179.0f) {
+		camera.field_of_view_deg = 179.0f;
+	}
+}
 
 void camera_reset(
 	float aspect_ratio,
@@ -218,7 +228,8 @@ void camera_reset(
 
 	camera.position = position;
 
-	camera.field_of_view_deg = field_of_view_in_deg;
+	camera_set_fov(camera, field_of_view_in_deg);
+
 	camera.near_plane = near_plane;
 	camera.far_plane = far_plane;
 
@@ -323,21 +334,6 @@ void camera_increment_up(float delta_up) {
 		camera.position,
 		camera_position_delta
 	);
-	set_view_frustrum();
-}
-
-
-void camera_set_fov(float fov_in_deg) {
-	camera.field_of_view_deg = fov_in_deg;
-
-	if (camera.field_of_view_deg < 1.0f) {
-		camera.field_of_view_deg = 1.0f;
-	}
-	else if (camera.field_of_view_deg > 179.0f) {
-		camera.field_of_view_deg = 179.0f;
-	}
-
-	set_projection_matrix(camera);
 	set_view_frustrum();
 }
 
