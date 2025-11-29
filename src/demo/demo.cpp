@@ -281,6 +281,10 @@ static void TransformAndRenderMesh(
 		right_plane.position = camera.view_frustrum.far_bottom_right_corner_position;
 		right_plane.normal = camera.view_frustrum.right_plane_normal;
 
+		Plane bottom_plane;
+		bottom_plane.position = camera.view_frustrum.far_bottom_right_corner_position;
+		bottom_plane.normal = camera.view_frustrum.down_plane_normal;
+
 		const int triangle_queue_size = 18; // 3 * 6 sides of view frustrum to clip
 		Triangle4d queue_data[triangle_queue_size];
 		tl::MemorySpace queue_data_space;
@@ -291,7 +295,7 @@ static void TransformAndRenderMesh(
 
 		Triangle4d clipped[2];
 		int new_triangles = 1;
-		for (int plane_index = 0; plane_index < 5; plane_index += 1)
+		for (int plane_index = 0; plane_index < 6; plane_index += 1)
 		{
 			int triangles_to_add = 0;
 			while (new_triangles > 0)
@@ -329,6 +333,11 @@ static void TransformAndRenderMesh(
 					case 4:
 					{
 						triangles_to_add = ClipTriangleAgainstPlane(right_plane, to_clip, clipped[0], clipped[1]);
+						break;
+					}
+					case 5:
+					{
+						triangles_to_add = ClipTriangleAgainstPlane(bottom_plane, to_clip, clipped[0], clipped[1]);
 						break;
 					}
 				}
