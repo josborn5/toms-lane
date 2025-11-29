@@ -35,6 +35,8 @@ static bool is_teapot = true;
 static cuboid world;
 static cuboid mesh;
 
+static Plane top_clipping_plane;
+
 static tl::array<Triangle4d> meshArray = tl::array<Triangle4d>();
 
 static float positionIncrement = 0.0f;
@@ -161,22 +163,22 @@ static int ClipTriangleAgainstPlane(
 
 static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>& near_2, tl::Vec2<float>& far_1, tl::Vec2<float>& far_2) {
 	const Camera& camera = camera_get();
-	tl::Vec3<float> unit_normal_to_direction = tl::UnitVector(
+	tl::Vec3<float> unit_right_to_direction = tl::UnitVector(
 		tl::CrossProduct(
-			camera.unit_direction,
-			camera.unit_up
+			camera.unit_up,
+			camera.unit_direction
 		)
 	);
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 
 	float near_opp = camera.near_plane * tan_half_fov;
 	tl::Vec3<float> near_plane_left = camera.view_frustrum.near_top_left_corner_position;
-	tl::Vec3<float> near_plane_right_from_left = MultiplyVectorByScalar(unit_normal_to_direction, (2.0f * near_opp));
+	tl::Vec3<float> near_plane_right_from_left = MultiplyVectorByScalar(unit_right_to_direction, (2.0f * near_opp));
 	tl::Vec3<float> near_plane_right = tl::AddVectors(near_plane_left, near_plane_right_from_left);
 
 	float far_opp = camera.far_plane * tan_half_fov;
 	tl::Vec3<float> far_plane_right = camera.view_frustrum.far_bottom_right_corner_position;
-	tl::Vec3<float> far_plane_left_from_right = MultiplyVectorByScalar(unit_normal_to_direction, (-2.0f * far_opp));
+	tl::Vec3<float> far_plane_left_from_right = MultiplyVectorByScalar(unit_right_to_direction, (-2.0f * far_opp));
 	tl::Vec3<float> far_plane_left = tl::AddVectors(far_plane_right, far_plane_left_from_right);
 
 	near_1 = Transform2DVector(tl::Vec2<float>{ near_plane_left.z, near_plane_left.x }, mapProjectionMatrix);
@@ -271,10 +273,6 @@ static void TransformAndRenderMesh(
 		far_plane.position = camera.view_frustrum.far_bottom_right_corner_position;
 		far_plane.normal = camera.view_frustrum.far_plane_normal;
 
-		Plane top_plane;
-		top_plane.position = camera.view_frustrum.near_top_left_corner_position;
-		top_plane.normal = camera.view_frustrum.up_plane_normal;
-
 		Plane left_plane;
 		left_plane.position = camera.view_frustrum.near_top_left_corner_position;
 		left_plane.normal = camera.view_frustrum.left_plane_normal;
@@ -316,7 +314,7 @@ static void TransformAndRenderMesh(
 					}
 					case 2:
 					{
-						triangles_to_add = ClipTriangleAgainstPlane(top_plane, to_clip, clipped[0], clipped[1]);
+						triangles_to_add = ClipTriangleAgainstPlane(top_clipping_plane, to_clip, clipped[0], clipped[1]);
 						break;
 					}
 					case 3:
@@ -519,6 +517,9 @@ static void reset_camera_in_world() {
 		near_plane,
 		far_plane
 	);
+	Camera camera = camera_get();
+	top_clipping_plane.position = camera.view_frustrum.near_top_left_corner_position;
+	top_clipping_plane.normal = camera.view_frustrum.up_plane_normal;
 }
 
 static void reset_world_to_mesh() {
@@ -742,6 +743,16 @@ static void process_input_for_camera(
 		camera_increment_roll(-rotation_increment_in_degrees);
 	}
 
+	if (input.buttons[tl::KEY_U].isDown) {
+		const float clip_increment = 0.1f;
+		if (input.buttons[tl::KEY_SHIFT].isDown) {
+			top_clipping_plane.position.y -= clip_increment;
+		}
+		else {
+			top_clipping_plane.position.y += clip_increment;
+		}
+		return;
+	}
 
 	// Next process any forwards or backwards movement
 	if (input.buttons[tl::KEY_S].isDown)
@@ -778,18 +789,24 @@ static void process_input_for_camera(
 		keep_camera_in_bounds(camera);
 	}
 
-	else if (input.buttons[tl::KEY_J].isDown) {
-		camera_set_fov(camera.field_of_view_deg + 0.25f);
-	}
-	else if (input.buttons[tl::KEY_K].isDown) {
-		camera_set_fov(camera.field_of_view_deg - 0.25f);
+	if (input.buttons[tl::KEY_V].isDown) {
+		if (input.buttons[tl::KEY_SHIFT].isDown) {
+			camera_set_fov(camera.field_of_view_deg - 0.25f);
+		}
+		else {
+			camera_set_fov(camera.field_of_view_deg + 0.25f);
+		}
+		return;
 	}
 
-	else if (input.buttons[tl::KEY_V].isDown) {
-		camera_set_near_plane(camera.near_plane + 0.1f);
-	}
-	else if (input.buttons[tl::KEY_B].isDown) {
-		camera_set_near_plane(camera.near_plane - 0.1f);
+	if (input.buttons[tl::KEY_N].isDown) {
+		if (input.buttons[tl::KEY_SHIFT].isDown) {
+			camera_set_near_plane(camera.near_plane - 0.1f);
+		}
+		else {
+			camera_set_near_plane(camera.near_plane + 0.1f);
+		}
+		return;
 	}
 
 	if (input.buttons[tl::KEY_C].keyUp)

@@ -125,7 +125,7 @@ static void look_at(const tl::Matrix4x4<float>& pointAt, tl::Matrix4x4<float>& l
 static void set_view_frustrum() {
 
 	tl::Vec3<float> camera_right_unit = tl::UnitVector(
-		tl::CrossProduct(camera.unit_direction, camera.unit_up)
+		tl::CrossProduct(camera.unit_up, camera.unit_direction) // argument order is important. right unit is in +ve x-axis direction
 	);
 
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
@@ -181,7 +181,7 @@ static void set_view_frustrum() {
 	};
 	rotate_around_unit_vector(
 		camera_right_unit,
-		0.5f * camera.field_of_view_deg,
+		-0.5f * camera.field_of_view_deg,
 		camera.view_frustrum.up_plane_normal,
 		camera.view_frustrum.up_plane_normal
 	);
@@ -194,7 +194,7 @@ static void set_view_frustrum() {
 		camera.view_frustrum.down_plane_normal
 	);
 
-	camera.view_frustrum.right_plane_normal = camera_right_unit;
+	camera.view_frustrum.left_plane_normal = camera_right_unit;
 	rotate_around_unit_vector(
 		camera.unit_up,
 		0.5f * camera.field_of_view_deg,
@@ -202,7 +202,7 @@ static void set_view_frustrum() {
 		camera.view_frustrum.right_plane_normal
 	);
 
-	camera.view_frustrum.left_plane_normal = tl::MultiplyVectorByScalar(camera_right_unit, -1.0f);
+	camera.view_frustrum.right_plane_normal = tl::MultiplyVectorByScalar(camera_right_unit, -1.0f);
 	rotate_around_unit_vector(
 		camera.unit_up,
 		-0.5f * camera.field_of_view_deg,
