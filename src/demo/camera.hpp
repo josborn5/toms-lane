@@ -36,7 +36,9 @@ void camera_reset(
 	const tl::Vec3<float>& position,
 	float field_of_view_in_deg,
 	float near_plane,
-	float far_plane);
+	float far_plane,
+	const tl::Vec3<float> unit_direction,
+	const tl::Vec3<float> unit_up);
 
 const tl::Matrix4x4<float>& get_projection_matrix();
 
@@ -51,8 +53,6 @@ void camera_increment_direction(float delta_z);
 void camera_increment_strafe(float delta_x);
 
 void camera_increment_up(float delta_up);
-
-void camera_set_position(const tl::Vec3<float>& position);
 
 void camera_fill_view_matrix(tl::Matrix4x4<float>& view_matrix);
 

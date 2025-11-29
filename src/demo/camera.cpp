@@ -229,12 +229,14 @@ void camera_reset(
 	const tl::Vec3<float>& position,
 	float field_of_view_in_deg,
 	float near_plane,
-	float far_plane
+	float far_plane,
+	const tl::Vec3<float> unit_direction,
+	const tl::Vec3<float> unit_up
 ) {
 	camera.aspect_ratio = aspect_ratio;
 
-	camera.unit_up = { 0.0f, 1.0f, 0.0f };
-	camera.unit_direction = { 0.0f, 0.0f, 1.0f };
+	camera.unit_direction = unit_direction;
+	camera.unit_up = unit_up;
 
 	camera.position = position;
 
@@ -345,12 +347,6 @@ void camera_increment_up(float delta_up) {
 	);
 	set_view_frustrum();
 }
-
-void camera_set_position(const tl::Vec3<float>& position) {
-	camera.position = position;
-	set_view_frustrum();
-}
-
 
 void camera_fill_view_matrix(tl::Matrix4x4<float>& view_matrix) {
 	tl::Matrix4x4<float> camera_matrix;

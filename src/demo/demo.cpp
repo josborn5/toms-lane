@@ -533,7 +533,9 @@ static void reset_camera_in_world() {
 		position,
 		field_of_view_in_deg,
 		near_plane,
-		far_plane
+		far_plane,
+		tl::Vec3<float> { 0.0, 0.0f, 1.0f },
+		tl::Vec3<float> { 0.0, 1.0f, 0.0f }
 	);
 	Camera camera = camera_get();
 	top_clipping_plane.position = camera.view_frustrum.near_top_left_corner_position;
@@ -732,7 +734,16 @@ static void keep_camera_in_bounds(const Camera& camera) {
 	camera_position.x = Clamp(world.position.x - world.half_size.x, camera_position.x, world.position.x + world.half_size.x);
 	camera_position.y = Clamp(world.position.y - world.half_size.y, camera_position.y, world.position.y + world.half_size.y);
 	camera_position.z = Clamp(world.position.z - world.half_size.z, camera_position.z, world.position.z + world.half_size.z);
-	camera_set_position(camera_position);
+
+	camera_reset(
+		camera.aspect_ratio,
+		camera_position,
+		camera.field_of_view_deg,
+		camera.near_plane,
+		camera.far_plane,
+		camera.unit_direction,
+		camera.unit_up
+	);
 }
 
 static void process_input_for_camera(
@@ -817,7 +828,9 @@ static void process_input_for_camera(
 			camera.position,
 			camera.field_of_view_deg + camera_fov_delta,
 			camera.near_plane,
-			camera.far_plane
+			camera.far_plane,
+			camera.unit_direction,
+			camera.unit_up
 		);
 		return;
 	}
@@ -832,7 +845,27 @@ static void process_input_for_camera(
 			camera.position,
 			camera.field_of_view_deg,
 			camera.near_plane + near_plane_increment,
-			camera.far_plane
+			camera.far_plane,
+			camera.unit_direction,
+			camera.unit_up
+		);
+
+		return;
+	}
+
+	if (input.buttons[tl::KEY_M].isDown) {
+		float far_plane_increment = (input.buttons[tl::KEY_SHIFT].isDown)
+			? -0.1f
+			: 0.1f;
+
+		camera_reset(
+			camera.aspect_ratio,
+			camera.position,
+			camera.field_of_view_deg,
+			camera.near_plane,
+			camera.far_plane + far_plane_increment,
+			camera.unit_direction,
+			camera.unit_up
 		);
 
 		return;
