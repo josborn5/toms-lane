@@ -128,7 +128,7 @@ static void set_view_frustrum() {
 		tl::CrossProduct(camera.unit_up, camera.unit_direction) // argument order is important. right unit is in +ve x-axis direction
 	);
 
-	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
+	float tan_half_fov = tanf(deg_to_rad(0.25f * camera.field_of_view_deg));
 
 	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
 		camera.unit_direction,
