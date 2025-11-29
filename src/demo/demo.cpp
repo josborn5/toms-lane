@@ -361,10 +361,6 @@ static void TransformAndRenderMesh(
 			MultiplyVectorWithMatrix(to_transform.p[1], viewed.p[1], viewMatrix);
 			MultiplyVectorWithMatrix(to_transform.p[2], viewed.p[2], viewMatrix);
 
-
-
-
-
 			projected_triangle_count += 1;
 			Triangle4d projected;
 			// Project each triangle in 3D space onto the 2D space triangle to render
@@ -812,14 +808,14 @@ static void process_input_for_camera(
 	}
 
 	if (input.buttons[tl::KEY_V].isDown) {
-		float new_camera_fov = (input.buttons[tl::KEY_SHIFT].isDown)
-			? camera.field_of_view_deg - 0.25f
-			: camera.field_of_view_deg + 0.25f;
+		float camera_fov_delta = (input.buttons[tl::KEY_SHIFT].isDown)
+			? -0.25f
+			: 0.25f;
 
 		camera_reset(
 			camera.aspect_ratio,
 			camera.position,
-			new_camera_fov,
+			camera.field_of_view_deg + camera_fov_delta,
 			camera.near_plane,
 			camera.far_plane
 		);
@@ -827,12 +823,18 @@ static void process_input_for_camera(
 	}
 
 	if (input.buttons[tl::KEY_N].isDown) {
-		if (input.buttons[tl::KEY_SHIFT].isDown) {
-			camera_set_near_plane(camera.near_plane - 0.1f);
-		}
-		else {
-			camera_set_near_plane(camera.near_plane + 0.1f);
-		}
+		float near_plane_increment = (input.buttons[tl::KEY_SHIFT].isDown)
+			? -0.1f
+			: 0.1f;
+
+		camera_reset(
+			camera.aspect_ratio,
+			camera.position,
+			camera.field_of_view_deg,
+			camera.near_plane + near_plane_increment,
+			camera.far_plane
+		);
+
 		return;
 	}
 

@@ -214,6 +214,16 @@ static void camera_set_fov(Camera& camera, float fov_in_deg) {
 	}
 }
 
+static void camera_set_near_plane(Camera& camera, float near_plane) {
+	camera.near_plane = near_plane;
+	if (camera.near_plane < 0.0f) {
+		camera.near_plane = 0.0f;
+	}
+	else if (camera.far_plane < camera.near_plane) {
+		camera.near_plane = camera.far_plane;
+	}
+}
+
 void camera_reset(
 	float aspect_ratio,
 	const tl::Vec3<float>& position,
@@ -229,8 +239,7 @@ void camera_reset(
 	camera.position = position;
 
 	camera_set_fov(camera, field_of_view_in_deg);
-
-	camera.near_plane = near_plane;
+	camera_set_near_plane(camera, near_plane);
 	camera.far_plane = far_plane;
 
 	set_projection_matrix(camera);
@@ -334,19 +343,6 @@ void camera_increment_up(float delta_up) {
 		camera.position,
 		camera_position_delta
 	);
-	set_view_frustrum();
-}
-
-void camera_set_near_plane(float near_plane) {
-	camera.near_plane = near_plane;
-	if (camera.near_plane < 0.0f) {
-		camera.near_plane = 0.0f;
-	}
-	else if (camera.far_plane < camera.near_plane) {
-		camera.near_plane = camera.far_plane;
-	}
-
-	set_projection_matrix(camera);
 	set_view_frustrum();
 }
 
