@@ -361,6 +361,10 @@ static void TransformAndRenderMesh(
 			MultiplyVectorWithMatrix(to_transform.p[1], viewed.p[1], viewMatrix);
 			MultiplyVectorWithMatrix(to_transform.p[2], viewed.p[2], viewMatrix);
 
+
+
+
+
 			projected_triangle_count += 1;
 			Triangle4d projected;
 			// Project each triangle in 3D space onto the 2D space triangle to render
@@ -377,8 +381,8 @@ static void TransformAndRenderMesh(
 			triToRender.p[2].x *= (float)screen_width;
 			triToRender.p[2].y *= (float)screen_height;
 
-			const float translateX = (float)0.5 * (float)renderBuffer.width;
-			const float translateY = (float)0.5 * (float)renderBuffer.height;
+			const float translateX = (float)0.5 * (float)screen_width;
+			const float translateY = (float)0.5 * (float)screen_height;
 			triToRender.p[0].x += translateX; triToRender.p[0].y += translateY;
 			triToRender.p[1].x += translateX; triToRender.p[1].y += translateY;
 			triToRender.p[2].x += translateX; triToRender.p[2].y += translateY;

@@ -55,29 +55,16 @@ static void rotate_around_unit_vector(
 	);
 }
 
-
-static tl::Matrix4x4<float> MakeProjectionMatrix(
-	float fieldOfVewDeg,
-	float aspectRatio,
-	float nearPlane,
-	float farPlane
-)
-{
-	float inverseTangent = 1.0f / tanf(deg_to_rad(0.5f * fieldOfVewDeg));
-
-	tl::Matrix4x4<float> matrix = { 0 };
-	matrix.m[0][0] = inverseTangent;
-	matrix.m[1][1] = aspectRatio * inverseTangent;
-	matrix.m[2][2] = farPlane / (farPlane - nearPlane);
-	matrix.m[3][2] = (-farPlane * nearPlane) / (farPlane - nearPlane);
-	matrix.m[2][3] = 1.0f;
-	matrix.m[3][3] = 0.0f;
-
-	return matrix;
-}
-
 static void set_projection_matrix(const Camera& camera) {
-	projectionMatrix = MakeProjectionMatrix(camera.field_of_view_deg, camera.aspect_ratio, camera.near_plane, camera.far_plane);
+	float inverseTangent = 1.0f / tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
+
+	projectionMatrix = { 0 };
+	projectionMatrix.m[0][0] = inverseTangent;
+	projectionMatrix.m[1][1] = camera.aspect_ratio * inverseTangent;
+	projectionMatrix.m[2][2] = camera.far_plane / (camera.far_plane - camera.near_plane);
+	projectionMatrix.m[3][2] = (-camera.far_plane * camera.near_plane) / (camera.far_plane - camera.near_plane);
+	projectionMatrix.m[2][3] = 1.0f;
+	projectionMatrix.m[3][3] = 0.0f;
 }
 
 /**
@@ -128,7 +115,7 @@ static void set_view_frustrum() {
 		tl::CrossProduct(camera.unit_up, camera.unit_direction) // argument order is important. right unit is in +ve x-axis direction
 	);
 
-	float tan_half_fov = tanf(deg_to_rad(0.25f * camera.field_of_view_deg));
+	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 
 	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
 		camera.unit_direction,
