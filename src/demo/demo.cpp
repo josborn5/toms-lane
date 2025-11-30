@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <strstream>
 #include <string>
+#include <limits>
 #include <math.h>
 #include "../tl-application.hpp"
 #include "../tl-library.hpp"
@@ -31,7 +32,7 @@ static const unsigned int screen_width = 1280;
 static const unsigned int screen_height = 720;
 static constexpr unsigned int pixel_count = screen_width * screen_height;
 static z_buffer depth_buffer;
-static float depth_array[pixel_count];
+static float depth_array[pixel_count] = { 0 };
 
 static bool wireframe = false;
 static bool is_teapot = true;
@@ -56,6 +57,12 @@ static bool isStarted = false;
 static unsigned int rendered_triangle_count = 0;
 static unsigned int projected_triangle_count = 0;
 static unsigned int viewed_triangle_count = 0;
+
+static void depth_buffer_clear() {
+	for (unsigned int i = 0; i < pixel_count; i += 1) {
+		depth_array[i] = std::numeric_limits<float>::max();
+	}
+}
 
 static float deg_to_rad(float degrees) {
 	constexpr float pi_over_180 = 3.14159f / 180.0f;
@@ -226,6 +233,8 @@ static void TransformAndRenderMesh(
 
 	tl::Matrix4x4<float> viewMatrix;
 	camera_fill_view_matrix(viewMatrix);
+
+	depth_buffer_clear();
 
 	tl::array<Triangle4d> trianglesToDrawArray = tl::array<Triangle4d>(transient);
 
