@@ -26,10 +26,12 @@ struct Triangle4d
 	unsigned int color;
 };
 
-static z_buffer depth_buffer;
 
 static const unsigned int screen_width = 1280;
 static const unsigned int screen_height = 720;
+static constexpr unsigned int pixel_count = screen_width * screen_height;
+static z_buffer depth_buffer;
+static float depth_array[pixel_count];
 
 static bool wireframe = false;
 static bool is_teapot = true;
@@ -697,6 +699,9 @@ static int Initialize(const tl::GameMemory& gameMemory)
 	tl::font_interface_initialize();
 
 	meshArray.initialize(gameMemory.permanent);
+
+	depth_buffer.size = pixel_count;
+	depth_buffer.depths = depth_array;
 
 	reset_mesh_to_teapot();
 
