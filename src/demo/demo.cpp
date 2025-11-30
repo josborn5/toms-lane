@@ -268,19 +268,8 @@ static void TransformAndRenderMesh(
 		far_plane.position = camera.view_frustrum.far_bottom_right_corner_position;
 		far_plane.normal = camera.view_frustrum.far_plane_normal;
 
-		Plane left_plane;
-		left_plane.position = camera.view_frustrum.near_top_left_corner_position;
-		left_plane.normal = camera.view_frustrum.left_plane_normal;
-
-		Plane right_plane;
-		right_plane.position = camera.view_frustrum.far_bottom_right_corner_position;
-		right_plane.normal = camera.view_frustrum.right_plane_normal;
-
-		Plane bottom_plane;
-		bottom_plane.position = camera.view_frustrum.far_bottom_right_corner_position;
-		bottom_plane.normal = camera.view_frustrum.down_plane_normal;
-
-		const int triangle_queue_size = 18; // 3 * 6 sides of view frustrum to clip
+		const int plane_clip_count = 2;
+		constexpr int triangle_queue_size = plane_clip_count * 3; // 3 * 2 sides of view frustrum to clip
 		Triangle4d queue_data[triangle_queue_size];
 		tl::MemorySpace queue_data_space;
 		queue_data_space.content = queue_data;
@@ -290,7 +279,7 @@ static void TransformAndRenderMesh(
 
 		Triangle4d clipped[2];
 		int new_triangles = 1;
-		for (int plane_index = 0; plane_index < 6; plane_index += 1)
+		for (int plane_index = 0; plane_index < plane_clip_count; plane_index += 1)
 		{
 			int triangles_to_add = 0;
 			while (new_triangles > 0)
@@ -313,26 +302,6 @@ static void TransformAndRenderMesh(
 					case 1:
 					{
 						triangles_to_add = ClipTriangleAgainstPlane(far_plane, to_clip, clipped[0], clipped[1]);
-						break;
-					}
-					case 2:
-					{
-						triangles_to_add = ClipTriangleAgainstPlane(top_clipping_plane, to_clip, clipped[0], clipped[1]);
-						break;
-					}
-					case 3:
-					{
-						triangles_to_add = ClipTriangleAgainstPlane(left_plane, to_clip, clipped[0], clipped[1]);
-						break;
-					}
-					case 4:
-					{
-						triangles_to_add = ClipTriangleAgainstPlane(right_plane, to_clip, clipped[0], clipped[1]);
-						break;
-					}
-					case 5:
-					{
-						triangles_to_add = ClipTriangleAgainstPlane(bottom_plane, to_clip, clipped[0], clipped[1]);
 						break;
 					}
 				}

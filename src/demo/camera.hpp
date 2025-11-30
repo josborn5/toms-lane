@@ -30,7 +30,6 @@ struct Camera
 	view_frustrum view_frustrum = {0};
 };
 
-
 void camera_reset(
 	float aspect_ratio,
 	const tl::Vec3<float>& position,
