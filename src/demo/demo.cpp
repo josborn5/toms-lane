@@ -26,8 +26,10 @@ struct Triangle4d
 	unsigned int color;
 };
 
-const unsigned int screen_width = 1280;
-const unsigned int screen_height = 720;
+static z_buffer depth_buffer;
+
+static const unsigned int screen_width = 1280;
+static const unsigned int screen_height = 720;
 
 static bool wireframe = false;
 static bool is_teapot = true;
@@ -279,6 +281,11 @@ static void TransformAndRenderMesh(
 
 		Triangle4d clipped[2];
 		int new_triangles = 1;
+
+		// TODO: take a rect that fills the rendered screen at the near plane z-position
+		// reverse calculate the projection then view transformation of that rect so it
+		// is in world space. then use that as a clipping surface for top/bottom/left/right
+
 		for (int plane_index = 0; plane_index < plane_clip_count; plane_index += 1)
 		{
 			int triangles_to_add = 0;
@@ -433,11 +440,10 @@ static void TransformAndRenderMesh(
 				DrawTriangleInPixels(renderBuffer, 0xFFFFFF, p0Int, p1Int, p2Int);
 
 			} else {
-				tl::Vec3<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
-				tl::Vec3<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
-				tl::Vec3<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
-
-				FillTriangleInPixels(renderBuffer, draw.color, p0Int, p1Int, p2Int);
+				tl::Vec3<float> p0 = { draw.p[0].x, draw.p[0].y, draw.p[0].z };
+				tl::Vec3<float> p1 = { draw.p[1].x, draw.p[1].y, draw.p[1].z };
+				tl::Vec3<float> p2 = { draw.p[2].x, draw.p[2].y, draw.p[2].z };
+				triangle_fill(renderBuffer, depth_buffer, draw.color, p0, p1, p2);
 			}
 		}
 	}

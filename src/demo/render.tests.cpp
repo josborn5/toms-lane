@@ -6,6 +6,8 @@
 const uint32_t EMPTY = 0x000000;
 const uint32_t FILLED = 0xFFFFFF;
 
+static z_buffer depth_buffer;
+
 void ClearPixelAndDepthArray(uint32_t* pixelArray, int arrayLength)
 {
 	for (int i = 0; i < arrayLength; i += 1)
@@ -41,7 +43,11 @@ void Run4x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2
 	renderBuffer.width = 4;					// Size the buffer to 16 pixels. pixelArray is 18 pixels so the test can tell if the function ever oversteps the bounds of tl::RenderBuffer.
 	renderBuffer.pixels = &pixelArray[1];	// Use the second element in pixelArray so we can tell if the zero-th element ever gets accessed.
 
-	FillTriangleInPixels(renderBuffer, FILLED, p0, p1, p2);
+	triangle_fill(renderBuffer, depth_buffer, FILLED,
+		{ (float)p0.x, (float)p0.y, (float)p0.z },
+		{ (float)p1.x, (float)p1.y, (float)p1.z },
+		{ (float)p2.x, (float)p2.y, (float)p2.z }
+	);
 
 	assert(pixelArray[0] == EMPTY);	// Should NEVER get written to
 
@@ -81,7 +87,11 @@ void Run6x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2
 	renderBuffer.width = 6;					// Size the buffer to 16 pixels. pixelArray is 25 pixels so the test can tell if the function ever oversteps the bounds of tl::RenderBuffer.
 	renderBuffer.pixels = &pixelArray[1];	// Use the second element in pixelArray so we can tell if the zero-th element ever gets accessed.
 
-	FillTriangleInPixels(renderBuffer, FILLED, p0, p1, p2);
+	triangle_fill(renderBuffer, depth_buffer, FILLED,
+		{ (float)p0.x, (float)p0.y, (float)p0.z },
+		{ (float)p1.x, (float)p1.y, (float)p1.z },
+		{ (float)p2.x, (float)p2.y, (float)p2.z }
+	);
 
 	assert(pixelArray[0] == EMPTY);	// Should NEVER get written to
 
@@ -309,7 +319,7 @@ int main()
 		EMPTY,	FILLED,	FILLED,	EMPTY,	EMPTY,	EMPTY,
 		EMPTY,	EMPTY,	FILLED,	EMPTY,	EMPTY,	EMPTY
 	};
-	Run6x4FillTriangleTest(tl::Vec3<int>{ 0, 0, 0 }, tl::Vec3<int>{ 3, 0, 0 }, tl::Vec3<int>{ 2, 3, 0 }, eft1);
+	Run6x4FillTriangleTest({ 0, 0, 0 }, { 3, 0, 0 }, { 2, 3, 0 }, eft1);
 
 	/**
 	 * NEW FLAT TOP TRIANGLE TEST - NARROW TALL 2
