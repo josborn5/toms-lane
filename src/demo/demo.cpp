@@ -709,7 +709,8 @@ static int Initialize(const tl::GameMemory& gameMemory)
 
 	meshArray.initialize(gameMemory.permanent);
 
-	depth_buffer.size = pixel_count;
+	depth_buffer.width = screen_width;
+	depth_buffer.height = screen_height;
 	depth_buffer.depths = depth_array;
 
 	reset_mesh_to_teapot();

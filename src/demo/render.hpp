@@ -9,7 +9,8 @@ void DrawTriangleInPixels(
 );
 
 struct z_buffer {
-	unsigned int size = 0;
+	unsigned int width = 0;
+	unsigned int height = 0;
 	float* depths;
 };
 
