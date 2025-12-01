@@ -174,8 +174,14 @@ void FillFlatTopTriangle(
  *	 /      \	  +ve y (if +ve y is up, this is actually a flat top triangle)
  *	p1------p2
  */
-void FillFlatBottomTriangle(const tl::RenderBuffer& renderBuffer, uint32_t color, const tl::Vec3<int>& p0, const tl::Vec3<int>& p1, const tl::Vec3<int>& p2)
-{
+static void FillFlatBottomTriangle(
+	const tl::RenderBuffer& renderBuffer,
+	z_buffer& depth_buffer,
+	uint32_t color,
+	const tl::Vec3<int>& p0,
+	const tl::Vec3<int>& p1,
+	const tl::Vec3<int>& p2
+) {
 	// LINE 0-->1
 	bool p1IsLeftOfP0 = (p1.x < p0.x);
 	int xDiff0 = (p1IsLeftOfP0) ? p0.x - p1.x : p1.x - p0.x;
@@ -232,8 +238,7 @@ void FillFlatBottomTriangle(const tl::RenderBuffer& renderBuffer, uint32_t color
 		}
 
 		// draw scanline to fill in triangle between x0 & x1
-		z_buffer temp;
-		DrawHorizontalLineInPixels(renderBuffer, temp, color, x0, x1, y, 0, 0);
+		DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, x0, x1, y, 0, 0);
 
 		// line p0 --> p1: decide to increment x0 or not for current y
 		if (isLongDimension0X)
@@ -275,8 +280,7 @@ void FillFlatBottomTriangle(const tl::RenderBuffer& renderBuffer, uint32_t color
 	}
 
 	// draw final scanline to fill in triangle between x0 & x1
-	z_buffer temp;
-	DrawHorizontalLineInPixels(renderBuffer, temp, color, p1.x, p2.x, p1.y, 0, 0);
+	DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, p1.x, p2.x, p1.y, 0, 0);
 }
 
 void triangle_fill(
@@ -341,7 +345,7 @@ void triangle_fill(
 			tl::swap(pp1, pp2);
 			tl::swap(pp1_f, pp2_f);
 		}
-		FillFlatBottomTriangle(render_buffer, color, *pp0, *pp1, *pp2);
+		FillFlatBottomTriangle(render_buffer, depth_buffer, color, *pp0, *pp1, *pp2);
 	}
 	else // general triangle
 	{
