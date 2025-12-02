@@ -178,14 +178,14 @@ static void FillFlatBottomTriangle(
 	const tl::RenderBuffer& renderBuffer,
 	z_buffer& depth_buffer,
 	uint32_t color,
-	const tl::Vec3<int>& p0,
-	const tl::Vec3<int>& p1,
-	const tl::Vec3<int>& p2
+	const tl::Vec3<float>& p0,
+	const tl::Vec3<float>& p1,
+	const tl::Vec3<float>& p2
 ) {
 	// LINE 0-->1
 	bool p1IsLeftOfP0 = (p1.x < p0.x);
-	int xDiff0 = (p1IsLeftOfP0) ? p0.x - p1.x : p1.x - p0.x;
-	int yDiff0 = p1.y - p0.y;
+	int xDiff0 = (p1IsLeftOfP0) ? (int)p0.x - (int)p1.x : (int)p1.x - (int)p0.x;
+	int yDiff0 = (int)p1.y - (int)p0.y;
 
 	bool isLongDimension0X = (yDiff0 < xDiff0);
 	int longDelta0 = (isLongDimension0X) ? xDiff0 : yDiff0;
@@ -199,7 +199,7 @@ static void FillFlatBottomTriangle(
 	// LINE 0-->2
 	// Vertical distance for 1-->2 is the same as 0-->2, so no need for a separate yDiff1 variable. Can reuse yDiff0.
 	bool p2IsRightOfP0 = (p0.x < p2.x);
-	int xDiff1 = (p2IsRightOfP0) ? p2.x - p0.x : p0.x - p2.x;
+	int xDiff1 = (p2IsRightOfP0) ? (int)p2.x - (int)p0.x : (int)p0.x - (int)p2.x;
 
 	bool isLongDimension1X = (yDiff0 < xDiff1);
 	int longDelta1 = (isLongDimension1X) ? xDiff1 : yDiff0;
@@ -212,10 +212,10 @@ static void FillFlatBottomTriangle(
 
 	// Copy the x & y values for p0 & p1 so we can modify them safely inside this function
 	// Note that p0.y == p1.y so we only need one variable for the y position
-	int x0 = p0.x;
-	int x1 = p0.x;
+	int x0 = (int)p0.x;
+	int x1 = (int)p0.x;
 
-	for (int y = p0.y; y <= p1.y - 1; y += 1)
+	for (int y = (int)p0.y; y <= (int)p1.y - 1; y += 1)
 	{
 		// Loop through the x0 / acc0 evaluation until acc0 is +ve.
 		// acc0 turning +ve is the indication we should plot.
@@ -238,7 +238,7 @@ static void FillFlatBottomTriangle(
 		}
 
 		// draw scanline to fill in triangle between x0 & x1
-		DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, x0, x1, y, 0, 0);
+		DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, x0, x1, y, p0.z, p1.z);
 
 		// line p0 --> p1: decide to increment x0 or not for current y
 		if (isLongDimension0X)
@@ -280,7 +280,7 @@ static void FillFlatBottomTriangle(
 	}
 
 	// draw final scanline to fill in triangle between x0 & x1
-	DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, p1.x, p2.x, p1.y, 0, 0);
+	DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, p1.x, p2.x, p1.y, p1.z, p2.z);
 }
 
 void triangle_fill(
@@ -291,17 +291,9 @@ void triangle_fill(
 	const tl::Vec3<float>& p1,
 	const tl::Vec3<float>& p2
 ) {
-	tl::Vec3<int> p0_int = { (int)p0.x, (int)p0.y, (int)p0.z };
-	tl::Vec3<int> p1_int = { (int)p1.x, (int)p1.y, (int)p1.z };
-	tl::Vec3<int> p2_int = { (int)p2.x, (int)p2.y, (int)p2.z };
-
-	const tl::Vec3<int>* pp0 = &p0_int;
-	const tl::Vec3<int>* pp1 = &p1_int;
-	const tl::Vec3<int>* pp2 = &p2_int;
-
-	const tl::Vec3<float>* pp0_f = &p0;
-	const tl::Vec3<float>* pp1_f = &p1;
-	const tl::Vec3<float>* pp2_f = &p2;
+	const tl::Vec3<float>* pp0 = &p0;
+	const tl::Vec3<float>* pp1 = &p1;
+	const tl::Vec3<float>* pp2 = &p2;
 
 	/* Sort the three points of the triangle by their y co-ordinate
 	 *
@@ -313,17 +305,14 @@ void triangle_fill(
 	if (pp1->y < pp0->y)
 	{
 		tl::swap(pp0, pp1);
-		tl::swap(pp0_f, pp1_f);
 	}
 	if (pp2->y < pp1->y)
 	{
 		tl::swap(pp1, pp2);
-		tl::swap(pp1_f, pp2_f);
 	}
 	if (pp1->y < pp0->y)
 	{
 		tl::swap(pp0, pp1);
-		tl::swap(pp0_f, pp1_f);
 	}
 
 	// Check for natural flat top
@@ -333,9 +322,8 @@ void triangle_fill(
 		if (pp1->x < pp0->x)
 		{
 			tl::swap(pp0, pp1);
-			tl::swap(pp0_f, pp1_f);
 		}
-		FillFlatTopTriangle(render_buffer, depth_buffer, color, *pp0_f, *pp1_f, *pp2_f);
+		FillFlatTopTriangle(render_buffer, depth_buffer, color, *pp0, *pp1, *pp2);
 	}
 	else if (pp1->y == pp2->y) // natural flat bottom
 	{
@@ -343,7 +331,6 @@ void triangle_fill(
 		if (pp2->x < pp1->x)
 		{
 			tl::swap(pp1, pp2);
-			tl::swap(pp1_f, pp2_f);
 		}
 		FillFlatBottomTriangle(render_buffer, depth_buffer, color, *pp0, *pp1, *pp2);
 	}
@@ -355,13 +342,13 @@ void triangle_fill(
 
 		// At this point we know that p0 has lowest y value. But we need to work out if p1 is left or right of p2 in order to start scanning.
 		bool pp1xIsLessThanPp2X = (pp1->x < pp2->x);
-		const tl::Vec3<int>* leftPoint = (pp1xIsLessThanPp2X) ? pp1 : pp2;
-		const tl::Vec3<int>* rightPoint = (pp1xIsLessThanPp2X) ? pp2 : pp1;
+		const tl::Vec3<float>* leftPoint = (pp1xIsLessThanPp2X) ? pp1 : pp2;
+		const tl::Vec3<float>* rightPoint = (pp1xIsLessThanPp2X) ? pp2 : pp1;
 
 		// LEFT LINE
 		bool leftPointIsLeftOfP0 = (leftPoint->x < pp0->x);
-		int xDiff0 = (leftPointIsLeftOfP0) ? pp0->x - leftPoint->x : leftPoint->x - pp0->x;
-		int yDiff0 = leftPoint->y - pp0->y;
+		int xDiff0 = (leftPointIsLeftOfP0) ? int(pp0->x - leftPoint->x) : int(leftPoint->x - pp0->x);
+		int yDiff0 = (int)(leftPoint->y - pp0->y);
 
 		bool isLongDimension0X = (yDiff0 < xDiff0);
 		int longDelta0 = (isLongDimension0X) ? xDiff0 : yDiff0;
@@ -374,8 +361,8 @@ void triangle_fill(
 
 		// RIGHT LINE
 		bool rightPointIsRightOfP0 = (pp0->x < rightPoint->x);
-		int xDiff1 = (rightPointIsRightOfP0) ? rightPoint->x - pp0->x : pp0->x - rightPoint->x;
-		int yDiff1 = rightPoint->y - pp0->y;
+		int xDiff1 = (rightPointIsRightOfP0) ? int(rightPoint->x - pp0->x) : int(pp0->x - rightPoint->x);
+		int yDiff1 = int(rightPoint->y - pp0->y);
 
 		bool isLongDimension1X = (yDiff1 < xDiff1);
 		int longDelta1 = (isLongDimension1X) ? xDiff1 : yDiff1;
@@ -387,10 +374,10 @@ void triangle_fill(
 		int x1Increment = (rightPointIsRightOfP0) ? 1 : -1;
 
 		// Copy the x & y values for leftPoint & rightPoint so we can modify them safely inside this function
-		int x0 = pp0->x;
-		int x1 = pp0->x;
+		int x0 = (int)pp0->x;
+		int x1 = (int)pp0->x;
 
-		for (int y = pp0->y; y <= pp1->y - 1; y += 1)	// Note that p1.y has already been sorte to be the vertical mid point of the triangle
+		for (int y = (int)pp0->y; y <= (int)pp1->y - 1; y += 1)	// Note that p1.y has already been sorte to be the vertical mid point of the triangle
 		{
 			// Loop through the x0 / acc0 evaluation until acc0 is +ve.
 			// acc0 turning +ve is the indication we should plot.
@@ -416,8 +403,8 @@ void triangle_fill(
 			DrawHorizontalLineInPixels(render_buffer,
 				depth_buffer,
 				color, x0, x1, y,
-				pp0_f->z,
-				pp1_f->z
+				pp0->z,
+				pp1->z
 			);
 
 			// line p0 --> p1: decide to increment x0 or not for current y
@@ -462,13 +449,13 @@ void triangle_fill(
 		// Now y is at pp1->y, so draw the scanline. Need to work out if pp1->y is left or right.
 		if (pp1xIsLessThanPp2X) // pp1->y is the leftPoint. i.e. Right major triangle
 		{
-			tl::Vec3<float> intermediatePoint = { (float)x1, pp1_f->y, 0 };
-			FillFlatTopTriangle(render_buffer, depth_buffer, color, *pp1_f, intermediatePoint, *pp2_f);
+			tl::Vec3<float> intermediatePoint = { (float)x1, pp1->y, 0 };
+			FillFlatTopTriangle(render_buffer, depth_buffer, color, *pp1, intermediatePoint, *pp2);
 		}
 		else	// pp1->y is the rightPoint. i.e. Left major triangle
 		{
-			tl::Vec3<float> intermediatePoint = { (float)x0, pp1_f->y, 0 };
-			FillFlatTopTriangle(render_buffer, depth_buffer, color, intermediatePoint, *pp1_f, *pp2_f);
+			tl::Vec3<float> intermediatePoint = { (float)x0, pp1->y, 0 };
+			FillFlatTopTriangle(render_buffer, depth_buffer, color, intermediatePoint, *pp1, *pp2);
 		}
 	}
 }
