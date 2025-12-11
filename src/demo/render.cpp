@@ -12,7 +12,13 @@ void DrawTriangleInPixels(const tl::RenderBuffer& renderBuffer, uint32_t color, 
 	tl::DrawLineInPixels(renderBuffer, color, p2, p0);
 }
 
-static unsigned int z_buffer_get_index(const z_buffer& buffer, unsigned int x, unsigned int y) {
+static unsigned int z_buffer_get_index(
+	const z_buffer& buffer,
+	float plane_x_coef,
+	float plane_y_coef,
+	float place_z_coef,
+	float x, float y
+) {
 	return (y * buffer.width) + x;
 }
 
@@ -183,6 +189,8 @@ static void FillFlatBottomTriangle(
 	const tl::Vec3<float>& p2
 ) {
 	// LINE 0-->1
+	float delta_z_0_1 = p1.z - p0.z;
+
 	bool p1IsLeftOfP0 = (p1.x < p0.x);
 	int xDiff0 = (p1IsLeftOfP0) ? (int)p0.x - (int)p1.x : (int)p1.x - (int)p0.x;
 	int yDiff0 = (int)p1.y - (int)p0.y;
@@ -198,6 +206,8 @@ static void FillFlatBottomTriangle(
 
 	// LINE 0-->2
 	// Vertical distance for 1-->2 is the same as 0-->2, so no need for a separate yDiff1 variable. Can reuse yDiff0.
+	float delta_z_0_2 = p2.z - p0.z;
+
 	bool p2IsRightOfP0 = (p0.x < p2.x);
 	int xDiff1 = (p2IsRightOfP0) ? (int)p2.x - (int)p0.x : (int)p0.x - (int)p2.x;
 
@@ -283,6 +293,21 @@ static void FillFlatBottomTriangle(
 	DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, p1.x, p2.x, p1.y, p1.z, p2.z);
 }
 
+struct plane_coeff
+{
+	float a = 0.0f;
+	float b = 0.0f;
+	float c = 0.0f;
+	float d = 0.0f;
+};
+
+static void fill_triangle_plane_coeff(
+	const tl::Vec3<float>& p0,
+	const tl::Vec3<float>& p1,
+	const tl::Vec3<float>& p2,
+	plane_coeff& coefficients
+) {};
+
 void triangle_fill(
 	const tl::RenderBuffer& render_buffer,
 	z_buffer& depth_buffer,
@@ -294,6 +319,12 @@ void triangle_fill(
 	const tl::Vec3<float>* pp0 = &p0;
 	const tl::Vec3<float>* pp1 = &p1;
 	const tl::Vec3<float>* pp2 = &p2;
+
+	plane_coeff coefficients;
+	fill_triangle_plane_coeff(
+		p0, p1, p2,
+		coefficients
+	);
 
 	/* Sort the three points of the triangle by their y co-ordinate
 	 *
