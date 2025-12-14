@@ -93,8 +93,17 @@ void FillFlatTopTriangle(
 	uint32_t color,
 	const tl::Vec3<float>& p0,
 	const tl::Vec3<float>& p1,
-	const tl::Vec3<float>& p2
+	const tl::Vec3<float>& p2,
+	plane_coeff& coefficients
 ) {
+	// a.x + b.y + c.z + d = 0
+	// z = (-d - b.y - a.x) / c
+	// dz/dx = -a / c
+	float z_delta_per_x = -coefficients.a / coefficients.c;
+
+	// LINE 0-->1
+	float delta_z_0_1 = p1.z - p0.z;
+
 	// LINE 0-->2
 	bool p2IsRightOfP0 = (p0.x < p2.x);
 	int xDiff0 = (p2IsRightOfP0) ? (int)p2.x - (int)p0.x : (int)p0.x - (int)p2.x;
@@ -129,12 +138,16 @@ void FillFlatTopTriangle(
 	int x1 = (int)p1.x;
 	for (int y = (int)p0.y; y <= (int)p2.y; y += 1)
 	{
+		// a.x + b.y + c.z + d = 0
+		// z = (-d - b.y - a.x) / c
+		float z0 = (-coefficients.d - (coefficients.b * (float)y) - (coefficients.a * (float)x0)) / coefficients.c;
+
 		// draw scanline to fill in triangle between x0 & x1
 		DrawHorizontalLineInPixels(renderBuffer,
 			depth_buffer,
 			color, x0, x1, y,
-			p0.z,
-			p1.z);
+			z0,
+			z_delta_per_x);
 
 		// Loop through the x0 / acc0 evaluation until acc0 is +ve.
 		// acc0 turning +ve is the indication we should plot.
@@ -392,7 +405,7 @@ void triangle_fill(
 		{
 			tl::swap(pp0, pp1);
 		}
-		FillFlatTopTriangle(render_buffer, depth_buffer, color, *pp0, *pp1, *pp2);
+		FillFlatTopTriangle(render_buffer, depth_buffer, color, *pp0, *pp1, *pp2, coefficients);
 	}
 	else if (pp1->y == pp2->y) // natural flat bottom
 	{
@@ -519,12 +532,12 @@ void triangle_fill(
 		if (pp1xIsLessThanPp2X) // pp1->y is the leftPoint. i.e. Right major triangle
 		{
 			tl::Vec3<float> intermediatePoint = { (float)x1, pp1->y, 0 };
-			FillFlatTopTriangle(render_buffer, depth_buffer, color, *pp1, intermediatePoint, *pp2);
+			FillFlatTopTriangle(render_buffer, depth_buffer, color, *pp1, intermediatePoint, *pp2, coefficients);
 		}
 		else	// pp1->y is the rightPoint. i.e. Left major triangle
 		{
 			tl::Vec3<float> intermediatePoint = { (float)x0, pp1->y, 0 };
-			FillFlatTopTriangle(render_buffer, depth_buffer, color, intermediatePoint, *pp1, *pp2);
+			FillFlatTopTriangle(render_buffer, depth_buffer, color, intermediatePoint, *pp1, *pp2, coefficients);
 		}
 	}
 }
