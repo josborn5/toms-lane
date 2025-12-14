@@ -2,17 +2,17 @@
 #include "./math.tests.hpp"
 #include <assert.h>
 #include <iostream>
+#include <limits>
 
 const uint32_t EMPTY = 0x000000;
 const uint32_t FILLED = 0xFFFFFF;
 
-static z_buffer depth_buffer;
-
-void ClearPixelAndDepthArray(uint32_t* pixelArray, int arrayLength)
+void ClearPixelAndDepthArray(uint32_t* pixelArray, float* depth_array, int arrayLength)
 {
 	for (int i = 0; i < arrayLength; i += 1)
 	{
 		pixelArray[i] = EMPTY;
+		depth_array[i] = std::numeric_limits<float>::max();
 	}
 }
 
@@ -21,7 +21,13 @@ void Run4x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2
 	uint32_t pixelArray[18] = { EMPTY };	// define pixels as an an array of 16 uint32_t values
 											// NB this array lives on the stack in the scope of the RunSoftwareRenderingTests function only.
 											// The array is sized greater than the tl::RenderBuffer pixel array so it can pick up illegal memory writes to the pixel array
-	ClearPixelAndDepthArray(pixelArray, 18);
+
+	float depthArray[10] = { 0 };
+	ClearPixelAndDepthArray(pixelArray, depthArray, 18);
+	z_buffer depth_buffer;
+	depth_buffer.width = 4;
+	depth_buffer.height = 4;
+	depth_buffer.depths = depthArray;
 
 	/**
 	 * Set the tl::RenderBuffer to be a 4x4 grid of pixels (pixel ordinals 0 - 3)
@@ -65,7 +71,11 @@ void Run6x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2
 											// NB this array lives on the stack in the scope of the RunSoftwareRenderingTests function only.
 											// The array is sized greater than the tl::RenderBuffer pixel array so it can pick up illegal memory writes to the pixel array
 	float depthArray[26] = { 0.0f };
-	ClearPixelAndDepthArray(pixelArray, 26);
+	z_buffer depth_buffer;
+	depth_buffer.width = 6;
+	depth_buffer.height = 4;
+	depth_buffer.depths = depthArray;
+	ClearPixelAndDepthArray(pixelArray, depthArray, 26);
 
 	/**
 	 * Set the tl::RenderBuffer to be a 5x5 grid of pixels (pixel ordinals 0 - 4)
