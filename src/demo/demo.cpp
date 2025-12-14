@@ -60,6 +60,7 @@ static unsigned int viewed_triangle_count = 0;
 
 static void depth_buffer_clear() {
 	for (unsigned int i = 0; i < pixel_count; i += 1) {
+		// smaller z is closer
 		depth_array[i] = std::numeric_limits<float>::max();
 	}
 }
@@ -677,7 +678,7 @@ static void reset_mesh_to_cube() {
 	// Using a clockwise winding convention
 	// -ve z face
 	meshArray.append({ 0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f });
-//	meshArray.append({ 0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f });
+	meshArray.append({ 0.0f, 0.0f, 2.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 2.0f, 1.0f });
 
 	// +ve x face
 //		meshArray.append({ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f });

@@ -1,6 +1,14 @@
 #include "../tl-library.hpp"
 #include "./render.hpp"
 
+struct plane_coeff
+{
+	float a = 0.0f;
+	float b = 0.0f;
+	float c = 0.0f;
+	float d = 0.0f;
+};
+
 void DrawTriangleInPixels(const tl::RenderBuffer& renderBuffer, uint32_t color, const tl::Vec2<int>& p0, const tl::Vec2<int>& p1, const tl::Vec2<int>& p2)
 {
 	if (p0.y < 0 || p0.y > renderBuffer.height - 1) return;
@@ -38,7 +46,7 @@ static void DrawHorizontalLineInPixels(
 	int x1,
 	int y,
 	float z0,
-	float z1
+	float dz_dx
 ) {
 	int start_x = x0;
 	int end_x = x1;
@@ -49,10 +57,25 @@ static void DrawHorizontalLineInPixels(
 	int start_row_position = renderBuffer.width * y;
 	int start_position = start_row_position + start_x;
 	uint32_t* pixel = renderBuffer.pixels + start_position;
+	float* pixel_depth = depth_buffer.depths + start_position;
+
+	float running_depth = z0;
+
 	for (int i = start_x; i <= end_x; i += 1)
 	{
+		float existing_depth = *pixel_depth;
+
+		// small z is closer
+		if (running_depth > existing_depth) {
+			continue;
+		}
+
 		*pixel = color;
 		pixel++;
+
+		*pixel_depth = running_depth;
+		pixel_depth++;
+		running_depth += dz_dx;
 	}
 }
 
@@ -186,8 +209,14 @@ static void FillFlatBottomTriangle(
 	uint32_t color,
 	const tl::Vec3<float>& p0,
 	const tl::Vec3<float>& p1,
-	const tl::Vec3<float>& p2
+	const tl::Vec3<float>& p2,
+	const plane_coeff& coefficients
 ) {
+	// a.x + b.y + c.z + d = 0
+	// z = (-d - b.y - a.x) / c
+	// dz/dx = -a / c
+	float z_delta_per_x = -coefficients.a / coefficients.c;
+
 	// LINE 0-->1
 	float delta_z_0_1 = p1.z - p0.z;
 
@@ -199,9 +228,9 @@ static void FillFlatBottomTriangle(
 	int longDelta0 = (isLongDimension0X) ? xDiff0 : yDiff0;
 	int shortDelta0 = (isLongDimension0X) ? yDiff0 : xDiff0;
 
-	int negIncrement0 = 2 * shortDelta0;
+	int negIncrement0 = shortDelta0 + shortDelta0;
 	int acc0 = negIncrement0 - longDelta0;
-	int posIncrement0 = negIncrement0 - (2 * longDelta0);
+	int posIncrement0 = negIncrement0 - (longDelta0 + longDelta0);
 	int x0Increment = (p1IsLeftOfP0) ? -1 : 1;
 
 	// LINE 0-->2
@@ -215,9 +244,9 @@ static void FillFlatBottomTriangle(
 	int longDelta1 = (isLongDimension1X) ? xDiff1 : yDiff0;
 	int shortDelta1 = (isLongDimension1X) ? yDiff0 : xDiff1;
 
-	int negIncrement1 = 2 * shortDelta1;
+	int negIncrement1 = shortDelta1 + shortDelta1;
 	int acc1 = negIncrement1 - longDelta1;
-	int posIncrement1 = negIncrement1 - (2 * longDelta1);
+	int posIncrement1 = negIncrement1 - (longDelta1 + longDelta1);
 	int x1Increment = (p2IsRightOfP0) ? 1 : -1;
 
 	// Copy the x & y values for p0 & p1 so we can modify them safely inside this function
@@ -247,8 +276,12 @@ static void FillFlatBottomTriangle(
 			}
 		}
 
+		// a.x + b.y + c.z + d = 0
+		// z = (-d - b.y - a.x) / c
+		float z0 = (-coefficients.d - (coefficients.b * (float)y) - (coefficients.a * (float)x0)) / coefficients.c;
+
 		// draw scanline to fill in triangle between x0 & x1
-		DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, x0, x1, y, p0.z, p1.z);
+		DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, x0, x1, y, z0, z_delta_per_x);
 
 		// line p0 --> p1: decide to increment x0 or not for current y
 		if (isLongDimension0X)
@@ -293,20 +326,25 @@ static void FillFlatBottomTriangle(
 	DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, p1.x, p2.x, p1.y, p1.z, p2.z);
 }
 
-struct plane_coeff
-{
-	float a = 0.0f;
-	float b = 0.0f;
-	float c = 0.0f;
-	float d = 0.0f;
-};
-
 static void fill_triangle_plane_coeff(
 	const tl::Vec3<float>& p0,
 	const tl::Vec3<float>& p1,
 	const tl::Vec3<float>& p2,
 	plane_coeff& coefficients
-) {};
+) {
+	float a1 = p1.x - p0.x;
+	float b1 = p1.y - p0.y;
+	float c1 = p1.z - p0.z;
+
+	float a2 = p2.x - p0.x;
+	float b2 = p2.y - p0.y;
+	float c2 = p2.z - p0.z;
+
+	coefficients.a = (b1 * c2) - (b2 * c1);
+	coefficients.b = (a2 * c1) - (a1 * c2);
+	coefficients.c = (a1 * b2) - (b1 * a2);
+	coefficients.d = ((- coefficients.a * p0.x) - coefficients.b * (p0.y - coefficients.c * p0.z));
+};
 
 void triangle_fill(
 	const tl::RenderBuffer& render_buffer,
@@ -363,7 +401,7 @@ void triangle_fill(
 		{
 			tl::swap(pp1, pp2);
 		}
-		FillFlatBottomTriangle(render_buffer, depth_buffer, color, *pp0, *pp1, *pp2);
+		FillFlatBottomTriangle(render_buffer, depth_buffer, color, *pp0, *pp1, *pp2, coefficients);
 	}
 	else // general triangle
 	{
