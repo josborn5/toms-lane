@@ -223,6 +223,7 @@ add_executable(
 	demo-tests
 	src/demo/render.tests.cpp
 	src/demo/math.tests.cpp
+	src/demo/camera.tests.cpp
 )
 add_executable(
 	demo-win32 WIN32

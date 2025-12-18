@@ -1,8 +1,9 @@
-#include "./render.hpp"
-#include "./math.tests.hpp"
 #include <assert.h>
 #include <iostream>
 #include <limits>
+#include "./render.hpp"
+#include "./math.tests.hpp"
+#include "./camera.tests.hpp"
 
 const uint32_t EMPTY = 0x000000;
 const uint32_t FILLED = 0xFFFFFF;
@@ -757,7 +758,16 @@ int main()
 
 	run_math_tests();
 
-	std::cout << "Math tests complete!!!" << std::endl;
+	std::cout << "math tests complete!!!" << std::endl;
+
+	std::cout << "Running camera tests" << std::endl;
+
+	run_camera_tests();
+
+	std::cout << "camera tests complete!!!" << std::endl;
+
+
+	std::cout << "!!! ALL tests complete!!!" << std::endl;
 
 	return 0;
 }
