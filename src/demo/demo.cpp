@@ -357,9 +357,6 @@ static void TransformAndRenderMesh(
 
 	tl::MemorySpace remainingTransient = trianglesToDrawArray.sizeToCurrentLength();
 
-	// sort the triangles back to front
-	qsort(trianglesToDrawArray.head_pointer(), trianglesToDrawArray.length(), sizeof(Triangle4d), compare_triangle_depth);
-
 	Plane bottomOfScreen = { 0.0f, 0.0f, 0.0f,                             0.0f,  1.0f, 0.0f };
 	Plane topOfScreen = { 0.0f, (float)(renderBuffer.height - 1), 0.0f, 0.0f, -1.0f, 0.0f };
 	Plane leftOfScreen = { 0.0f, 0.0f, 0.0f,                             1.0f,  0.0f, 0.0f };
