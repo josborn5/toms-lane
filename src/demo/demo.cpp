@@ -219,7 +219,6 @@ static void TransformAndRenderMesh(
 	const tl::RenderBuffer& renderBuffer,
 	const tl::array<Triangle4d>& mesh,
 	const Camera& camera,
-	const tl::Matrix4x4<float>& projectionMatrix,
 	const tl::MemorySpace& transient
 ) {
 	const int RED = 0xFF;
@@ -229,9 +228,6 @@ static void TransformAndRenderMesh(
 	rendered_triangle_count = 0;
 	projected_triangle_count = 0;
 	viewed_triangle_count = 0;
-
-	tl::Matrix4x4<float> viewMatrix;
-	camera_fill_view_matrix(viewMatrix);
 
 	depth_buffer_clear();
 
@@ -909,7 +905,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	tl::MemorySpace transientMemory = gameMemory.transient;
 
-	TransformAndRenderMesh(renderBuffer, meshArray, camera, get_projection_matrix(), transientMemory);
+	TransformAndRenderMesh(renderBuffer, meshArray, camera, transientMemory);
 
 
 	// Show info about z-position

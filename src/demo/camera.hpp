@@ -39,8 +39,6 @@ void camera_reset(
 	const tl::Vec3<float> unit_direction,
 	const tl::Vec3<float> unit_up);
 
-const tl::Matrix4x4<float>& get_projection_matrix();
-
 void camera_increment_yaw(float delta_angle_in_deg);
 
 void camera_increment_pitch(float delta_angle_in_deg);
@@ -52,8 +50,6 @@ void camera_increment_direction(float delta_z);
 void camera_increment_strafe(float delta_x);
 
 void camera_increment_up(float delta_up);
-
-void camera_fill_view_matrix(tl::Matrix4x4<float>& view_matrix);
 
 const Camera& camera_get();
 

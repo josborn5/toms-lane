@@ -256,10 +256,6 @@ void camera_reset(
 	set_view_frustrum();
 }
 
-const tl::Matrix4x4<float>& get_projection_matrix() {
-	return projectionMatrix;
-}
-
 void camera_increment_yaw(float delta_angle_in_deg) {
 	rotate_around_unit_vector(
 		camera.unit_up,
@@ -354,16 +350,6 @@ void camera_increment_up(float delta_up) {
 		camera_position_delta
 	);
 	set_view_frustrum();
-}
-
-void camera_fill_view_matrix(tl::Matrix4x4<float>& view_matrix) {
-	tl::Matrix4x4<float> camera_matrix;
-	point_at(
-		camera,
-		camera_matrix
-	);
-
-	look_at(camera_matrix, view_matrix);
 }
 
 const Camera& camera_get() {
