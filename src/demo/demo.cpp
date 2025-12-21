@@ -644,27 +644,27 @@ static void reset_mesh_to_cube() {
 	// Using a clockwise winding convention
 	// -ve z face
 	meshArray.append({ 0.0f, 0.0f, 0.0f,		0.0f, 1.0f, 0.0f,		1.0f, 1.0f, 0.0f });
-	meshArray.append({ 0.0f, 0.0f, 2.0f,		0.0f, 1.0f, 1.0f,		1.0f, 1.0f, 2.0f });
+	meshArray.append({ 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 2.0f,		1.0f, 1.0f, 2.0f });
 
 	// +ve x face
-//		meshArray.append({ 1.0f, 0.0f, 0.0f,		1.0f, 1.0f, 0.0f,		1.0f, 1.0f, 1.0f });
-//		meshArray.append({ 1.0f, 0.0f, 0.0f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f });
+//	meshArray.append({ 1.0f, 0.0f, 0.0f,		1.0f, 1.0f, 0.0f,		1.0f, 1.0f, 1.0f });
+//	meshArray.append({ 1.0f, 0.0f, 0.0f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f });
 
 	// +ve z face
-//		meshArray.append({ 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f });
-//		meshArray.append({ 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f });
+//	meshArray.append({ 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f });
+//	meshArray.append({ 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f });
 
 	// -ve x face
-//		meshArray.append({ 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f });
-//		meshArray.append({ 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,		0.0f, 0.0f, 0.0f });
+//	meshArray.append({ 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f });
+//	meshArray.append({ 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,		0.0f, 0.0f, 0.0f });
 
 	// +ve y face
-//		meshArray.append({ 0.0f, 1.0f, 0.0f,		0.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f });
-//		meshArray.append({ 0.0f, 1.0f, 0.0f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 0.0f });
+//	meshArray.append({ 0.0f, 1.0f, 0.0f,		0.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f });
+//	meshArray.append({ 0.0f, 1.0f, 0.0f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 0.0f });
 
 	// -ve y face
-//		meshArray.append({ 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 0.0f, 0.0f });
-//		meshArray.append({ 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f });
+//	meshArray.append({ 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 0.0f, 0.0f });
+//	meshArray.append({ 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f });
 
 	reset_world_to_mesh();
 }

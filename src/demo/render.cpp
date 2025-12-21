@@ -67,13 +67,16 @@ static void DrawHorizontalLineInPixels(
 
 		// small z is closer
 		if (running_depth > existing_depth) {
+			pixel++;
+			pixel_depth++;
+			running_depth += dz_dx;
 			continue;
 		}
 
 		*pixel = color;
-		pixel++;
-
 		*pixel_depth = running_depth;
+
+		pixel++;
 		pixel_depth++;
 		running_depth += dz_dx;
 	}
@@ -100,9 +103,6 @@ void FillFlatTopTriangle(
 	// z = (-d - b.y - a.x) / c
 	// dz/dx = -a / c
 	float z_delta_per_x = -coefficients.a / coefficients.c;
-
-	// LINE 0-->1
-	float delta_z_0_1 = p1.z - p0.z;
 
 	// LINE 0-->2
 	bool p2IsRightOfP0 = (p0.x < p2.x);
@@ -231,8 +231,6 @@ static void FillFlatBottomTriangle(
 	float z_delta_per_x = -coefficients.a / coefficients.c;
 
 	// LINE 0-->1
-	float delta_z_0_1 = p1.z - p0.z;
-
 	bool p1IsLeftOfP0 = (p1.x < p0.x);
 	int xDiff0 = (p1IsLeftOfP0) ? (int)p0.x - (int)p1.x : (int)p1.x - (int)p0.x;
 	int yDiff0 = (int)p1.y - (int)p0.y;
@@ -248,8 +246,6 @@ static void FillFlatBottomTriangle(
 
 	// LINE 0-->2
 	// Vertical distance for 1-->2 is the same as 0-->2, so no need for a separate yDiff1 variable. Can reuse yDiff0.
-	float delta_z_0_2 = p2.z - p0.z;
-
 	bool p2IsRightOfP0 = (p0.x < p2.x);
 	int xDiff1 = (p2IsRightOfP0) ? (int)p2.x - (int)p0.x : (int)p0.x - (int)p2.x;
 
@@ -294,7 +290,10 @@ static void FillFlatBottomTriangle(
 		float z0 = (-coefficients.d - (coefficients.b * (float)y) - (coefficients.a * (float)x0)) / coefficients.c;
 
 		// draw scanline to fill in triangle between x0 & x1
-		DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, x0, x1, y, z0, z_delta_per_x);
+		DrawHorizontalLineInPixels(
+			renderBuffer, depth_buffer,
+			color, x0, x1, y,
+			z0, z_delta_per_x);
 
 		// line p0 --> p1: decide to increment x0 or not for current y
 		if (isLongDimension0X)
@@ -335,8 +334,20 @@ static void FillFlatBottomTriangle(
 		}
 	}
 
+	// a.x + b.y + c.z + d = 0
+	// z = (-d - b.y - a.x) / c
+	float z0 = (-coefficients.d - (coefficients.b * (float)p1.y) - (coefficients.a * (float)p1.x)) / coefficients.c;
+
 	// draw final scanline to fill in triangle between x0 & x1
-	DrawHorizontalLineInPixels(renderBuffer, depth_buffer, color, p1.x, p2.x, p1.y, p1.z, p2.z);
+	DrawHorizontalLineInPixels(
+		renderBuffer,
+		depth_buffer,
+		color,
+		p1.x,
+		p2.x,
+		p1.y,
+		z0,
+		z_delta_per_x);
 }
 
 static void fill_triangle_plane_coeff(
@@ -422,6 +433,11 @@ void triangle_fill(
 		// Then when we reach the center point, continue scanning but switch to the flat top triangle logic until we reach the bottom point (highest y value).
 		// That should mean there is no need worry about finding the split point.
 
+		// a.x + b.y + c.z + d = 0
+		// z = (-d - b.y - a.x) / c
+		// dz/dx = -a / c
+		float z_delta_per_x = -coefficients.a / coefficients.c;
+
 		// At this point we know that p0 has lowest y value. But we need to work out if p1 is left or right of p2 in order to start scanning.
 		bool pp1xIsLessThanPp2X = (pp1->x < pp2->x);
 		const tl::Vec3<float>* leftPoint = (pp1xIsLessThanPp2X) ? pp1 : pp2;
@@ -481,12 +497,16 @@ void triangle_fill(
 				}
 			}
 
+			// a.x + b.y + c.z + d = 0
+			// z = (-d - b.y - a.x) / c
+			float z0 = (-coefficients.d - (coefficients.b * (float)y) - (coefficients.a * (float)x0)) / coefficients.c;
+
 			// draw scanline to fill in triangle between x0 & x1
 			DrawHorizontalLineInPixels(render_buffer,
 				depth_buffer,
 				color, x0, x1, y,
-				pp0->z,
-				pp1->z
+				z0,
+				z_delta_per_x
 			);
 
 			// line p0 --> p1: decide to increment x0 or not for current y

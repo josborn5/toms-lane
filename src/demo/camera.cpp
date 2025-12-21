@@ -5,7 +5,7 @@ static Camera camera;
 
 struct matrix3x3
 {
-	float element[3][3]; // row then col index
+	float element[3][3]; // row then col index (i.e. element[x][y])
 };
 
 static void matrix3x3_dot_vect3(const matrix3x3& matrix, const tl::Vec3<float>& input, tl::Vec3<float>& output) {
@@ -55,16 +55,23 @@ static void rotate_around_unit_vector(
 	);
 }
 
+/**
+* Structure of the projection matrix:
+* | A | 0 | 0 | 0 |
+* | 0 | B | 0 | 0 |
+* | 0 | 0 | C | D |
+* | 0 | 0 | 1 | 0 |
+*/
+// https://www.mauriciopoppe.com/notes/computer-graphics/viewing/projection-transform/
 static void set_projection_matrix(const Camera& camera) {
 	float inverseTangent = 1.0f / tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 
 	projectionMatrix = { 0 };
 	projectionMatrix.m[0][0] = inverseTangent;
 	projectionMatrix.m[1][1] = camera.aspect_ratio * inverseTangent;
-	projectionMatrix.m[2][2] = camera.far_plane / (camera.far_plane - camera.near_plane);
-	projectionMatrix.m[3][2] = (-camera.far_plane * camera.near_plane) / (camera.far_plane - camera.near_plane);
+	projectionMatrix.m[2][2] = -1.0f * (camera.far_plane + camera.near_plane) / (camera.far_plane - camera.near_plane);
+	projectionMatrix.m[3][2] = (-2.0f * camera.near_plane) / (camera.far_plane - camera.near_plane);
 	projectionMatrix.m[2][3] = 1.0f;
-	projectionMatrix.m[3][3] = 0.0f;
 }
 
 static tl::Vec3<float> get_unit_right(const Camera& camera) {
