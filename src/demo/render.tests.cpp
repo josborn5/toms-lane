@@ -116,6 +116,12 @@ void Run6x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2
 
 int main()
 {
+	std::cout << "Running camera tests" << std::endl;
+
+	run_camera_tests();
+
+	std::cout << "camera tests complete!!!" << std::endl;
+
 	std::cout << "Running demo render tests" << std::endl;
 
 	/**
@@ -759,12 +765,6 @@ int main()
 	run_math_tests();
 
 	std::cout << "math tests complete!!!" << std::endl;
-
-	std::cout << "Running camera tests" << std::endl;
-
-	run_camera_tests();
-
-	std::cout << "camera tests complete!!!" << std::endl;
 
 
 	std::cout << "!!! ALL tests complete!!!" << std::endl;

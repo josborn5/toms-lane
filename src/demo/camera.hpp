@@ -57,5 +57,15 @@ void camera_fill_view_matrix(tl::Matrix4x4<float>& view_matrix);
 
 const Camera& camera_get();
 
+void camera_project_triangle(
+	float screen_width,
+	const tl::Vec3<float>& in_p0,
+	const tl::Vec3<float>& in_p1,
+	const tl::Vec3<float>& in_p2,
+	tl::Vec3<float>& out_p0,
+	tl::Vec3<float>& out_p1,
+	tl::Vec3<float>& out_p2
+);
+
 #endif
 

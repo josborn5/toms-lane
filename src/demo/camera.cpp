@@ -17,7 +17,7 @@ static void matrix3x3_dot_vect3(const matrix3x3& matrix, const tl::Vec3<float>& 
 
 
 static tl::Matrix4x4<float> projectionMatrix;
-
+static tl::Matrix4x4<float> view_matrix;
 
 static float deg_to_rad(float degrees) {
 	constexpr float pi_over_180 = 3.14159f / 180.0f;
@@ -201,6 +201,14 @@ static void set_view_frustrum() {
 		camera.view_frustrum.left_plane_normal,
 		camera.view_frustrum.left_plane_normal
 	);
+
+	// update the view matrix
+	tl::Matrix4x4<float> camera_matrix;
+	point_at(
+		camera,
+		camera_matrix
+	);
+	look_at(camera_matrix, view_matrix);
 }
 
 static void camera_set_fov(Camera& camera, float fov_in_deg) {
@@ -360,5 +368,41 @@ void camera_fill_view_matrix(tl::Matrix4x4<float>& view_matrix) {
 
 const Camera& camera_get() {
 	return camera;
+}
+
+void camera_project_triangle(
+	float screen_width,
+	const tl::Vec3<float>& in_p0,
+	const tl::Vec3<float>& in_p1,
+	const tl::Vec3<float>& in_p2,
+	tl::Vec3<float>& out_p0,
+	tl::Vec3<float>& out_p1,
+	tl::Vec3<float>& out_p2
+) {
+	tl::Vec4<float> viewed_p0, viewed_p1, viewed_p2;
+	tl::Vec4<float> projected_p0, projected_p1, projected_p2;
+
+	MultiplyVectorWithMatrix({ in_p0.x, in_p0.y, in_p0.z, 1.0f }, viewed_p0, view_matrix);
+	MultiplyVectorWithMatrix({ in_p1.x, in_p1.y, in_p1.z, 1.0f }, viewed_p1, view_matrix);
+	MultiplyVectorWithMatrix({ in_p2.x, in_p2.y, in_p2.z, 1.0f }, viewed_p2, view_matrix);
+
+	Project3DPointTo2D(viewed_p0, projected_p0, projectionMatrix);
+	Project3DPointTo2D(viewed_p1, projected_p1, projectionMatrix);
+	Project3DPointTo2D(viewed_p2, projected_p2, projectionMatrix);
+
+	float screen_height = (float)screen_width / camera.aspect_ratio;
+	float translate_x = 0.5f * screen_width;
+	float translate_y = 0.5f * screen_height;
+	out_p0.x = (screen_width * projected_p0.x) + translate_x;
+	out_p0.y = (screen_height * projected_p0.y) + translate_y;
+	out_p0.z = screen_height * projected_p0.z;
+
+	out_p1.x = (screen_width * projected_p1.x) + translate_x;
+	out_p1.y = (screen_height * projected_p1.y) + translate_y;
+	out_p1.z = screen_height * projected_p1.z;
+
+	out_p2.x = (screen_width * projected_p2.x) + translate_x;
+	out_p2.y = (screen_height * projected_p2.y) + translate_y;
+	out_p2.z = screen_height * projected_p2.z;
 }
 

@@ -23,7 +23,7 @@ struct Plane
 
 struct Triangle4d
 {
-	tl::Vec4<float> p[3];
+	tl::Vec3<float> p[3];
 	unsigned int color;
 };
 
@@ -70,27 +70,25 @@ static float deg_to_rad(float degrees) {
 	return degrees * pi_over_180;
 }
 
-static tl::Vec4<float> IntersectPlane(
+static tl::Vec3<float> IntersectPlane(
 	const Plane& plane,
-	const tl::Vec4<float>& lineStart,
-	const tl::Vec4<float>& lineEnd
+	const tl::Vec3<float>& lineStart,
+	const tl::Vec3<float>& lineEnd
 )
 {
 	tl::Vec3<float> normalizedPlaneN = tl::UnitVector(plane.normal);
-	tl::Vec4<float> temp_normalized_plane;
+	tl::Vec3<float> temp_normalized_plane;
 	temp_normalized_plane.z = normalizedPlaneN.z;
 	temp_normalized_plane.x = normalizedPlaneN.x;
 	temp_normalized_plane.y = normalizedPlaneN.y;
-	temp_normalized_plane.w = 0.0f;
 
 	float planeD = tl::DotProduct(normalizedPlaneN, plane.position);
 	float ad = tl::DotProduct(temp_normalized_plane, lineStart);
 	float bd = tl::DotProduct(temp_normalized_plane, lineEnd);
 	float t = (planeD - ad) / (bd - ad);
-	tl::Vec4<float> lineStartToEnd = tl::SubtractVectors(lineEnd, lineStart);
-	tl::Vec4<float> lineToIntersect = tl::MultiplyVectorByScalar(lineStartToEnd, t);
-	tl::Vec4<float> return_temp = tl::AddVectors(lineStart, lineToIntersect);
-	return_temp.w = 1.0f;
+	tl::Vec3<float> lineStartToEnd = tl::SubtractVectors(lineEnd, lineStart);
+	tl::Vec3<float> lineToIntersect = tl::MultiplyVectorByScalar(lineStartToEnd, t);
+	tl::Vec3<float> return_temp = tl::AddVectors(lineStart, lineToIntersect);
 	return return_temp;
 }
 
@@ -104,8 +102,8 @@ static int ClipTriangleAgainstPlane(
 	tl::Vec3<float> unitNormalToPlane = UnitVector(plane.normal);
 
 	// Two baskets to store points that are inside the plane and points that are outside
-	tl::Vec4<float>* insidePoints[3];
-	tl::Vec4<float>* outsidePoints[3];
+	tl::Vec3<float>* insidePoints[3];
+	tl::Vec3<float>* outsidePoints[3];
 	int insidePointCount = 0;
 	int outsidePointCount = 0;
 
@@ -343,39 +341,18 @@ static void TransformAndRenderMesh(
 			Triangle4d to_transform = triangle_queue.content[i];
 
 			viewed_triangle_count += 1;
-			// Convert the triangle position from world space to view space
-			Triangle4d viewed;
-			MultiplyVectorWithMatrix(to_transform.p[0], viewed.p[0], viewMatrix);
-			MultiplyVectorWithMatrix(to_transform.p[1], viewed.p[1], viewMatrix);
-			MultiplyVectorWithMatrix(to_transform.p[2], viewed.p[2], viewMatrix);
-
 			projected_triangle_count += 1;
-			Triangle4d projected;
-			// Project each triangle in 3D space onto the 2D space triangle to render
-			Project3DPointTo2D(viewed.p[0], projected.p[0], projectionMatrix);
-			Project3DPointTo2D(viewed.p[1], projected.p[1], projectionMatrix);
-			Project3DPointTo2D(viewed.p[2], projected.p[2], projectionMatrix);
 
-			// Scale to view
-			Triangle4d triToRender = projected;
-			triToRender.p[0].x *= (float)screen_width;
-			triToRender.p[0].y *= (float)screen_height;
-			triToRender.p[0].z *= (float)screen_height;
-
-			triToRender.p[1].x *= (float)screen_width;
-			triToRender.p[1].y *= (float)screen_height;
-			triToRender.p[1].z *= (float)screen_height;
-
-			triToRender.p[2].x *= (float)screen_width;
-			triToRender.p[2].y *= (float)screen_height;
-			triToRender.p[2].z *= (float)screen_height;
-
-			const float translateX = (float)0.5 * (float)screen_width;
-			const float translateY = (float)0.5 * (float)screen_height;
-			triToRender.p[0].x += translateX; triToRender.p[0].y += translateY;
-			triToRender.p[1].x += translateX; triToRender.p[1].y += translateY;
-			triToRender.p[2].x += translateX; triToRender.p[2].y += translateY;
-
+			Triangle4d triToRender;
+			camera_project_triangle(
+				(float)screen_width,
+				to_transform.p[0],
+				to_transform.p[1],
+				to_transform.p[2],
+				triToRender.p[0],
+				triToRender.p[1],
+				triToRender.p[2]
+			);
 			triToRender.color = triangleColor;
 
 			trianglesToDrawArray.append(triToRender);
@@ -535,17 +512,9 @@ static void reset_camera_in_world() {
 }
 
 static void reset_world_to_mesh() {
-	tl::Vec4<float> first_triangle_vertice = meshArray.get(0).p[0];
-	tl::Vec3<float> max = {
-		first_triangle_vertice.x,
-		first_triangle_vertice.y,
-		first_triangle_vertice.z
-	};
-	tl::Vec3<float> min = {
-		first_triangle_vertice.x,
-		first_triangle_vertice.y,
-		first_triangle_vertice.z
-	};
+	tl::Vec3<float> first_triangle_vertice = meshArray.get(0).p[0];
+	tl::Vec3<float> max = first_triangle_vertice;
+	tl::Vec3<float> min = first_triangle_vertice;
 
 	for (int i = 0; i < meshArray.length(); i += 1)
 	{
@@ -633,7 +602,7 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 	const unsigned int string_buffer_size = 256;
 	char string_buffer[string_buffer_size];
 
-	tl::array<tl::Vec4<float>> heapVertices = tl::array<tl::Vec4<float>>(transient);
+	tl::array<tl::Vec3<float>> heapVertices = tl::array<tl::Vec3<float>>(transient);
 	while (asset_interface_read_line(asset, string_buffer, string_buffer_size)) {
 
 		std::string line = std::string(string_buffer);
@@ -645,10 +614,9 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 
 		if (line[0] == 'v' && line[1] == ' ')
 		{
-			tl::Vec4<float> vertex;
+			tl::Vec3<float> vertex;
 			// expect line to have syntax 'v x y z' where x, y & z are the ordinals of the point position
 			stringStream >> junk >> vertex.x >> vertex.y >> vertex.z;
-			vertex.w = 1.0f;
 			heapVertices.append(vertex);
 		}
 
@@ -682,28 +650,28 @@ static void reset_mesh_to_cube() {
 	meshArray.clear();
 	// Using a clockwise winding convention
 	// -ve z face
-	meshArray.append({ 0.0f, 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f });
-	meshArray.append({ 0.0f, 0.0f, 2.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 2.0f, 1.0f });
+	meshArray.append({ 0.0f, 0.0f, 0.0f,		0.0f, 1.0f, 0.0f,		1.0f, 1.0f, 0.0f });
+	meshArray.append({ 0.0f, 0.0f, 2.0f,		0.0f, 1.0f, 1.0f,		1.0f, 1.0f, 2.0f });
 
 	// +ve x face
-//		meshArray.append({ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f });
-//		meshArray.append({ 1.0f, 0.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f, 1.0f });
+//		meshArray.append({ 1.0f, 0.0f, 0.0f,		1.0f, 1.0f, 0.0f,		1.0f, 1.0f, 1.0f });
+//		meshArray.append({ 1.0f, 0.0f, 0.0f,		1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f });
 
 	// +ve z face
-//		meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f });
-//		meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f });
+//		meshArray.append({ 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f });
+//		meshArray.append({ 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f });
 
 	// -ve x face
-//		meshArray.append({ 0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f });
-//		meshArray.append({ 0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f });
+//		meshArray.append({ 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f });
+//		meshArray.append({ 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,		0.0f, 0.0f, 0.0f });
 
 	// +ve y face
-//		meshArray.append({ 0.0f, 1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f });
-//		meshArray.append({ 0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 0.0f, 1.0f });
+//		meshArray.append({ 0.0f, 1.0f, 0.0f,		0.0f, 1.0f, 1.0f,		1.0f, 1.0f, 1.0f });
+//		meshArray.append({ 0.0f, 1.0f, 0.0f,		1.0f, 1.0f, 1.0f,		1.0f, 1.0f, 0.0f });
 
 	// -ve y face
-//		meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f });
-//		meshArray.append({ 1.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f, 1.0f });
+//		meshArray.append({ 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f,		1.0f, 0.0f, 0.0f });
+//		meshArray.append({ 1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 1.0f,		0.0f, 0.0f, 0.0f });
 
 	reset_world_to_mesh();
 }

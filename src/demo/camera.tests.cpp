@@ -15,7 +15,18 @@ void run_camera_tests() {
 		{ 0.0f, 0.0f, 1.0f },
 		{ 0.0f, 1.0f, 0.0f }
 	);
-	
-	tl::Matrix4x4<float> view_matrix;
-	camera_fill_view_matrix(view_matrix);
+
+	tl::Vec3<float> projected_p0, projected_p1, projected_p2;
+
+	camera_project_triangle(
+		100,
+		p0, p1, p2,
+		projected_p0, projected_p1, projected_p2
+	);
+
+	assert(projected_p0.x > 25.0f);
+	assert(projected_p0.x < 26.0f);
+
+	assert(projected_p0.y > 25.0f);
+	assert(projected_p0.y < 26.0f);
 }
