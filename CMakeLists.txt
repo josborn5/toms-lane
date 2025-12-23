@@ -210,36 +210,7 @@ endfunction()
 
 generate_demo_asset("teapot.obj")
 
-add_library(
-	demo
-	src/demo/demo.cpp
-	src/demo/render.cpp
-	src/demo/asset.cpp
-	src/demo/camera.cpp
-	src/demo/math.cpp
-	src/demo/assets/teapot.obj.cpp
-)
-add_executable(
-	demo-tests
-	src/demo/render.tests.cpp
-	src/demo/math.tests.cpp
-	src/demo/camera.tests.cpp
-)
-add_executable(
-	demo-win32 WIN32
-	src/demo/demo-win32.cpp
-)
-target_link_libraries(
-	demo-tests
-	demo
-	toms-lane-platform
-)
-target_link_libraries(
-	demo-win32
-	demo
-	toms-lane-platform
-	toms-lane-win32-application
-)
+add_subdirectory(src/demo)
 
 
 ######## sound-test ########
