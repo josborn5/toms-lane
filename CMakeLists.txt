@@ -198,18 +198,6 @@ target_link_libraries(
 )
 
 ######## demo ########
-function(generate_demo_asset name)
-	file(REMOVE "${CMAKE_SOURCE_DIR}/src/demo/assets/${name}.cpp")
-	add_custom_command(
-		OUTPUT "${CMAKE_SOURCE_DIR}/src/demo/assets/${name}.cpp"
-		COMMAND xxd -i "${name}" > "${name}.cpp"
-		DEPENDS "${CMAKE_SOURCE_DIR}/src/demo/assets/${name}"
-		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/demo/assets"
-	)
-endfunction()
-
-generate_demo_asset("teapot.obj")
-
 add_subdirectory(src/demo)
 
 
