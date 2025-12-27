@@ -4,10 +4,10 @@ cmake_minimum_required(VERSION 3.31.0)
 
 project(demo-app VERSION 1.0)
 
-
 add_subdirectory(../platform ./platform-output)
 add_subdirectory(../application ./application-output)
 
+message("demo-app context:")
 message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
 
 function(generate_demo_asset name)
