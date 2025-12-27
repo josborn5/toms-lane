@@ -1,6 +1,6 @@
 #include <assert.h>
 #include "./generated-test-assets.hpp"
-#include "./bitmap.hpp"
+#include "../bitmap.hpp"
 
 static const uint32_t grey = 0xAAAAAA;
 static const uint32_t red = 0xFF0000;

@@ -4,7 +4,6 @@ bin-*
 *.exe
 *.swp
 
-src/platform/assets/*.cpp
 src/obby-1/assets/*.cpp
 src/obby-2/assets/*.cpp
 src/demo/assets/*.cpp

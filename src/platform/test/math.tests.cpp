@@ -1,4 +1,4 @@
-#include "./math.hpp"
+#include "../math.hpp"
 #include <iostream>
 #include <assert.h>
 

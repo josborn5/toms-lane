@@ -1,4 +1,4 @@
-#include "./data-structures.hpp"
+#include "../data-structures.hpp"
 #include <stdio.h>
 #include <assert.h>
 

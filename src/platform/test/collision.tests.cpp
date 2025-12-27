@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "./collision.hpp"
+#include "../collision.hpp"
 #include "./collision.tests.moving-rects.cpp"
 #include "./collision.tests.static-and-moving-rects.cpp"
 

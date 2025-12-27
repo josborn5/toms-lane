@@ -1,4 +1,4 @@
-#include "./collision.hpp"
+#include "../collision.hpp"
 
 using namespace tl;
 

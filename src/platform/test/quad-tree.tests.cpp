@@ -1,4 +1,4 @@
-#include "./quad-tree.hpp"
+#include "../quad-tree.hpp"
 #include <stdio.h>
 #include <assert.h>
 

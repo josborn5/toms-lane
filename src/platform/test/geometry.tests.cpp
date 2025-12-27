@@ -1,5 +1,5 @@
 #include <iostream>
-#include "geometry.hpp"
+#include "../geometry.hpp"
 
 void RunGeometryTests()
 {
