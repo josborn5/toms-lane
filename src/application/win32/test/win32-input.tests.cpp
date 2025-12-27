@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
-#include "./win32-input.hpp"
+#include "../win32-input.hpp"
 
 static MSG GetMessageKeyEvent(UINT messageType, char key, bool isDown, bool wasDown)
 {
