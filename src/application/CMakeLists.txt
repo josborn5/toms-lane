@@ -16,7 +16,6 @@ target_link_libraries(
 	gdi32
 )
 
-
 add_executable(
 	toms-lane-win32-application-tests
 	win32/win32-tests.cpp

@@ -1,5 +1,13 @@
 # https://www.codegenes.net/blog/how-can-i-build-a-c-project-with-multiple-interdependent-subdirectories/
 
+cmake_minimum_required(VERSION 3.31.0)
+
+project(demo VERSION 1.0)
+
+
+add_subdirectory(../platform ./platform-output)
+add_subdirectory(../application ./application-output)
+
 function(generate_demo_asset name)
 	file(REMOVE "${CMAKE_SOURCE_DIR}/src/demo/assets/${name}.cpp")
 	add_custom_command(

@@ -121,10 +121,6 @@ target_link_libraries(
 	toms-lane-win32-application
 )
 
-######## demo ########
-add_subdirectory(src/demo)
-
-
 ######## sound-test ########
 add_executable(
 	sound-test WIN32
