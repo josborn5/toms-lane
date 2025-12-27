@@ -1,5 +1,5 @@
 #include <assert.h>
-#include "./camera.hpp"
+#include "../camera.hpp"
 
 void run_camera_tests() {
 	tl::Vec3<float> p0 = { 0.0f, 0.0f, 0.0f };

@@ -1,5 +1,5 @@
 #include <assert.h>
-#include "./math.hpp"
+#include "../math.hpp"
 
 void run_math_tests() {
 	float actual_distance = 0.0f;

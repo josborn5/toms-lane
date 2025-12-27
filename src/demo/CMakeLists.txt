@@ -7,6 +7,8 @@ project(demo-app VERSION 1.0)
 add_subdirectory(../platform ./platform-output)
 add_subdirectory(../application ./application-output)
 
+add_subdirectory(test)
+
 message("demo-app context:")
 message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
 message("CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
@@ -34,21 +36,10 @@ add_library(
 )
 
 add_executable(
-	demo-tests
-	render.tests.cpp
-	math.tests.cpp
-	camera.tests.cpp
-)
-add_executable(
 	demo-win32 WIN32
 	demo-win32.cpp
 )
 
-target_link_libraries(
-	demo-tests
-	demo
-	toms-lane-platform
-)
 target_link_libraries(
 	demo-win32
 	demo

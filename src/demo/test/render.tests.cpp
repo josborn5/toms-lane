@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <iostream>
 #include <limits>
-#include "./render.hpp"
+#include "../render.hpp"
 #include "./math.tests.hpp"
 #include "./camera.tests.hpp"
 
