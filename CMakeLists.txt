@@ -30,56 +30,7 @@ target_link_libraries(
 	toms-lane-win32-application
 )
 
-
-function(generate_platform_asset input_file output_file)
-	file(REMOVE "${CMAKE_SOURCE_DIR}/src/platform/assets/${output_file}")
-	add_custom_command(
-		OUTPUT "${CMAKE_SOURCE_DIR}/src/platform/assets/${output_file}"
-		COMMAND xxd -i "${input_file}" > "${output_file}"
-		DEPENDS "${CMAKE_SOURCE_DIR}/src/platform/assets/${input_file}"
-		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/platform/assets"
-	)
-endfunction()
-generate_platform_asset(font-mono.tlsf font-mono.cpp)
-generate_platform_asset(test.bmp test.cpp)
-generate_platform_asset(bitmap-4bit.bmp bitmap-4bit.cpp)
-generate_platform_asset(monochrome.bmp monochrome.cpp)
-generate_platform_asset(player-m.bmp player-m.cpp)
-generate_platform_asset(9x9-1bit.bmp 9x9-1bit.cpp)
-generate_platform_asset(8x8-1bit.bmp 8x8-1bit.cpp)
-generate_platform_asset(7x7-1bit.bmp 7x7-1bit.cpp)
-generate_platform_asset(6x6-1bit.bmp 6x6-1bit.cpp)
-generate_platform_asset(5x5-1bit.bmp 5x5-1bit.cpp)
-generate_platform_asset(4x4-1bit.bmp 4x4-1bit.cpp)
-
-add_library(
-	toms-lane-platform STATIC
-	src/platform/toms-lane-platform.cpp
-	src/platform/assets/font-mono.cpp
-	src/platform/font.cpp
-	src/platform/transform.cpp
-)
-
-
-add_executable(
-	toms-lane-platform-test
-	src/platform/toms-lane-platform.tests.cpp
-	src/platform/assets/test.cpp
-	src/platform/assets/bitmap-4bit.cpp
-	src/platform/assets/monochrome.cpp
-	src/platform/assets/player-m.cpp
-	src/platform/assets/9x9-1bit.cpp
-	src/platform/assets/8x8-1bit.cpp
-	src/platform/assets/7x7-1bit.cpp
-	src/platform/assets/6x6-1bit.cpp
-	src/platform/assets/5x5-1bit.cpp
-	src/platform/assets/4x4-1bit.cpp
-)
-target_link_libraries(
-	toms-lane-platform-test
-	toms-lane-platform
-)
-
+add_subdirectory(src/platform)
 
 ######## sprite-editor ########
 add_executable(
