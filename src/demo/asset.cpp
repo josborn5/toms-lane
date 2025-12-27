@@ -48,3 +48,4 @@ void asset_interface_close(void* asset) {
 	read_pointer_counter = 0;
 }
 
+
