@@ -2,19 +2,21 @@
 
 cmake_minimum_required(VERSION 3.31.0)
 
-project(demo VERSION 1.0)
+project(demo-app VERSION 1.0)
 
 
 add_subdirectory(../platform ./platform-output)
 add_subdirectory(../application ./application-output)
 
+message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
+
 function(generate_demo_asset name)
-	file(REMOVE "${CMAKE_SOURCE_DIR}/src/demo/assets/${name}.cpp")
+	file(REMOVE "${CMAKE_SOURCE_DIR}/assets/${name}.cpp")
 	add_custom_command(
-		OUTPUT "${CMAKE_SOURCE_DIR}/src/demo/assets/${name}.cpp"
+		OUTPUT "${CMAKE_SOURCE_DIR}/assets/${name}.cpp"
 		COMMAND xxd -i "${name}" > "${name}.cpp"
-		DEPENDS "${CMAKE_SOURCE_DIR}/src/demo/assets/${name}"
-		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src/demo/assets"
+		DEPENDS "${CMAKE_SOURCE_DIR}/assets/${name}"
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/assets"
 	)
 endfunction()
 
