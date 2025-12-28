@@ -7,6 +7,7 @@ struct view_frustrum {
 	tl::Vec3<float> near_top_left_corner_position = {0};
 	tl::Vec3<float> far_bottom_right_corner_position = {0};
 
+
 	tl::Vec3<float> near_plane_normal = {0};
 	tl::Vec3<float> far_plane_normal = {0};
 	tl::Vec3<float> up_plane_normal = {0};
@@ -21,6 +22,11 @@ struct Camera
 
 	tl::Vec3<float> unit_up = {0};
 	tl::Vec3<float> unit_direction = {0};
+
+	float view_space_near_left;
+	float view_space_near_right;
+	float view_space_near_top;
+	float view_space_near_bottom;
 
 	float field_of_view_deg = 0.0f;
 	float near_plane = 0.0f;

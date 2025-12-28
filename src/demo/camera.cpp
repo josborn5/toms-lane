@@ -66,6 +66,11 @@ static void rotate_around_unit_vector(
 static void set_projection_matrix(const Camera& camera) {
 	float inverseTangent = 1.0f / tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 
+	// r = screen_width
+	// l = 0
+	// t = screen_height
+	// b = 0
+
 	projectionMatrix = { 0 };
 	projectionMatrix.m[0][0] = inverseTangent;
 	projectionMatrix.m[1][1] = camera.aspect_ratio * inverseTangent;
@@ -124,7 +129,6 @@ static void look_at(const tl::Matrix4x4<float>& pointAt, tl::Matrix4x4<float>& l
 }
 
 static void set_view_frustrum() {
-
 	tl::Vec3<float> camera_right_unit = get_unit_right(camera);
 
 	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
@@ -148,6 +152,11 @@ static void set_view_frustrum() {
 		tl::MultiplyVectorByScalar(camera_right_unit, -near_opp_horizontal)
 	);
 
+
+	camera.view_space_near_left = -near_opp_horizontal;
+	camera.view_space_near_right = near_opp_horizontal;
+	camera.view_space_near_top = near_opp_vertical;
+	camera.view_space_near_bottom = -near_opp_vertical;
 
 	tl::Vec3<float> far_plane_center_from_position = MultiplyVectorByScalar(
 		camera.unit_direction,
@@ -363,19 +372,6 @@ const Camera& camera_get() {
 	return camera;
 }
 
-template<typename T>
-static void Project3DPointTo2D(const tl::Vec4<T> &in, tl::Vec4<T> &out, const tl::Matrix4x4<T> &matrix)
-{
-	MultiplyVectorWithMatrix(in, out, matrix);
-	if (out.w != 0.0f)
-	{
-		out.x /= out.w;
-		out.y /= out.w;
-		out.z /= out.w;
-	}
-}
-
-
 void camera_project_triangle(
 	float screen_width,
 	const tl::Vec3<float>& in_p0,
@@ -392,23 +388,48 @@ void camera_project_triangle(
 	MultiplyVectorWithMatrix({ in_p1.x, in_p1.y, in_p1.z, 1.0f }, viewed_p1, view_matrix);
 	MultiplyVectorWithMatrix({ in_p2.x, in_p2.y, in_p2.z, 1.0f }, viewed_p2, view_matrix);
 
-	Project3DPointTo2D(viewed_p0, projected_p0, projectionMatrix);
-	Project3DPointTo2D(viewed_p1, projected_p1, projectionMatrix);
-	Project3DPointTo2D(viewed_p2, projected_p2, projectionMatrix);
+	float r_plus_l = camera.view_space_near_right + camera.view_space_near_left;
+	float r_minus_l = camera.view_space_near_right - camera.view_space_near_left;
+	float ax = 2.0f * camera.near_plane / r_minus_l;
+	float bx = r_plus_l / r_minus_l;
 
-	float screen_height = (float)screen_width / camera.aspect_ratio;
-	float translate_x = 0.5f * screen_width;
-	float translate_y = 0.5f * screen_height;
-	out_p0.x = (screen_width * projected_p0.x) + translate_x;
-	out_p0.y = (screen_height * projected_p0.y) + translate_y;
-	out_p0.z = screen_height * projected_p0.z;
+	// projected_p is normalized to the view frustrum space.
+	// i.e.
+	// projected_pn.x is in the range -1 -> 1 for points inside the view frustrum
+	// projected_pn.y is in the range -1 -> 1 for points inside the view frustrum
+	// projected_pn.z is in the range -1 -> 1 for points inside the view frustrum
+	projected_p0.x = ax * (viewed_p0.x / viewed_p0.z) - bx;
+	projected_p1.x = ax * (viewed_p1.x / viewed_p1.z) - bx;
+	projected_p2.x = ax * (viewed_p2.x / viewed_p2.z) - bx;
 
-	out_p1.x = (screen_width * projected_p1.x) + translate_x;
-	out_p1.y = (screen_height * projected_p1.y) + translate_y;
-	out_p1.z = screen_height * projected_p1.z;
+	float t_plus_b = camera.view_space_near_top + camera.view_space_near_bottom;
+	float t_minus_b = camera.view_space_near_top - camera.view_space_near_bottom;
+	float ay = 2.0f * camera.near_plane / t_minus_b;
+	float by = t_plus_b / t_minus_b;
 
-	out_p2.x = (screen_width * projected_p2.x) + translate_x;
-	out_p2.y = (screen_height * projected_p2.y) + translate_y;
-	out_p2.z = screen_height * projected_p2.z;
+	projected_p0.y = ay * (viewed_p0.y / viewed_p0.z) - by;
+	projected_p1.y = ay * (viewed_p1.y / viewed_p1.z) - by;
+	projected_p2.y = ay * (viewed_p2.y / viewed_p2.z) - by;
+
+	// need to map normalized screen space to pixel screen space
+	// i.e.
+	// x: -1 -> 0, 1 -> screen_width
+	// y: -1 -> 0, 1 -> screen_height
+
+	float half_screen_width = 0.5f * (float)screen_width;
+	out_p0.x = half_screen_width * projected_p0.x + half_screen_width;
+	out_p1.x = half_screen_width * projected_p1.x + half_screen_width;
+	out_p2.x = half_screen_width * projected_p2.x + half_screen_width;
+
+	float half_screen_height = half_screen_width / camera.aspect_ratio;
+	out_p0.y = half_screen_height * projected_p0.y + half_screen_height;
+	out_p1.y = half_screen_height * projected_p1.y + half_screen_height;
+	out_p2.y = half_screen_height * projected_p2.y + half_screen_height;
+
+	// for now just output z value in view space.
+	// might want to normalize it in the future? if it will help with clipping?
+	out_p0.z = viewed_p0.z;
+	out_p1.z = viewed_p1.z;
+	out_p2.z = viewed_p2.z;
 }
 
