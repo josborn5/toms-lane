@@ -8,6 +8,11 @@ struct matrix3x3
 	float element[3][3]; // col then row index (i.e. element[x][y])
 };
 
+struct projection_matrix {
+	float ax = 0.0f;
+	float ay = 0.0f;
+};
+
 static void matrix3x3_dot_vect3(const matrix3x3& matrix, const tl::Vec3<float>& input, tl::Vec3<float>& output) {
 	output.x = (matrix.element[0][0] * input.x) + (matrix.element[0][1] * input.y) + (matrix.element[0][2] * input.z);
 	output.y = (matrix.element[1][0] * input.x) + (matrix.element[1][1] * input.y) + (matrix.element[1][2] * input.z);
@@ -16,7 +21,7 @@ static void matrix3x3_dot_vect3(const matrix3x3& matrix, const tl::Vec3<float>& 
 
 
 
-static tl::Matrix4x4<float> projectionMatrix;
+static projection_matrix projection_matrix;
 static tl::Matrix4x4<float> view_matrix;
 
 static float deg_to_rad(float degrees) {
@@ -64,19 +69,30 @@ static void rotate_around_unit_vector(
 */
 // https://www.mauriciopoppe.com/notes/computer-graphics/viewing/projection-transform/
 static void set_projection_matrix(const Camera& camera) {
-	float inverseTangent = 1.0f / tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
 
 	// r = screen_width
 	// l = 0
 	// t = screen_height
 	// b = 0
 
-	projectionMatrix = { 0 };
-	projectionMatrix.m[0][0] = inverseTangent;
-	projectionMatrix.m[1][1] = camera.aspect_ratio * inverseTangent;
-	projectionMatrix.m[2][2] = -1.0f * (camera.far_plane + camera.near_plane) / (camera.far_plane - camera.near_plane);
-	projectionMatrix.m[3][2] = (-2.0f * camera.near_plane) / (camera.far_plane - camera.near_plane);
-	projectionMatrix.m[2][3] = 1.0f;
+	// _nc -> normalized coordinates. normalized to the bounds of the view frustrum -1 -> 1.
+	// _screen -> screen coordinates
+	// _view -> view coordinates
+	//
+	// x_screen = x_view * near_plane / z_view
+	//
+	// x_nc = (2 * x_screen / (r - l)) + ((r + l) / (r - l))
+	//
+	// substitute for x_screen:
+	// x_nc = (2 / (r - l)) * (x_view * near_plane / z_view) - ((r + l) / (r - l))
+
+	// note there's a special simplification we can make since in view space
+	// the center of the screen is at x = 0. so r = -l. so (r + l) = 0.
+	float r_minus_l = camera.view_space_near_right - camera.view_space_near_left;
+	projection_matrix.ax = 2.0f * camera.near_plane / r_minus_l;
+
+	float t_minus_b = camera.view_space_near_top - camera.view_space_near_bottom;
+	projection_matrix.ay = 2.0f * camera.near_plane / t_minus_b;
 }
 
 static tl::Vec3<float> get_unit_right(const Camera& camera) {
@@ -401,17 +417,15 @@ void camera_project_triangle(
 
 	// note there's a special simplification we can make since in view space
 	// the center of the screen is at x = 0. so r = -l. so (r + l) = 0.
-	float r_minus_l = camera.view_space_near_right - camera.view_space_near_left;
-	float ax = 2.0f * camera.near_plane / r_minus_l;
 
 	// projected_p is normalized to the view frustrum space.
 	// i.e.
 	// projected_pn.x is in the range -1 -> 1 for points inside the view frustrum
 	// projected_pn.y is in the range -1 -> 1 for points inside the view frustrum
 	// projected_pn.z is in the range -1 -> 1 for points inside the view frustrum
-	projected_p0.x = ax * (viewed_p0.x / viewed_p0.z);
-	projected_p1.x = ax * (viewed_p1.x / viewed_p1.z);
-	projected_p2.x = ax * (viewed_p2.x / viewed_p2.z);
+	projected_p0.x = projection_matrix.ax * (viewed_p0.x / viewed_p0.z);
+	projected_p1.x = projection_matrix.ax * (viewed_p1.x / viewed_p1.z);
+	projected_p2.x = projection_matrix.ax * (viewed_p2.x / viewed_p2.z);
 
 	float t_minus_b = camera.view_space_near_top - camera.view_space_near_bottom;
 	float ay = 2.0f * camera.near_plane / t_minus_b;
