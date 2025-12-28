@@ -185,19 +185,6 @@ namespace tl
 	template Vec3<float> UnitVector(const Vec3<float> &in);
 
 	template<typename T>
-	void Project3DPointTo2D(const Vec4<T> &in, Vec4<T> &out, const Matrix4x4<T> &matrix)
-	{
-		MultiplyVectorWithMatrix(in, out, matrix);
-		if (out.w != 0.0f)
-		{
-			out.x /= out.w;
-			out.y /= out.w;
-			out.z /= out.w;
-		}
-	}
-	template void Project3DPointTo2D(const Vec4<float> &in, Vec4<float> &out, const Matrix4x4<float> &matrix);
-
-	template<typename T>
 	void MultiplyVectorWithMatrix(const Vec4<T> &in, Vec4<T> &out, const Matrix4x4<T> &matrix)
 	{
 		out.x = (in.x * matrix.m[0][0]) + (in.y * matrix.m[1][0]) + (in.z * matrix.m[2][0]) + (in.w * matrix.m[3][0]);

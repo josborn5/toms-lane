@@ -5,7 +5,7 @@ static Camera camera;
 
 struct matrix3x3
 {
-	float element[3][3]; // row then col index (i.e. element[x][y])
+	float element[3][3]; // col then row index (i.e. element[x][y])
 };
 
 static void matrix3x3_dot_vect3(const matrix3x3& matrix, const tl::Vec3<float>& input, tl::Vec3<float>& output) {
@@ -362,6 +362,19 @@ void camera_increment_up(float delta_up) {
 const Camera& camera_get() {
 	return camera;
 }
+
+template<typename T>
+static void Project3DPointTo2D(const tl::Vec4<T> &in, tl::Vec4<T> &out, const tl::Matrix4x4<T> &matrix)
+{
+	MultiplyVectorWithMatrix(in, out, matrix);
+	if (out.w != 0.0f)
+	{
+		out.x /= out.w;
+		out.y /= out.w;
+		out.z /= out.w;
+	}
+}
+
 
 void camera_project_triangle(
 	float screen_width,

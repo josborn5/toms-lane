@@ -93,9 +93,6 @@ namespace tl
 	};
 
 	template<typename T>
-	void Project3DPointTo2D(const Vec4<T> &in, Vec4<T> &out, const Matrix4x4<T> &matrix);
-
-	template<typename T>
 	void MultiplyVectorWithMatrix(const Vec4<T> &in, Vec4<T> &out, const Matrix4x4<T> &matrix);
 
 	Vec2<float> Transform2DVector(const Vec2<float> &in, const Matrix2x3<float> &transformMatrix);
