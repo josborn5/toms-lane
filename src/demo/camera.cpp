@@ -388,28 +388,37 @@ void camera_project_triangle(
 	MultiplyVectorWithMatrix({ in_p1.x, in_p1.y, in_p1.z, 1.0f }, viewed_p1, view_matrix);
 	MultiplyVectorWithMatrix({ in_p2.x, in_p2.y, in_p2.z, 1.0f }, viewed_p2, view_matrix);
 
-	float r_plus_l = camera.view_space_near_right + camera.view_space_near_left;
+	// _nc -> normalized coordinates. normalized to the bounds of the view frustrum -1 -> 1.
+	// _screen -> screen coordinates
+	// _view -> view coordinates
+	//
+	// x_screen = x_view * near_plane / z_view
+	//
+	// x_nc = (2 * x_screen / (r - l)) + ((r + l) / (r - l))
+	//
+	// substitute for x_screen:
+	// x_nc = (2 / (r - l)) * (x_view * near_plane / z_view) - ((r + l) / (r - l))
+
+	// note there's a special simplification we can make since in view space
+	// the center of the screen is at x = 0. so r = -l. so (r + l) = 0.
 	float r_minus_l = camera.view_space_near_right - camera.view_space_near_left;
 	float ax = 2.0f * camera.near_plane / r_minus_l;
-	float bx = r_plus_l / r_minus_l;
 
 	// projected_p is normalized to the view frustrum space.
 	// i.e.
 	// projected_pn.x is in the range -1 -> 1 for points inside the view frustrum
 	// projected_pn.y is in the range -1 -> 1 for points inside the view frustrum
 	// projected_pn.z is in the range -1 -> 1 for points inside the view frustrum
-	projected_p0.x = ax * (viewed_p0.x / viewed_p0.z) - bx;
-	projected_p1.x = ax * (viewed_p1.x / viewed_p1.z) - bx;
-	projected_p2.x = ax * (viewed_p2.x / viewed_p2.z) - bx;
+	projected_p0.x = ax * (viewed_p0.x / viewed_p0.z);
+	projected_p1.x = ax * (viewed_p1.x / viewed_p1.z);
+	projected_p2.x = ax * (viewed_p2.x / viewed_p2.z);
 
-	float t_plus_b = camera.view_space_near_top + camera.view_space_near_bottom;
 	float t_minus_b = camera.view_space_near_top - camera.view_space_near_bottom;
 	float ay = 2.0f * camera.near_plane / t_minus_b;
-	float by = t_plus_b / t_minus_b;
 
-	projected_p0.y = ay * (viewed_p0.y / viewed_p0.z) - by;
-	projected_p1.y = ay * (viewed_p1.y / viewed_p1.z) - by;
-	projected_p2.y = ay * (viewed_p2.y / viewed_p2.z) - by;
+	projected_p0.y = ay * (viewed_p0.y / viewed_p0.z);
+	projected_p1.y = ay * (viewed_p1.y / viewed_p1.z);
+	projected_p2.y = ay * (viewed_p2.y / viewed_p2.z);
 
 	// need to map normalized screen space to pixel screen space
 	// i.e.
