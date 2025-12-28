@@ -1,13 +1,6 @@
 #include "../tl-library.hpp"
 #include "./render.hpp"
 
-struct plane_coeff
-{
-	float a = 0.0f;
-	float b = 0.0f;
-	float c = 0.0f;
-	float d = 0.0f;
-};
 
 void DrawTriangleInPixels(const tl::RenderBuffer& renderBuffer, uint32_t color, const tl::Vec2<int>& p0, const tl::Vec2<int>& p1, const tl::Vec2<int>& p2)
 {
@@ -28,6 +21,15 @@ static unsigned int z_buffer_get_index(
 	float x, float y
 ) {
 	return (y * buffer.width) + x;
+}
+
+float plane_z_value_get(
+	float x,
+	float y,
+	const plane_coeff& coefficients
+) {
+	float z0 = (-coefficients.d - (coefficients.b * y) - (coefficients.a * x)) / coefficients.c;
+	return z0;
 }
 
 /**
@@ -90,7 +92,7 @@ static void DrawHorizontalLineInPixels(
  *	   \ /	  +ve y (if +ve y is up, this is actually a flat bottom triangle)
  *	    p2
  */
-void FillFlatTopTriangle(
+static void FillFlatTopTriangle(
 	const tl::RenderBuffer& renderBuffer,
 	z_buffer& depth_buffer,
 	uint32_t color,
@@ -350,24 +352,24 @@ static void FillFlatBottomTriangle(
 		z_delta_per_x);
 }
 
-static void fill_triangle_plane_coeff(
+void fill_triangle_plane_coeff(
 	const tl::Vec3<float>& p0,
 	const tl::Vec3<float>& p1,
 	const tl::Vec3<float>& p2,
 	plane_coeff& coefficients
 ) {
-	float a1 = p1.x - p0.x;
-	float b1 = p1.y - p0.y;
-	float c1 = p1.z - p0.z;
+	tl::Vec3<float> p0_to_p1 = tl::SubtractVectors(p1, p0);
+	tl::Vec3<float> p0_to_p2 = tl::SubtractVectors(p2, p0);
 
-	float a2 = p2.x - p0.x;
-	float b2 = p2.y - p0.y;
-	float c2 = p2.z - p0.z;
+	tl::Vec3<float> normal = tl::CrossProduct(p0_to_p1, p0_to_p2);
 
-	coefficients.a = (b1 * c2) - (b2 * c1);
-	coefficients.b = (a2 * c1) - (a1 * c2);
-	coefficients.c = (a1 * b2) - (b1 * a2);
-	coefficients.d = ((- coefficients.a * p0.x) - coefficients.b * (p0.y - coefficients.c * p0.z));
+	// a.x + b.y + c.z + d = 0
+
+	coefficients.a = normal.x;
+	coefficients.b = normal.y;
+	coefficients.c = normal.z;
+
+	coefficients.d = -(coefficients.a * p0.x) - (coefficients.b * p0.y) - (coefficients.c * p0.z);
 };
 
 void triangle_fill(

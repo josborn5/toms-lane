@@ -11,7 +11,7 @@ void DrawTriangleInPixels(
 struct z_buffer {
 	unsigned int width = 0;
 	unsigned int height = 0;
-	float* depths;
+	float* depths = nullptr;
 };
 
 void triangle_fill(
@@ -21,4 +21,25 @@ void triangle_fill(
 	const tl::Vec3<float>& p0,
 	const tl::Vec3<float>& p1,
 	const tl::Vec3<float>& p2
+);
+
+struct plane_coeff
+{
+	float a = 0.0f;
+	float b = 0.0f;
+	float c = 0.0f;
+	float d = 0.0f;
+};
+
+void fill_triangle_plane_coeff(
+	const tl::Vec3<float>& p0,
+	const tl::Vec3<float>& p1,
+	const tl::Vec3<float>& p2,
+	plane_coeff& coefficients
+);
+
+float plane_z_value_get(
+	float x,
+	float y,
+	const plane_coeff& coefficients
 );

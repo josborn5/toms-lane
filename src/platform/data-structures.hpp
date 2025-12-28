@@ -19,7 +19,7 @@ namespace tl
 			unsigned int _length = 0;
 			unsigned int _capacity = 0;
 			size_t _itemSizeInBytes = sizeof(T);
-			T* _content;
+			T* _content = nullptr;
 
 		public :
 			array(){}

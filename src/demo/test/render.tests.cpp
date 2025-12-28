@@ -8,7 +8,7 @@
 const uint32_t EMPTY = 0x000000;
 const uint32_t FILLED = 0xFFFFFF;
 
-void ClearPixelAndDepthArray(uint32_t* pixelArray, float* depth_array, int arrayLength)
+static void ClearPixelAndDepthArray(uint32_t* pixelArray, float* depth_array, int arrayLength)
 {
 	for (int i = 0; i < arrayLength; i += 1)
 	{
@@ -17,7 +17,7 @@ void ClearPixelAndDepthArray(uint32_t* pixelArray, float* depth_array, int array
 	}
 }
 
-void Run4x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2, uint32_t* expectedPixels)
+static void Run4x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2, uint32_t* expectedPixels)
 {
 	uint32_t pixelArray[18] = { EMPTY };	// define pixels as an an array of 16 uint32_t values
 											// NB this array lives on the stack in the scope of the RunSoftwareRenderingTests function only.
@@ -66,7 +66,7 @@ void Run4x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2
 	assert(pixelArray[17] == EMPTY);	// Should NEVER get written to
 }
 
-void Run6x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2, uint32_t* expectedPixels)
+static void Run6x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2, uint32_t* expectedPixels)
 {
 	uint32_t pixelArray[26] = { EMPTY };	// define pixels as an an array of 26 uint32_t values
 											// NB this array lives on the stack in the scope of the RunSoftwareRenderingTests function only.
@@ -114,13 +114,30 @@ void Run6x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<int> p2
 	assert(pixelArray[25] == EMPTY);	// Should NEVER get written to
 }
 
+static void run_triangle_plane_coeffificent_tests() {
+	plane_coeff coefficients;
+
+	fill_triangle_plane_coeff(
+		{ 0.0f, 0.0f, 1.0f },
+		{ 0.0f, 1.0f, 1.0f },
+		{ 1.0f, 1.0f, 1.0f },
+		coefficients
+	);
+
+	float z0 = plane_z_value_get(0.0f, 0.0f, coefficients);
+
+	assert(z0 == 1.0f);
+}
+
 int main()
 {
 	std::cout << "Running camera tests" << std::endl;
-
 	run_camera_tests();
-
 	std::cout << "camera tests complete!!!" << std::endl;
+
+	std::cout << "Running plane coefficient tests" << std::endl;
+	run_triangle_plane_coeffificent_tests();
+	std::cout << "Plane coefficient tests complete!!!" << std::endl;
 
 	std::cout << "Running demo render tests" << std::endl;
 

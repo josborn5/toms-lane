@@ -265,8 +265,8 @@ void camera_reset(
 	camera.position = position;
 
 	camera_set_fov(camera, field_of_view_in_deg);
-	camera_set_near_plane(camera, near_plane);
 	camera.far_plane = far_plane;
+	camera_set_near_plane(camera, near_plane);
 
 	set_projection_matrix(camera);
 	set_view_frustrum();

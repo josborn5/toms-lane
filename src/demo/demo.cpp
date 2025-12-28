@@ -436,7 +436,7 @@ static void TransformAndRenderMesh(
 	}
 }
 
-tl::Matrix2x3<float> GenerateProjectionMatrix(const tl::Rect<float> &from, const tl::Rect<float> &to)
+static tl::Matrix2x3<float> GenerateProjectionMatrix(const tl::Rect<float> &from, const tl::Rect<float> &to)
 {
 	float toMaxY = to.y_max();
 	float toMinY = to.y_min();
@@ -1005,7 +1005,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 	return 0;
 }
 
-int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
+static int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
 	float dt = (float)dtInMilliseconds / 1000.0f;
 	return UpdateAndRender1(appMemory, input, renderBuffer, dt);
