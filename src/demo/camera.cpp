@@ -427,12 +427,9 @@ void camera_project_triangle(
 	projected_p1.x = projection_matrix.ax * (viewed_p1.x / viewed_p1.z);
 	projected_p2.x = projection_matrix.ax * (viewed_p2.x / viewed_p2.z);
 
-	float t_minus_b = camera.view_space_near_top - camera.view_space_near_bottom;
-	float ay = 2.0f * camera.near_plane / t_minus_b;
-
-	projected_p0.y = ay * (viewed_p0.y / viewed_p0.z);
-	projected_p1.y = ay * (viewed_p1.y / viewed_p1.z);
-	projected_p2.y = ay * (viewed_p2.y / viewed_p2.z);
+	projected_p0.y = projection_matrix.ay * (viewed_p0.y / viewed_p0.z);
+	projected_p1.y = projection_matrix.ay * (viewed_p1.y / viewed_p1.z);
+	projected_p2.y = projection_matrix.ay * (viewed_p2.y / viewed_p2.z);
 
 	// need to map normalized screen space to pixel screen space
 	// i.e.

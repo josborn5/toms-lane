@@ -482,7 +482,7 @@ static void reset_camera_in_world() {
 		world.position.z - world.half_size.z
 	};
 
-	float field_of_view_in_deg = 75.0f;
+	float field_of_view_in_deg = 35.0f;
 
 	// camera         near   object    far
 	// 	 |             |    |------|    |
