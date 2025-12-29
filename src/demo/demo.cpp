@@ -387,8 +387,6 @@ static void TransformAndRenderMesh(
 
 	Plane bottomOfScreen = { 0.0f, 0.0f, 0.0f,                             0.0f,  1.0f, 0.0f };
 	Plane topOfScreen = { 0.0f, (float)(renderBuffer.height - 1), 0.0f, 0.0f, -1.0f, 0.0f };
-	Plane leftOfScreen = { 0.0f, 0.0f, 0.0f,                             1.0f,  0.0f, 0.0f };
-	Plane rightOfScreen = { (float)(renderBuffer.width - 1), 0.0f, 0.0f, -1.0f,  0.0f, 0.0f };
 
 	for (int n = 0; n < trianglesToDrawArray.length(); n += 1)
 	{
@@ -401,7 +399,7 @@ static void TransformAndRenderMesh(
 		int newTriangles = 1;
 
 		// Clip against each screen edge
-		for (int edge = 0; edge < 4; edge += 1)
+		for (int edge = 0; edge < 2; edge += 1)
 		{
 			int trianglesToAdd = 0;
 			while (newTriangles > 0)
@@ -420,16 +418,6 @@ static void TransformAndRenderMesh(
 					case 1:
 					{
 						trianglesToAdd = ClipTriangleAgainstPlane(topOfScreen, test, clipped[0], clipped[1]);
-						break;
-					}
-					case 2:
-					{
-						trianglesToAdd = ClipTriangleAgainstPlane(leftOfScreen, test, clipped[0], clipped[1]);
-						break;
-					}
-					case 3:
-					{
-						trianglesToAdd = ClipTriangleAgainstPlane(rightOfScreen, test, clipped[0], clipped[1]);
 						break;
 					}
 				}
