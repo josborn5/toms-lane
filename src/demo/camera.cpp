@@ -221,17 +221,17 @@ static void set_view_frustrum() {
 	camera.view_frustrum.left_plane_normal = camera_right_unit;
 	rotate_around_unit_vector(
 		camera.unit_up,
-		0.5f * camera.field_of_view_deg,
-		camera.view_frustrum.right_plane_normal,
-		camera.view_frustrum.right_plane_normal
+		-0.5f * camera.field_of_view_deg,
+		camera.view_frustrum.left_plane_normal,
+		camera.view_frustrum.left_plane_normal
 	);
 
 	camera.view_frustrum.right_plane_normal = tl::MultiplyVectorByScalar(camera_right_unit, -1.0f);
 	rotate_around_unit_vector(
 		camera.unit_up,
-		-0.5f * camera.field_of_view_deg,
-		camera.view_frustrum.left_plane_normal,
-		camera.view_frustrum.left_plane_normal
+		0.5f * camera.field_of_view_deg,
+		camera.view_frustrum.right_plane_normal,
+		camera.view_frustrum.right_plane_normal
 	);
 
 	// update the view matrix

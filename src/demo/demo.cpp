@@ -276,7 +276,23 @@ static void TransformAndRenderMesh(
 		far_plane.position = camera.view_frustrum.far_bottom_right_corner_position;
 		far_plane.normal = camera.view_frustrum.far_plane_normal;
 
-		const int plane_clip_count = 2;
+		Plane top_plane;
+		top_plane.position = camera.position;
+		top_plane.normal = camera.view_frustrum.up_plane_normal;
+
+		Plane bottom_plane;
+		bottom_plane.position = camera.position;
+		bottom_plane.normal = camera.view_frustrum.down_plane_normal;
+
+		Plane left_plane;
+		left_plane.position = camera.position;
+		left_plane.normal = camera.view_frustrum.left_plane_normal;
+
+		Plane right_plane;
+		right_plane.position = camera.position;
+		right_plane.normal = camera.view_frustrum.right_plane_normal;
+
+		const int plane_clip_count = 6;
 		constexpr int triangle_queue_size = plane_clip_count * 3; // 3 * 2 sides of view frustrum to clip
 		Triangle4d queue_data[triangle_queue_size];
 		tl::MemorySpace queue_data_space;
@@ -317,6 +333,18 @@ static void TransformAndRenderMesh(
 						triangles_to_add = ClipTriangleAgainstPlane(far_plane, to_clip, clipped[0], clipped[1]);
 						break;
 					}
+					case 2: {
+						triangles_to_add = ClipTriangleAgainstPlane(top_plane, to_clip, clipped[0], clipped[1]);
+					} break;
+					case 3: {
+						triangles_to_add = ClipTriangleAgainstPlane(bottom_plane, to_clip, clipped[0], clipped[1]);
+					} break;
+					case 4: {
+						triangles_to_add = ClipTriangleAgainstPlane(left_plane, to_clip, clipped[0], clipped[1]);
+					} break;
+					case 5: {
+						triangles_to_add = ClipTriangleAgainstPlane(right_plane, to_clip, clipped[0], clipped[1]);
+					} break;
 				}
 
 				for (int i = 0; i < triangles_to_add; i += 1)
@@ -644,7 +672,7 @@ static void reset_mesh_to_cube() {
 	// Using a clockwise winding convention
 	// -ve z face
 	meshArray.append({ 0.0f, 0.0f, 0.0f,		0.0f, 1.0f, 0.0f,		1.0f, 1.0f, 0.0f });
-	meshArray.append({ 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 2.0f,		1.0f, 1.0f, 2.0f });
+	meshArray.append({ 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 2.0f,		1.0f, 1.0f, -1.0f });
 
 	// +ve x face
 //	meshArray.append({ 1.0f, 0.0f, 0.0f,		1.0f, 1.0f, 0.0f,		1.0f, 1.0f, 1.0f });
