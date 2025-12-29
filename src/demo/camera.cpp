@@ -29,6 +29,11 @@ static float deg_to_rad(float degrees) {
 	return degrees * pi_over_180;
 }
 
+static float rad_to_deg(float radians) {
+	constexpr float inv_pi_over_180 = 180.0f / 3.14159f;
+	return radians * inv_pi_over_180;
+}
+
 static void rotate_around_unit_vector(
 	const tl::Vec3<float>& unit_vector_axis,
 	float angle_in_deg,
@@ -147,7 +152,8 @@ static void look_at(const tl::Matrix4x4<float>& pointAt, tl::Matrix4x4<float>& l
 static void set_view_frustrum() {
 	tl::Vec3<float> camera_right_unit = get_unit_right(camera);
 
-	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
+	float half_horizontal_fov_in_deg = 0.5f * camera.field_of_view_deg;
+	float tan_half_fov = tanf(deg_to_rad(half_horizontal_fov_in_deg));
 
 	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
 		camera.unit_direction,
@@ -198,14 +204,19 @@ static void set_view_frustrum() {
 	camera.view_frustrum.near_plane_normal = camera.unit_direction;
 	camera.view_frustrum.far_plane_normal = tl::Vec3<float>{ -camera.unit_direction.x, -camera.unit_direction.y, -camera.unit_direction.z };
 
+	// fov is in horizontal direction. so vertical fov is going to be different when aspect ratio is not 1.
+	float vertical_half_fov_in_radians = atanf(near_opp_vertical / camera.near_plane);
+
 	camera.view_frustrum.up_plane_normal = tl::Vec3<float> {
 		-camera.unit_up.x,
 		-camera.unit_up.y,
 		-camera.unit_up.z
 	};
+
+	float vertical_half_fov_in_deg = rad_to_deg(vertical_half_fov_in_radians);
 	rotate_around_unit_vector(
 		camera_right_unit,
-		-0.5f * camera.field_of_view_deg,
+		-vertical_half_fov_in_deg,
 		camera.view_frustrum.up_plane_normal,
 		camera.view_frustrum.up_plane_normal
 	);
@@ -213,7 +224,7 @@ static void set_view_frustrum() {
 	camera.view_frustrum.down_plane_normal = camera.unit_up;
 	rotate_around_unit_vector(
 		camera_right_unit,
-		0.5f * camera.field_of_view_deg,
+		vertical_half_fov_in_deg,
 		camera.view_frustrum.down_plane_normal,
 		camera.view_frustrum.down_plane_normal
 	);
@@ -221,7 +232,7 @@ static void set_view_frustrum() {
 	camera.view_frustrum.left_plane_normal = camera_right_unit;
 	rotate_around_unit_vector(
 		camera.unit_up,
-		-0.5f * camera.field_of_view_deg,
+		-half_horizontal_fov_in_deg,
 		camera.view_frustrum.left_plane_normal,
 		camera.view_frustrum.left_plane_normal
 	);
@@ -229,7 +240,7 @@ static void set_view_frustrum() {
 	camera.view_frustrum.right_plane_normal = tl::MultiplyVectorByScalar(camera_right_unit, -1.0f);
 	rotate_around_unit_vector(
 		camera.unit_up,
-		0.5f * camera.field_of_view_deg,
+		half_horizontal_fov_in_deg,
 		camera.view_frustrum.right_plane_normal,
 		camera.view_frustrum.right_plane_normal
 	);
