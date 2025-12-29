@@ -384,69 +384,23 @@ static void TransformAndRenderMesh(
 
 	tl::MemorySpace remainingTransient = trianglesToDrawArray.sizeToCurrentLength();
 
-	Plane bottomOfScreen = { 0.0f, 0.0f, 0.0f,                             0.0f,  1.0f, 0.0f };
 	Plane topOfScreen = { 0.0f, (float)(renderBuffer.height - 1), 0.0f, 0.0f, -1.0f, 0.0f };
 
 	for (int n = 0; n < trianglesToDrawArray.length(); n += 1)
 	{
-		Triangle4d triToRender = trianglesToDrawArray.get(n);
-		Triangle4d clipped[2];
+		rendered_triangle_count += 1;
+		Triangle4d draw = trianglesToDrawArray.get(n);
 
-		tl::queue<Triangle4d> triangleQueue = tl::queue<Triangle4d>(remainingTransient);
-		if (triangleQueue.enqueue(triToRender) != 0) continue;
-
-		int newTriangles = 1;
-
-		// Clip against each screen edge
-		for (int edge = 0; edge < 2; edge += 1)
-		{
-			int trianglesToAdd = 0;
-			while (newTriangles > 0)
-			{
-				newTriangles -= 1;
-				tl::operation<Triangle4d> dequeue_op = triangleQueue.dequeue();
-				Triangle4d test = dequeue_op.value;
-
-				switch (edge)
-				{
-					case 0:
-					{
-						trianglesToAdd = ClipTriangleAgainstPlane(bottomOfScreen, test, clipped[0], clipped[1]);
-						break;
-					}
-					case 1:
-					{
-						trianglesToAdd = ClipTriangleAgainstPlane(topOfScreen, test, clipped[0], clipped[1]);
-						break;
-					}
-				}
-
-				for (int i = 0; i < trianglesToAdd; i += 1)
-				{
-					triangleQueue.enqueue(clipped[i]);
-				}
-			}
-
-			newTriangles = triangleQueue.length();
-		}
-
-		for (int i = 0; i < triangleQueue.length(); i += 1)
-		{
-			rendered_triangle_count += 1;
-			Triangle4d draw = triangleQueue.content[i];
-
-			if (wireframe) {
-				tl::Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
-				tl::Vec2<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
-				tl::Vec2<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
-				DrawTriangleInPixels(renderBuffer, 0xFFFFFF, p0Int, p1Int, p2Int);
-
-			} else {
-				tl::Vec3<float> p0 = { draw.p[0].x, draw.p[0].y, draw.p[0].z };
-				tl::Vec3<float> p1 = { draw.p[1].x, draw.p[1].y, draw.p[1].z };
-				tl::Vec3<float> p2 = { draw.p[2].x, draw.p[2].y, draw.p[2].z };
-				triangle_fill(renderBuffer, depth_buffer, draw.color, p0, p1, p2);
-			}
+		if (wireframe) {
+			tl::Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
+			tl::Vec2<int> p1Int = { (int)draw.p[1].x, (int)draw.p[1].y };
+			tl::Vec2<int> p2Int = { (int)draw.p[2].x, (int)draw.p[2].y };
+			DrawTriangleInPixels(renderBuffer, 0xFFFFFF, p0Int, p1Int, p2Int);
+		} else {
+			tl::Vec3<float> p0 = { draw.p[0].x, draw.p[0].y, draw.p[0].z };
+			tl::Vec3<float> p1 = { draw.p[1].x, draw.p[1].y, draw.p[1].z };
+			tl::Vec3<float> p2 = { draw.p[2].x, draw.p[2].y, draw.p[2].z };
+			triangle_fill(renderBuffer, depth_buffer, draw.color, p0, p1, p2);
 		}
 	}
 }
