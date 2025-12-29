@@ -369,7 +369,6 @@ static void TransformAndRenderMesh(
 
 			Triangle4d triToRender;
 			camera_project_triangle(
-				(float)screen_width,
 				to_transform.p[0],
 				to_transform.p[1],
 				to_transform.p[2],
@@ -507,7 +506,8 @@ static void reset_camera_in_world() {
 	float far_plane = world.half_size.z;
 	float near_plane = 0.1f * far_plane;
 	camera_reset(
-		(float)screen_width / (float)screen_height,
+		screen_width,
+		screen_height,
 		position,
 		field_of_view_in_deg,
 		near_plane,
@@ -709,7 +709,8 @@ static void keep_camera_in_bounds(const Camera& camera) {
 	camera_position.z = Clamp(world.position.z - world.half_size.z, camera_position.z, world.position.z + world.half_size.z);
 
 	camera_reset(
-		camera.aspect_ratio,
+		screen_width,
+		screen_height,
 		camera_position,
 		camera.field_of_view_deg,
 		camera.near_plane,
@@ -797,7 +798,8 @@ static void process_input_for_camera(
 			: 0.25f;
 
 		camera_reset(
-			camera.aspect_ratio,
+			screen_width,
+			screen_height,
 			camera.position,
 			camera.field_of_view_deg + camera_fov_delta,
 			camera.near_plane,
@@ -814,7 +816,8 @@ static void process_input_for_camera(
 			: 0.1f;
 
 		camera_reset(
-			camera.aspect_ratio,
+			screen_width,
+			screen_height,
 			camera.position,
 			camera.field_of_view_deg,
 			camera.near_plane + near_plane_increment,
@@ -832,7 +835,8 @@ static void process_input_for_camera(
 			: 0.1f;
 
 		camera_reset(
-			camera.aspect_ratio,
+			screen_width,
+			screen_height,
 			camera.position,
 			camera.field_of_view_deg,
 			camera.near_plane,

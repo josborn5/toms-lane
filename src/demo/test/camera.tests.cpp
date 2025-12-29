@@ -9,7 +9,8 @@ void run_camera_tests() {
 
 	// looking straight down +ve z-axis
 	camera_reset(
-		1.0f,
+		100,
+		100,
 		{ 0.5f, 0.5f, -5.0f },
 		45.0f,
 		1.0f,
@@ -19,7 +20,6 @@ void run_camera_tests() {
 	);
 
 	camera_project_triangle(
-		100,
 		p0, p1, p2,
 		projected_p0, projected_p1, projected_p2
 	);
@@ -41,7 +41,8 @@ void run_camera_tests() {
 
 	// looking toward +ve z & +ve x axes
 	camera_reset(
-		1.0f,
+		100,
+		100,
 		{ -5.0f, 0.5f, -5.0f },
 		45.0f,
 		1.0f,
@@ -51,7 +52,6 @@ void run_camera_tests() {
 	);
 
 	camera_project_triangle(
-		100,
 		p0, p1, p2,
 		projected_p0, projected_p1, projected_p2
 	);
@@ -74,7 +74,8 @@ void run_camera_tests() {
 
 	// looking toward +ve z & -ve x axes
 	camera_reset(
-		1.0f,
+		100,
+		100,
 		{ 5.0f, 0.5f, -5.0f },
 		45.0f,
 		1.0f,
@@ -84,7 +85,6 @@ void run_camera_tests() {
 	);
 
 	camera_project_triangle(
-		100,
 		p0, p1, p2,
 		projected_p0, projected_p1, projected_p2
 	);

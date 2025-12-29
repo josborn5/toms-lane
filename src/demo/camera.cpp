@@ -265,7 +265,8 @@ static void camera_set_near_plane(Camera& camera, float near_plane) {
 }
 
 void camera_reset(
-	float aspect_ratio,
+	unsigned int screen_width,
+	unsigned int screen_height,
 	const tl::Vec3<float>& position,
 	float field_of_view_in_deg,
 	float near_plane,
@@ -273,7 +274,9 @@ void camera_reset(
 	const tl::Vec3<float> unit_direction,
 	const tl::Vec3<float> unit_up
 ) {
-	camera.aspect_ratio = aspect_ratio;
+	camera.aspect_ratio = (float)screen_width / (float)screen_height;
+	camera.screen_width = screen_width;
+	camera.screen_height = screen_height;
 
 	camera.unit_direction = unit_direction;
 	camera.unit_up = unit_up;
@@ -389,7 +392,6 @@ const Camera& camera_get() {
 }
 
 void camera_project_triangle(
-	float screen_width,
 	const tl::Vec3<float>& in_p0,
 	const tl::Vec3<float>& in_p1,
 	const tl::Vec3<float>& in_p2,
@@ -436,12 +438,12 @@ void camera_project_triangle(
 	// x: -1 -> 0, 1 -> screen_width
 	// y: -1 -> 0, 1 -> screen_height
 
-	float half_screen_width = 0.5f * (float)screen_width;
+	float half_screen_width = 0.5f * (float)camera.screen_width;
 	out_p0.x = half_screen_width * projected_p0.x + half_screen_width;
 	out_p1.x = half_screen_width * projected_p1.x + half_screen_width;
 	out_p2.x = half_screen_width * projected_p2.x + half_screen_width;
 
-	float half_screen_height = half_screen_width / camera.aspect_ratio;
+	float half_screen_height = 0.5f * camera.screen_height;
 	out_p0.y = half_screen_height * projected_p0.y + half_screen_height;
 	out_p1.y = half_screen_height * projected_p1.y + half_screen_height;
 	out_p2.y = half_screen_height * projected_p2.y + half_screen_height;

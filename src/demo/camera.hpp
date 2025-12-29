@@ -33,11 +33,15 @@ struct Camera
 	float far_plane = 0.0f;
 	float aspect_ratio = 1.0f;
 
+	unsigned int screen_width = 0;
+	unsigned int screen_height = 0;
+
 	view_frustrum view_frustrum = {0};
 };
 
 void camera_reset(
-	float aspect_ratio,
+	unsigned int screen_width,
+	unsigned int screen_height,
 	const tl::Vec3<float>& position,
 	float field_of_view_in_deg,
 	float near_plane,
@@ -60,7 +64,6 @@ void camera_increment_up(float delta_up);
 const Camera& camera_get();
 
 void camera_project_triangle(
-	float screen_width,
 	const tl::Vec3<float>& in_p0,
 	const tl::Vec3<float>& in_p1,
 	const tl::Vec3<float>& in_p2,
