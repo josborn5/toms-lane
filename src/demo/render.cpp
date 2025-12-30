@@ -384,6 +384,10 @@ void triangle_fill(
 	if (p1.y < 0 || p1.y > render_buffer.height - 1) return;
 	if (p2.y < 0 || p2.y > render_buffer.height - 1) return;
 
+	if (p0.x < 0 || p0.x > render_buffer.width - 1) return;
+	if (p1.x < 0 || p1.x > render_buffer.width - 1) return;
+	if (p2.x < 0 || p2.x > render_buffer.width - 1) return;
+
 	const tl::Vec3<float>* pp0 = &p0;
 	const tl::Vec3<float>* pp1 = &p1;
 	const tl::Vec3<float>* pp2 = &p2;
