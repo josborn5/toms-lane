@@ -298,8 +298,8 @@ void camera_reset(
 	camera.far_plane = far_plane;
 	camera_set_near_plane(camera, near_plane);
 
-	set_projection_matrix(camera);
 	set_view_frustrum();
+	set_projection_matrix(camera);
 }
 
 void camera_increment_yaw(float delta_angle_in_deg) {

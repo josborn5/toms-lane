@@ -268,6 +268,10 @@ static void TransformAndRenderMesh(
 
 		uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
 
+		tl::Vec3<float> temp_position = tl::AddVectors(
+			camera.position,
+			tl::MultiplyVectorByScalar(camera.unit_direction, 2.0f)
+		);
 		Plane near_plane;
 		near_plane.position = camera.view_frustrum.near_top_left_corner_position;
 		near_plane.normal = camera.view_frustrum.near_plane_normal;
@@ -277,19 +281,19 @@ static void TransformAndRenderMesh(
 		far_plane.normal = camera.view_frustrum.far_plane_normal;
 
 		Plane top_plane;
-		top_plane.position = camera.position;
+		top_plane.position = temp_position;
 		top_plane.normal = camera.view_frustrum.up_plane_normal;
 
 		Plane bottom_plane;
-		bottom_plane.position = camera.position;
+		bottom_plane.position = temp_position;
 		bottom_plane.normal = camera.view_frustrum.down_plane_normal;
 
 		Plane left_plane;
-		left_plane.position = camera.position;
+		left_plane.position = temp_position;
 		left_plane.normal = camera.view_frustrum.left_plane_normal;
 
 		Plane right_plane;
-		right_plane.position = camera.position;
+		right_plane.position = temp_position;
 		right_plane.normal = camera.view_frustrum.right_plane_normal;
 
 		const int plane_clip_count = 6;
@@ -457,7 +461,7 @@ static void reset_camera_in_world() {
 	// 	 |             |    |------|    |
 	//   |-------------|----------------|----> z
 	//   0
-	float far_plane = world.half_size.z;
+	float far_plane = 2.5f * world.half_size.z;
 	float near_plane = 0.1f * far_plane;
 	camera_reset(
 		screen_width,
@@ -526,6 +530,17 @@ static void reset_world_to_mesh() {
 	world.half_size.x = space_around_mesh_scale_factor * max_mesh_half_size;
 	world.half_size.y = space_around_mesh_scale_factor * max_mesh_half_size;
 	world.half_size.z = space_around_mesh_scale_factor * max_mesh_half_size;
+
+	float max_world_x = world.position.x + world.half_size.x;
+	float min_world_x = world.position.x - world.half_size.x;
+	float max_world_y = world.position.y + world.half_size.y;
+	float min_world_y = world.position.y - world.half_size.y;
+	float max_world_z = world.position.z + world.half_size.z;
+	float min_world_z = world.position.z - world.half_size.z;
+
+	// add triangles for the world border
+	meshArray.append({min_world_x, min_world_y, max_world_z,	min_world_x, max_world_y, max_world_z,	max_world_x, max_world_y, max_world_z});
+	meshArray.append({min_world_x, min_world_y, max_world_z,	max_world_x, max_world_y, max_world_z,	max_world_x, min_world_y, max_world_z});
 
 	positionIncrement = 0.01f * world.half_size.x;
 
