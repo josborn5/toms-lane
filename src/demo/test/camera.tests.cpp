@@ -110,6 +110,27 @@ void run_camera_tests() {
 		{ 0.0f, 1.0f, 0.0f }
 	);
 
+	Camera camera = camera_get();
+	assert(camera.view_frustrum.up_plane_normal.z > 0);
+	assert(camera.view_frustrum.up_plane_normal.y < 0);
+	assert(camera.view_frustrum.up_plane_normal.x == 0);
+	assert(camera.view_frustrum.up_plane_normal.y == -camera.view_frustrum.up_plane_normal.z);
+
+	assert(camera.view_frustrum.down_plane_normal.z > 0);
+	assert(camera.view_frustrum.down_plane_normal.y > 0);
+	assert(camera.view_frustrum.down_plane_normal.x == 0);
+	assert(camera.view_frustrum.down_plane_normal.y == camera.view_frustrum.up_plane_normal.z);
+
+	assert(camera.view_frustrum.left_plane_normal.x > 0);
+	assert(camera.view_frustrum.left_plane_normal.z > 0);
+	assert(camera.view_frustrum.left_plane_normal.y == 0);
+	assert(camera.view_frustrum.left_plane_normal.x == camera.view_frustrum.up_plane_normal.z);
+
+	assert(camera.view_frustrum.right_plane_normal.x < 0);
+	assert(camera.view_frustrum.right_plane_normal.z > 0);
+	assert(camera.view_frustrum.right_plane_normal.y == 0);
+	assert(camera.view_frustrum.right_plane_normal.x == -camera.view_frustrum.up_plane_normal.z);
+
 	camera_project_triangle(
 		p0, p1, p2,
 		projected_p0, projected_p1, projected_p2
@@ -123,10 +144,4 @@ void run_camera_tests() {
 
 	assert(projected_p2.x == 100.0f);
 	assert(projected_p2.y == 100.0f);
-
-	Camera camera = camera_get();
-	assert(camera.view_frustrum.up_plane_normal.z > 0);
-	assert(camera.view_frustrum.up_plane_normal.y < 0);
-	assert(camera.view_frustrum.up_plane_normal.x == 0);
-	assert(camera.view_frustrum.up_plane_normal.y == -camera.view_frustrum.up_plane_normal.z);
 }
