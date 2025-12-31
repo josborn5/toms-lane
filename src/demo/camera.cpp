@@ -25,12 +25,12 @@ static projection_matrix projection_matrix;
 static tl::Matrix4x4<float> view_matrix;
 
 static float deg_to_rad(float degrees) {
-	constexpr float pi_over_180 = 3.14159f / 180.0f;
+	constexpr float pi_over_180 = 3.14159265f / 180.0f;
 	return degrees * pi_over_180;
 }
 
 static float rad_to_deg(float radians) {
-	constexpr float inv_pi_over_180 = 180.0f / 3.14159f;
+	constexpr float inv_pi_over_180 = 180.0f / 3.14159265f;
 	return radians * inv_pi_over_180;
 }
 
@@ -60,7 +60,7 @@ static void rotate_around_unit_vector(
 
 	matrix3x3_dot_vect3(
 		rotation_matrix,
-		rotate_in,
+		{ rotate_in.x, rotate_in.y, rotate_in.z },
 		rotated_out
 	);
 }

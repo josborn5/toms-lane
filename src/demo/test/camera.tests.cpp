@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <math.h>
 #include "../camera.hpp"
 
 void run_camera_tests() {
@@ -96,4 +97,36 @@ void run_camera_tests() {
 
 	assert(projected_p2.y > projected_p1.y); // p2 will be closer than p0 & p1
 	assert(projected_p2.z < projected_p0.z);
+
+	// filling the whole projection screen
+	camera_reset(
+		100,
+		100,
+		{ 0.5f, 0.5f, -0.5f },
+		90.0f,
+		0.5f,
+		1.0f,
+		{ 0.0f, 0.0f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f }
+	);
+
+	camera_project_triangle(
+		p0, p1, p2,
+		projected_p0, projected_p1, projected_p2
+	);
+
+	assert(projected_p0.x == 0.0f);
+	assert(projected_p0.y == 0.0f);
+
+	assert(projected_p1.x == 0.0f);
+	assert(projected_p1.y == 100.0f);
+
+	assert(projected_p2.x == 100.0f);
+	assert(projected_p2.y == 100.0f);
+
+	Camera camera = camera_get();
+	assert(camera.view_frustrum.up_plane_normal.z > 0);
+	assert(camera.view_frustrum.up_plane_normal.y < 0);
+	assert(camera.view_frustrum.up_plane_normal.x == 0);
+	assert(camera.view_frustrum.up_plane_normal.y == -camera.view_frustrum.up_plane_normal.z);
 }

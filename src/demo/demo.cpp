@@ -270,7 +270,7 @@ static void TransformAndRenderMesh(
 
 		tl::Vec3<float> temp_position = tl::AddVectors(
 			camera.position,
-			tl::MultiplyVectorByScalar(camera.unit_direction, 2.0f)
+			tl::MultiplyVectorByScalar(camera.unit_direction, 3.0f)
 		);
 		Plane near_plane;
 		near_plane.position = camera.view_frustrum.near_top_left_corner_position;
