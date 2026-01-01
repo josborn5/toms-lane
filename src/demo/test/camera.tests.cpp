@@ -43,6 +43,7 @@ static void run_camera_view_frustrum_clip_tests() {
 		out_2
 	);
 
+	assert(clip_count == 1);
 
 	std::cout << "...camera view frustrum clip tests complete!" << std::endl;
 }
