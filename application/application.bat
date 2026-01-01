@@ -9,3 +9,5 @@ cmake --build "%~dp0/src/win32/test/cmake-build" --config %CONFIG% || exit 1
 
 "%~dp0/src/win32/test/cmake-build/%CONFIG%/toms-lane-win32-application-tests.exe"
 
+rm test-file.dat
+
