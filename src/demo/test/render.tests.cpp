@@ -23,7 +23,7 @@ static void Run4x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<
 											// NB this array lives on the stack in the scope of the RunSoftwareRenderingTests function only.
 											// The array is sized greater than the tl::RenderBuffer pixel array so it can pick up illegal memory writes to the pixel array
 
-	float depthArray[10] = { 0 };
+	float depthArray[18] = { 0 };
 	ClearPixelAndDepthArray(pixelArray, depthArray, 18);
 	z_buffer depth_buffer;
 	depth_buffer.width = 4;

@@ -2,7 +2,7 @@
 #include <math.h>
 #include <iostream>
 #include "../camera.hpp"
-#include "../demo.hpp"
+#include "../math.hpp"
 
 static void run_camera_view_frustrum_clip_tests() {
 	std::cout << "Running camera view frustrum clip tests..." << std::endl;
@@ -22,6 +22,27 @@ static void run_camera_view_frustrum_clip_tests() {
 		{ 0.0f, 0.0f, 1.0f },
 		{ 0.0f, 1.0f, 0.0f }
 	);
+
+	Camera camera = camera_get();
+
+	Plane clipping_plane;
+	clipping_plane.position = camera.position;
+	clipping_plane.normal = camera.view_frustrum.up_plane_normal;
+
+	Triangle4d in;
+	in.p[0] = p0;
+	in.p[1] = p1;
+	in.p[2] = p2;
+
+	Triangle4d out_1, out_2;
+
+	int clip_count = ClipTriangleAgainstPlane(
+		clipping_plane,
+		in,
+		out_1,
+		out_2
+	);
+
 
 	std::cout << "...camera view frustrum clip tests complete!" << std::endl;
 }
