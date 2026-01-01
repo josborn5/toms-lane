@@ -1,7 +1,7 @@
 #ifndef TOMS_LANE_DATA_STRUCTURES_H
 #define TOMS_LANE_DATA_STRUCTURES_H
 
-#include "../tl-application.hpp"
+#include "../../application/src/tl-application.hpp"
 
 namespace tl
 {

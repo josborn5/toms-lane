@@ -1,7 +1,7 @@
 #ifndef TOMS_LANE_FONT_HPP
 #define TOMS_LANE_FONT_HPP
 
-#include "../tl-application.hpp"
+#include "../../application/src/tl-application.hpp"
 #include "./geometry.hpp"
 
 namespace tl

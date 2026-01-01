@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.31.0)
 
 project(demo-app VERSION 1.0)
 
-add_subdirectory(../platform ./platform-output)
+add_subdirectory(../src/platform ./platform-output)
 add_subdirectory(../application ./application-output)
 
 add_subdirectory(src/test)
@@ -37,7 +37,7 @@ add_library(
 
 add_executable(
 	demo-win32 WIN32
-	demo-win32.cpp
+	src/demo-win32.cpp
 )
 
 target_link_libraries(

@@ -1,4 +1,3 @@
-#include "../tl-application.hpp"
 #include "./font.hpp"
 #include "./geometry.hpp"
 #include "./utilities.hpp"

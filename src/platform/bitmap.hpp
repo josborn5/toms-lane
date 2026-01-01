@@ -2,7 +2,7 @@
 #define TOMS_LANE_PLATFORM_BITMAP
 
 #include <stdint.h>
-#include "../tl-application.hpp"
+#include "../../application/src/tl-application.hpp"
 #include "./math.hpp"
 
 namespace tl
