@@ -39,7 +39,7 @@ static tl::Vec3<float> IntersectPlane(
 
 int ClipTriangleAgainstPlane(
 	const Plane& plane,
-	Triangle4d& inputTriangle,
+	const Triangle4d& inputTriangle,
 	Triangle4d& outputTriangle1,
 	Triangle4d& outputTriangle2
 )
@@ -47,8 +47,8 @@ int ClipTriangleAgainstPlane(
 	tl::Vec3<float> unitNormalToPlane = UnitVector(plane.normal);
 
 	// Two baskets to store points that are inside the plane and points that are outside
-	tl::Vec3<float>* insidePoints[3];
-	tl::Vec3<float>* outsidePoints[3];
+	const tl::Vec3<float>* insidePoints[3];
+	const tl::Vec3<float>* outsidePoints[3];
 	int insidePointCount = 0;
 	int outsidePointCount = 0;
 

@@ -20,7 +20,7 @@ struct Triangle4d
 
 int ClipTriangleAgainstPlane(
 	const Plane& plane,
-	Triangle4d& inputTriangle,
+	const Triangle4d& inputTriangle,
 	Triangle4d& outputTriangle1,
 	Triangle4d& outputTriangle2
 );
