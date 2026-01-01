@@ -7,7 +7,7 @@ project(demo-app VERSION 1.0)
 add_subdirectory(../platform ./platform-output)
 add_subdirectory(../application ./application-output)
 
-add_subdirectory(test)
+add_subdirectory(src/test)
 
 message("demo-app context:")
 message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
@@ -27,11 +27,11 @@ generate_demo_asset("teapot.obj")
 
 add_library(
 	demo
-	demo.cpp
-	render.cpp
-	asset.cpp
-	camera.cpp
-	math.cpp
+	src/demo.cpp
+	src/render.cpp
+	src/asset.cpp
+	src/camera.cpp
+	src/math.cpp
 	assets/teapot.obj.cpp
 )
 

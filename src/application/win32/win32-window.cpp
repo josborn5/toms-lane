@@ -11,6 +11,7 @@ namespace tl
 {
 
 static bool IsRunning = false;
+static bool is_paused = false;
 static RenderBuffer globalRenderBuffer = {0};
 static BITMAPINFO bitmapInfo = {0};	// platform dependent
 static HWND globalWindow;
@@ -118,6 +119,12 @@ LRESULT CALLBACK Win32_MainWindowCallback(HWND window, UINT Message, WPARAM wPar
 			HDC deviceContext = BeginPaint(window, &paint);
 			Win32_DisplayglobalRenderBufferInWindow(deviceContext);
 			EndPaint(window, &paint);
+		} break;
+		case WM_KILLFOCUS: {
+			is_paused = true;
+		} break;
+		case WM_SETFOCUS: {
+			is_paused = false;
 		} break;
 		default:
 		{
@@ -239,6 +246,10 @@ int RunWindowUpdateLoop(
 	while (IsRunning)
 	{
 		Win32_ProcessPendingMessages(&gameInput);
+
+		if (is_paused) {
+			continue;
+		}
 
 		// Get mouse position
 		POINT mousePointer;
