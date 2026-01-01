@@ -1,8 +1,34 @@
 #include <assert.h>
 #include <math.h>
+#include <iostream>
 #include "../camera.hpp"
+#include "../demo.hpp"
+
+static void run_camera_view_frustrum_clip_tests() {
+	std::cout << "Running camera view frustrum clip tests..." << std::endl;
+
+	tl::Vec3<float> p0 = { 0.0f, 0.0f, 0.0f };
+	tl::Vec3<float> p1 = { 0.0f, 10.0f, 0.0f };
+	tl::Vec3<float> p2 = { 10.0f, 10.0f, 0.0f };
+	tl::Vec3<float> projected_p0, projected_p1, projected_p2 = { 0 };
+
+	camera_reset(
+		100,
+		100,
+		{ 0.5f, 0.5f, -5.0f },
+		45.0f,
+		1.0f,
+		10.0f,
+		{ 0.0f, 0.0f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f }
+	);
+
+	std::cout << "...camera view frustrum clip tests complete!" << std::endl;
+}
 
 void run_camera_tests() {
+	std::cout << "Running camera tests..." << std::endl;
+
 	tl::Vec3<float> p0 = { 0.0f, 0.0f, 0.0f };
 	tl::Vec3<float> p1 = { 0.0f, 1.0f, 0.0f };
 	tl::Vec3<float> p2 = { 1.0f, 1.0f, 0.0f };
@@ -98,7 +124,7 @@ void run_camera_tests() {
 	assert(projected_p2.y > projected_p1.y); // p2 will be closer than p0 & p1
 	assert(projected_p2.z < projected_p0.z);
 
-	// filling the whole projection screen
+	// on the near plain
 	camera_reset(
 		100,
 		100,
@@ -144,4 +170,55 @@ void run_camera_tests() {
 
 	assert(projected_p2.x == 100.0f);
 	assert(projected_p2.y == 100.0f);
+
+	// on the far plain
+	camera_reset(
+		100,
+		100,
+		{ 0.5f, 0.5f, -0.5f },
+		90.0f,
+		0.1f,
+		0.5f,
+		{ 0.0f, 0.0f, 1.0f },
+		{ 0.0f, 1.0f, 0.0f }
+	);
+
+	camera = camera_get();
+	assert(camera.view_frustrum.up_plane_normal.z > 0);
+	assert(camera.view_frustrum.up_plane_normal.y < 0);
+	assert(camera.view_frustrum.up_plane_normal.x == 0);
+	assert(camera.view_frustrum.up_plane_normal.y == -camera.view_frustrum.up_plane_normal.z);
+
+	assert(camera.view_frustrum.down_plane_normal.z > 0);
+	assert(camera.view_frustrum.down_plane_normal.y > 0);
+	assert(camera.view_frustrum.down_plane_normal.x == 0);
+	assert(camera.view_frustrum.down_plane_normal.y == camera.view_frustrum.up_plane_normal.z);
+
+	assert(camera.view_frustrum.left_plane_normal.x > 0);
+	assert(camera.view_frustrum.left_plane_normal.z > 0);
+	assert(camera.view_frustrum.left_plane_normal.y == 0);
+	assert(camera.view_frustrum.left_plane_normal.x == camera.view_frustrum.up_plane_normal.z);
+
+	assert(camera.view_frustrum.right_plane_normal.x < 0);
+	assert(camera.view_frustrum.right_plane_normal.z > 0);
+	assert(camera.view_frustrum.right_plane_normal.y == 0);
+	assert(camera.view_frustrum.right_plane_normal.x == -camera.view_frustrum.up_plane_normal.z);
+
+	camera_project_triangle(
+		p0, p1, p2,
+		projected_p0, projected_p1, projected_p2
+	);
+
+	assert(projected_p0.x == 0.0f);
+	assert(projected_p0.y == 0.0f);
+
+	assert(projected_p1.x == 0.0f);
+	assert(projected_p1.y == 100.0f);
+
+	assert(projected_p2.x == 100.0f);
+	assert(projected_p2.y == 100.0f);
+
+	std::cout << "...camera tests complete!!!" << std::endl;
+
+	run_camera_view_frustrum_clip_tests();
 }

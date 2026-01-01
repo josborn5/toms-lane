@@ -9,24 +9,12 @@
 #include "./file.hpp"
 #include "./camera.hpp"
 #include "./math.hpp"
+#include "./demo.hpp"
 
 struct cuboid {
 	tl::Vec3<float> position = {0};
 	tl::Vec3<float> half_size = {0};
 };
-
-struct Plane
-{
-	tl::Vec3<float> position;
-	tl::Vec3<float> normal;
-};
-
-struct Triangle4d
-{
-	tl::Vec3<float> p[3];
-	unsigned int color;
-};
-
 
 static const unsigned int screen_width = 1280;
 static const unsigned int screen_height = 720;
@@ -92,7 +80,7 @@ static tl::Vec3<float> IntersectPlane(
 	return return_temp;
 }
 
-static int ClipTriangleAgainstPlane(
+int ClipTriangleAgainstPlane(
 	const Plane& plane,
 	Triangle4d& inputTriangle,
 	Triangle4d& outputTriangle1,
@@ -628,7 +616,7 @@ static void reset_mesh_to_cube() {
 	meshArray.clear();
 	// Using a clockwise winding convention
 	// -ve z face
-	meshArray.append({ 0.0f, 0.0f, 0.0f,		0.0f, 1.0f, 0.0f,		1.0f, 1.0f, 0.0f });
+	// meshArray.append({ 0.0f, 0.0f, 0.0f,		0.0f, 1.0f, 0.0f,		1.0f, 1.0f, 0.0f });
 	meshArray.append({ 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 2.0f,		1.0f, 1.0f, -1.0f });
 
 	// +ve x face

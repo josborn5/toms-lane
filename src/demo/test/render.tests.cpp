@@ -131,9 +131,7 @@ static void run_triangle_plane_coeffificent_tests() {
 
 int main()
 {
-	std::cout << "Running camera tests" << std::endl;
 	run_camera_tests();
-	std::cout << "camera tests complete!!!" << std::endl;
 
 	std::cout << "Running plane coefficient tests" << std::endl;
 	run_triangle_plane_coeffificent_tests();
