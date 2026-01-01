@@ -156,12 +156,10 @@ static void TransformAndRenderMesh(
 		float normalized_triangle_face_to_light = 0.5f * (triangle_face_to_light + 1.0f);
 		float shade = 0.2f + (0.8f * normalized_triangle_face_to_light);
 
-		uint32_t triangleColor = tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade));
+		uint32_t triangleColor = (tri.color == 0)
+			? tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade))
+			: (int)((float)tri.color * shade);
 
-		tl::Vec3<float> temp_position = tl::AddVectors(
-			camera.position,
-			tl::MultiplyVectorByScalar(camera.unit_direction, 1.0f)
-		);
 		Plane near_plane;
 		near_plane.position = camera.view_frustrum.near_top_left_corner_position;
 		near_plane.normal = camera.view_frustrum.near_plane_normal;
@@ -171,19 +169,19 @@ static void TransformAndRenderMesh(
 		far_plane.normal = camera.view_frustrum.far_plane_normal;
 
 		Plane top_plane;
-		top_plane.position = temp_position;
+		top_plane.position = camera.position;
 		top_plane.normal = camera.view_frustrum.up_plane_normal;
 
 		Plane bottom_plane;
-		bottom_plane.position = temp_position;
+		bottom_plane.position = camera.position;
 		bottom_plane.normal = camera.view_frustrum.down_plane_normal;
 
 		Plane left_plane;
-		left_plane.position = temp_position;
+		left_plane.position = camera.position;
 		left_plane.normal = camera.view_frustrum.left_plane_normal;
 
 		Plane right_plane;
-		right_plane.position = temp_position;
+		right_plane.position = camera.position;
 		right_plane.normal = camera.view_frustrum.right_plane_normal;
 
 		const int plane_clip_count = 6;
@@ -429,8 +427,8 @@ static void reset_world_to_mesh() {
 	float min_world_z = world.position.z - world.half_size.z;
 
 	// add triangles for the world border
-	meshArray.append({min_world_x, min_world_y, max_world_z,	min_world_x, max_world_y, max_world_z,	max_world_x, max_world_y, max_world_z});
-	meshArray.append({min_world_x, min_world_y, max_world_z,	max_world_x, max_world_y, max_world_z,	max_world_x, min_world_y, max_world_z});
+	meshArray.append({min_world_x, min_world_y, max_world_z,	min_world_x, max_world_y, max_world_z,	max_world_x, max_world_y, max_world_z,	0x000055});
+	meshArray.append({min_world_x, min_world_y, max_world_z,	max_world_x, max_world_y, max_world_z,	max_world_x, min_world_y, max_world_z,	0x000055 });
 
 	positionIncrement = 0.01f * world.half_size.x;
 
