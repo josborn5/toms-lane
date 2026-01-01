@@ -1,8 +1,8 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "../tl-application.hpp"
-#include "../tl-library.hpp"
+#include "../../application/src/tl-application.hpp"
+#include "../../src/tl-library.hpp"
 
 struct SpriteC
 {

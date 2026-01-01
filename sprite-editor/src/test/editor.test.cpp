@@ -1,4 +1,4 @@
-#include "./editor.hpp"
+#include "../editor.hpp"
 #include <stdio.h>
 #include <assert.h>
 

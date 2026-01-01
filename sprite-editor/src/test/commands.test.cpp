@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
-#include "./commands.hpp"
+#include "../commands.hpp"
 
 // mock implementations of libraries used
 uint32_t tl::GetColorFromRGB(int r, int g, int b)

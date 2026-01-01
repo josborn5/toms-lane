@@ -6,37 +6,6 @@ add_subdirectory(application)
 add_subdirectory(src/platform)
 
 ######## sprite-editor ########
-add_executable(
-	sprite-editor-win32 WIN32
-	src/sprite-editor/sprite-editor-win32.cpp
-)
-add_executable(
-	sprite-editor-tests
-	src/sprite-editor/sprite-editor.test.cpp
-)
-add_library(
-	sprite-editor STATIC
-	src/sprite-editor/commands.cpp
-	src/sprite-editor/state.cpp
-	src/sprite-editor/render.cpp
-	src/sprite-editor/palettes.cpp
-	src/sprite-editor/sprite-editor.cpp
-	src/sprite-editor/utilities.cpp
-	src/sprite-editor/transform.cpp
-	src/sprite-editor/operations.cpp
-)
-target_link_libraries(
-	sprite-editor-tests
-	sprite-editor
-)
-target_link_libraries(
-	sprite-editor-win32
-	sprite-editor
-	toms-lane-platform
-	toms-lane-win32-application
-)
-
-
 ######## breakout ########
 
 ######## obby-1 ########

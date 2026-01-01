@@ -1,8 +1,8 @@
 #ifndef SPRITE_EDITOR_COMMANDS_HPP
 #define SPRITE_EDITOR_COMMANDS_HPP
 
-#include "../tl-application.hpp"
-#include "../tl-library.hpp"
+#include "../../application/src/tl-application.hpp"
+#include "../../src/tl-library.hpp"
 #include "./editor.hpp"
 #include "./operations.hpp"
 

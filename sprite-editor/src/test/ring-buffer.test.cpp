@@ -1,4 +1,4 @@
-#include "./ring-buffer.hpp"
+#include "../ring-buffer.hpp"
 #include <stdio.h>
 #include <assert.h>
 
