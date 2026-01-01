@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.31.0)
 
 project(toms-lane VERSION 1.0)
 
-add_subdirectory(src/application)
+add_subdirectory(application)
 add_subdirectory(src/platform)
 
 ######## sprite-editor ########
@@ -38,23 +38,6 @@ target_link_libraries(
 
 
 ######## breakout ########
-add_executable(
-	breakout-win32 WIN32
-	src/breakout/breakout-win32.cpp
-)
-add_library(
-	breakout STATIC
-	src/breakout/breakout.cpp
-	src/breakout/render.cpp
-	src/breakout/update_state.cpp
-)
-target_link_libraries(
-	breakout-win32
-	breakout
-	toms-lane-platform
-	toms-lane-win32-application
-)
-
 
 ######## obby-1 ########
 function(generate_obby_1_asset name)

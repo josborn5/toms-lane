@@ -1,4 +1,4 @@
-#include "../tl-library.hpp"
+#include "../../src/tl-library.hpp"
 #include <math.h>
 
 struct ADSREnvelope
