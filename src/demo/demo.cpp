@@ -18,6 +18,8 @@ struct cuboid {
 
 static const unsigned int screen_width = 1280;
 static const unsigned int screen_height = 720;
+static unsigned int actual_height = 0;
+static unsigned int actual_width = 0;
 static constexpr unsigned int pixel_count = screen_width * screen_height;
 static z_buffer depth_buffer;
 static float depth_array[pixel_count] = { 0 };
@@ -352,8 +354,8 @@ static void reset_camera_in_world() {
 	float far_plane = 2.5f * world.half_size.z;
 	float near_plane = 0.1f * far_plane;
 	camera_reset(
-		screen_width,
-		screen_height,
+		actual_width,
+		actual_height,
 		position,
 		field_of_view_in_deg,
 		near_plane,
@@ -516,7 +518,7 @@ static void reset_mesh_to_cube() {
 	meshArray.clear();
 	// Using a clockwise winding convention
 	// -ve z face
-	// meshArray.append({ 0.0f, 0.0f, 0.0f,		0.0f, 1.0f, 0.0f,		1.0f, 1.0f, 0.0f });
+	meshArray.append({ 0.0f, 0.0f, 0.0f,		0.0f, 1.0f, 0.0f,		1.0f, 1.0f, 0.0f });
 	meshArray.append({ 0.0f, 0.0f, 1.0f,		0.0f, 1.0f, 2.0f,		1.0f, 1.0f, -1.0f });
 
 	// +ve x face
@@ -566,8 +568,8 @@ static void keep_camera_in_bounds(const Camera& camera) {
 	camera_position.z = Clamp(world.position.z - world.half_size.z, camera_position.z, world.position.z + world.half_size.z);
 
 	camera_reset(
-		screen_width,
-		screen_height,
+		actual_width,
+		actual_height,
 		camera_position,
 		camera.field_of_view_deg,
 		camera.near_plane,
@@ -655,8 +657,8 @@ static void process_input_for_camera(
 			: 0.25f;
 
 		camera_reset(
-			screen_width,
-			screen_height,
+			actual_width,
+			actual_height,
 			camera.position,
 			camera.field_of_view_deg + camera_fov_delta,
 			camera.near_plane,
@@ -673,8 +675,8 @@ static void process_input_for_camera(
 			: 0.1f;
 
 		camera_reset(
-			screen_width,
-			screen_height,
+			actual_width,
+			actual_height,
 			camera.position,
 			camera.field_of_view_deg,
 			camera.near_plane + near_plane_increment,
@@ -692,8 +694,8 @@ static void process_input_for_camera(
 			: 0.1f;
 
 		camera_reset(
-			screen_width,
-			screen_height,
+			actual_width,
+			actual_height,
 			camera.position,
 			camera.field_of_view_deg,
 			camera.near_plane,
@@ -884,6 +886,8 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 static int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
+	actual_width = renderBuffer.width;
+	actual_height = renderBuffer.height;
 	float dt = (float)dtInMilliseconds / 1000.0f;
 	return UpdateAndRender1(appMemory, input, renderBuffer, dt);
 }
