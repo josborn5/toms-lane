@@ -21,12 +21,10 @@ tl::bitmap playerBitmaps;
 
 */
 
-tl::GameMemory appMemory;
-tl::MemorySpace font_memory;
 bool initialized = false;
 bool isPaused = false;
 
-int Initialize(const tl::GameMemory& gameMemory)
+int Initialize()
 {
 	load_bitmap_from_embed(
 		background_bmp,
@@ -95,15 +93,9 @@ int obby_2_main()
 		return windowOpenResult;
 	}
 
-	tl::InitializeMemory(
-		2,
-		1,
-		appMemory
-	);
-
 	tl::font_interface_initialize();
 
-	Initialize(appMemory);
+	Initialize();
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
