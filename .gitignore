@@ -4,6 +4,4 @@ bin-*
 *.exe
 *.swp
 
-src/obby-2/assets/*.cpp
-
 cmake-build/

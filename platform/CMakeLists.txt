@@ -16,9 +16,9 @@ generate_platform_asset(font-mono.tlsf font-mono.cpp)
 
 add_library(
 	toms-lane-platform STATIC
-	toms-lane-platform.cpp
+	src/toms-lane-platform.cpp
 	assets/font-mono.cpp
-	font.cpp
-	transform.cpp
+	src/font.cpp
+	src/transform.cpp
 )
 

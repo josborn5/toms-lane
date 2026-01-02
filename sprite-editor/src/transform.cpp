@@ -1,5 +1,5 @@
 #include "../../application/src/tl-application.hpp"
-#include "../../src/tl-library.hpp"
+#include "../../platform/src/tl-library.hpp"
 #include "./editor.hpp"
 
 struct RGB24Bit

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.31.0)
 
 project(breakout VERSION 1.0)
 
-add_subdirectory(../src/platform ./platform-output)
+add_subdirectory(../platform ./platform-output)
 add_subdirectory(../application ./application-output)
 
 message("breakout context:")

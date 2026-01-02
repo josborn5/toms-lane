@@ -1,5 +1,0 @@
-src\platform\toms-lane-platform.cpp
-src\platform\toms-lane-platform.tests.cpp
-src\platform\font.cpp
-src\platform\transform.cpp
-

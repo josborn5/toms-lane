@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.31.0)
 
 project(sprite-editor VERSION 1.0)
 
-add_subdirectory(../src/platform ./platform-output)
+add_subdirectory(../platform ./platform-output)
 add_subdirectory(../application ./application-output)
 
 add_subdirectory(src/test)

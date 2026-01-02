@@ -1,0 +1,3 @@
+assets/*.cpp
+src/test/cmake-build/
+

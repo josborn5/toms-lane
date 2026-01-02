@@ -1,7 +1,7 @@
 #ifndef TOMS_LANE_MEMORY_H
 #define TOMS_LANE_MEMORY_H
 
-#include "../../src/platform/memory.hpp"
+#include "../../platform/src/memory.hpp"
 
 namespace tl
 {

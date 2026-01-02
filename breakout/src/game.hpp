@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "../../src/tl-library.hpp"
+#include "../../platform/src/tl-library.hpp"
 
 
 enum PowerUpType

@@ -1,4 +1,4 @@
-#include "../../src/tl-library.hpp"
+#include "../../platform/src/tl-library.hpp"
 
 void DrawTriangleInPixels(
 	const tl::RenderBuffer& renderBuffer,

@@ -1,4 +1,4 @@
-#include "../../src/tl-library.hpp"
+#include "../../platform/src/tl-library.hpp"
 
 float ShortestDistanceFromPointToPlane(
 	const tl::Vec3<float>& point,

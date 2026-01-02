@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.31.0)
 
 project(obby-1 VERSION 1.0)
 
-add_subdirectory(../../src/platform ./platform-output)
-add_subdirectory(../../application ./application-output)
+add_subdirectory(../platform ./platform-output)
+add_subdirectory(../application ./application-output)
 
 message("obby-1 context:")
 message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")

@@ -1,7 +1,7 @@
 #ifndef DEMO_CAMERA
 #define DEMO_CAMERA
 
-#include "../../src/tl-library.hpp"
+#include "../../platform/src/tl-library.hpp"
 
 struct view_frustrum {
 	tl::Vec3<float> near_top_left_corner_position = {0};

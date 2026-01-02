@@ -1,4 +1,4 @@
-#include "../../src/tl-library.hpp"
+#include "../../platform/src/tl-library.hpp"
 #include "./editor.hpp"
 #include "./utilities.hpp"
 #include "./render.hpp"
