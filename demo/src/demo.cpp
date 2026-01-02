@@ -40,7 +40,8 @@ static tl::Rect<float> map;
 static float world_to_map_scale_factor = 0.0f;
 static tl::Matrix2x3<float> mapProjectionMatrix;
 
-static tl::GameMemory appMemory;
+static tl::MemorySpace persistent_memory;
+static tl::MemorySpace transient_memory;
 
 static bool isStarted = false;
 
@@ -506,7 +507,7 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 
 static void reset_mesh_to_teapot() {
 	meshArray.clear();
-	tl::MemorySpace temp = appMemory.transient; // make a copy of the transient memory so it can be modified
+	tl::MemorySpace temp = transient_memory; // make a copy of the transient memory so it can be modified
 	load_asset_to_array("teapot.obj", meshArray, temp);
 
 	reset_world_to_mesh();
@@ -542,12 +543,11 @@ static void reset_mesh_to_cube() {
 	reset_world_to_mesh();
 }
 
-static int Initialize(const tl::GameMemory& gameMemory)
+static int Initialize(const tl::MemorySpace& persistent)
 {
-	tl::MemorySpace transientMemory = gameMemory.transient;
 	tl::font_interface_initialize();
 
-	meshArray.initialize(gameMemory.permanent);
+	meshArray.initialize(persistent);
 
 	depth_buffer.width = screen_width;
 	depth_buffer.height = screen_height;
@@ -711,7 +711,9 @@ static void process_input_for_camera(
 	}
 }
 
-static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
+static int UpdateAndRender1(
+	const tl::MemorySpace& transient,
+	const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
 	const Camera& camera = camera_get();
 	const uint32_t BACKGROUND_COLOR = 0x000000;
@@ -777,9 +779,7 @@ static int UpdateAndRender1(const tl::GameMemory& gameMemory, const tl::Input& i
 
 	process_input_for_camera(input, camera);
 
-	tl::MemorySpace transientMemory = gameMemory.transient;
-
-	TransformAndRenderMesh(renderBuffer, meshArray, camera, transientMemory);
+	TransformAndRenderMesh(renderBuffer, meshArray, camera, transient);
 
 
 	// Show info about z-position
@@ -887,7 +887,7 @@ static int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl
 	actual_width = renderBuffer.width;
 	actual_height = renderBuffer.height;
 	float dt = (float)dtInMilliseconds / 1000.0f;
-	return UpdateAndRender1(appMemory, input, renderBuffer, dt);
+	return UpdateAndRender1(transient_memory, input, renderBuffer, dt);
 }
 
 int demo_main()
@@ -905,13 +905,13 @@ int demo_main()
 		return windowOpenResult;
 	}
 
-	tl::InitializeMemory(
-		10,
-		10,
-		appMemory
-	);
+	persistent_memory.sizeInBytes = 10 * 1024 * 1024;
+	transient_memory.sizeInBytes = 10 * 1024 * 1024;
 
-	Initialize(appMemory);
+	persistent_memory.content = malloc(persistent_memory.sizeInBytes);
+	transient_memory.content = malloc(transient_memory.sizeInBytes);
+
+	Initialize(persistent_memory);
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
