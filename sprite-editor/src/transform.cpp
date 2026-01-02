@@ -1,4 +1,3 @@
-#include "../../application/src/tl-application.hpp"
 #include "../../platform/src/tl-library.hpp"
 #include "./editor.hpp"
 
