@@ -19,7 +19,7 @@ jobs:
     - shell: bash
       name: test demo
       run: |
-        ./sprite-editor/sprite-editor.bat -t
+        ./demo/demo.bat -t
 
     - shell: bash
       name: test sprite-editor
