@@ -25,14 +25,14 @@ generate_obby_1_asset("player")
 
 add_library(
 	obby-1
-	obby-1.cpp
+	src/obby-1.cpp
 	assets/brick.cpp
 	assets/checkpoint.cpp
 	assets/player.cpp
 )
 add_executable(
 	obby-1-win32 WIN32
-	obby-1-win32.cpp
+	src/obby-1-win32.cpp
 )
 target_link_libraries(
 	obby-1-win32
