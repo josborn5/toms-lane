@@ -10,7 +10,7 @@ cmake -S "%~dp0/." -B "%~dp0/cmake-build" || exit 1
 cmake --build "%~dp0/cmake-build" --config %CONFIG% || exit 1
 
 if %TEST%==true (
-	"%~dp0/cmake-build/test/%CONFIG%/demo-tests.exe" || exit 1
+	"%~dp0/cmake-build/src/test/%CONFIG%/demo-tests.exe" || exit 1
 ) else (
 	"%~dp0/cmake-build/%CONFIG%/demo-win32.exe"
 )
