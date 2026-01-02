@@ -12,13 +12,4 @@ add_subdirectory(src/platform)
 
 ######## obby-2 ########
 ######## sound-test ########
-add_executable(
-	sound-test WIN32
-	src/sound-test/sound-test.cpp
-)
-target_link_libraries(
-	sound-test
-	toms-lane-win32-application
-)
-
 

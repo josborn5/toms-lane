@@ -1,7 +1,7 @@
 #include <math.h>
 #include <windows.h>
-#include "../application/win32/win32-application.hpp"
-#include "../tl-application.hpp"
+#include "../application/src/win32/win32-application.hpp"
+#include "../application/src/tl-application.hpp"
 
 static uint64_t sampleCounter = 0;
 static const int sampleRate = 48000;
