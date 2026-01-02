@@ -36,17 +36,5 @@ int InitializeMemory(
 	return 0;
 }
 
-int memory_interface_initialize(MemorySpace& memory)
-{
-	memory.content = VirtualAlloc(0, (size_t)memory.sizeInBytes, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
-	if(memory.content == NULL)
-	{
-		DisplayLastWin32Error();
-		return -1;
-	}
-
-	return 0;
-}
-
 }
 

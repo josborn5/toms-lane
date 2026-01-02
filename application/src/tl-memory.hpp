@@ -22,8 +22,6 @@ namespace tl
 		unsigned long transientSpaceInMegabytes,
 		GameMemory& memory
 	);
-
-	int memory_interface_initialize(MemorySpace& memory);
 }
 
 #endif
