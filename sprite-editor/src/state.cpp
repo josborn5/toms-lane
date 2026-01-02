@@ -411,7 +411,7 @@ static int Initialize(char* commandLine)
 	return 0;
 }
 
-int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int clientX, int clientY)
+int InitializeState(const tl::MemorySpace& persistent, const tl::MemorySpace& transient, char* commandLine, int clientX, int clientY)
 {
 	state.windowWidth = clientX;
 	state.windowHeight = clientY;
@@ -422,7 +422,7 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 	const unsigned int max_color_table_size_in_items = 256;
 	constexpr uint64_t color_table_size_in_bytes = sizeof(uint32_t) * max_color_table_size_in_items;
 
-	tl::MemorySpace working = gameMemory.permanent;
+	tl::MemorySpace working = persistent;
 	tl::font_interface_initialize();
 
 	paletteMemory = tl::CarveMemorySpace(oneMegaByteInBytes, working);
@@ -443,7 +443,7 @@ int InitializeState(const tl::GameMemory& gameMemory, char* commandLine, int cli
 
 	state.canvas.init(working);
 
-	tempMemory = gameMemory.transient;
+	tempMemory = transient;
 
 	state.canvas.p_color_table = &state.canvas_color_table;
 	state.commandBuffer = &commandBuffer[0];
