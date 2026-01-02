@@ -1,17 +1,14 @@
-#include "../tl-application.hpp"
-#include "../tl-library.hpp"
+#include "../../application/src/tl-application.hpp"
+#include "../../src/tl-library.hpp"
 #include "./game.hpp"
 
 #include "./levels.cpp"
 #include "./update-gamestate.cpp"
 #include "./render-gamestate.cpp"
 
-tl::GameMemory appMemory;
-tl::MemorySpace font_memory;
-
-int Initialize(const tl::GameMemory& gameMemory)
+int Initialize()
 {
-	LoadSprites(gameMemory);
+	LoadSprites();
 	gamestate.blockPixelHalfSize = 2.0f;
 	gamestate.player.pixelHalfSize = 2.0f;
 
@@ -50,14 +47,8 @@ int obby_1_main()
 	gamestate.camera.halfSize.x = (float)(clientX / 2);
 	gamestate.camera.halfSize.y = (float)(clientY / 2);
 
-	tl::InitializeMemory(
-		2,
-		1,
-		appMemory
-	);
-
 	tl::font_interface_initialize();
-	Initialize(appMemory);
+	Initialize();
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
 

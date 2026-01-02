@@ -222,7 +222,7 @@ static int load_bitmap_from_embed(unsigned char data[], unsigned int data_size, 
 	);
 }
 
-int LoadSprites(const tl::GameMemory& gameMemory)
+int LoadSprites()
 {
 	load_bitmap_from_embed(
 		brick_bmp,
