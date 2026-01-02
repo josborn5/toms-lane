@@ -1,6 +1,6 @@
 #include <assert.h>
 #include "../software-rendering.hpp"
-#include "../../tl-application.hpp"
+#include "../memory.hpp"
 
 static void run_fill_rgba_rect_tests()
 {

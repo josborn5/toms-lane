@@ -3,10 +3,19 @@
 
 #include "./math.hpp"
 #include "./geometry.hpp"
-#include "../../application/src/tl-application.hpp"
+#include "./memory.hpp"
 
 namespace tl
 {
+	struct RenderBuffer
+	{
+		unsigned int* pixels;
+		int width;
+		int height;
+		int pitch;
+		int bytesPerPixel;
+	};
+
 	// monochrome sprite
 	struct Sprite
 	{

@@ -2,18 +2,10 @@
 #define TOMS_LANE_WINDOW_HPP
 
 #include "./tl-input.hpp"
+#include "../../src/platform/software-rendering.hpp"
 
 namespace tl
 {
-	struct RenderBuffer
-	{
-		unsigned int* pixels;
-		int width;
-		int height;
-		int pitch;
-		int bytesPerPixel;
-	};
-
 	struct WindowSettings
 	{
 		int width;
