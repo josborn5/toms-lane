@@ -1,4 +1,4 @@
-#include "../tl-library.hpp"
+#include "../../src/tl-library.hpp"
 #include "./platform_common.hpp"
 
 static bool IsDown(const tl::Input &input, int button)

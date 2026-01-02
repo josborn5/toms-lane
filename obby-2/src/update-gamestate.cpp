@@ -1,5 +1,5 @@
 #include "./game.hpp"
-#include "../tl-library.hpp"
+#include "../../src/tl-library.hpp"
 
 GameState gamestate = {};
 

@@ -1,6 +1,3 @@
-#include "./game.hpp"
-#include "../tl-library.hpp"
-
 char *levels[10] = {
 "\
  \n\
