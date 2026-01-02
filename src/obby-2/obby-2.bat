@@ -1,9 +1,8 @@
-call "%~dp0../../compile.bat" %1
-
 SET CONFIG=Release
-if "%1"=="-d" (
-	SET CONFIG=Debug
-)
 
-"%~dp0../../cmake-build/%CONFIG%/obby-2-win32.exe"
+cmake -S "%~dp0/." -B "%~dp0/cmake-build" || exit 1
+
+cmake --build "%~dp0/cmake-build" --config %CONFIG% || exit 1
+
+"%~dp0/cmake-build/%CONFIG%/obby-2-win32.exe"
 
