@@ -1,16 +1,10 @@
 #ifndef TOMS_LANE_MEMORY_H
 #define TOMS_LANE_MEMORY_H
 
-#include <stdint.h>
+#include "../../src/platform/memory.hpp"
 
 namespace tl
 {
-	struct MemorySpace
-	{
-		void* content = nullptr;
-		uint64_t sizeInBytes = 0;
-	};
-
 	struct GameMemory
 	{
 		MemorySpace permanent;
