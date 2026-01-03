@@ -884,8 +884,8 @@ static int UpdateAndRender1(
 
 static int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
-	actual_width = renderBuffer.width;
-	actual_height = renderBuffer.height;
+	actual_width = renderBuffer.width - 4;
+	actual_height = renderBuffer.height - 4;
 	float dt = (float)dtInMilliseconds / 1000.0f;
 	return UpdateAndRender1(transient_memory, input, renderBuffer, dt);
 }

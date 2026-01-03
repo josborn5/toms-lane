@@ -448,12 +448,12 @@ void camera_project_triangle(
 	// x: -1 -> 0, 1 -> screen_width
 	// y: -1 -> 0, 1 -> screen_height
 
-	float half_screen_width = 0.5f * (float)(camera.screen_width - 1);
+	float half_screen_width = 0.5f * (float)(camera.screen_width);
 	out_p0.x = half_screen_width * projected_p0.x + half_screen_width;
 	out_p1.x = half_screen_width * projected_p1.x + half_screen_width;
 	out_p2.x = half_screen_width * projected_p2.x + half_screen_width;
 
-	float half_screen_height = 0.5f * (float)(camera.screen_height - 1);
+	float half_screen_height = 0.5f * (float)(camera.screen_height);
 	out_p0.y = half_screen_height * projected_p0.y + half_screen_height;
 	out_p1.y = half_screen_height * projected_p1.y + half_screen_height;
 	out_p2.y = half_screen_height * projected_p2.y + half_screen_height;

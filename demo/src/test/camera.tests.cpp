@@ -70,11 +70,11 @@ static void run_camera_view_frustrum_clip_tests() {
 	assert(projected_p0.z == 0.5f);
 
 	assert(projected_p1.x == 0.0f);
-	assert(projected_p1.y == 99.0f);
+	assert(projected_p1.y == 100.0f);
 	assert(projected_p1.z == 0.5f);
 
-	assert(projected_p2.x == 99.0f);
-	assert(projected_p2.y == 99.0f);
+	assert(projected_p2.x == 100.0f);
+	assert(projected_p2.y == 100.0f);
 	assert(projected_p2.z == 0.5f);
 
 	std::cout << "...camera view frustrum clip tests complete!" << std::endl;
@@ -137,7 +137,7 @@ void run_camera_tests() {
 		projected_p0, projected_p1, projected_p2
 	);
 
-	assert(projected_p0.x == 49.5f);
+	assert(projected_p0.x == 50.0f);
 	assert(projected_p0.y > 0);
 	assert(projected_p0.y < 100);
 	assert(projected_p0.z > 1.0f);
@@ -220,10 +220,10 @@ void run_camera_tests() {
 	assert(projected_p0.y == 0.0f);
 
 	assert(projected_p1.x == 0.0f);
-	assert(projected_p1.y == 99.0f);
+	assert(projected_p1.y == 100.0f);
 
-	assert(projected_p2.x == 99.0f);
-	assert(projected_p2.y == 99.0f);
+	assert(projected_p2.x == 100.0f);
+	assert(projected_p2.y == 100.0f);
 
 	// on the far plain
 	camera_reset(
@@ -267,10 +267,10 @@ void run_camera_tests() {
 	assert(projected_p0.y == 0.0f);
 
 	assert(projected_p1.x == 0.0f);
-	assert(projected_p1.y == 99.0f);
+	assert(projected_p1.y == 100.0f);
 
-	assert(projected_p2.x == 99.0f);
-	assert(projected_p2.y == 99.0f);
+	assert(projected_p2.x == 100.0f);
+	assert(projected_p2.y == 100.0f);
 
 	std::cout << "...camera tests complete!!!" << std::endl;
 
