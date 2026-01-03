@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <strstream>
 #include <string>
 #include <limits>
@@ -112,10 +111,6 @@ static void TransformAndRenderMesh(
 	const Camera& camera,
 	const tl::MemorySpace& transient
 ) {
-	const int RED = 0xFF;
-	const int GREEN = 0xAA;
-	const int BLUE = 0x88;
-
 	rendered_triangle_count = 0;
 	projected_triangle_count = 0;
 	viewed_triangle_count = 0;
@@ -157,9 +152,7 @@ static void TransformAndRenderMesh(
 		float normalized_triangle_face_to_light = 0.5f * (triangle_face_to_light + 1.0f);
 		float shade = 0.2f + (0.8f * normalized_triangle_face_to_light);
 
-		uint32_t triangleColor = (tri.color == 0)
-			? tl::GetColorFromRGB(int(RED * shade), int(GREEN * shade), int(BLUE * shade))
-			: (int)((float)tri.color * shade);
+		uint32_t triangleColor = (uint32_t)((float)tri.color * shade);
 
 		Plane near_plane;
 		near_plane.position = camera.view_frustrum.near_top_left_corner_position;
@@ -493,6 +486,7 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 				heapVertices.get(points[1] - 1),
 				heapVertices.get(points[2] - 1)
 			};
+			newTriangle.color = 0xAAAAAA;
 
 			triangles.append(newTriangle);
 		}
