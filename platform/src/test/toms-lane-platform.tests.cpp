@@ -1,5 +1,4 @@
 #include "./math.tests.cpp"
-#include "./geometry.tests.cpp"
 #include "./software-rendering.tests.cpp"
 #include "./collision.tests.cpp"
 #include "./data-structures.tests.cpp"
@@ -11,8 +10,6 @@
 int main()
 {
 	RunMathTests();
-
-	RunGeometryTests();
 
 	RunSoftwareRenderingTests();
 

@@ -1,5 +1,4 @@
 #include "./math.cpp"
-#include "./geometry.cpp"
 #include "./software-rendering.cpp"
 #include "./software-rendering.sprite.cpp"
 #include "./collision.cpp"
