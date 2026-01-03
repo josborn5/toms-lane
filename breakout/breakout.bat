@@ -4,5 +4,5 @@ cmake -S "%~dp0/." -B "%~dp0/cmake-build" || exit 1
 
 cmake --build "%~dp0/cmake-build" --config %CONFIG% || exit 1
 
-"%~dp0/cmake-build/%CONFIG%/breakout-win32.exe"
+"%~dp0/cmake-build/src/%CONFIG%/breakout-win32.exe"
 
