@@ -186,7 +186,7 @@ static void TransformAndRenderMesh(
 		right_plane.normal = camera.view_frustrum.right_plane_normal;
 
 		const int plane_clip_count = 6;
-		constexpr int triangle_queue_size = plane_clip_count * 3; // 3 * 2 sides of view frustrum to clip
+		constexpr int triangle_queue_size = plane_clip_count * 6; // 3 * 2 sides of view frustrum to clip
 		Triangle4d queue_data[triangle_queue_size];
 		tl::MemorySpace queue_data_space;
 		queue_data_space.content = queue_data;
@@ -274,10 +274,6 @@ static void TransformAndRenderMesh(
 			trianglesToDrawArray.append(triToRender);
 		}
 	}
-
-	tl::MemorySpace remainingTransient = trianglesToDrawArray.sizeToCurrentLength();
-
-	Plane topOfScreen = { 0.0f, (float)(renderBuffer.height - 1), 0.0f, 0.0f, -1.0f, 0.0f };
 
 	for (int n = 0; n < trianglesToDrawArray.length(); n += 1)
 	{

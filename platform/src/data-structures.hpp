@@ -226,7 +226,7 @@ namespace tl
 	struct queue
 	{
 		private:
-			int _capacity = 0;
+			unsigned int _capacity = 0;
 			int _length = 0;
 			T* _ogHead;
 
