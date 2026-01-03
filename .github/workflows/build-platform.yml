@@ -1,7 +1,7 @@
 on: workflow_dispatch
 
 jobs:
-  build-platform:
+  build-test:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
@@ -9,20 +9,20 @@ jobs:
     - shell: bash
       name: test win32
       run: |
-        ./application/application.bat
+        ./application/go.bat
 
     - shell: bash
       name: test platform
       run: |
-        ./platform/platform.bat
+        ./platform/go.bat
 
     - shell: bash
       name: test demo
       run: |
-        ./demo/demo.bat -t
+        ./demo/go.bat -t
 
     - shell: bash
       name: test sprite-editor
       run: |
-        ./sprite-editor/sprite-editor.bat -t
+        ./sprite-editor/go.bat -t
 
