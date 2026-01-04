@@ -152,8 +152,6 @@ static void TransformAndRenderMesh(
 		float normalized_triangle_face_to_light = 0.5f * (triangle_face_to_light + 1.0f);
 		float shade = 0.2f + (0.8f * normalized_triangle_face_to_light);
 
-		uint32_t triangleColor = (uint32_t)((float)tri.color * shade);
-
 		Plane near_plane;
 		near_plane.position = camera.view_frustrum.near_top_left_corner_position;
 		near_plane.normal = camera.view_frustrum.near_plane_normal;
@@ -262,7 +260,9 @@ static void TransformAndRenderMesh(
 				triToRender.p[1],
 				triToRender.p[2]
 			);
-			triToRender.color = triangleColor;
+			triToRender.color_r = (uint8_t)((float)tri.color_r * shade);
+			triToRender.color_g = (uint8_t)((float)tri.color_g * shade);
+			triToRender.color_b = (uint8_t)((float)tri.color_b * shade);
 
 			trianglesToDrawArray.append(triToRender);
 		}
@@ -272,6 +272,11 @@ static void TransformAndRenderMesh(
 	{
 		rendered_triangle_count += 1;
 		Triangle4d draw = trianglesToDrawArray.get(n);
+		uint32_t draw_color = tl::GetColorFromRGB(
+			draw.color_r,
+			draw.color_g,
+			draw.color_b
+		);
 
 		if (wireframe) {
 			tl::Vec2<int> p0Int = { (int)draw.p[0].x, (int)draw.p[0].y };
@@ -282,7 +287,7 @@ static void TransformAndRenderMesh(
 			tl::Vec3<float> p0 = { draw.p[0].x, draw.p[0].y, draw.p[0].z };
 			tl::Vec3<float> p1 = { draw.p[1].x, draw.p[1].y, draw.p[1].z };
 			tl::Vec3<float> p2 = { draw.p[2].x, draw.p[2].y, draw.p[2].z };
-			triangle_fill(renderBuffer, depth_buffer, draw.color, p0, p1, p2);
+			triangle_fill(renderBuffer, depth_buffer, draw_color, p0, p1, p2);
 		}
 	}
 }
@@ -417,8 +422,8 @@ static void reset_world_to_mesh() {
 	float min_world_z = world.position.z - world.half_size.z;
 
 	// add triangles for the world border
-	meshArray.append({min_world_x, min_world_y, max_world_z,	min_world_x, max_world_y, max_world_z,	max_world_x, max_world_y, max_world_z,	0x000055});
-	meshArray.append({min_world_x, min_world_y, max_world_z,	max_world_x, max_world_y, max_world_z,	max_world_x, min_world_y, max_world_z,	0x000055 });
+	meshArray.append({min_world_x, min_world_y, max_world_z,	min_world_x, max_world_y, max_world_z,	max_world_x, max_world_y, max_world_z,	0, 0, 0x55});
+	meshArray.append({min_world_x, min_world_y, max_world_z,	max_world_x, max_world_y, max_world_z,	max_world_x, min_world_y, max_world_z,	0, 0, 0x55 });
 
 	positionIncrement = 0.01f * world.half_size.x;
 
@@ -486,7 +491,9 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 				heapVertices.get(points[1] - 1),
 				heapVertices.get(points[2] - 1)
 			};
-			newTriangle.color = 0xAAAAAA;
+			newTriangle.color_r = 0xAA;
+			newTriangle.color_g = 0xAA;
+			newTriangle.color_b = 0xAA;
 
 			triangles.append(newTriangle);
 		}

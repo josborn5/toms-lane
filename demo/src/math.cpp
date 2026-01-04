@@ -92,7 +92,9 @@ int ClipTriangleAgainstPlane(
 		// for the other two points, work out where the triangleintersects the plane and use those points in hte output
 		outputTriangle1.p[1] = IntersectPlane(plane, *insidePoints[0], *outsidePoints[0]);
 		outputTriangle1.p[2] = IntersectPlane(plane, *insidePoints[0], *outsidePoints[1]);
-		outputTriangle1.color = inputTriangle.color;
+		outputTriangle1.color_r = inputTriangle.color_r;
+		outputTriangle1.color_g = inputTriangle.color_g;
+		outputTriangle1.color_b = inputTriangle.color_b;
 		return 1;
 	}
 
@@ -103,12 +105,16 @@ int ClipTriangleAgainstPlane(
 		outputTriangle1.p[0] = *insidePoints[0];
 		outputTriangle1.p[1] = *insidePoints[1];
 		outputTriangle1.p[2] = IntersectPlane(plane, *insidePoints[0], *outsidePoints[0]);
-		outputTriangle1.color = inputTriangle.color;
+		outputTriangle1.color_r = inputTriangle.color_r;
+		outputTriangle1.color_g = inputTriangle.color_g;
+		outputTriangle1.color_b = inputTriangle.color_b;
 
 		outputTriangle2.p[0] = *insidePoints[1];
 		outputTriangle2.p[1] = outputTriangle1.p[2];
 		outputTriangle2.p[2] = IntersectPlane(plane, *insidePoints[1], *outsidePoints[0]);
-		outputTriangle2.color = inputTriangle.color;
+		outputTriangle2.color_r = inputTriangle.color_r;
+		outputTriangle2.color_g = inputTriangle.color_g;
+		outputTriangle2.color_b = inputTriangle.color_b;
 		return 2;
 	}
 

@@ -15,7 +15,9 @@ struct Plane
 struct Triangle4d
 {
 	tl::Vec3<float> p[3];
-	unsigned int color;
+	uint8_t color_r;
+	uint8_t color_g;
+	uint8_t color_b;
 };
 
 int ClipTriangleAgainstPlane(
