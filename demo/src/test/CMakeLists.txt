@@ -1,3 +1,5 @@
+message("demo tests start")
+
 add_executable(
 	demo-tests
 	render.tests.cpp
@@ -10,3 +12,6 @@ target_link_libraries(
 	demo
 	toms-lane-platform
 )
+
+message("demo tests end")
+

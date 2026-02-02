@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct pixel_bow {
 	unsigned int shots;
@@ -32,6 +33,8 @@ int main() {
 
 	pixel_bow_queue[3].shots = 4;
 	pixel_bow_queue[3].type = 'd';
+
+	system("clear");
 
 	printf("hello!!!\n");
 

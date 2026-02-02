@@ -22,3 +22,5 @@ add_library(
 	src/transform.cpp
 )
 
+message("platform context end")
+
