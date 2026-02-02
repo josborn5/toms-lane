@@ -7,7 +7,7 @@ jobs:
     - uses: actions/checkout@v6
 
     - shell: bash
-      name: test win32
+      name: test demo
       run: |
         ./demo/test.sh
 
