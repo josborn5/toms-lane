@@ -8,6 +8,7 @@ jobs:
 
     - shell: bash
       name: test demo
+      working-directory: ./demo
       run: |
-        ./demo/test.sh
+        ./test.sh
 
