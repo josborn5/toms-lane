@@ -3,7 +3,7 @@
 
 #include "../../platform/src/tl-library.hpp"
 
-struct view_frustrum {
+struct ViewFrustrum {
 	tl::Vec3<float> near_top_left_corner_position = {0};
 	tl::Vec3<float> far_bottom_right_corner_position = {0};
 
@@ -36,7 +36,7 @@ struct Camera
 	unsigned int screen_width = 0;
 	unsigned int screen_height = 0;
 
-	view_frustrum view_frustrum = {0};
+	ViewFrustrum view_frustrum = {0};
 };
 
 void camera_reset(

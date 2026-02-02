@@ -1,11 +1,10 @@
 # https://www.codegenes.net/blog/how-can-i-build-a-c-project-with-multiple-interdependent-subdirectories/
 
-cmake_minimum_required(VERSION 3.31.0)
+cmake_minimum_required(VERSION 3.28.0)
 
 project(demo-app VERSION 1.0)
 
 add_subdirectory(../platform ./platform-output)
-add_subdirectory(../application ./application-output)
 
 add_subdirectory(src/test)
 
@@ -35,15 +34,4 @@ add_library(
 	assets/teapot.obj.cpp
 )
 
-add_executable(
-	demo-win32 WIN32
-	src/demo-win32.cpp
-)
-
-target_link_libraries(
-	demo-win32
-	demo
-	toms-lane-platform
-	toms-lane-win32-application
-)
 

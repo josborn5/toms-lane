@@ -2,6 +2,7 @@
 #define TOMS_LANE_DATA_STRUCTURES_H
 
 #include "./memory.hpp"
+#include <stddef.h>
 
 namespace tl
 {
