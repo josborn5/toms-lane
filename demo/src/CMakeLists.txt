@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 3.28.0)
 
 project(demo-app VERSION 1.0)
 
-add_subdirectory(../platform ./platform-output)
+add_subdirectory(../../platform platform-output)
 
-add_subdirectory(src/test)
+add_subdirectory(test)
 
 message("demo-app context:")
 message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
@@ -26,12 +26,12 @@ generate_demo_asset("teapot.obj")
 
 add_library(
 	demo
-	src/demo.cpp
-	src/render.cpp
-	src/asset.cpp
-	src/camera.cpp
-	src/math.cpp
-	assets/teapot.obj.cpp
+	demo.cpp
+	render.cpp
+	asset.cpp
+	camera.cpp
+	math.cpp
+	../assets/teapot.obj.cpp
 )
 
 
