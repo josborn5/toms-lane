@@ -12,3 +12,9 @@ jobs:
       run: |
         ./lib.sh
 
+    - shell: bash
+      name: build breakout
+      working-directory: ./breakout
+      run: |
+        ./lib.sh
+
