@@ -1,4 +1,4 @@
-cmake -S src -B src/cmake-build || exit 1
+cmake -S lib -B lib/cmake-build || exit 1
 
-cmake --build src/cmake-build --config Release || exit 1
+cmake --build lib/cmake-build --config Release || exit 1
 
