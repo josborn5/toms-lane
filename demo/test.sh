@@ -1,4 +1,4 @@
-cd src
+cd lib
 
 cmake -S . -B ./cmake-build || exit 1
 
