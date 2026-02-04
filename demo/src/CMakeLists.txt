@@ -13,12 +13,12 @@ message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
 message("CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
 
 function(generate_demo_asset name)
-	file(REMOVE "${CMAKE_CURRENT_LIST_DIR}/assets/${name}.cpp")
+	file(REMOVE "${CMAKE_CURRENT_LIST_DIR}/../assets/${name}.cpp")
 	add_custom_command(
-		OUTPUT "${CMAKE_CURRENT_LIST_DIR}/assets/${name}.cpp"
+		OUTPUT "${CMAKE_CURRENT_LIST_DIR}/../assets/${name}.cpp"
 		COMMAND xxd -i "${name}" > "${name}.cpp"
-		DEPENDS "${CMAKE_CURRENT_LIST_DIR}/assets/${name}"
-		WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/assets"
+		DEPENDS "${CMAKE_CURRENT_LIST_DIR}/../assets/${name}"
+		WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../assets"
 	)
 endfunction()
 
