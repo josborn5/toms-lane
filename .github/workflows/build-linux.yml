@@ -10,5 +10,5 @@ jobs:
       name: test demo
       working-directory: ./demo
       run: |
-        ./test.sh
+        ./lib.sh
 
