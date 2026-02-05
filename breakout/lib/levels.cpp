@@ -3,7 +3,7 @@
 const tl::Vec2<float> POWER_UP_VELOCITY = tl::Vec2<float> { 0.0f, -50.0f };
 const tl::Vec2<float> POWER_UP_HALF_SIZE = tl::Vec2<float> { 5.0f, 5.0f };
 
-char *levels[10] = {
+const char* levels[10] = {
 "\
 000000000000\n\
 000000000000\n\
@@ -45,10 +45,10 @@ static void PopulateBlocksForLevel(
 		level = 1;
 	}
 
-	char* blockLayoutForLevel = levels[level - 1];
+	const char* blockLayoutForLevel = levels[level - 1];
 
 	// count the newlines to work out how many rows of blocks we have
-	char* firstCharacter = blockLayoutForLevel; // keep a reference to the first character so we can iterate through it again
+	const char* firstCharacter = blockLayoutForLevel; // keep a reference to the first character so we can iterate through it again
 
 	int rowCount = 1;
 	int columnCounter = 0;
