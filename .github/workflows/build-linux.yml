@@ -7,6 +7,12 @@ jobs:
     - uses: actions/checkout@v6
 
     - shell: bash
+      name: build test platform
+      working-directory: ./platform
+      run: |
+        ./lib.sh
+
+    - shell: bash
       name: build test demo
       working-directory: ./demo
       run: |

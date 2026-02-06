@@ -20,6 +20,7 @@ add_library(
 	assets/font-mono.cpp
 	src/font.cpp
 	src/transform.cpp
+	src/assert.cpp
 )
 
 message("platform context end")
