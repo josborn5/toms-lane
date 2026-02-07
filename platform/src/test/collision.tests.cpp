@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "../assert.hpp"
+
 #include "../collision.hpp"
 #include "./collision.tests.moving-rects.cpp"
 #include "./collision.tests.static-and-moving-rects.cpp"
@@ -52,21 +54,13 @@ void RunCheckRectAndXLineCollisionTest(
 	printf("\n===== Wall & Moving =====\n");
 	printf(name);
 	printf("\n");
-	printf("actual collisionResult is %d\n", result.collisions[0].side);
-	printf("expected collisionResult is %d\n", expectedCollisionResult);
-	printf("actual collisionTime is %f\n", result.time);
-	printf("expected collisionTime is %f\n", expectedCollisionTime);
-	
-	assert(result.collisions[0].side == expectedCollisionResult);
-	assert(result.time == expectedCollisionTime);
+
+	assert_int(result.collisions[0].side, expectedCollisionResult, "result of collision");	
+	assert_float(result.time, expectedCollisionTime, "time of collision");
 	if (expectedCollisionResult != None)
 	{
-		printf("actual collisionPosition.x is %f\n", result.collisions[0].position.x);
-		printf("expected collisionPosition.x is %f\n", expectedCollisionPosition.x);
-		printf("actual collisionPosition.y is %f\n", result.collisions[0].position.y);
-		printf("expected collisionPosition.y is %f\n", expectedCollisionPosition.y);
-		assert(result.collisions[0].position.x == expectedCollisionPosition.x);
-		assert(result.collisions[0].position.y == expectedCollisionPosition.y);
+		assert_float(result.collisions[0].position.x, expectedCollisionPosition.x, "x position of collision");
+		assert_float(result.collisions[0].position.y, expectedCollisionPosition.y, "y position of collision");
 	}
 	printf("\n");
 }
