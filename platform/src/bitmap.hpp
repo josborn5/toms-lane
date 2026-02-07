@@ -68,7 +68,7 @@ namespace tl
 
 	int bitmap_interface_initialize(
 		bitmap& bitmap,
-		const MemorySpace& memory);
+		const MemorySpace& bitmap_data);
 
 	int bitmap_interface_get_pixel_data(
 		const bitmap& bitmap,

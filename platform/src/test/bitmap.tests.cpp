@@ -233,27 +233,19 @@ static void RunBitmapReadFromBadMemoryTests(bitmap& bitmap)
 {
 	MemorySpace badMemory = {0};
 
-
-	printf("!!! small bitmap file size %d\n", bitmap.file_header.fileSizeInBytes);
-
 	int readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
-
-
-	printf("!!! small bitmap file size %d\n", bitmap.file_header.fileSizeInBytes);
-
 	assert_int(readResult, tl::bitmap_read_missing_memory_source, "bitmap initialize fails with uninitialized memory");
 
 	// source memory is not big enough to read the file size
-	badMemory.content = bitmapReadMemory.content;
+	badMemory.content = small_bmp_data.content;
 	badMemory.sizeInBytes = 5;
 	readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
 	assert_int(readResult, tl::bitmap_read_invalid_memory_source, "bitmap initialize fails with memory less than bitmap header size");
 
-	// source memory is blank
-	badMemory.content = bitmapReadMemory.content;
-	badMemory.sizeInBytes = 5;
+	// source memory is blank: TODO
 
 	// source memory is big enough to read the file size but is smaller that the read file size
+	badMemory.content = small_bmp_data.content;
 	badMemory.sizeInBytes = smallBitmapFileSizeInBytes - 1;
 	readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
 	assert_int(readResult, tl::bitmap_read_invalid_memory_source, "bitmap initialize fails with memory less than bitmap file size");
@@ -266,8 +258,6 @@ static void RunSmallBitmapTest()
 	RunSmallBitmapRenderTest(smallBitmap);
 	RunBitmapWriteTest(smallBitmap, small_bmp_data);
 	RunBitmapWriteToSmallMemoryTest(smallBitmap);
-
-	printf("!!! small bitmap file size %d\n", smallBitmap.file_header.fileSizeInBytes);
 
 	RunBitmapReadFromBadMemoryTests(smallBitmap);
 }

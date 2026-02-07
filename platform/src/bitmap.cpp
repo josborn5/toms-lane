@@ -1,7 +1,5 @@
 #include "./bitmap.hpp"
 
-#include <stdio.h>
-
 namespace tl
 {
 
@@ -75,9 +73,9 @@ static uint8_t* write_uint16_t_value_to_little_endian(uint16_t two_byte_value, u
 }
 
 
-int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
+int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& bitmap_data)
 {
-	if (!memory.content)
+	if (!bitmap_data.content)
 	{
 		return bitmap_read_missing_memory_source;
 	}
@@ -86,12 +84,12 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	const int minimumBytesNeededToReadFileSize = 6;
 
 
-	if (memory.sizeInBytes < minimumBytesNeededToReadFileSize )
+	if (bitmap_data.sizeInBytes < minimumBytesNeededToReadFileSize )
 	{
 		return bitmap_read_invalid_memory_source;
 	}
 
-	uint8_t* bitmapDataAsBytes = (uint8_t*)memory.content;
+	uint8_t* bitmapDataAsBytes = (uint8_t*)bitmap_data.content;
 
 	bitmap.file_header.fileType = read_uint16_t_from_little_endian(bitmapDataAsBytes);
 	bitmapDataAsBytes += sizeof(uint16_t);
@@ -99,10 +97,7 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	bitmap.file_header.fileSizeInBytes = read_int32_from_little_endian<int32_t>(bitmapDataAsBytes);
 	bitmapDataAsBytes += sizeof(int32_t);
 
-	printf("!!! imp: memory_size_in_bytes %d\n", memory.sizeInBytes);
-
-	printf("!!! imp: file_size_in_bytes %d\n", bitmap.file_header.fileSizeInBytes);
-	if (memory.sizeInBytes < bitmap.file_header.fileSizeInBytes)
+	if (bitmap_data.sizeInBytes < bitmap.file_header.fileSizeInBytes)
 	{
 		return bitmap_read_invalid_memory_source;
 	}
@@ -118,7 +113,7 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 
 	// Cast to a char pointer to do pointer arithmetic in bytes
 	size_t pixelDataOffsetInBytes = bitmap.file_header.offsetToPixelDataInBytes;
-	bitmap.content = (unsigned char*)memory.content + pixelDataOffsetInBytes;
+	bitmap.content = (unsigned char*)bitmap_data.content + pixelDataOffsetInBytes;
 
 	bitmap.dibs_header.headerSizeInBytes = read_int32_from_little_endian<uint32_t>(bitmapDataAsBytes);
 	bitmapDataAsBytes += sizeof(uint32_t);
