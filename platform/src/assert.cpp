@@ -12,9 +12,9 @@ static void assert_whole_number(T actual, T expected, const char* message) {
 		printf(message);
 		printf("\n");
 	} else {
-		printf("\n FAIL: ");
+		printf("\nFAIL - ");
 		printf(message);
-		printf("Actual: %d, Expected: %d", actual, expected);
+		printf(" - Actual: %d, Expected: %d", actual, expected);
 		printf("\n");
 
 		assert(false);
@@ -23,13 +23,13 @@ static void assert_whole_number(T actual, T expected, const char* message) {
 
 void assert_float(float actual, float expected, const char* message) {
 	if (actual == expected) {
-		printf("\nPass: ");
+		printf("\nPass - ");
 		printf(message);
 		printf("\n");
 	} else {
-		printf("\n FAIL: ");
+		printf("\nFAIL - ");
 		printf(message);
-		printf("Actual: %.4f, Expected: %.4f", actual, expected);
+		printf(" - Actual: %.4f, Expected: %.4f", actual, expected);
 		printf("\n");
 
 		assert(false);

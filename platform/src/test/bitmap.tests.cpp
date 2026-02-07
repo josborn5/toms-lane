@@ -62,7 +62,7 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap, tl::MemorySpace
 	assert_uint32_t(testBitmap.dibs_header.numberOfColorsInPalette, 0, "bitmap dibs header color palette size");
 	assert_uint32_t(testBitmap.dibs_header.numberOfImportantColors, 0, "bitmap dibs header important colors");
 
-	assert(testBitmap.color_table.size == 0);
+	assert_int32_t(testBitmap.color_table.size, 0, "bitmap color table size");
 }
 
 static void RunBitmapWriteTest(const bitmap& bitmap, const MemorySpace& reference_memory)
@@ -233,7 +233,7 @@ static void RunSmallBitmapTest()
 	RunSmallBitmapRenderTest(smallBitmap);
 	RunBitmapWriteTest(smallBitmap, small_bitmap_memory_space);
 	RunBitmapWriteToSmallMemoryTest(smallBitmap);
-//	RunBitmapReadFromBadMemoryTests(smallBitmap);
+	RunBitmapReadFromBadMemoryTests(smallBitmap);
 }
 
 static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)
