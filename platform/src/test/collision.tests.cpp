@@ -13,7 +13,6 @@
 #define blockBelowOrigin Vec2<float> { 0.0f, -4.0f }
 
 #include <stdio.h>
-#include <assert.h>
 
 #include "../assert.hpp"
 

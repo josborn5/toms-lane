@@ -86,7 +86,7 @@ static void RunBitmapWriteTest(const bitmap& bitmap, const MemorySpace& referenc
 	{
 		if (i < minPaddingIndex || i > maxPaddingIndex) // don't care about padding memory content
 		{
-			assert_whole_number<uint8_t>(*readMemory, *writeMemory);
+			assert_uint8_t(*readMemory, *writeMemory, "bitmap written byte");
 		}
 		readMemory++;
 		writeMemory++;
@@ -102,11 +102,11 @@ static void initialize_4_bit_bitmap_test_run() {
 
 	tl::bitmap_interface_initialize(test_bitmap, test_bitmap_memory_space);
 
-	assert_whole_number<uint16_t>(test_bitmap.file_header.fileType, 0x4d42);
+	assert_uint16_t(test_bitmap.file_header.fileType, 0x4d42, "bitmap header file type");
 	assert_whole_number<int32_t>(test_bitmap.file_header.offsetToPixelDataInBytes, 118);
 
-	assert_whole_number<uint32_t>(test_bitmap.dibs_header.headerSizeInBytes, 40);
-	assert_whole_number<uint16_t>(test_bitmap.dibs_header.bitsPerPixel, 4);
+	assert_uint32_t(test_bitmap.dibs_header.headerSizeInBytes, 40, "bitmap header size in bytes");
+	assert_uint16_t(test_bitmap.dibs_header.bitsPerPixel, 4, "bitmap header bits per pixel");
 
 	assert_whole_number<int32_t>(test_bitmap.color_table.size, 16);
 
@@ -114,28 +114,28 @@ static void initialize_4_bit_bitmap_test_run() {
 	tl::bitmap_interface_render(renderBuffer, test_bitmap, tl::Vec2<int>{ 0, 0 });
 
 	uint32_t* bottom_left_color = renderBuffer.pixels;
-	assert_whole_number<uint32_t>(*bottom_left_color, 0x000000);
+	assert_uint32_t(*bottom_left_color, 0x000000, "bitmap rendered pixel color");
 
 	uint32_t test_pixel_data = 0xFFFFFF;
 	bitmap_interface_get_pixel_data(test_bitmap, 0, 0, test_pixel_data);
-	assert_whole_number<uint32_t>(test_pixel_data, 0);
+	assert_uint32_t(test_pixel_data, 0, "bitmap read pixel color");
 
 	bitmap_interface_get_pixel_data(test_bitmap, 0, 0, test_pixel_data);
-	assert_whole_number<uint32_t>(test_pixel_data, 0);
+	assert_uint32_t(test_pixel_data, 0, "bitmap read pixel color - first pixel");
 	bitmap_interface_get_pixel_data(test_bitmap, 1, 0, test_pixel_data);
-	assert_whole_number<uint32_t>(test_pixel_data, 15);
+	assert_uint32_t(test_pixel_data, 15, "bitmap read pixel color - last pixel");
 	bitmap_interface_get_pixel_data(test_bitmap, 2, 0, test_pixel_data);
-	assert_whole_number<uint32_t>(test_pixel_data, 9);
+	assert_uint32_t(test_pixel_data, 9, "bitmap read pixel color");
 	bitmap_interface_get_pixel_data(test_bitmap, 3, 0, test_pixel_data);
-	assert_whole_number<uint32_t>(test_pixel_data, 10);
+	assert_uint32_t(test_pixel_data, 10, "bitmap read pixel color");
 	bitmap_interface_get_pixel_data(test_bitmap, 4, 0, test_pixel_data);
-	assert_whole_number<uint32_t>(test_pixel_data, 12);
+	assert_uint32_t(test_pixel_data, 12, "bitmap read pixel color");
 
-	assert_uint32_t(test_bitmap.color_table.content[0], 0x000000, "bitmap color table content");
-	assert_uint32_t(test_bitmap.color_table.content[15], 0xFFFFFF, "bitmap color table content");
-	assert_uint32_t(test_bitmap.color_table.content[9], 0xFF0000, "bitmap color table content");
-	assert_uint32_t(test_bitmap.color_table.content[10], 0x00FF00, "bitmap color table content");
-	assert_uint32_t(test_bitmap.color_table.content[12], 0x0000FF, "bitmap color table content");
+	assert_uint32_t(test_bitmap.color_table.content[0], 0x000000, "bitmap color table color");
+	assert_uint32_t(test_bitmap.color_table.content[15], 0xFFFFFF, "bitmap color table color");
+	assert_uint32_t(test_bitmap.color_table.content[9], 0xFF0000, "bitmap color table color");
+	assert_uint32_t(test_bitmap.color_table.content[10], 0x00FF00, "bitmap color table color");
+	assert_uint32_t(test_bitmap.color_table.content[12], 0x0000FF, "bitmap color table color");
 
 	RunBitmapWriteTest(test_bitmap, test_bitmap_memory_space);
 }
@@ -151,10 +151,10 @@ static void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 	uint32_t* topRightPixel = renderBuffer.pixels + pixelCount - 1;
 	uint32_t* topLeftPixel = renderBuffer.pixels + pixelCount - renderBuffer.width;
 
-	assert(*bottomLeftPixel == green);
+	assert_uint32_t(*bottomLeftPixel, green, "bitmap rendered pixel color");
 	uint32_t bottomLeftPixelColorTest;
-	assert(bitmap_interface_get_pixel_data(testBitmap, 0, 0, bottomLeftPixelColorTest) == 0);
-	assert(bottomLeftPixelColorTest == green);
+	assert_uint32_t(bitmap_interface_get_pixel_data(testBitmap, 0, 0, bottomLeftPixelColorTest), 0, "bitmap read color operation");
+	assert_uint32_t(bottomLeftPixelColorTest, green, "bitmap read color");
 
 	assert(*(bottomLeftPixel + 1) == white);
 	assert(*(bottomLeftPixel + 2) == black);
@@ -217,18 +217,18 @@ static void RunBitmapReadFromBadMemoryTests(bitmap& bitmap)
 
 	int readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
 
-	assert(readResult == tl::bitmap_read_missing_memory_source);
+	assert_int(readResult, tl::bitmap_read_missing_memory_source, "bitmap initialize fails with uninitialized memory");
 
 	// source memory is not big enough to read the file size
 	badMemory.content = bitmapReadMemory.content;
 	badMemory.sizeInBytes = 5;
 	readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
-	assert(readResult == tl::bitmap_read_invalid_memory_source);
+	assert_int(readResult, tl::bitmap_read_invalid_memory_source, "bitmap initialize fails with memory less bitmap header size");
 
 	// source memory is big enough to read the file size but is smaller that the read file size
 	badMemory.sizeInBytes = smallBitmapFileSizeInBytes - 1; 
 	readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
-	assert(readResult == tl::bitmap_read_invalid_memory_source);
+	assert_int(readResult, tl::bitmap_read_invalid_memory_source, "bitmap initialize fails with memory less than bitmap file size");
 }
 
 static void RunSmallBitmapTest()
