@@ -18,12 +18,6 @@ static MemorySpace bitmapWriteMemory;
 static MemorySpace renderBufferPixels;
 static RenderBuffer renderBuffer;
 
-template<typename T>
-void assert_whole_number(T actual, T expected) {
-	printf("\nactual: %d, expected: %d\n", actual, expected);
-	assert(actual == expected);
-}
-
 static void InitializeMemory()
 {
 	bitmapReadMemory.sizeInBytes = 1024 * 60;
@@ -103,12 +97,12 @@ static void initialize_4_bit_bitmap_test_run() {
 	tl::bitmap_interface_initialize(test_bitmap, test_bitmap_memory_space);
 
 	assert_uint16_t(test_bitmap.file_header.fileType, 0x4d42, "bitmap header file type");
-	assert_whole_number<int32_t>(test_bitmap.file_header.offsetToPixelDataInBytes, 118);
+	assert_int32_t(test_bitmap.file_header.offsetToPixelDataInBytes, 118, "bitmap header offset to pixel data");
 
 	assert_uint32_t(test_bitmap.dibs_header.headerSizeInBytes, 40, "bitmap header size in bytes");
 	assert_uint16_t(test_bitmap.dibs_header.bitsPerPixel, 4, "bitmap header bits per pixel");
 
-	assert_whole_number<int32_t>(test_bitmap.color_table.size, 16);
+	assert_int32_t(test_bitmap.color_table.size, 16, "bitmap color table size");
 
 	tl::ClearScreen(renderBuffer, grey);
 	tl::bitmap_interface_render(renderBuffer, test_bitmap, tl::Vec2<int>{ 0, 0 });

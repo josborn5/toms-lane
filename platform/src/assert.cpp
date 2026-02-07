@@ -40,6 +40,10 @@ void assert_int(int actual, int expected, const char* message) {
 	assert_whole_number<int>(actual, expected, message);
 }
 
+void assert_int32_t(int32_t actual, int32_t expected, const char* message) {
+	assert_whole_number<int32_t>(actual, expected, message);
+}
+
 void assert_uint32_t(uint32_t actual, uint32_t expected, const char* message) {
 	assert_whole_number<uint32_t>(actual, expected, message);
 }
