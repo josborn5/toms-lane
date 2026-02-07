@@ -41,26 +41,26 @@ static void RunInitializeSmallBitmapTest(tl::bitmap& testBitmap, tl::MemorySpace
 
 	tl::bitmap_interface_initialize(testBitmap, test_bitmap_memory_space);
 
-	assert(testBitmap.file_header.fileType == 0x4d42);
-	assert(testBitmap.file_header.fileSizeInBytes == smallBitmapFileSizeInBytes );
-	assert(testBitmap.file_header.reserved1 == 0);
-	assert(testBitmap.file_header.reserved2 == 0);
-	assert(testBitmap.file_header.offsetToPixelDataInBytes == 54);
+	assert_uint16_t(testBitmap.file_header.fileType, 0x4d42, "bitmap header file type");
+	assert_int32_t(testBitmap.file_header.fileSizeInBytes, smallBitmapFileSizeInBytes, "bitmap header file size");
+	assert_uint16_t(testBitmap.file_header.reserved1, 0, "bitmap header reserved 1");
+	assert_uint16_t(testBitmap.file_header.reserved2, 0, "bitmap header reserved 2");
+	assert_int32_t(testBitmap.file_header.offsetToPixelDataInBytes, 54, "bitmap header offset to pixel data");
 
-	assert(testBitmap.dibs_header.headerSizeInBytes == 40);
+	assert_uint32_t(testBitmap.dibs_header.headerSizeInBytes, 40, "bitmap dibs header size");
 
-	assert(testBitmap.dibs_header.width == 12);
-	assert(testBitmap.dibs_header.height == 8);
+	assert_int32_t(testBitmap.dibs_header.width, 12, "bitmap dibs header width");
+	assert_int32_t(testBitmap.dibs_header.height, 8, "bitmap dibs header height");
 
-	assert(testBitmap.dibs_header.numberOfColorPlanes == 1);
-	assert(testBitmap.dibs_header.bitsPerPixel == 24);
-	assert(testBitmap.dibs_header.compressionMethod == 0);
-	assert(testBitmap.dibs_header.imageSizeInBytes == 288);
+	assert_uint16_t(testBitmap.dibs_header.numberOfColorPlanes, 1, "bitmap dibs header color plane count");
+	assert_uint16_t(testBitmap.dibs_header.bitsPerPixel, 24, "bitmap dibs header bits per pixel");
+	assert_uint32_t(testBitmap.dibs_header.compressionMethod, 0, "bitmap dibs header compression method");
+	assert_uint32_t(testBitmap.dibs_header.imageSizeInBytes, 288, "bitmap dibs header image size");
 
-	assert(testBitmap.dibs_header.horizontalPixelsPerMeter == 0);
-	assert(testBitmap.dibs_header.verticalPixelsPerMeter == 0);
-	assert(testBitmap.dibs_header.numberOfColorsInPalette == 0);
-	assert(testBitmap.dibs_header.numberOfImportantColors == 0);
+	assert_int32_t(testBitmap.dibs_header.horizontalPixelsPerMeter, 0, "bitmap dibs header horizontal pixels per meter");
+	assert_int32_t(testBitmap.dibs_header.verticalPixelsPerMeter, 0, "bitmap dibs header vertical pixels per meter");
+	assert_uint32_t(testBitmap.dibs_header.numberOfColorsInPalette, 0, "bitmap dibs header color palette size");
+	assert_uint32_t(testBitmap.dibs_header.numberOfImportantColors, 0, "bitmap dibs header important colors");
 
 	assert(testBitmap.color_table.size == 0);
 }
