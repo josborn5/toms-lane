@@ -1,5 +1,7 @@
 #include "./bitmap.hpp"
 
+#include <stdio.h>
+
 namespace tl
 {
 
@@ -81,7 +83,9 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	}
 
 	// Need at least 6 bytes available to be able to read the file size
-	const int minimumBytesNeededToReadFileSize = 6; 
+	const int minimumBytesNeededToReadFileSize = 6;
+
+
 	if (memory.sizeInBytes < minimumBytesNeededToReadFileSize )
 	{
 		return bitmap_read_invalid_memory_source;
@@ -95,6 +99,9 @@ int bitmap_interface_initialize(bitmap& bitmap, const MemorySpace& memory)
 	bitmap.file_header.fileSizeInBytes = read_int32_from_little_endian<int32_t>(bitmapDataAsBytes);
 	bitmapDataAsBytes += sizeof(int32_t);
 
+	printf("!!! imp: memory_size_in_bytes %d\n", memory.sizeInBytes);
+
+	printf("!!! imp: file_size_in_bytes %d\n", bitmap.file_header.fileSizeInBytes);
 	if (memory.sizeInBytes < bitmap.file_header.fileSizeInBytes)
 	{
 		return bitmap_read_invalid_memory_source;

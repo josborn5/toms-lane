@@ -13,6 +13,24 @@ static const uint32_t black = 0x000000;
 
 static const int smallBitmapFileSizeInBytes = 342;
 
+
+static MemorySpace __9x9_bmp_data;
+static MemorySpace __8x8_bmp_data;
+static MemorySpace __7x7_bmp_data;
+static MemorySpace __6x6_bmp_data;
+static MemorySpace __5x5_bmp_data;
+static MemorySpace __4x4_bmp_data;
+
+static void initialize_data_for_test_bitmap(
+	const unsigned char* data,
+	const unsigned int size,
+	MemorySpace& memory
+) {
+	memory.content = &data;
+	memory.sizeInBytes = sizeof(unsigned int) * size;
+}
+
+
 static MemorySpace bitmapReadMemory;
 static MemorySpace bitmapWriteMemory;
 static MemorySpace renderBufferPixels;
@@ -20,6 +38,13 @@ static RenderBuffer renderBuffer;
 
 static void InitializeMemory()
 {
+	initialize_data_for_test_bitmap(__9x9_1bit_bmp, __9x9_1bit_bmp_len, __9x9_bmp_data);
+	initialize_data_for_test_bitmap(__8x8_1bit_bmp, __8x8_1bit_bmp_len, __8x8_bmp_data);
+	initialize_data_for_test_bitmap(__7x7_1bit_bmp, __7x7_1bit_bmp_len, __7x7_bmp_data);
+	initialize_data_for_test_bitmap(__6x6_1bit_bmp, __6x6_1bit_bmp_len, __6x6_bmp_data);
+	initialize_data_for_test_bitmap(__5x5_1bit_bmp, __5x5_1bit_bmp_len, __5x5_bmp_data);
+	initialize_data_for_test_bitmap(__4x4_1bit_bmp, __4x4_1bit_bmp_len, __4x4_bmp_data);
+
 	bitmapReadMemory.sizeInBytes = 1024 * 60;
 	bitmapReadMemory.content = malloc(bitmapReadMemory.sizeInBytes);
 	bitmapWriteMemory.sizeInBytes = 1024 * 60;
@@ -207,9 +232,15 @@ static void RunBitmapWriteToSmallMemoryTest(const bitmap& bitmap)
 
 static void RunBitmapReadFromBadMemoryTests(bitmap& bitmap)
 {
-	MemorySpace badMemory;
+	MemorySpace badMemory = {0};
+
+
+	printf("!!! small bitmap file size %d\n", bitmap.file_header.fileSizeInBytes);
 
 	int readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
+
+
+	printf("!!! small bitmap file size %d\n", bitmap.file_header.fileSizeInBytes);
 
 	assert_int(readResult, tl::bitmap_read_missing_memory_source, "bitmap initialize fails with uninitialized memory");
 
@@ -217,10 +248,14 @@ static void RunBitmapReadFromBadMemoryTests(bitmap& bitmap)
 	badMemory.content = bitmapReadMemory.content;
 	badMemory.sizeInBytes = 5;
 	readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
-	assert_int(readResult, tl::bitmap_read_invalid_memory_source, "bitmap initialize fails with memory less bitmap header size");
+	assert_int(readResult, tl::bitmap_read_invalid_memory_source, "bitmap initialize fails with memory less than bitmap header size");
+
+	// source memory is blank
+	badMemory.content = bitmapReadMemory.content;
+	badMemory.sizeInBytes = 5;
 
 	// source memory is big enough to read the file size but is smaller that the read file size
-	badMemory.sizeInBytes = smallBitmapFileSizeInBytes - 1; 
+	badMemory.sizeInBytes = smallBitmapFileSizeInBytes - 1;
 	readResult = tl::bitmap_interface_initialize(bitmap, badMemory);
 	assert_int(readResult, tl::bitmap_read_invalid_memory_source, "bitmap initialize fails with memory less than bitmap file size");
 }
@@ -233,6 +268,9 @@ static void RunSmallBitmapTest()
 	RunSmallBitmapRenderTest(smallBitmap);
 	RunBitmapWriteTest(smallBitmap, small_bitmap_memory_space);
 	RunBitmapWriteToSmallMemoryTest(smallBitmap);
+
+	printf("!!! small bitmap file size %d\n", smallBitmap.file_header.fileSizeInBytes);
+
 	RunBitmapReadFromBadMemoryTests(smallBitmap);
 }
 
@@ -244,7 +282,7 @@ static void RunInitializeLargeBitmapTest(tl::bitmap& largeBitmap)
 
 	tl::bitmap_interface_initialize(largeBitmap, test_bitmap_memory_space);
 	assert(largeBitmap.file_header.fileType == 0x4d42);
-	assert(largeBitmap.file_header.fileSizeInBytes == 60062);
+	assert_int32_t(largeBitmap.file_header.fileSizeInBytes, 60062, "bitmap header file size");
 	assert(largeBitmap.file_header.reserved1 == 0);
 	assert(largeBitmap.file_header.reserved2 == 0);
 	assert(largeBitmap.file_header.offsetToPixelDataInBytes == 62);
@@ -353,30 +391,12 @@ static void RunSmallMonochromeBitmapTests()
 
 	RunBitmapWriteTest(monoBitmap, test_bitmap_memory_space);
 
-	tl::MemorySpace bitmap_memory_space;
-	bitmap_memory_space.content = &__9x9_1bit_bmp;
-	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __9x9_1bit_bmp_len;
-	run_square_monochrome_bitmap_test(bitmap_memory_space, 9);
-
-	bitmap_memory_space.content = &__8x8_1bit_bmp;
-	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __8x8_1bit_bmp_len;
-	run_square_monochrome_bitmap_test(bitmap_memory_space, 8);
-
-	bitmap_memory_space.content = &__7x7_1bit_bmp;
-	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __7x7_1bit_bmp_len;
-	run_square_monochrome_bitmap_test(bitmap_memory_space, 7);
-
-	bitmap_memory_space.content = &__6x6_1bit_bmp;
-	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __6x6_1bit_bmp_len;
-	run_square_monochrome_bitmap_test(bitmap_memory_space, 6);
-
-	bitmap_memory_space.content = &__5x5_1bit_bmp;
-	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __5x5_1bit_bmp_len;
-	run_square_monochrome_bitmap_test(bitmap_memory_space, 5);
-
-	bitmap_memory_space.content = &__4x4_1bit_bmp;
-	bitmap_memory_space.sizeInBytes = sizeof(unsigned int) * __4x4_1bit_bmp_len;
-	run_square_monochrome_bitmap_test(bitmap_memory_space, 4);
+	run_square_monochrome_bitmap_test(__9x9_bmp_data, 9);
+	run_square_monochrome_bitmap_test(__8x8_bmp_data, 8);
+	run_square_monochrome_bitmap_test(__7x7_bmp_data, 7);
+	run_square_monochrome_bitmap_test(__6x6_bmp_data, 6);
+	run_square_monochrome_bitmap_test(__5x5_bmp_data, 5);
+	run_square_monochrome_bitmap_test(__4x4_bmp_data, 4);
 }
 
 static void RunLargeBitmapTest()
