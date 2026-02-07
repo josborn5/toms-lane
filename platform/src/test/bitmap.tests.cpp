@@ -13,7 +13,7 @@ static const uint32_t black = 0x000000;
 
 static const int smallBitmapFileSizeInBytes = 342;
 
-static MemorySpace test_bmp_data;
+static MemorySpace small_bmp_data;
 static MemorySpace __4bit_bmp_data;
 static MemorySpace monochrome_bmp_data;
 static MemorySpace player_bmp_data;
@@ -29,7 +29,7 @@ static void initialize_data_for_test_bitmap(
 	const unsigned int size,
 	MemorySpace& memory
 ) {
-	memory.content = &data;
+	memory.content = (void*)& data[0];
 	memory.sizeInBytes = sizeof(unsigned int) * size;
 }
 
@@ -41,7 +41,7 @@ static RenderBuffer renderBuffer;
 
 static void InitializeMemory()
 {
-	initialize_data_for_test_bitmap(test_bmp, test_bmp_len, test_bmp_data);
+	initialize_data_for_test_bitmap(test_bmp, test_bmp_len, small_bmp_data);
 	initialize_data_for_test_bitmap(bitmap_4bit_bmp, bitmap_4bit_bmp_len, __4bit_bmp_data);
 	initialize_data_for_test_bitmap(monochrome_bmp, monochrome_bmp_len, monochrome_bmp_data);
 	initialize_data_for_test_bitmap(player_m_bmp, player_m_bmp_len, player_bmp_data);
@@ -262,9 +262,9 @@ static void RunBitmapReadFromBadMemoryTests(bitmap& bitmap)
 static void RunSmallBitmapTest()
 {
 	tl::bitmap smallBitmap;
-	RunInitializeSmallBitmapTest(test_bmp_data, smallBitmap);
+	RunInitializeSmallBitmapTest(small_bmp_data, smallBitmap);
 	RunSmallBitmapRenderTest(smallBitmap);
-	RunBitmapWriteTest(smallBitmap, test_bmp_data);
+	RunBitmapWriteTest(smallBitmap, small_bmp_data);
 	RunBitmapWriteToSmallMemoryTest(smallBitmap);
 
 	printf("!!! small bitmap file size %d\n", smallBitmap.file_header.fileSizeInBytes);
@@ -400,7 +400,7 @@ static void RunBitmapReinitializeTest()
 	// TODO: maybe this is a sign of a bad interface... just return a new bitmap value and deal with the copy overhead.
 	tl::bitmap bitmap;
 	RunInitializeLargeBitmapTest(bitmap);
-	RunInitializeSmallBitmapTest(test_bmp_data, bitmap);
+	RunInitializeSmallBitmapTest(small_bmp_data, bitmap);
 }
 
 void RunBitmapTests()
