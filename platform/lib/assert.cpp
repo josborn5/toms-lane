@@ -7,34 +7,24 @@
 
 template<typename T>
 static void assert_whole_number(T actual, T expected, const char* message) {
-	if (actual == expected) {
-		printf("Pass: ");
-		printf(message);
-		printf("\n");
-	} else {
+	if (actual != expected) {
 		printf("\nFAIL - ");
 		printf(message);
 		printf(" - Actual: %d, Expected: %d", actual, expected);
 		printf("\n");
 
 		assert(false);
-	}
-}
+	}}
 
 void assert_float(float actual, float expected, const char* message) {
-	if (actual == expected) {
-		printf("\nPass - ");
-		printf(message);
-		printf("\n");
-	} else {
+	if (actual != expected) {
 		printf("\nFAIL - ");
 		printf(message);
 		printf(" - Actual: %.4f, Expected: %.4f", actual, expected);
 		printf("\n");
 
 		assert(false);
-	}
-}
+	}}
 
 void assert_int(int actual, int expected, const char* message) {
 	assert_whole_number<int>(actual, expected, message);
