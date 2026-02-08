@@ -16,11 +16,11 @@ generate_platform_asset(font-mono.tlsf font-mono.cpp)
 
 add_library(
 	toms-lane-platform STATIC
-	src/toms-lane-platform.cpp
+	lib/toms-lane-platform.cpp
 	assets/font-mono.cpp
-	src/font.cpp
-	src/transform.cpp
-	src/assert.cpp
+	lib/font.cpp
+	lib/transform.cpp
+	lib/assert.cpp
 )
 
 message("platform context end")
