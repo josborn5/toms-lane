@@ -1,7 +1,7 @@
 #ifndef OBBY_GAME_H
 #define OBBY_GAME_H
 
-#include "../../platform/src/tl-library.hpp"
+#include "../../platform/lib/tl-library.hpp"
 
 #define BLOCK_ARRAY_SIZE 512
 #define ZERO_VECTOR tl::Vec2<float> { 0.0f, 0.0f }

@@ -1,4 +1,4 @@
-#include "../../platform/src/tl-library.hpp"
+#include "../../platform/lib/tl-library.hpp"
 
 int rainbowColor = 0;
 const tl::Vec2<float> smallFontHalfSize = { 5.0f, 10.0f };

@@ -1,5 +1,5 @@
 #include "./game.hpp"
-#include "../../platform/src/tl-library.hpp"
+#include "../../platform/lib/tl-library.hpp"
 
 #include "./generated-assets.hpp"
 
