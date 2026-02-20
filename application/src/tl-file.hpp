@@ -1,7 +1,7 @@
 #ifndef TOMS_LANE_FILE
 #define TOMS_LANE_FILE
 
-#include "../../platform/src/tl-library.hpp"
+#include "../../platform/lib/tl-library.hpp"
 
 namespace tl
 {

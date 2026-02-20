@@ -16,7 +16,7 @@ TODO (in no particular order):
 
 */
 
-#include "../../platform/src/tl-library.hpp"
+#include "../../platform/lib/tl-library.hpp"
 #include "../../application/src/tl-application.hpp"
 #include "game.hpp"
 #include "update.hpp"
