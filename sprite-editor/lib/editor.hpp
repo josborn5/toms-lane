@@ -2,7 +2,7 @@
 #define EDITOR_H
 
 #include "../../application/src/tl-application.hpp"
-#include "../../platform/src/tl-library.hpp"
+#include "../../platform/lib/tl-library.hpp"
 
 struct SpriteC
 {

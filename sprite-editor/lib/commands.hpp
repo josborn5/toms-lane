@@ -2,7 +2,7 @@
 #define SPRITE_EDITOR_COMMANDS_HPP
 
 #include "../../application/src/tl-application.hpp"
-#include "../../platform/src/tl-library.hpp"
+#include "../../platform/lib/tl-library.hpp"
 #include "./editor.hpp"
 #include "./operations.hpp"
 
