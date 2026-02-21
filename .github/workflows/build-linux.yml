@@ -30,3 +30,10 @@ jobs:
       run: |
         ./lib.sh
 
+    - shell: bash
+      name: build obby-1 
+      working-directory: ./obby-1
+      run: |
+        ./lib.sh
+
+
