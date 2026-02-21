@@ -252,11 +252,53 @@ static void ClearBlock_(Block& block)
 	block.type = Regular;
 }
 
+static tl::Vec2<int> GetContentDimensions(const char* content)
+{
+	int height = 0;
+	int width = 0;
+	int rowCounter = 0;
+	while (*content)
+	{
+		if (rowCounter == 0 && height == 0)
+		{
+			height += 1;
+		}
+		if (*content == '\n')
+		{
+			if (width < rowCounter)
+			{
+				width = rowCounter;
+			}
+			rowCounter = 0;
+			height += 1;
+		}
+		else
+		{
+			rowCounter += 1;
+		}
+		content++;
+	}
+
+	// Check the final row (it may not end in a \n char)
+	if (width < rowCounter)
+	{
+		width = rowCounter;
+	}
+
+	// Set the width value if no newline char exists in the content
+	if (height == 1)
+	{
+		width = rowCounter;
+	}
+	tl::Vec2<int> dim = { width, height };
+	return dim;
+}
+
 int PopulateBlocksForLevelString_(
-	char* blockLayout,
+	const char* blockLayout,
 	GameState& gameState
 ) {
-	tl::Vec2<int> dimensions = tl::GetContentDimensions(blockLayout);
+	tl::Vec2<int> dimensions = GetContentDimensions(blockLayout);
 
 	// Check the block array size is big enough for the content
 	int contentCount = dimensions.x * dimensions.y;
@@ -280,7 +322,7 @@ int PopulateBlocksForLevelString_(
 	maxPlayerX = gamestate.world.x_max() - gamestate.player.halfSize.x;
 	minPlayerY = 0.0f + gamestate.player.halfSize.y;
 
-	bool endOfContent = false;
+	bool checkContent = true;
 	float originalX = -blockHalfSize.x;
 	tl::Vec2<float> blockPosition = {
 		originalX,
@@ -292,7 +334,7 @@ int PopulateBlocksForLevelString_(
 	}
 
 	gamestate.blockCount = 0;
-	for (int i = 0; i < gameState.blockCapacity && !endOfContent; i += 1)
+	for (int i = 0; i < gameState.blockCapacity && checkContent; i += 1)
 	{
 		if (*blockLayout == '\n')
 		{
@@ -336,7 +378,7 @@ int PopulateBlocksForLevelString_(
 		}
 
 		blockLayout++;
-		endOfContent = (*blockLayout == NULL);
+		checkContent = (*blockLayout);
 	}
 
 	return 0;
@@ -353,7 +395,7 @@ int PopulateBlocksForLevel(
 	}
 
 	// level is a 1-based index. levels array is 0-based.
-	char* blockLayout = levels[level - 1]; // levels is a global var set by levels.cpp .. TODO: make not global
+	const char* blockLayout = levels[level - 1]; // levels is a global var set by levels.cpp .. TODO: make not global
 
 	return PopulateBlocksForLevelString_(blockLayout, gameState);
 }

@@ -1,4 +1,4 @@
-char *levels[10] = {
+const char *levels[10] = {
 "\
  \n\
  \n\
