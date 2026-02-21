@@ -371,6 +371,12 @@ void fill_triangle_plane_coeff(
 	coefficients.d = -(coefficients.a * p0.x) - (coefficients.b * p0.y) - (coefficients.c * p0.z);
 };
 
+static void swap_vec3_pointers(const tl::Vec3<float>*& a, const tl::Vec3<float>*& b) {
+	const tl::Vec3<float>* spare = a;
+	a = b;
+	b = spare;
+}
+
 void triangle_fill(
 	const tl::RenderBuffer& render_buffer,
 	z_buffer& depth_buffer,
@@ -398,15 +404,15 @@ void triangle_fill(
 	 */
 	if (pp1->y < pp0->y)
 	{
-		tl::swap(pp0, pp1);
+		swap_vec3_pointers(pp0, pp1);
 	}
 	if (pp2->y < pp1->y)
 	{
-		tl::swap(pp1, pp2);
+		swap_vec3_pointers(pp1, pp2);
 	}
 	if (pp1->y < pp0->y)
 	{
-		tl::swap(pp0, pp1);
+		swap_vec3_pointers(pp0, pp1);
 	}
 
 	// Check for natural flat top
@@ -415,7 +421,7 @@ void triangle_fill(
 		// sort top two points of flat top by their x co-ordinate
 		if (pp1->x < pp0->x)
 		{
-			tl::swap(pp0, pp1);
+			swap_vec3_pointers(pp0, pp1);
 		}
 		FillFlatTopTriangle(render_buffer, depth_buffer, color, *pp0, *pp1, *pp2, coefficients);
 	}
@@ -424,7 +430,7 @@ void triangle_fill(
 		// sort bottom two points of flat bottom by their x co-ordinate
 		if (pp2->x < pp1->x)
 		{
-			tl::swap(pp1, pp2);
+			swap_vec3_pointers(pp1, pp2);
 		}
 		FillFlatBottomTriangle(render_buffer, depth_buffer, color, *pp0, *pp1, *pp2, coefficients);
 	}
