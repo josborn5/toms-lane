@@ -3,15 +3,6 @@
 
 namespace tl
 {
-	template<typename T>
-	void swap(T& a, T& b)
-	{
-		T spare;
-		spare = a;
-		a = b;
-		b = spare;
-	}
-
 	MemorySpace CarveMemorySpace(uint64_t carveSizeInBytes, MemorySpace& toCarve);
 
 	int CharStringToInt(char* toParse);

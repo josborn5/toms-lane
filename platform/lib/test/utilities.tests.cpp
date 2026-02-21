@@ -4,15 +4,6 @@
 
 void RunUtilitiesTests()
 {
-	printf("\n===== Swap =====\n");
-	int a = 3;
-	int b = 2;
-	
-	tl::swap(a, b);
-
-	assert(a == 2);
-	assert(b == 3);
-
 	printf("\n===== CharStringToInt =====\n");
 	assert(tl::CharStringToInt("1") == 1);
 	assert(tl::CharStringToInt("0") == 0);
