@@ -41,7 +41,9 @@ namespace tl
 		const int* endX = &x1;
 		if (x1 < x0)
 		{
-			tl::swap(x0, x1);
+			int temp = x1;
+			x1 = x0;
+			x0 = temp;
 		}
 
 		int positionStartOfRow = renderBuffer.width * y;
