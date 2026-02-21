@@ -25,15 +25,20 @@ jobs:
         ./lib.sh
 
     - shell: bash
-      name: build test sprite-editor 
+      name: build test sprite-editor
       working-directory: ./sprite-editor
       run: |
         ./lib.sh
 
     - shell: bash
-      name: build obby-1 
+      name: build obby-1
       working-directory: ./obby-1
       run: |
         ./lib.sh
 
+    - shell: bash
+      name: build obby-2
+      working-directory: ./obby-2
+      run: |
+        ./lib.sh
 
