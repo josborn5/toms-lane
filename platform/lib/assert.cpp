@@ -8,20 +8,20 @@
 template<typename T>
 static void assert_whole_number(T actual, T expected, const char* message) {
 	if (actual != expected) {
-		printf("\nFAIL - ");
-		printf(message);
+		puts("\nFAIL - ");
+		puts(message);
 		printf(" - Actual: %d, Expected: %d", actual, expected);
-		printf("\n");
+		puts("\n");
 
 		assert(false);
 	}}
 
 void assert_float(float actual, float expected, const char* message) {
 	if (actual != expected) {
-		printf("\nFAIL - ");
-		printf(message);
+		puts("\nFAIL - ");
+		puts(message);
 		printf(" - Actual: %.4f, Expected: %.4f", actual, expected);
-		printf("\n");
+		puts("\n");
 
 		assert(false);
 	}}
