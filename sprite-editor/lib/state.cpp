@@ -215,7 +215,7 @@ static void ClearCommandBuffer()
 	}
 }
 
-static void WriteStringToCommandBuffer(char* character)
+static void WriteStringToCommandBuffer(const char* character)
 {
 	ClearCommandBuffer();
 	int counter = 1;
@@ -456,7 +456,7 @@ int InitializeState(const tl::MemorySpace& persistent, const tl::MemorySpace& tr
 	return Initialize(commandLine);
 }
 
-static bool CommandHas(char* compare, int& cursor)
+static bool CommandHas(const char* compare, int& cursor)
 {
 	cursor = 1;
 	bool match = true;
@@ -469,14 +469,14 @@ static bool CommandHas(char* compare, int& cursor)
 	return match;
 }
 
-static bool CommandStartsWith(char* prefix)
+static bool CommandStartsWith(const char* prefix)
 {
 	int cursor = 0;
 	bool has = CommandHas(prefix, cursor);
 	return has && (commands.get(cursor) != '\0');
 }
 
-static bool CommandIs(char* command)
+static bool CommandIs(const char* command)
 {
 	int cursor = 0;
 	bool has = CommandHas(command, cursor);
