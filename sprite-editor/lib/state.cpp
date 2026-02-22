@@ -6,6 +6,7 @@
 #include "./utilities.hpp"
 #include "./transform.hpp"
 #include "./operations.hpp"
+#include "./utils.hpp"
 
 static const int commandBufferSize = 256;
 static const int filePathBufferSize = 256;
@@ -675,7 +676,7 @@ static void ExecuteCurrentCommand()
 			return;
 		}
 
-		char* pointerToNumberChar = tl::GetNextNumberChar(&commands.access(1));
+		char* pointerToNumberChar = GetNextNumberChar(&commands.access(1));
 		uint32_t parsed_color;
 		ParseColorFromCharArray(pointerToNumberChar, tempMemory, parsed_color);
 
@@ -686,7 +687,7 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandStartsWith("bpp ")) // set bits per pixel
 	{
-		int new_bits_per_pixel = tl::CharStringToInt(&commands.access(5));
+		int new_bits_per_pixel = CharStringToInt(&commands.access(5));
 		set_bits_per_pixel(new_bits_per_pixel);
 		return;
 	}

@@ -4,6 +4,7 @@
 #include "./software-rendering.hpp"
 #include "./software-rendering.sprite.hpp"
 #include "./generated-assets.hpp"
+#include <stdio.h>
 
 namespace tl
 {
@@ -104,20 +105,13 @@ void font_interface_render_int(
 	float spaceWidth = 0.2f * firstCharFootprint.halfSize.x;
 	float charWidth = (2.0f * firstCharFootprint.halfSize.x) + spaceWidth;
 
-	char characterBuffer[10];
-	MemorySpace charBuffer;
-	charBuffer.content = characterBuffer;
-	charBuffer.sizeInBytes = 10;
-	if (IntToCharString(number, charBuffer) != 0)
-	{
-		return;
-	}
+	char character_buffer[12] = {0};
+	sprintf(character_buffer, "%d", number);
+	char* number_chars = character_buffer;
 
-	char* intAsString = (char*)charBuffer.content;
-
-	while (*intAsString)
+	while (*number_chars)
 	{
-		char digit = *intAsString;
+		char digit = *number_chars;
 		if (digit == '-')
 		{
 			Sprite neg_sprite = ascii_chars['-' - '!'];
@@ -131,7 +125,7 @@ void font_interface_render_int(
 		}
 
 		charRect.position.x += charWidth;
-		intAsString++;
+		number_chars++;
 	}
 }
 

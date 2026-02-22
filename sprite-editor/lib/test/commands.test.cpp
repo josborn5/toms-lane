@@ -3,57 +3,11 @@
 #include "../commands.hpp"
 
 // mock implementations of libraries used
-uint32_t tl::GetColorFromRGB(int r, int g, int b)
-{
-	return 0x000000;
-}
-
 int tl::file_interface_write(
 	char* fileName,
 	const tl::MemorySpace& writeBuffer
 )
 {
-	return 0;
-}
-
-int tl::IntToCharString(int a, char* b)
-{
-	return 0;
-}
-
-int tl::bitmap_interface_write(
-	const tl::bitmap& bitmap,
-	const tl::MemorySpace& memory)
-{
-	return 0;
-}
-
-tl::MemorySpace tl::CarveMemorySpace(uint64_t carveSizeInBytes, tl::MemorySpace& toCarve)
-{
-	return toCarve;
-}
-
-int tl::CharStringToInt(char* string)
-{
-	return 0;
-}
-
-char* tl::CopyToEndOfNumberChar(char* one, char* two)
-{
-	return "";
-}
-
-char* tl::GetNextNumberChar(char* string)
-{
-	return "";
-}
-
-int tl::bitmap_interface_get_pixel_data(const tl::bitmap& bitmap,
-		int x,
-		int y,
-		uint32_t& pixel_data)
-{
-	pixel_data = 0x000000;
 	return 0;
 }
 

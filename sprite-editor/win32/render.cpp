@@ -1,6 +1,8 @@
 #include "../../platform/lib/tl-library.hpp"
 #include "./editor.hpp"
 #include "./utilities.hpp"
+#include "./utils.cpp"
+#include <stdio.h>
 
 struct sprite_control_view
 {
@@ -39,19 +41,19 @@ static void GetDisplayStringForGrid(const Grid& grid, char* writeTo)
 	int b_color = selected_pixel_color & 0x0000FF;
 
 	char* cursor = writeTo;
-	tl::IntToCharString(r_color, cursor);
+	sprintf(cursor, "%d", r_color);
 
 	while (*cursor) cursor++;
 	*cursor = ' ';
 	cursor++;
 
-	tl::IntToCharString(g_color, cursor);
+	sprintf(cursor, "%d", g_color);
 
 	while (*cursor) cursor++;
 	*cursor = ' ';
 	cursor++;
 
-	tl::IntToCharString(b_color, cursor);
+	sprintf(cursor, "%d", b_color);
 }
 
 static tl::Rect<float> SizeBoundingRectForSpriteInContainingRect(const SpriteC& sprite, const tl::Rect<float>& containerRect)

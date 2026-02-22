@@ -6,5 +6,6 @@ add_executable(
 target_link_libraries(
 	sprite-editor-tests
 	sprite-editor
+	toms-lane-platform
 )
 

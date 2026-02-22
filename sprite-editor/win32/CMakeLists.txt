@@ -9,6 +9,7 @@ add_subdirectory(../lib ./lib-output)
 add_executable(
 	sprite-editor-win32 WIN32
 	sprite-editor-win32.cpp
+	render.cpp
 )
 
 target_link_libraries(

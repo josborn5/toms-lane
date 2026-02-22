@@ -2,6 +2,7 @@
 #include "./editor.hpp"
 #include "./utilities.hpp"
 #include "./render.hpp"
+#include "./utils.hpp"
 
 static const int PALETTE_COUNT = 4;
 
@@ -91,14 +92,14 @@ static void sprite_from_string_read_dimensions(char* content, tl::MemorySpace& s
 {
 	char* buffer = (char*)space.content;
 	// Width
-	char* workingPointer = tl::GetNextNumberChar(content);
-	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
-	int width = tl::CharStringToInt(buffer);
+	char* workingPointer = GetNextNumberChar(content);
+	workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
+	int width = CharStringToInt(buffer);
 
 	// Height
-	workingPointer = tl::GetNextNumberChar(workingPointer);
-	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
-	int height = tl::CharStringToInt(buffer);
+	workingPointer = GetNextNumberChar(workingPointer);
+	workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
+	int height = CharStringToInt(buffer);
 
 	sprite.width = width;
 	sprite.height = height;
@@ -108,14 +109,14 @@ static void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
 {
 	char* buffer = (char*)space.content;
 	// Width
-	char* workingPointer = tl::GetNextNumberChar(content);
-	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
-	int width = tl::CharStringToInt(buffer);
+	char* workingPointer = GetNextNumberChar(content);
+	workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
+	int width = CharStringToInt(buffer);
 
 	// Height
-	workingPointer = tl::GetNextNumberChar(workingPointer);
-	workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
-	int height = tl::CharStringToInt(buffer);
+	workingPointer = GetNextNumberChar(workingPointer);
+	workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
+	int height = CharStringToInt(buffer);
 
 	// Content
 	int contentCount = height * width;

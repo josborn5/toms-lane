@@ -10,11 +10,11 @@ add_library(
 	sprite-editor STATIC
 	commands.cpp
 	state.cpp
-	render.cpp
 	palettes.cpp
 	sprite-editor.cpp
 	utilities.cpp
 	transform.cpp
 	operations.cpp
+	utils.cpp
 )
 

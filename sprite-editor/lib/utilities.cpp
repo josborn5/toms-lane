@@ -1,4 +1,5 @@
 #include "./editor.hpp"
+#include "./utils.hpp"
 
 char* ParseColorFromCharArray(char* content, tl::MemorySpace& space, uint32_t& color)
 {
@@ -10,11 +11,11 @@ char* ParseColorFromCharArray(char* content, tl::MemorySpace& space, uint32_t& c
 
 	for (int i = 0; i < 3 && *workingPointer; i += 1)
 	{
-		workingPointer = tl::GetNextNumberChar(workingPointer);
+		workingPointer = GetNextNumberChar(workingPointer);
 		if (*workingPointer)
 		{
-			workingPointer = tl::CopyToEndOfNumberChar(workingPointer, buffer);
-			rgbContent[i] = tl::CharStringToInt(buffer);
+			workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
+			rgbContent[i] = CharStringToInt(buffer);
 		}
 	}
 
