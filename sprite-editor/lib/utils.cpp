@@ -38,54 +38,6 @@ int CharStringToInt(char* toParse)
 	return (isNegative) ? -1 * intValue : intValue;
 }
 
-int IntToCharString(int from, char* to)
-{
-	// Special case: zero
-	if (from == 0)
-	{
-		to[0] = '0';
-		to[1] = '\0';
-		return 0;
-	}
-
-	int charIndex = 0;
-
-	// Handle negative numbers
-	int safeNumber = (from < 0) ? -1 * from : from;
-	if (from < 0)
-	{
-		to[charIndex] = '-';
-		charIndex += 1;
-	}
-
-	int baseTenMultiplier = 1;
-	int digit = safeNumber / baseTenMultiplier;
-	int digitCount = 1;
-	while (digit > 0)
-	{
-		baseTenMultiplier *= 10;
-		digitCount += 1;
-		digit = safeNumber / baseTenMultiplier;
-	}
-
-	// Could do target memory space check here since digitCount is know here???
-
-	int workingNumber = safeNumber;
-	while (baseTenMultiplier >= 10)
-	{
-		baseTenMultiplier /= 10;
-		digit = workingNumber / baseTenMultiplier;
-
-		to[charIndex] = '0' + (char)digit;
-
-		workingNumber -= (digit * baseTenMultiplier);
-		charIndex += 1;
-	}
-
-	to[charIndex] = '\0';
-	return 0;
-}
-
 char* CopyToEndOfNumberChar(char* from, char* to)
 {
 	while (*from && *from >= '0' && *from <= '9')
