@@ -2,3 +2,5 @@ https://tuttlem.github.io/2024/05/28/framebuffer-drawing-in-linux.html
 
 https://github.com/libsdl-org/SDL/blob/main/docs/INTRO-cmake.md
 
+https://www.deusinmachina.net/p/sdl-tutorial-part-1-opening-a-window
+
