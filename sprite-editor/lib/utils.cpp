@@ -38,7 +38,7 @@ int CharStringToInt(char* toParse)
 	return (isNegative) ? -1 * intValue : intValue;
 }
 
-char* CopyToEndOfNumberChar(char* from, char* to)
+const char* CopyToEndOfNumberChar(const char* from, char* to)
 {
 	while (*from && *from >= '0' && *from <= '9')
 	{
@@ -52,7 +52,7 @@ char* CopyToEndOfNumberChar(char* from, char* to)
 	return from;
 }
 
-char* GetNextNumberChar(char* from)
+const char* GetNextNumberChar(const char* from)
 {
 	while (*from && (*from < '0' || *from > '9'))
 	{

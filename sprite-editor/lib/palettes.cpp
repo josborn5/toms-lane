@@ -6,7 +6,7 @@
 
 static const int PALETTE_COUNT = 4;
 
-char* rgrPaletteContent = "\
+const char* rgrPaletteContent = "\
 2\n\
 8\n\
 255 249 179\n\
@@ -26,7 +26,7 @@ char* rgrPaletteContent = "\
 255 191  64\n\
 204  20  36";
 
-char* pollenPaletteContent = "\
+const char* pollenPaletteContent = "\
 1\n\
 8\n\
 115  70  76\n\
@@ -38,7 +38,7 @@ char* pollenPaletteContent = "\
 114 220 187\n\
  52 172 186";
 
-char* sunsetCloudsPaletteContent = "\
+const char* sunsetCloudsPaletteContent = "\
 1\n\
 8\n\
 252 176 140\n\
@@ -50,7 +50,7 @@ char* sunsetCloudsPaletteContent = "\
 154 171 201\n\
 165 183 212";
 
-char* fantasyConsolePaletteContent = "\
+const char* fantasyConsolePaletteContent = "\
 2\n\
 8\n\
   0   0   0\n\
@@ -70,7 +70,7 @@ char* fantasyConsolePaletteContent = "\
 115 201 235\n\
 202 175 245";
 
-char* paletteContents[PALETTE_COUNT] = {
+const char* paletteContents[PALETTE_COUNT] = {
 	rgrPaletteContent,
 	pollenPaletteContent,
 	sunsetCloudsPaletteContent,
@@ -88,11 +88,11 @@ static int selectedPaletteIndex = 0;
 * :
 * RValue<char> GValue<char> BValue<char>\n // Nth pixel
 */
-static void sprite_from_string_read_dimensions(char* content, tl::MemorySpace& space, SpriteC& sprite)
+static void sprite_from_string_read_dimensions(const char* content, tl::MemorySpace& space, SpriteC& sprite)
 {
 	char* buffer = (char*)space.content;
 	// Width
-	char* workingPointer = GetNextNumberChar(content);
+	const char* workingPointer = GetNextNumberChar(content);
 	workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
 	int width = CharStringToInt(buffer);
 
@@ -105,11 +105,11 @@ static void sprite_from_string_read_dimensions(char* content, tl::MemorySpace& s
 	sprite.height = height;
 }
 
-static void LoadSpriteC(char* content, tl::MemorySpace& space, SpriteC& sprite)
+static void LoadSpriteC(const char* content, tl::MemorySpace& space, SpriteC& sprite)
 {
 	char* buffer = (char*)space.content;
 	// Width
-	char* workingPointer = GetNextNumberChar(content);
+	const char* workingPointer = GetNextNumberChar(content);
 	workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
 	int width = CharStringToInt(buffer);
 

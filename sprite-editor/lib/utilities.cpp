@@ -1,10 +1,10 @@
 #include "./editor.hpp"
 #include "./utils.hpp"
 
-char* ParseColorFromCharArray(char* content, tl::MemorySpace& space, uint32_t& color)
+const char* ParseColorFromCharArray(const char* content, tl::MemorySpace& space, uint32_t& color)
 {
 	char* buffer = (char*)space.content;
-	char* workingPointer = content;
+	const char* workingPointer = content;
 
 	/// RBGA values
 	int rgbContent[3] = { 0, 0, 0 };

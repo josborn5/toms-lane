@@ -20,7 +20,7 @@ void RunUtilitiesTests()
 	assert(CharStringToInt("-6543210") == -6543210);
 
 	printf("\n===== CopyToEndOfNumberChar =====\n");
-	char* copyNumberString = "123 ";
+	const char* copyNumberString = "123 ";
 	const int to_length = 8;
 	char* to = (char*)malloc(to_length);
 
@@ -30,8 +30,8 @@ void RunUtilitiesTests()
 	free(to);
 
 	printf("\n===== GetNextNumberChar =====\n");
-	char* numberString = "ab 123";
-	char* result = GetNextNumberChar(numberString);
+	const char* numberString = "ab 123";
+	const char* result = GetNextNumberChar(numberString);
 	assert(*result == '1');
 	assert(result == &numberString[3]);
 }

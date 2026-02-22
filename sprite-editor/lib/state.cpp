@@ -676,7 +676,7 @@ static void ExecuteCurrentCommand()
 			return;
 		}
 
-		char* pointerToNumberChar = GetNextNumberChar(&commands.access(1));
+		const char* pointerToNumberChar = GetNextNumberChar(&commands.access(1));
 		uint32_t parsed_color;
 		ParseColorFromCharArray(pointerToNumberChar, tempMemory, parsed_color);
 

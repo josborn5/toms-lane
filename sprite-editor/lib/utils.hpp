@@ -1,5 +1,5 @@
 int CharStringToInt(char* toParse);
 
-char* CopyToEndOfNumberChar(char* from, char* to);
-char* GetNextNumberChar(char* from);
+const char* CopyToEndOfNumberChar(const char* from, char* to);
+const char* GetNextNumberChar(const char* from);
 
