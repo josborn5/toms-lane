@@ -3,6 +3,7 @@
 #include "./utilities.hpp"
 #include "./render.hpp"
 #include "./utils.hpp"
+#include <stdlib.h>
 
 static const int PALETTE_COUNT = 4;
 
@@ -94,12 +95,12 @@ static void sprite_from_string_read_dimensions(const char* content, tl::MemorySp
 	// Width
 	const char* workingPointer = GetNextNumberChar(content);
 	workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
-	int width = CharStringToInt(buffer);
+	int width = atoi(buffer);
 
 	// Height
 	workingPointer = GetNextNumberChar(workingPointer);
 	workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
-	int height = CharStringToInt(buffer);
+	int height = atoi(buffer);
 
 	sprite.width = width;
 	sprite.height = height;
@@ -111,12 +112,12 @@ static void LoadSpriteC(const char* content, tl::MemorySpace& space, SpriteC& sp
 	// Width
 	const char* workingPointer = GetNextNumberChar(content);
 	workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
-	int width = CharStringToInt(buffer);
+	int width = atoi(buffer);
 
 	// Height
 	workingPointer = GetNextNumberChar(workingPointer);
 	workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
-	int height = CharStringToInt(buffer);
+	int height = atoi(buffer);
 
 	// Content
 	int contentCount = height * width;

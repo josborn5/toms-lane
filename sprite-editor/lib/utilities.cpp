@@ -1,5 +1,6 @@
 #include "./editor.hpp"
 #include "./utils.hpp"
+#include <stdlib.h>
 
 const char* ParseColorFromCharArray(const char* content, tl::MemorySpace& space, uint32_t& color)
 {
@@ -15,7 +16,7 @@ const char* ParseColorFromCharArray(const char* content, tl::MemorySpace& space,
 		if (*workingPointer)
 		{
 			workingPointer = CopyToEndOfNumberChar(workingPointer, buffer);
-			rgbContent[i] = CharStringToInt(buffer);
+			rgbContent[i] = atoi(buffer);
 		}
 	}
 

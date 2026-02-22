@@ -5,20 +5,6 @@
 
 void RunUtilitiesTests()
 {
-	printf("\n===== CharStringToInt =====\n");
-	assert(CharStringToInt("1") == 1);
-	assert(CharStringToInt("0") == 0);
-	assert(CharStringToInt("23") == 23);
-	assert(CharStringToInt("654") == 654);
-	assert(CharStringToInt("6543210") == 6543210);
-	assert(CharStringToInt("01") == 1);
-
-	assert(CharStringToInt("-1") == -1);
-	assert(CharStringToInt("-0") == 0);
-	assert(CharStringToInt("-23") == -23);
-	assert(CharStringToInt("-654") == -654);
-	assert(CharStringToInt("-6543210") == -6543210);
-
 	printf("\n===== CopyToEndOfNumberChar =====\n");
 	const char* copyNumberString = "123 ";
 	const int to_length = 8;

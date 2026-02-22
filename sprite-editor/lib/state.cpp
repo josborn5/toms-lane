@@ -7,6 +7,7 @@
 #include "./transform.hpp"
 #include "./operations.hpp"
 #include "./utils.hpp"
+#include <stdlib.h>
 
 static const int commandBufferSize = 256;
 static const int filePathBufferSize = 256;
@@ -687,7 +688,7 @@ static void ExecuteCurrentCommand()
 	}
 	else if (CommandStartsWith("bpp ")) // set bits per pixel
 	{
-		int new_bits_per_pixel = CharStringToInt(&commands.access(5));
+		int new_bits_per_pixel = atoi(&commands.access(5));
 		set_bits_per_pixel(new_bits_per_pixel);
 		return;
 	}
