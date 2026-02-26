@@ -82,6 +82,8 @@ int RunWindowUpdateLoop(
 		SDL_RenderCopy(global_renderer, global_texture, nullptr, nullptr);
 
 		SDL_RenderPresent(global_renderer);
+
+		SDL_Delay(16);
 	}
 
 	free(global_render_buffer.pixels);
