@@ -6,18 +6,6 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - uses: libsdl-org/setup-sdl@main
-      with:
-        install-linux-dependencies: true
-        version: 2-latest
-        version-sdl-image: 2-latest
-
-    - shell: bash
-      name: build sdl2 app
-      working-directory: ./application/src
-      run: |
-        ./sdl2.sh
-
     - shell: bash
       name: build test platform
       working-directory: ./platform
