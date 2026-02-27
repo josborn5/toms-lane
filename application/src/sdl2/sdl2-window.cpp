@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <stdint.h>
 #include "../tl-window.hpp"
+#include "../tl-application.hpp"
 
 namespace tl {
 
@@ -60,15 +61,24 @@ int RunWindowUpdateLoop(
 ) {
 	bool is_running = true;
 	while (is_running) {
+		Input input;
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) {
-				is_running = false;
+			switch (event.type) {
+				case SDL_QUIT: {
+					is_running = false;
+				} break;
+				case SDL_KEYDOWN: {
+					SDL_KeyboardEvent key_event = event.key;
+					if (key_event.keysym.sym >= SDLK_0 && key_event.keysym.sym <= SDLK_9) {
+						int key = SDLK_0 + '0' + key_event.keysym.sym;
+						input.buttons[key].isDown = true;
+					}
+				} break;	
 			}
 		}
 
 		// TODO: figure out input & time between calls
-		Input input;
 		updateWindowCallback(input, 0.1666666f, global_render_buffer);
 
 		SDL_UpdateTexture(
