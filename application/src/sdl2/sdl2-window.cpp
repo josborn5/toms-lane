@@ -52,7 +52,11 @@ int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY)
 	return 0;
 }
 
-	
+
+int OpenWindow(const WindowSettings& settings) {
+	int _1, _2;
+	return OpenWindow(settings, _1, _2);
+}
 
 
 int RunWindowUpdateLoop(
