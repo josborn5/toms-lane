@@ -7,3 +7,16 @@ add_library(
 	sdl2-application.cpp
 	sdl2-window.cpp
 )
+
+find_package(
+	SDL2
+	REQUIRED CONFIG
+	REQUIRED COMPONENTS
+	SDL2
+)
+
+target_link_libraries(
+	toms-lane-sdl2-application
+	SDL2::SDL2
+)
+
