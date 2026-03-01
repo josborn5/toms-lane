@@ -4,3 +4,6 @@ https://github.com/libsdl-org/SDL/blob/main/docs/INTRO-cmake.md
 
 https://www.deusinmachina.net/p/sdl-tutorial-part-1-opening-a-window
 
+https://codersplate.wordpress.com/2025/08/01/creating-a-framebuffer-renderer-in-c-with-sdl2/
+
+

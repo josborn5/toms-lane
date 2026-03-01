@@ -9,6 +9,8 @@ static SDL_Window* global_window = nullptr;
 static SDL_Renderer* global_renderer = nullptr;
 static SDL_Texture* global_texture = nullptr;
 
+static SDL_Surface* global_surface = nullptr;
+
 static RenderBuffer global_render_buffer = {0};
 
 int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY) {
@@ -25,29 +27,13 @@ int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY)
 		return -1;
 	}
 
-	global_renderer = SDL_CreateRenderer(
-		global_window,
-		-1,
-		SDL_RENDERER_ACCELERATED
-	);
 
-	if (global_renderer == nullptr) {
-		return -2;
-	}
+	global_surface = SDL_GetWindowSurface(global_window);
 
-	global_texture = SDL_CreateTexture(
-		global_renderer,
-		SDL_PIXELFORMAT_RGBA8888,
-		SDL_TEXTUREACCESS_STREAMING,
-		settings.width,
-		settings.height
-	);
-
-	uint32_t* pixel_content = (uint32_t*)malloc(settings.width * settings.height * sizeof(uint32_t));
-
-	global_render_buffer.pixels = pixel_content;
 	global_render_buffer.width = settings.width;
 	global_render_buffer.height = settings.height;
+
+	global_render_buffer.pixels = (uint32_t*)global_surface->pixels;
 
 	return 0;
 }
@@ -64,6 +50,7 @@ int RunWindowUpdateLoop(
 	UpdateWindowCallback updateWindowCallback
 ) {
 	bool is_running = true;
+
 	while (is_running) {
 		Input input;
 		SDL_Event event;
@@ -83,26 +70,15 @@ int RunWindowUpdateLoop(
 		}
 
 		// TODO: figure out input & time between calls
-		updateWindowCallback(input, 0.1666666f, global_render_buffer);
+		SDL_LockSurface(global_surface);
+		updateWindowCallback(input, 0.01666666f, global_render_buffer);
 
-		SDL_UpdateTexture(
-			global_texture,
-			nullptr,
-			global_render_buffer.pixels,
-			global_render_buffer.width * sizeof(uint32_t));
-
-		SDL_RenderClear(global_renderer);
-
-		SDL_RenderCopy(global_renderer, global_texture, nullptr, nullptr);
-
-		SDL_RenderPresent(global_renderer);
+		SDL_UnlockSurface(global_surface);
+		SDL_UpdateWindowSurface(global_window);
 
 		SDL_Delay(16);
 	}
 
-	free(global_render_buffer.pixels);
-	SDL_DestroyTexture(global_texture);
-	SDL_DestroyRenderer(global_renderer);
 	SDL_DestroyWindow(global_window);
 
 	return 0;
