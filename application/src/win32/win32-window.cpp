@@ -58,7 +58,6 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 
 	int bitmapPixelCount = globalRenderBuffer.width * globalRenderBuffer.height;
 	int bitmapMemorySize = bitmapPixelCount * globalRenderBuffer.bytesPerPixel;
-	globalRenderBuffer.pitch = globalRenderBuffer.width * globalRenderBuffer.bytesPerPixel;
 	globalRenderBuffer.pixels = (uint32_t *)VirtualAlloc(0, bitmapMemorySize, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
 
 	HDC window_context = GetDC(globalWindow);

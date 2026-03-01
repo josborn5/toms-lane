@@ -12,7 +12,6 @@ namespace tl
 		unsigned int* pixels;
 		int width;
 		int height;
-		int pitch;
 		int bytesPerPixel;
 	};
 
