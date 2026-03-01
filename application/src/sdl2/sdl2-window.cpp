@@ -32,7 +32,7 @@ int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY)
 
 	global_render_buffer.width = settings.width;
 	global_render_buffer.height = settings.height;
-
+	global_render_buffer.origin = frame_buffer_origin_top_left;
 	global_render_buffer.pixels = (uint32_t*)global_surface->pixels;
 
 	return 0;

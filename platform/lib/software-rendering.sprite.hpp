@@ -7,11 +7,17 @@
 
 namespace tl
 {
+	enum frame_buffer_origin {
+		frame_buffer_origin_top_left,
+		frame_buffer_origin_bottom_left
+	};
+
 	struct RenderBuffer
 	{
 		unsigned int* pixels;
 		int width;
 		int height;
+		frame_buffer_origin origin;
 	};
 
 	// monochrome sprite

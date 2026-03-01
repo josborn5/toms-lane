@@ -36,6 +36,7 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 
 	globalRenderBuffer.width = clientRect.right - clientRect.left;
 	globalRenderBuffer.height = clientRect.bottom - clientRect.top;
+	globalRenderBuffer.origin = frame_buffer_origin_bottom_left;
 
 	if (globalRenderBuffer.pixels)
 	{
