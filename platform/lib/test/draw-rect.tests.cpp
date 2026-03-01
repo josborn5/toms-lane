@@ -9,7 +9,6 @@ static void run_fill_rgba_rect_tests()
 
 	renderBuffer.width = 12;
 	renderBuffer.height = 8;
-	renderBuffer.bytesPerPixel = 4;
 
 	renderBufferPixels.sizeInBytes = sizeof(unsigned int) * renderBuffer.width * renderBuffer.height;
 	renderBufferPixels.content = malloc(renderBufferPixels.sizeInBytes);
@@ -29,7 +28,6 @@ void RunDrawRectTests()
 
 	renderBuffer.width = 12;
 	renderBuffer.height = 8;
-	renderBuffer.bytesPerPixel = 4;
 
 	renderBufferPixels.sizeInBytes = sizeof(unsigned int) * renderBuffer.width * renderBuffer.height;
 	renderBufferPixels.content = malloc(renderBufferPixels.sizeInBytes);

@@ -36,7 +36,6 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 
 	globalRenderBuffer.width = clientRect.right - clientRect.left;
 	globalRenderBuffer.height = clientRect.bottom - clientRect.top;
-	globalRenderBuffer.bytesPerPixel = sizeof(uint32_t);
 
 	if (globalRenderBuffer.pixels)
 	{
@@ -57,7 +56,7 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 	bitmapInfo.bmiHeader.biCompression = BI_RGB;
 
 	int bitmapPixelCount = globalRenderBuffer.width * globalRenderBuffer.height;
-	int bitmapMemorySize = bitmapPixelCount * globalRenderBuffer.bytesPerPixel;
+	int bitmapMemorySize = bitmapPixelCount * sizeof(unsigned int);
 	globalRenderBuffer.pixels = (uint32_t *)VirtualAlloc(0, bitmapMemorySize, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
 
 	HDC window_context = GetDC(globalWindow);
