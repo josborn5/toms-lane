@@ -5,6 +5,15 @@
 
 namespace tl
 {
+	static unsigned int frame_buffer_get_row_start_pixel(const RenderBuffer& frame_buffer, unsigned int y) {
+		unsigned int frame_buffer_y = (frame_buffer.origin == frame_buffer_origin_top_left)
+			? frame_buffer.height - y
+			: y;
+		unsigned int start_row_pixel_index = frame_buffer.width * frame_buffer_y;
+
+		return start_row_pixel_index;
+	}
+
 	/**
 	 *	|---|---|---|
 	 *	| 0 | 1 | 2 |	pixel ordinals
@@ -21,7 +30,7 @@ namespace tl
 			return;
 		}
 
-		int positionStartOfRow = renderBuffer.width * y;
+		int positionStartOfRow = frame_buffer_get_row_start_pixel(renderBuffer, y);
 		int positionStartOfX0InRow = positionStartOfRow + x;
 		uint32_t* pixel = renderBuffer.pixels + positionStartOfX0InRow;
 		*pixel = color;
@@ -46,7 +55,7 @@ namespace tl
 			x0 = temp;
 		}
 
-		int positionStartOfRow = renderBuffer.width * y;
+		int positionStartOfRow = frame_buffer_get_row_start_pixel(renderBuffer, y);
 		int positionOfX0InRow = positionStartOfRow + *startX;
 		uint32_t* pixelPointer = renderBuffer.pixels + positionOfX0InRow;
 		for (int i = *startX; i <= *endX; i += 1)
@@ -216,7 +225,7 @@ namespace tl
 
 		for (int y = y0; y < y1; y++)
 		{
-			int positionStartOfRow = renderBuffer.width * y;
+			int positionStartOfRow = frame_buffer_get_row_start_pixel(renderBuffer, y);
 			int positionStartOfX0InRow = positionStartOfRow + x0;
 			uint32_t* pixel = renderBuffer.pixels + positionStartOfX0InRow;
 			for (int x = x0; x < x1; x++)
