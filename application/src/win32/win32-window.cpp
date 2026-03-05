@@ -266,7 +266,7 @@ int RunWindowUpdateLoop(
 			return updateResult;
 		}
 
-		win32_input_interface_reset(gameInput);
+		gameInput.reset();
 
 		// render visual
 //		RedrawWindow(globalWindow, NULL, NULL, RDW_INTERNALPAINT);

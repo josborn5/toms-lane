@@ -22,31 +22,31 @@ static void RunTestForButton(char virtualKeyCode, int tlKeyCode)
 	MSG secondPressFrame = GetMessageKeyEvent(WM_KEYDOWN, virtualKeyCode, true, true);
 	MSG firstReleaseFrame = GetMessageKeyEvent(WM_KEYUP, virtualKeyCode, false, true);
 
-	win32_input_interface_reset(input);
+	input.reset();
 	win32_input_interface_process_message(nothingPressed, input);
 
 	assert(input.buttons[tlKeyCode].isDown == false);
 	assert(input.buttons[tlKeyCode].wasDown == false);
 
-	win32_input_interface_reset(input);
+	input.reset();
 	win32_input_interface_process_message(firstPressFrame, input);
 
 	assert(input.buttons[tlKeyCode].isDown == true);
 	assert(input.buttons[tlKeyCode].wasDown == false);
 
-	win32_input_interface_reset(input);
+	input.reset();
 	win32_input_interface_process_message(secondPressFrame, input);
 
 	assert(input.buttons[tlKeyCode].isDown == true);
 	assert(input.buttons[tlKeyCode].wasDown == true);
 
-	win32_input_interface_reset(input);
+	input.reset();
 	win32_input_interface_process_message(firstReleaseFrame, input);
 
 	assert(input.buttons[tlKeyCode].isDown == false);
 	assert(input.buttons[tlKeyCode].wasDown == true);
 
-	win32_input_interface_reset(input);
+	input.reset();
 	win32_input_interface_process_message(nothingPressed, input);
 
 	assert(input.buttons[tlKeyCode].isDown == false);

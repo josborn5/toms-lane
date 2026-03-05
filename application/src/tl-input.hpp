@@ -70,7 +70,43 @@ namespace tl
 		Mouse mouse;
 		Button buttons[KEY_COUNT];
 		char character;
+
+		void reset() {
+			for (int i = 0; i < KEY_COUNT; i += 1)
+			{
+				Button& button = buttons[i];
+				// When holding down a button the first key-down message shows isDown:true
+				// and wasDown:false. The next key-down message to come after than, that
+				// shows isDown:true and wasDown:true only comes ~1 second after the first.
+				// To support this being called in a frame rate much higher than 1 frames
+				// per second, the reset function needs to compare the input state of a button
+				// from the prior frame to determine if it's held down from the previous frame.
+				if (button.keyDown)
+				{
+					button.wasDown = true;
+					button.keyDown = false;
+				}
+				else if (button.keyUp)
+				{
+
+					button.wasDown = false;
+					button.keyUp = false;
+				}
+			}
+
+			for (int i = 0; i < MOUSE_BUTTON_COUNT; i += 1)
+			{
+				if (mouse.buttons[i].keyUp)
+				{
+					mouse.buttons[i].wasDown = false;
+					mouse.buttons[i].keyUp = false;
+				}
+			}
+
+			character = 0;
+		}
 	};
+
 }
 
 #endif

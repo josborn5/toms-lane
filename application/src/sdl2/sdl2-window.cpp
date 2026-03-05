@@ -134,12 +134,11 @@ int RunWindowUpdateLoop(
 		// TODO: figure out input & time between calls
 		updateWindowCallback(input, 0.01666666f, global_render_buffer);
 
-//		SDL_FillRect(frame_buffer_surface, nullptr,
-//			SDL_MapRGB(frame_buffer_surface->format, color, 0, 0));
-
 		SDL_BlitSurface(frame_buffer_surface, nullptr, window_surface, nullptr);
 
 		SDL_UpdateWindowSurface(global_window);
+
+		input.reset();
 
 		SDL_Delay(16);
 	}

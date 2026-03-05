@@ -748,7 +748,7 @@ static int UpdateAndRender1(
 
 		if (input.buttons[tl::KEY_S].keyUp)
 		{
-//			printf("demo started!\n");
+			printf("demo started!\n");
 			isStarted = true;
 			reset_camera_in_world();
 		}
