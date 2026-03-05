@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "../tl-window.hpp"
 #include "../tl-application.hpp"
 
@@ -58,6 +59,12 @@ int OpenWindow(const WindowSettings& settings) {
 	return OpenWindow(settings, _1, _2);
 }
 
+static void set_key_state(Button& key, bool is_down, bool was_down) {
+	key.isDown = is_down;
+	key.wasDown = was_down;
+	key.keyDown = is_down && !was_down;
+	key.keyUp = !is_down && was_down;
+}
 
 int RunWindowUpdateLoop(
 	int targetFPS,
@@ -65,10 +72,16 @@ int RunWindowUpdateLoop(
 ) {
 	bool is_running = true;
 
-	int color = 255;
-
+/*	uint32_t test_red = SDL_MapRGB(frame_buffer_surface->format, 255, 0, 0);
+	uint32_t test_green = SDL_MapRGB(frame_buffer_surface->format, 0, 255, 0);
+	uint32_t test_blue = SDL_MapRGB(frame_buffer_surface->format, 0, 0, 255);
+	printf("test_red %x\n", test_red);
+	printf("0xFF0000 %x\n", 0xFF0000);
+	printf("test_green %x\n", test_green);
+	printf("test_blue %x\n", test_blue);
+*/
 	while (is_running) {
-		Input input;
+		Input input = {0};
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -77,38 +90,52 @@ int RunWindowUpdateLoop(
 				} break;
 				case SDL_KEYDOWN: {
 					SDL_KeyboardEvent key_event = event.key;
+					printf("KEYDOWN %d\n", key_event.keysym.sym);
 					if (key_event.keysym.sym >= SDLK_0 && key_event.keysym.sym <= SDLK_9) {
 						int key = SDLK_0 + '0' + key_event.keysym.sym;
-						input.buttons[key].isDown = true;
+						set_key_state(
+							input.buttons[key],
+							true,
+							key_event.repeat == 0
+						);
 					}
 					else if (key_event.keysym.sym >= 'A' && key_event.keysym.sym <= 'Z') {
 						int key = SDLK_a + 'A' + key_event.keysym.sym;
-						input.buttons[key].isDown = true;
+						set_key_state(
+							input.buttons[key],
+							true,
+							key_event.repeat == 0
+						);
 					}
 				} break;
 				case SDL_KEYUP: {
 					SDL_KeyboardEvent key_event = event.key;
+					printf("KEYUP %d\n", key_event.keysym.sym);
 					if (key_event.keysym.sym >= SDLK_0 && key_event.keysym.sym <= SDLK_9) {
 						int key = SDLK_0 + '0' + key_event.keysym.sym;
-						input.buttons[key].isDown = false;
+						set_key_state(
+							input.buttons[key],
+							false,
+							key_event.repeat == 0
+						);
 					}
 					else if (key_event.keysym.sym >= 'A' && key_event.keysym.sym <= 'Z') {
 						int key = SDLK_a + 'A' + key_event.keysym.sym;
-						input.buttons[key].isDown = false;
+						set_key_state(
+							input.buttons[key],
+							false,
+							key_event.repeat == 0
+						);
 					}
 				} break;	
 			}
 		}
 
 		// TODO: figure out input & time between calls
-//		updateWindowCallback(input, 0.01666666f, global_render_buffer);
-		color -= 1;
-		if (color == -1) {
-			color = 255;
-		}
+		updateWindowCallback(input, 0.01666666f, global_render_buffer);
 
-		SDL_FillRect(frame_buffer_surface, nullptr,
-    		SDL_MapRGB(frame_buffer_surface->format, color, 0, 0));
+//		SDL_FillRect(frame_buffer_surface, nullptr,
+//			SDL_MapRGB(frame_buffer_surface->format, color, 0, 0));
 
 		SDL_BlitSurface(frame_buffer_surface, nullptr, window_surface, nullptr);
 

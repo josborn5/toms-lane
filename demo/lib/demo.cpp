@@ -2,6 +2,7 @@
 #include <string>
 #include <limits>
 #include <math.h>
+#include <stdio.h>
 #include "../../application/src/tl-application.hpp"
 #include "../../platform/lib/tl-library.hpp"
 #include "./render.hpp"
@@ -747,6 +748,7 @@ static int UpdateAndRender1(
 
 		if (input.buttons[tl::KEY_S].keyUp)
 		{
+//			printf("demo started!\n");
 			isStarted = true;
 			reset_camera_in_world();
 		}
