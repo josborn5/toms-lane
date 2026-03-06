@@ -56,6 +56,13 @@ namespace tl
 		bool wasDown;
 		bool keyUp;
 		bool keyDown;
+
+		void set_state(bool is_down, bool was_down) {
+			isDown = is_down;
+			was_down = wasDown;
+			keyDown = is_down && !was_down;
+			keyUp = !is_down && was_down;
+		}
 	};
 
 	struct Mouse

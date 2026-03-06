@@ -59,22 +59,14 @@ int OpenWindow(const WindowSettings& settings) {
 	return OpenWindow(settings, _1, _2);
 }
 
-static void set_key_state(Button& key, bool is_down, bool was_down) {
-	key.isDown = is_down;
-	key.wasDown = was_down;
-
-	key.keyDown = is_down && !was_down;
-	key.keyUp = !is_down && was_down;
-}
-
 int RunWindowUpdateLoop(
 	int targetFPS,
 	UpdateWindowCallback updateWindowCallback
 ) {
 	bool is_running = true;
+	Input input = {0};
 
 	while (is_running) {
-		Input input = {0};
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -85,38 +77,22 @@ int RunWindowUpdateLoop(
 					SDL_KeyboardEvent key_event = event.key;
 					if (key_event.keysym.sym >= SDLK_0 && key_event.keysym.sym <= SDLK_9) {
 						int key = key_event.keysym.sym - SDLK_0 + KEY_0;
-						set_key_state(
-							input.buttons[key],
-							true,
-							key_event.repeat != 0
-						);
+						input.buttons[key].set_state(true, key_event.repeat != 0);
 					}
 					else if (key_event.keysym.sym >= SDLK_a && key_event.keysym.sym <= SDLK_z) {
 						int key = key_event.keysym.sym - SDLK_a + KEY_A;
-						set_key_state(
-							input.buttons[key],
-							true,
-							key_event.repeat != 0
-						);
+						input.buttons[key].set_state(true, key_event.repeat != 0);
 					}
 				} break;
 				case SDL_KEYUP: {
 					SDL_KeyboardEvent key_event = event.key;
 					if (key_event.keysym.sym >= SDLK_0 && key_event.keysym.sym <= SDLK_9) {
-						int key = SDLK_0 + '0' + key_event.keysym.sym;
-						set_key_state(
-							input.buttons[key],
-							false,
-							true
-						);
+						int key = key_event.keysym.sym - SDLK_0 + KEY_0;
+						input.buttons[key].set_state(false, true);
 					}
 					else if (key_event.keysym.sym >= SDLK_a && key_event.keysym.sym <= SDLK_z) {
-						int key = SDLK_a + 'A' + key_event.keysym.sym;
-						set_key_state(
-							input.buttons[key],
-							false,
-							true
-						);
+						int key = key_event.keysym.sym - SDLK_a + KEY_A;
+						input.buttons[key].set_state(false, true);
 					}
 				} break;	
 			}
