@@ -716,8 +716,8 @@ static int UpdateAndRender1(
 	const Camera& camera = camera_get();
 	const uint32_t BACKGROUND_COLOR = 0x000000;
 	tl::ClearScreen(renderBuffer, BACKGROUND_COLOR);
-//	if (!isStarted)
-//	{
+	if (!isStarted)
+	{
 		tl::Rect<float> titleCharRect = tl::Rect<float>();
 		titleCharRect.position = { 100.0f, 350.0f };
 		titleCharRect.halfSize = { 20.0f, 30.0f };
@@ -753,7 +753,7 @@ static int UpdateAndRender1(
 			reset_camera_in_world();
 		}
 		return 0;
-//	}
+	}
 
 	if (input.buttons[tl::KEY_R].keyUp)
 	{
