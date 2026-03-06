@@ -62,6 +62,7 @@ int OpenWindow(const WindowSettings& settings) {
 static void set_key_state(Button& key, bool is_down, bool was_down) {
 	key.isDown = is_down;
 	key.wasDown = was_down;
+
 	key.keyDown = is_down && !was_down;
 	key.keyUp = !is_down && was_down;
 }
@@ -72,14 +73,6 @@ int RunWindowUpdateLoop(
 ) {
 	bool is_running = true;
 
-/*	uint32_t test_red = SDL_MapRGB(frame_buffer_surface->format, 255, 0, 0);
-	uint32_t test_green = SDL_MapRGB(frame_buffer_surface->format, 0, 255, 0);
-	uint32_t test_blue = SDL_MapRGB(frame_buffer_surface->format, 0, 0, 255);
-	printf("test_red %x\n", test_red);
-	printf("0xFF0000 %x\n", 0xFF0000);
-	printf("test_green %x\n", test_green);
-	printf("test_blue %x\n", test_blue);
-*/
 	while (is_running) {
 		Input input = {0};
 		SDL_Event event;
@@ -95,7 +88,7 @@ int RunWindowUpdateLoop(
 						set_key_state(
 							input.buttons[key],
 							true,
-							key_event.repeat == 0
+							key_event.repeat != 0
 						);
 					}
 					else if (key_event.keysym.sym >= SDLK_a && key_event.keysym.sym <= SDLK_z) {
@@ -103,7 +96,7 @@ int RunWindowUpdateLoop(
 						set_key_state(
 							input.buttons[key],
 							true,
-							key_event.repeat == 0
+							key_event.repeat != 0
 						);
 					}
 				} break;
@@ -114,15 +107,15 @@ int RunWindowUpdateLoop(
 						set_key_state(
 							input.buttons[key],
 							false,
-							key_event.repeat == 0
+							true
 						);
 					}
-					else if (key_event.keysym.sym >= 'A' && key_event.keysym.sym <= 'Z') {
+					else if (key_event.keysym.sym >= SDLK_a && key_event.keysym.sym <= SDLK_z) {
 						int key = SDLK_a + 'A' + key_event.keysym.sym;
 						set_key_state(
 							input.buttons[key],
 							false,
-							key_event.repeat == 0
+							true
 						);
 					}
 				} break;	
