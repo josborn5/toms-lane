@@ -90,17 +90,16 @@ int RunWindowUpdateLoop(
 				} break;
 				case SDL_KEYDOWN: {
 					SDL_KeyboardEvent key_event = event.key;
-					printf("KEYDOWN %d\n", key_event.keysym.sym);
 					if (key_event.keysym.sym >= SDLK_0 && key_event.keysym.sym <= SDLK_9) {
-						int key = SDLK_0 + '0' + key_event.keysym.sym;
+						int key = key_event.keysym.sym - SDLK_0 + KEY_0;
 						set_key_state(
 							input.buttons[key],
 							true,
 							key_event.repeat == 0
 						);
 					}
-					else if (key_event.keysym.sym >= 'A' && key_event.keysym.sym <= 'Z') {
-						int key = SDLK_a + 'A' + key_event.keysym.sym;
+					else if (key_event.keysym.sym >= SDLK_a && key_event.keysym.sym <= SDLK_z) {
+						int key = key_event.keysym.sym - SDLK_a + KEY_A;
 						set_key_state(
 							input.buttons[key],
 							true,
@@ -110,7 +109,6 @@ int RunWindowUpdateLoop(
 				} break;
 				case SDL_KEYUP: {
 					SDL_KeyboardEvent key_event = event.key;
-					printf("KEYUP %d\n", key_event.keysym.sym);
 					if (key_event.keysym.sym >= SDLK_0 && key_event.keysym.sym <= SDLK_9) {
 						int key = SDLK_0 + '0' + key_event.keysym.sym;
 						set_key_state(
