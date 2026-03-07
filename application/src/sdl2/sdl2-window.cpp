@@ -59,6 +59,27 @@ int OpenWindow(const WindowSettings& settings) {
 	return OpenWindow(settings, _1, _2);
 }
 
+static int map_sdl_key_to_tl_key(int sdl_key) {
+	if (sdl_key >= SDLK_0 && sdl_key <= SDLK_9) {
+		return sdl_key - SDLK_0 + KEY_0;
+	}
+
+	if (sdl_key >= SDLK_a && sdl_key <= SDLK_z) {
+		return sdl_key - SDLK_a + KEY_A;
+	}
+
+	if (sdl_key == SDLK_LSHIFT || sdl_key == SDLK_RSHIFT) {
+		return KEY_SHIFT;
+	}
+
+	if (sdl_key == SDLK_UP) return KEY_UP;
+	if (sdl_key == SDLK_DOWN) return KEY_DOWN;
+	if (sdl_key == SDLK_LEFT) return KEY_LEFT;
+	if (sdl_key == SDLK_RIGHT) return KEY_RIGHT;
+
+	return -1;
+}
+
 int RunWindowUpdateLoop(
 	int targetFPS,
 	UpdateWindowCallback updateWindowCallback
@@ -75,58 +96,16 @@ int RunWindowUpdateLoop(
 				} break;
 				case SDL_KEYDOWN: {
 					SDL_KeyboardEvent key_event = event.key;
-					if (key_event.keysym.sym >= SDLK_0 && key_event.keysym.sym <= SDLK_9) {
-						int key = key_event.keysym.sym - SDLK_0 + KEY_0;
+					int key = map_sdl_key_to_tl_key(key_event.keysym.sym);
+					if (key > 0) {
 						input.buttons[key].set_state(true, key_event.repeat != 0);
-					}
-					else if (key_event.keysym.sym >= SDLK_a && key_event.keysym.sym <= SDLK_z) {
-						int key = key_event.keysym.sym - SDLK_a + KEY_A;
-						input.buttons[key].set_state(true, key_event.repeat != 0);
-					}
-					else if (key_event.keysym.sym == SDLK_LSHIFT || key_event.keysym.sym == SDLK_RSHIFT) {
-						input.buttons[KEY_SHIFT].set_state(true, key_event.repeat != 0);
-					}
-					else if (key_event.keysym.sym == SDLK_UP) {
-						input.buttons[KEY_UP].set_state(true, key_event.repeat != 0);
-					}
-					else if (key_event.keysym.sym == SDLK_DOWN) {
-						input.buttons[KEY_DOWN].set_state(true, key_event.repeat != 0);
-					}
-					else if (key_event.keysym.sym == SDLK_LEFT) {
-						input.buttons[KEY_LEFT].set_state(true, key_event.repeat != 0);
-					}
-					else if (key_event.keysym.sym == SDLK_RIGHT) {
-						input.buttons[KEY_RIGHT].set_state(true, key_event.repeat != 0);
 					}
 				} break;
 				case SDL_KEYUP: {
 					SDL_KeyboardEvent key_event = event.key;
-					if (key_event.keysym.sym >= SDLK_0 && key_event.keysym.sym <= SDLK_9) {
-						int key = key_event.keysym.sym - SDLK_0 + KEY_0;
+					int key = map_sdl_key_to_tl_key(key_event.keysym.sym);
+					if (key > 0) {
 						input.buttons[key].set_state(false, true);
-					}
-					else if (key_event.keysym.sym >= SDLK_a && key_event.keysym.sym <= SDLK_z) {
-						int key = key_event.keysym.sym - SDLK_a + KEY_A;
-						input.buttons[key].set_state(false, true);
-					}
-					else if (key_event.keysym.sym >= SDLK_a && key_event.keysym.sym <= SDLK_z) {
-						int key = key_event.keysym.sym - SDLK_a + KEY_A;
-						input.buttons[key].set_state(false, true);
-					}
-					else if (key_event.keysym.sym == SDLK_LSHIFT || key_event.keysym.sym == SDLK_RSHIFT) {
-						input.buttons[KEY_SHIFT].set_state(false, true);
-					}
-					else if (key_event.keysym.sym == SDLK_UP) {
-						input.buttons[KEY_UP].set_state(false, true);
-					}
-					else if (key_event.keysym.sym == SDLK_DOWN) {
-						input.buttons[KEY_DOWN].set_state(false, true);
-					}
-					else if (key_event.keysym.sym == SDLK_LEFT) {
-						input.buttons[KEY_LEFT].set_state(false, true);
-					}
-					else if (key_event.keysym.sym == SDLK_RIGHT) {
-						input.buttons[KEY_RIGHT].set_state(false, true);
 					}
 				} break;	
 			}
