@@ -5,8 +5,20 @@
 
 namespace tl
 {
+	unsigned int RenderBuffer::resolve_y_for_bottom_left_origin(unsigned int y) const {
+		return y;
+	}
+
+	unsigned int RenderBuffer::resolve_y_for_top_left_origin(unsigned int y) const {
+		return height - y;
+	}
+
 	void RenderBuffer::init(uint32_t* pixels, unsigned int width, unsigned int height, frame_buffer_origin origin) {
 		this->_max_pixel_index = (height * width) - 1;
+
+		this->_y_resolver = (origin == frame_buffer_origin_top_left)
+			? &RenderBuffer::resolve_y_for_top_left_origin
+			: &RenderBuffer::resolve_y_for_bottom_left_origin;
 
 		this->pixels = pixels;
 		this->width = width;
@@ -15,21 +27,19 @@ namespace tl
 	}
 
 	unsigned int RenderBuffer::frame_buffer_get_row_start_pixel(unsigned int y) const {
-		unsigned int frame_buffer_y = (origin == frame_buffer_origin_top_left)
-			? height - y
-			: y;
+		unsigned int frame_buffer_y = (this->*_y_resolver)(y);
 		unsigned int start_row_pixel_index = width * frame_buffer_y;
 		return start_row_pixel_index;
 	}
 
 	void RenderBuffer::plot_pixel(uint32_t color, unsigned int x, unsigned int y) const {
-		if (x > (width - 1) || y > (height - 1)) {
+		int positionStartOfRow = frame_buffer_get_row_start_pixel(y);
+		int pixel_index = positionStartOfRow + x;
+		if (pixel_index > _max_pixel_index) {
 			return;
 		}
 
-		int positionStartOfRow = frame_buffer_get_row_start_pixel(y);
-		int positionStartOfX0InRow = positionStartOfRow + x;
-		uint32_t* pixel = pixels + positionStartOfX0InRow;
+		uint32_t* pixel = pixels + pixel_index;
 		*pixel = color;
 	}
 
