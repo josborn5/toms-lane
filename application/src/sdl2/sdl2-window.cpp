@@ -49,7 +49,6 @@ int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY)
 	global_render_buffer.height = settings.height;
 	global_render_buffer.origin = frame_buffer_origin_top_left;
 	global_render_buffer.pixels = (uint32_t*)frame_buffer_surface->pixels;
-
 	return 0;
 }
 
@@ -87,7 +86,14 @@ int RunWindowUpdateLoop(
 	bool is_running = true;
 	Input input = {0};
 
+	uint64_t performance_counter_per_second = SDL_GetPerformanceFrequency();
+	uint64_t counters_per_millisecond = performance_counter_per_second / 1000;
+	uint64_t target_counter_per_frame = performance_counter_per_second / targetFPS;
+	uint64_t previous_start_callback_counter = SDL_GetPerformanceCounter();
+
 	while (is_running) {
+		uint64_t start_frame_counter = SDL_GetPerformanceCounter();
+
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -111,8 +117,10 @@ int RunWindowUpdateLoop(
 			}
 		}
 
-		// TODO: figure out input & time between calls
-		updateWindowCallback(input, 0.01666666f, global_render_buffer);
+		uint64_t start_callback_counter = SDL_GetPerformanceCounter();
+		uint64_t counters_since_last_callback = start_callback_counter - previous_start_callback_counter;
+		float delta_time_in_milliseconds = counters_since_last_callback / counters_per_millisecond;
+		updateWindowCallback(input, delta_time_in_milliseconds, global_render_buffer);
 
 		SDL_BlitSurface(frame_buffer_surface, nullptr, window_surface, nullptr);
 
@@ -120,7 +128,13 @@ int RunWindowUpdateLoop(
 
 		input.reset();
 
-		SDL_Delay(16);
+		uint64_t end_frame_counter = SDL_GetPerformanceCounter();
+
+		uint64_t remaining_counters_in_frame = end_frame_counter - start_frame_counter;
+		if (remaining_counters_in_frame > 0) {
+			uint32_t milliseconds_to_wait = remaining_counters_in_frame / counters_per_millisecond;
+			SDL_Delay(milliseconds_to_wait);
+		}
 	}
 
 	SDL_FreeSurface(frame_buffer_surface);
