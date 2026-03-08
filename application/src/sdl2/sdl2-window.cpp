@@ -13,7 +13,7 @@ static SDL_Texture* global_texture = nullptr;
 static SDL_Surface* window_surface = nullptr;
 static SDL_Surface* frame_buffer_surface = nullptr;
 
-static RenderBuffer global_render_buffer = {0};
+static RenderBuffer global_render_buffer;
 
 int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY) {
 	global_window = SDL_CreateWindow(
@@ -45,10 +45,12 @@ int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY)
 		return -3;
 	}
 
-	global_render_buffer.width = settings.width;
-	global_render_buffer.height = settings.height;
-	global_render_buffer.origin = frame_buffer_origin_top_left;
-	global_render_buffer.pixels = (uint32_t*)frame_buffer_surface->pixels;
+	global_render_buffer.init(
+		(uint32_t*)frame_buffer_surface->pixels,
+		settings.width,
+		settings.height,
+		frame_buffer_origin_top_left
+	);
 	return 0;
 }
 

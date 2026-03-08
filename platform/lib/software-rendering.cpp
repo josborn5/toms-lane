@@ -5,6 +5,34 @@
 
 namespace tl
 {
+	void RenderBuffer::init(uint32_t* pixels, unsigned int width, unsigned int height, frame_buffer_origin origin) {
+		this->_max_pixel_index = (height * width) - 1;
+
+		this->pixels = pixels;
+		this->width = width;
+		this->height = height;
+		this->origin = origin;
+	}
+
+	unsigned int RenderBuffer::frame_buffer_get_row_start_pixel(unsigned int y) const {
+		unsigned int frame_buffer_y = (origin == frame_buffer_origin_top_left)
+			? height - y
+			: y;
+		unsigned int start_row_pixel_index = width * frame_buffer_y;
+		return start_row_pixel_index;
+	}
+
+	void RenderBuffer::plot_pixel(uint32_t color, unsigned int x, unsigned int y) const {
+		if (x > (width - 1) || y > (height - 1)) {
+			return;
+		}
+
+		int positionStartOfRow = frame_buffer_get_row_start_pixel(y);
+		int positionStartOfX0InRow = positionStartOfRow + x;
+		uint32_t* pixel = pixels + positionStartOfX0InRow;
+		*pixel = color;
+	}
+
 	static unsigned int frame_buffer_get_row_start_pixel(const RenderBuffer& frame_buffer, unsigned int y) {
 		unsigned int frame_buffer_y = (frame_buffer.origin == frame_buffer_origin_top_left)
 			? frame_buffer.height - y
@@ -13,6 +41,7 @@ namespace tl
 
 		return start_row_pixel_index;
 	}
+
 
 	/**
 	 *	|---|---|---|
@@ -24,16 +53,7 @@ namespace tl
 	 */
 	void PlotPixel(const RenderBuffer &renderBuffer, uint32_t color, int x, int y)
 	{
-		// Make sure writing to the render buffer does not escape its bounds
-		if (x < 0 || x >(renderBuffer.width - 1) || y < 0 || y >(renderBuffer.height - 1))
-		{
-			return;
-		}
-
-		int positionStartOfRow = frame_buffer_get_row_start_pixel(renderBuffer, y);
-		int positionStartOfX0InRow = positionStartOfRow + x;
-		uint32_t* pixel = renderBuffer.pixels + positionStartOfX0InRow;
-		*pixel = color;
+		renderBuffer.plot_pixel(color, x, y);
 	}
 
 	/**

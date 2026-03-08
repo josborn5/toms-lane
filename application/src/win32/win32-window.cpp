@@ -12,7 +12,7 @@ namespace tl
 
 static bool IsRunning = false;
 static bool is_paused = false;
-static RenderBuffer globalRenderBuffer = {0};
+static RenderBuffer globalRenderBuffer;
 static BITMAPINFO bitmapInfo = {0};	// platform dependent
 static HWND globalWindow;
 static HDC memory_context = NULL;
@@ -34,9 +34,8 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 	RECT clientRect = {0};
 	GetClientRect(window, &clientRect);
 
-	globalRenderBuffer.width = clientRect.right - clientRect.left;
-	globalRenderBuffer.height = clientRect.bottom - clientRect.top;
-	globalRenderBuffer.origin = frame_buffer_origin_bottom_left;
+	unsigned int frame_buffer_width = clientRect.right - clientRect.left;
+	unsigned int frame_buffer_height = clientRect.bottom - clientRect.top;
 
 	if (globalRenderBuffer.pixels)
 	{
@@ -50,15 +49,17 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 	}
 
 	bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
-	bitmapInfo.bmiHeader.biWidth = globalRenderBuffer.width;
-	bitmapInfo.bmiHeader.biHeight = globalRenderBuffer.height;
+	bitmapInfo.bmiHeader.biWidth = frame_buffer_width;
+	bitmapInfo.bmiHeader.biHeight = frame_buffer_height;
 	bitmapInfo.bmiHeader.biPlanes = 1;
 	bitmapInfo.bmiHeader.biBitCount = 32;
 	bitmapInfo.bmiHeader.biCompression = BI_RGB;
 
-	int bitmapPixelCount = globalRenderBuffer.width * globalRenderBuffer.height;
+	int bitmapPixelCount = frame_buffer_width * frame_buffer_height;
 	int bitmapMemorySize = bitmapPixelCount * sizeof(unsigned int);
-	globalRenderBuffer.pixels = (uint32_t *)VirtualAlloc(0, bitmapMemorySize, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+	frame_buffer_memory = (uint32_t *)VirtualAlloc(0, bitmapMemorySize, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+
+	globalRenderBeffer.init(frame_buffer_memory, frame_buffer,width, frame_buffer_height, frame_buffer_origin_bottom_left);
 
 	HDC window_context = GetDC(globalWindow);
 	memory_context = CreateCompatibleDC(window_context);

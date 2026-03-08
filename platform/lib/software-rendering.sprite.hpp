@@ -14,10 +14,16 @@ namespace tl
 
 	struct RenderBuffer
 	{
-		unsigned int* pixels;
-		int width;
-		int height;
-		frame_buffer_origin origin;
+		unsigned int* pixels = nullptr;
+		int width = 0;
+		int height = 0;
+		frame_buffer_origin origin = frame_buffer_origin_bottom_left;
+
+		void init(uint32_t* pixels, unsigned int width, unsigned int height, frame_buffer_origin origin);
+		void plot_pixel(uint32_t color, unsigned int x, unsigned int y) const;
+		private:
+			unsigned int _max_pixel_index;
+			unsigned int frame_buffer_get_row_start_pixel(unsigned int y) const;
 	};
 
 	// monochrome sprite
