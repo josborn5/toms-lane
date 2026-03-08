@@ -24,6 +24,9 @@ namespace tl
 		this->width = width;
 		this->height = height;
 		this->origin = origin;
+
+		this->_max_width = width - 1;
+		this->_max_height = height - 1;
 	}
 
 	unsigned int RenderBuffer::frame_buffer_get_row_start_pixel(unsigned int y) const {
@@ -76,8 +79,12 @@ namespace tl
 	 */
 	static void DrawHorizontalLineInPixels(const RenderBuffer &renderBuffer, uint32_t color, int x0, int x1, int y)
 	{
-		const int* startX = &x0;
-		const int* endX = &x1;
+		renderBuffer.draw_horizontal_line(color, x0, x1, y);
+	}
+
+	void RenderBuffer::draw_horizontal_line(uint32_t color, unsigned int x0, unsigned int x1, unsigned int y) const {
+		const unsigned int* startX = &x0;
+		const unsigned int* endX = &x1;
 		if (x1 < x0)
 		{
 			int temp = x1;
@@ -85,10 +92,16 @@ namespace tl
 			x0 = temp;
 		}
 
-		int positionStartOfRow = frame_buffer_get_row_start_pixel(renderBuffer, y);
-		int positionOfX0InRow = positionStartOfRow + *startX;
-		uint32_t* pixelPointer = renderBuffer.pixels + positionOfX0InRow;
-		for (int i = *startX; i <= *endX; i += 1)
+		int positionStartOfRow = frame_buffer_get_row_start_pixel(y);
+		int start_index = positionStartOfRow + *startX;
+		int end_index = positionStartOfRow + *endX;
+		uint32_t* pixelPointer = pixels + start_index;
+
+		if (end_index > _max_pixel_index) {
+			end_index = _max_pixel_index;
+		}
+
+		for (int i = start_index; i <= end_index; i += 1)
 		{
 			*pixelPointer = color;
 			pixelPointer++;
@@ -247,17 +260,20 @@ namespace tl
 
 	static void DrawRectInPixels(const RenderBuffer &renderBuffer, uint32_t color, int x0, int y0, int x1, int y1)
 	{
-		// Make sure writing to the render buffer does not escape its bounds
-		x0 = ClampInt(0, x0, renderBuffer.width);
-		x1 = ClampInt(1, x1, renderBuffer.width);
-		y0 = ClampInt(0, y0, renderBuffer.height);
-		y1 = ClampInt(1, y1, renderBuffer.height);
+		renderBuffer.fill_rect(color, x0, y0, x1, y1);
+	}
+
+	void RenderBuffer::fill_rect(uint32_t color, unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1) const {
+		if (x0 > _max_width) x0 = _max_width;
+		if (x1 > _max_width) x0 = _max_width;
+		if (y0 > _max_height) x0 = _max_height;
+		if (y1 > _max_height) x0 = _max_height;
 
 		for (int y = y0; y < y1; y++)
 		{
-			int positionStartOfRow = frame_buffer_get_row_start_pixel(renderBuffer, y);
+			int positionStartOfRow = frame_buffer_get_row_start_pixel(y);
 			int positionStartOfX0InRow = positionStartOfRow + x0;
-			uint32_t* pixel = renderBuffer.pixels + positionStartOfX0InRow;
+			uint32_t* pixel = pixels + positionStartOfX0InRow;
 			for (int x = x0; x < x1; x++)
 			{
 				*pixel = color;

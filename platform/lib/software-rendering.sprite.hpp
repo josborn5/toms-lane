@@ -21,8 +21,12 @@ namespace tl
 
 		void init(uint32_t* pixels, unsigned int width, unsigned int height, frame_buffer_origin origin);
 		void plot_pixel(uint32_t color, unsigned int x, unsigned int y) const;
+		void draw_horizontal_line(uint32_t color, unsigned int x0, unsigned int x1, unsigned int y) const;
+		void fill_rect(uint32_t color, unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1) const;
 		private:
 			unsigned int _max_pixel_index = 0;
+			unsigned int _max_width = 0;
+			unsigned int _max_height = 0;
 			unsigned int frame_buffer_get_row_start_pixel(unsigned int y) const;
 
 			unsigned int resolve_y_for_bottom_left_origin(unsigned int y) const;
