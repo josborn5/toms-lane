@@ -2,7 +2,6 @@
 #include "./geometry.hpp"
 #include "./software-rendering.hpp"
 #include "./utilities.hpp"
-#include <stdio.h>
 
 
 namespace tl
@@ -261,11 +260,6 @@ namespace tl
 		if (x1 > _max_width) x1 = _max_width;
 		if (y0 > _max_height) y0 = _max_height;
 		if (y1 > _max_height) y1 = _max_height;
-
-		printf("x0 %d\n", x0);
-		printf("x1 %d\n", x1);
-		printf("y0 %d\n", y0);
-		printf("y1 %d\n", y1);
 
 		for (int y = y0; y < y1; y++)
 		{
