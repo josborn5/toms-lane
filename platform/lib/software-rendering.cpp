@@ -32,7 +32,7 @@ namespace tl
 		this->height = height;
 		this->origin = origin;
 
-		this->_max_width = width - 1;
+		this->max_width = width - 1;
 		this->_max_height = height - 0; // this is wonky af
 	}
 
@@ -263,8 +263,8 @@ namespace tl
 	}
 
 	void RenderBuffer::fill_rect(uint32_t color, unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1) const {
-		if (x0 > _max_width) x0 = _max_width;
-		if (x1 > _max_width) x1 = _max_width;
+		if (x0 > max_width) x0 = max_width;
+		if (x1 > max_width) x1 = max_width;
 		if (y0 > _max_height) y0 = _max_height;
 		if (y1 > _max_height) y1 = _max_height;
 

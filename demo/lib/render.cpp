@@ -31,15 +31,6 @@ float plane_z_value_get(
 	return z0;
 }
 
-static unsigned int frame_buffer_get_row_start_pixel(const tl::RenderBuffer& frame_buffer, unsigned int y) {
-	unsigned int frame_buffer_y = (frame_buffer.origin == tl::frame_buffer_origin_top_left)
-		? frame_buffer.height - y
-		: y;
-	unsigned int start_row_pixel_index = frame_buffer.width * frame_buffer_y;
-
-	return start_row_pixel_index;
-}
-
 /**
  *	|---|---|---|
  *	| 0 | 1 | 2 |	pixel ordinals
@@ -64,12 +55,16 @@ static void DrawHorizontalLineInPixels(
 		start_x = x1;
 		end_x = x0;
 	}
-	int start_row_position = frame_buffer_get_row_start_pixel(renderBuffer, y);
+	unsigned int start_row_position = renderBuffer.get_pixel_index(0, y);
 	int start_position = start_row_position + start_x;
 	uint32_t* pixel = renderBuffer.pixels + start_position;
 	float* pixel_depth = depth_buffer.depths + start_position;
 
 	float running_depth = z0;
+
+	if (end_x > renderBuffer.max_width) {
+		end_x = renderBuffer.max_width;
+	}
 
 	for (int i = start_x; i <= end_x; i += 1)
 	{
