@@ -2,6 +2,8 @@
 #include "./geometry.hpp"
 #include "./software-rendering.hpp"
 #include "./utilities.hpp"
+#include <stdio.h>
+
 
 namespace tl
 {
@@ -14,6 +16,12 @@ namespace tl
 	}
 
 	void RenderBuffer::init(uint32_t* pixels, unsigned int width, unsigned int height, frame_buffer_origin origin) {
+		if (width == 0) {
+			width = 1;
+		}
+		if (height == 0) {
+			height = 1;
+		}
 		this->_max_pixel_index = (height * width) - 1;
 
 		this->_y_resolver = (origin == frame_buffer_origin_top_left)
@@ -26,7 +34,7 @@ namespace tl
 		this->origin = origin;
 
 		this->_max_width = width - 1;
-		this->_max_height = height - 1;
+		this->_max_height = height - 0; // this is wonky af
 	}
 
 	unsigned int RenderBuffer::frame_buffer_get_row_start_pixel(unsigned int y) const {
@@ -45,16 +53,6 @@ namespace tl
 		uint32_t* pixel = pixels + pixel_index;
 		*pixel = color;
 	}
-
-	static unsigned int frame_buffer_get_row_start_pixel(const RenderBuffer& frame_buffer, unsigned int y) {
-		unsigned int frame_buffer_y = (frame_buffer.origin == frame_buffer_origin_top_left)
-			? frame_buffer.height - y
-			: y;
-		unsigned int start_row_pixel_index = frame_buffer.width * frame_buffer_y;
-
-		return start_row_pixel_index;
-	}
-
 
 	/**
 	 *	|---|---|---|
@@ -258,16 +256,16 @@ namespace tl
 		return (int)(floatValue + 0.5f);
 	}
 
-	static void DrawRectInPixels(const RenderBuffer &renderBuffer, uint32_t color, int x0, int y0, int x1, int y1)
-	{
-		renderBuffer.fill_rect(color, x0, y0, x1, y1);
-	}
-
 	void RenderBuffer::fill_rect(uint32_t color, unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1) const {
 		if (x0 > _max_width) x0 = _max_width;
-		if (x1 > _max_width) x0 = _max_width;
-		if (y0 > _max_height) x0 = _max_height;
-		if (y1 > _max_height) x0 = _max_height;
+		if (x1 > _max_width) x1 = _max_width;
+		if (y0 > _max_height) y0 = _max_height;
+		if (y1 > _max_height) y1 = _max_height;
+
+		printf("x0 %d\n", x0);
+		printf("x1 %d\n", x1);
+		printf("y0 %d\n", y0);
+		printf("y1 %d\n", y1);
 
 		for (int y = y0; y < y1; y++)
 		{
@@ -331,7 +329,8 @@ namespace tl
 		int y0 = ConvertFloatToInt(rect.y_min());
 		int y1 = ConvertFloatToInt(rect.y_max());
 
-		DrawRectInPixels(renderBuffer, color, x0, y0, x1, y1);
+
+		renderBuffer.fill_rect(color, x0, y0, x1, y1);
 	}
 
 	void render_interface_fill_rect_rgba(const RenderBuffer& render_buffer, uint32_t color, const Rect<float> footprint)
@@ -342,15 +341,14 @@ namespace tl
 
 	void ClearScreen(const RenderBuffer &renderBuffer, uint32_t color)
 	{
-		uint32_t* pixel = renderBuffer.pixels;
+		renderBuffer.fill(color);
+	}
 
-		for (int y = 0; y < renderBuffer.height; y += 1)
-		{
-			for (int x = 0; x < renderBuffer.width; x += 1)
-			{
-				*pixel = color;
-				pixel++;
-			}
+	void RenderBuffer::fill(uint32_t color) const {
+		uint32_t* pixel = pixels;
+		for (unsigned int i = 0; i < _max_pixel_index; i += 1) {
+			*pixel = color;
+			pixel++;
 		}
 	}
 

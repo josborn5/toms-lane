@@ -57,12 +57,15 @@ static void InitializeMemory()
 	bitmapWriteMemory.sizeInBytes = 1024 * 60;
 	bitmapWriteMemory.content = malloc(bitmapWriteMemory.sizeInBytes);
 
-	renderBuffer.width = 12;
-	renderBuffer.height = 8;
-
-	renderBufferPixels.sizeInBytes = sizeof(unsigned int) * renderBuffer.width * renderBuffer.height;
+	renderBufferPixels.sizeInBytes = sizeof(uint32_t) * 12 * 8;
 	renderBufferPixels.content = malloc(renderBufferPixels.sizeInBytes);
-	renderBuffer.pixels = (unsigned int*)renderBufferPixels.content;
+
+	renderBuffer.init(
+		(uint32_t*)renderBufferPixels.content,
+		12,
+		8,
+		tl::frame_buffer_origin_bottom_left
+	);
 }
 
 static void RunInitializeSmallBitmapTest(const MemorySpace& bitmap_data, tl::bitmap& testBitmap)

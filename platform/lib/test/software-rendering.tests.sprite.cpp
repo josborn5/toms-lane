@@ -1,6 +1,7 @@
 #include "../software-rendering.hpp"
-#include <assert.h>
+#include "../assert.hpp"
 #include <iostream>
+#include <stdio.h>
 
 static void TestSprite(char* inputContent, int expectedHeight, int expectedWidth)
 {
@@ -19,24 +20,13 @@ static void TestSprite(char* inputContent, int expectedHeight, int expectedWidth
 	assert(expectedWidth == testSprite.width);
 }
 
-static void ClearBuffer(tl::RenderBuffer& buffer)
-{
-	int pixelCount = buffer.width * buffer.height;
-	for (int i = 0; i < pixelCount; i += 1)
-	{
-		buffer.pixels[i] = 0x000000;
-	}
-}
-
 static void RunSpriteRenderTests()
 {
 	tl::RenderBuffer buffer;
-	buffer.width = 5;
-	buffer.height = 4;
-	int pixelCount = buffer.width * buffer.height;
-	buffer.pixels = (uint32_t*)malloc(sizeof(uint32_t) * pixelCount);
+	uint32_t* frame_buffer_memory = (uint32_t*)malloc(sizeof(uint32_t) * 5 * 4);
+	buffer.init(frame_buffer_memory, 5, 4, tl::frame_buffer_origin_bottom_left);
 
-	ClearBuffer(buffer);
+	buffer.fill(0x000000);
 
 	tl::Sprite testSprite;
 	testSprite.width = 4;
@@ -67,7 +57,7 @@ static void RunSpriteRenderTests()
 	assert(*(buffer.pixels + 13) == 0x000000);
 	assert(*(buffer.pixels + 14) == 0x000000);
 
-	ClearBuffer(buffer);
+	buffer.fill(0x000000);
 
 	footprint.position.y = (float)buffer.height - footprint.halfSize.y;
 
@@ -89,17 +79,18 @@ static void RunSpriteRenderTests()
 	assert(*(buffer.pixels + 11) == 0x000000);
 	assert(*(buffer.pixels + 12) == 0xFFFFFF);
 	assert(*(buffer.pixels + 13) == 0xFFFFFF);
-	assert(*(buffer.pixels + 14) == 0x000000);
+	assert_uint32_t(*(buffer.pixels + 14), 0x000000, "pixel index 14 color");
 
-	assert(*(buffer.pixels + 15) == 0xFFFFFF);
-	assert(*(buffer.pixels + 16) == 0x000000);
-	assert(*(buffer.pixels + 17) == 0x000000);
-	assert(*(buffer.pixels + 18) == 0x000000);
-	assert(*(buffer.pixels + 19) == 0x000000);
+	assert_uint32_t(*(buffer.pixels + 15), 0xFFFFFF, "pixel index 15 color");
+	assert_uint32_t(*(buffer.pixels + 16), 0x000000, "pixel index 16 color");
+	assert_uint32_t(*(buffer.pixels + 17), 0x000000, "pixel index 17 color");
+	assert_uint32_t(*(buffer.pixels + 18), 0x000000, "pixel index 18 color");
+	assert_uint32_t(*(buffer.pixels + 19), 0x000000, "pixel index 19 color");
 }
 
 void RunSpriteTests()
 {
+	printf("Start RunSpriteTests...\n");
 	// Sprites
 
 	char* inputSprite = "\
@@ -140,4 +131,6 @@ void RunSpriteTests()
 	TestSprite(inputSprite, 8, 24);
 
 	RunSpriteRenderTests();
+
+	printf("... RunSpriteTests complete!\n");
 }

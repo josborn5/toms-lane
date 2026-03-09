@@ -1,5 +1,8 @@
+#include <stdio.h>
+
 void RunLineDrawTest(tl::Vec2<int> p0, tl::Vec2<int> p1, uint32_t* expectedPixels)
 {
+	printf("Start RunLineDrawTest...\n");
 	uint32_t pixelArray[18] = { EMPTY };	// define pixels as an an array of 16 uint32_t values
 											// NB this array lives on the stack in the scope of the RunSoftwareRenderingTests function only.
 											// The array is sized greater than the tl::RenderBuffer pixel array so it can pick up illegal memory writes to the pixel array
@@ -21,9 +24,9 @@ void RunLineDrawTest(tl::Vec2<int> p0, tl::Vec2<int> p1, uint32_t* expectedPixel
 	 *    0   1   2   3   4
 	 */
 	tl::RenderBuffer renderBuffer;
-	renderBuffer.height = 4;
-	renderBuffer.width = 4;					// Size the buffer to 16 pixels. pixelArray is 18 pixels so the test can tell if the function ever oversteps the bounds of tl::RenderBuffer.
-	renderBuffer.pixels = &pixelArray[1];	// Use the second element in pixelArray so we can tell if the zero-th element ever gets accessed.
+	// Size the buffer to 16 pixels. pixelArray is 18 pixels so the test can tell if the function ever oversteps the bounds of tl::RenderBuffer.
+	// Use the second element in pixelArray so we can tell if the zero-th element ever gets accessed.
+	renderBuffer.init(&pixelArray[1], 4, 4, tl::frame_buffer_origin_bottom_left);
 
 	tl::DrawLineInPixels(renderBuffer, FILLED, p0, p1);
 
@@ -268,4 +271,5 @@ void RunLineDrawingTests()
 		EMPTY,	EMPTY,	EMPTY,	EMPTY
 	};
 	RunLineDrawTest(tl::Vec2<int>{ 1, 1 }, tl::Vec2<int>{ 3, 0 }, el10);
+	printf("... RunLineDrawTest complete!\n");
 }
