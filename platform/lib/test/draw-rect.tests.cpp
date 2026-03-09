@@ -1,4 +1,4 @@
-#include <assert.h>
+#include "../assert.hpp"
 #include "../software-rendering.hpp"
 #include "../memory.hpp"
 #include <stdio.h>
@@ -47,15 +47,15 @@ void RunDrawRectTests()
 
 	tl::DrawRect(renderBuffer, 0xFF0000, wholeBufferRect);
 
- 	assert(*renderBuffer.pixels == 0xFF0000);
-	assert(*(renderBuffer.pixels + 20) == 0xFF0000);
+ 	assert_uint32_t(renderBuffer.get_pixel(0), 0xFF0000, "pixel 0 color");
+ 	assert_uint32_t(renderBuffer.get_pixel(20), 0xFF0000, "pixel 20 color");
 
 	wholeBufferRect.halfSize = { 8.0f, 6.0f };
 
 	tl::DrawRect(renderBuffer, 0xFF0000, wholeBufferRect);
 
-	assert(*renderBuffer.pixels == 0xFF0000);
-	assert(*(renderBuffer.pixels + 20) == 0xFF0000);
+ 	assert_uint32_t(renderBuffer.get_pixel(0), 0xFF0000, "pixel 0 color");
+ 	assert_uint32_t(renderBuffer.get_pixel(20), 0xFF0000, "pixel 20 color");
 
 	run_fill_rgba_rect_tests();
 

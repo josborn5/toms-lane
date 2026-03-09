@@ -133,8 +133,7 @@ static void initialize_4_bit_bitmap_test_run() {
 	tl::ClearScreen(renderBuffer, grey);
 	tl::bitmap_interface_render(renderBuffer, test_bitmap, tl::Vec2<int>{ 0, 0 });
 
-	uint32_t* bottom_left_color = renderBuffer.pixels;
-	assert_uint32_t(*bottom_left_color, 0x000000, "bitmap rendered pixel color");
+	assert_uint32_t(renderBuffer.get_pixel(0), 0x000000, "bitmap rendered pixel color");
 
 	uint32_t test_pixel_data = 0xFFFFFF;
 	bitmap_interface_get_pixel_data(test_bitmap, 0, 0, test_pixel_data);
@@ -165,46 +164,45 @@ static void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 	tl::ClearScreen(renderBuffer, grey);
 	tl::bitmap_interface_render(renderBuffer, testBitmap, tl::Vec2<int>{ 0, 0 });
 
-	uint32_t* bottomLeftPixel = renderBuffer.pixels;
-	uint32_t* bottomRightPixel = renderBuffer.pixels + renderBuffer.width - 1;
+	unsigned int bottom_right_pixel_index = renderBuffer.width - 1;
 	int pixelCount = renderBuffer.width * renderBuffer.height;
-	uint32_t* topRightPixel = renderBuffer.pixels + pixelCount - 1;
-	uint32_t* topLeftPixel = renderBuffer.pixels + pixelCount - renderBuffer.width;
+	unsigned int top_right_pixel_index = pixelCount - 1;
+	unsigned int top_left_pixel_index = pixelCount - renderBuffer.width;
 
-	assert_uint32_t(*bottomLeftPixel, green, "bitmap rendered pixel color");
+	assert_uint32_t(renderBuffer.get_pixel(0), green, "bitmap rendered pixel color");
 	uint32_t bottomLeftPixelColorTest;
 	assert_uint32_t(bitmap_interface_get_pixel_data(testBitmap, 0, 0, bottomLeftPixelColorTest), 0, "bitmap read color operation");
 	assert_uint32_t(bottomLeftPixelColorTest, green, "bitmap read color");
 
-	assert(*(bottomLeftPixel + 1) == white);
-	assert(*(bottomLeftPixel + 2) == black);
+	assert(renderBuffer.get_pixel(1) == white);
+	assert(renderBuffer.get_pixel(2) == black);
 
-	assert(*(bottomRightPixel - 2) == black);
-	assert(*(bottomRightPixel - 1) == white);
-	assert(*bottomRightPixel == blue);
+	assert(renderBuffer.get_pixel(bottom_right_pixel_index - 2) == black);
+	assert(renderBuffer.get_pixel(bottom_right_pixel_index - 1) == white);
+	assert(renderBuffer.get_pixel(bottom_right_pixel_index) == blue);
 
-	assert(*topLeftPixel == red);
-	assert(*(topLeftPixel + 1) == white);
-	assert(*(topLeftPixel + 2) == black);
+	assert(renderBuffer.get_pixel(top_left_pixel_index) == red);
+	assert(renderBuffer.get_pixel(top_left_pixel_index + 1) == white);
+	assert(renderBuffer.get_pixel(top_left_pixel_index + 2) == black);
 
-	assert(*(topRightPixel - 2) == black);
-	assert(*(topRightPixel - 1) == white);
-	assert(*topRightPixel == blue);
+	assert(renderBuffer.get_pixel(top_right_pixel_index - 2) == black);
+	assert(renderBuffer.get_pixel(top_right_pixel_index - 1) == white);
+	assert(renderBuffer.get_pixel(top_right_pixel_index) == blue);
 
 	tl::ClearScreen(renderBuffer, grey);
 	tl::bitmap_interface_render(renderBuffer, testBitmap, tl::Vec2<int>{ 6, 4 });
 
-	assert(*bottomLeftPixel == grey);
-	assert(*bottomRightPixel == grey);
+	assert(renderBuffer.get_pixel(0) == grey);
+	assert(renderBuffer.get_pixel(bottom_right_pixel_index) == grey);
 
-	uint32_t* sixAcrossFourUpFromBottomLeft = renderBuffer.pixels + 6 + (4 * renderBuffer.width);
-	assert(*sixAcrossFourUpFromBottomLeft == green);
-	assert(*(sixAcrossFourUpFromBottomLeft + 1) == white);
-	assert(*(sixAcrossFourUpFromBottomLeft + 2) == black);
+	unsigned int six_across_four_up_index = 6 + (4 * renderBuffer.width);
+	assert(renderBuffer.get_pixel(six_across_four_up_index) == green);
+	assert(renderBuffer.get_pixel(six_across_four_up_index + 1) == white);
+	assert(renderBuffer.get_pixel(six_across_four_up_index + 2) == black);
 
-	assert(*(topRightPixel - 2) == black);
-	assert(*(topRightPixel - 1) == black);
-	assert(*topRightPixel == black);
+	assert(renderBuffer.get_pixel(top_right_pixel_index - 2) == black);
+	assert(renderBuffer.get_pixel(top_right_pixel_index - 1) == black);
+	assert(renderBuffer.get_pixel(top_right_pixel_index) == black);
 
 	// Render scaled up by a factor of 2
 	tl::ClearScreen(renderBuffer, grey);
@@ -216,11 +214,11 @@ static void RunSmallBitmapRenderTest(const tl::bitmap testBitmap)
 	renderFootprint.position = renderFootprint.halfSize;
 	tl::bitmap_interface_render(renderBuffer, testBitmap, renderFootprint);
 
-	assert(*(bottomLeftPixel) == green);
-	assert(*(bottomLeftPixel + 1) == green);
-	assert(*(bottomLeftPixel + 2) == white);
-	assert(*(bottomLeftPixel + 3) == white);
-	assert(*(bottomLeftPixel + 4) == black);
+	assert(renderBuffer.get_pixel(0) == green);
+	assert(renderBuffer.get_pixel(0 + 1) == green);
+	assert(renderBuffer.get_pixel(0 + 2) == white);
+	assert(renderBuffer.get_pixel(0 + 3) == white);
+	assert(renderBuffer.get_pixel(0 + 4) == black);
 }
 
 static void RunBitmapWriteToSmallMemoryTest(const bitmap& bitmap)
@@ -298,33 +296,32 @@ static void RunLargeBitmapRenderTest(const tl::bitmap& largeBitmap)
 	tl::ClearScreen(renderBuffer, red);
 	tl::bitmap_interface_render(renderBuffer, largeBitmap, tl::Vec2<int>{ 0, 0 });
 
-	uint32_t* bottomLeftPixel = renderBuffer.pixels;
-	assert(*bottomLeftPixel == white);
+	assert(renderBuffer.get_pixel(0) == white);
 
 	uint32_t bottomLeftPixelDataTest;
 	assert(bitmap_interface_get_pixel_data(largeBitmap, 0, 0, bottomLeftPixelDataTest) == 0);
 	assert(bottomLeftPixelDataTest == 1);
 
-	assert(*(bottomLeftPixel + 1) == black);
+	assert(renderBuffer.get_pixel(1) == black);
 
 	tl::ClearScreen(renderBuffer, red);
 	tl::bitmap_interface_render(renderBuffer, largeBitmap, tl::Vec2<int>{ 6, 4 });
 
-	assert(*bottomLeftPixel == red);
+	assert(renderBuffer.get_pixel(0) == red);
 
-	uint32_t* sixAcrossFourUpFromBottomLeft = renderBuffer.pixels + 6 + (4 * renderBuffer.width);
-	assert(*sixAcrossFourUpFromBottomLeft == white);
-	assert(*(sixAcrossFourUpFromBottomLeft + 1) == black);
-	assert(*(sixAcrossFourUpFromBottomLeft + 2) == white);
+	unsigned int six_across_four_up_index = 6 + (4 * renderBuffer.width);
+	assert(renderBuffer.get_pixel(six_across_four_up_index) == white);
+	assert(renderBuffer.get_pixel(six_across_four_up_index + 1) == black);
+	assert(renderBuffer.get_pixel(six_across_four_up_index + 2) == white);
 }
 
-static void AssertMonochromeBitmapSide(uint32_t* bottomLeftPixel, int length, int step)
+static void AssertMonochromeBitmapSide(const RenderBuffer& buffer, int length, int step)
 {
 	bool expectBlack = true;
 	for (int i = 0; i < length; i += step)
 	{
 		uint32_t expectedColor = (expectBlack) ? black : white;
-		assert(*(bottomLeftPixel + i) == expectedColor);
+		assert(buffer.get_pixel(i) == expectedColor);
 		expectBlack = !expectBlack;
 	}
 }
@@ -345,9 +342,8 @@ static void run_square_monochrome_bitmap_test(tl::MemorySpace& bitmap_memory_spa
 	tl::ClearScreen(renderBuffer, red);
 	tl::bitmap_interface_render(renderBuffer, monoBitmap, tl::Vec2<int>{ 0, 0 });
 
-	uint32_t* bottomLeftPixel = renderBuffer.pixels;
-	AssertMonochromeBitmapSide(bottomLeftPixel, side, 1);
-	AssertMonochromeBitmapSide(bottomLeftPixel, side, side);
+	AssertMonochromeBitmapSide(renderBuffer, side, 1);
+	AssertMonochromeBitmapSide(renderBuffer, side, side);
 }
 
 static void RunSmallMonochromeBitmapTests()
@@ -362,13 +358,12 @@ static void RunSmallMonochromeBitmapTests()
 
 	assert(monoBitmap.dibs_header.imageSizeInBytes == 64);
 
-	uint32_t* bottomLeftPixel = renderBuffer.pixels;
-	assert(*bottomLeftPixel == black);
-	assert(*(bottomLeftPixel + monoBitmap.dibs_header.width) == black);
+	assert(renderBuffer.get_pixel(0) == black);
+	assert(renderBuffer.get_pixel(monoBitmap.dibs_header.width) == black);
 
-	uint32_t* fourthRowLeft = bottomLeftPixel + (monoBitmap.dibs_header.width * 4);
-	assert(*fourthRowLeft == white);
-	assert(*(fourthRowLeft + 1) == white);
+	unsigned int fourth_row_left_index = monoBitmap.dibs_header.width * 4;
+	assert(renderBuffer.get_pixel(fourth_row_left_index ) == white);
+	assert(renderBuffer.get_pixel(fourth_row_left_index + 1) == white);
 
 	RunBitmapWriteTest(monoBitmap, player_bmp_data);
 

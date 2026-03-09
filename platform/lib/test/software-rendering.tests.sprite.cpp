@@ -39,23 +39,23 @@ static void RunSpriteRenderTests()
 
 	DrawSprite(buffer, testSprite, footprint, 0xFFFFFF);
 
-	assert(*buffer.pixels == 0xFFFFFF);
-	assert(*(buffer.pixels + 1) == 0xFFFFFF);
-	assert(*(buffer.pixels + 2) == 0x000000);
-	assert(*(buffer.pixels + 3) == 0x000000);
-	assert(*(buffer.pixels + 4) == 0x000000);
+	assert_uint32_t(buffer.get_pixel(0), 0xFFFFFF, "pixel index 0 color");
+	assert_uint32_t(buffer.get_pixel(1), 0xFFFFFF, "pixel index 1 color");
+	assert_uint32_t(buffer.get_pixel(2), 0x000000, "pixel index 2 color");
+	assert_uint32_t(buffer.get_pixel(3), 0x000000, "pixel index 3 color");
+	assert_uint32_t(buffer.get_pixel(4), 0x000000, "pixel index 4 color");
 
-	assert(*(buffer.pixels + 5) == 0x000000);
-	assert(*(buffer.pixels + 6) == 0x000000);
-	assert(*(buffer.pixels + 7) == 0xFFFFFF);
-	assert(*(buffer.pixels + 8) == 0xFFFFFF);
-	assert(*(buffer.pixels + 9) == 0x000000);
+	assert_uint32_t(buffer.get_pixel(5), 0x000000, "pixel index 5 color");
+	assert_uint32_t(buffer.get_pixel(6), 0x000000, "pixel index 6 color");
+	assert_uint32_t(buffer.get_pixel(7), 0xFFFFFF, "pixel index 7 color");
+	assert_uint32_t(buffer.get_pixel(8), 0xFFFFFF, "pixel index 8 color");
+	assert_uint32_t(buffer.get_pixel(9), 0x000000, "pixel index 9 color");
 
-	assert(*(buffer.pixels + 10) == 0xFFFFFF);
-	assert(*(buffer.pixels + 11) == 0x000000);
-	assert(*(buffer.pixels + 12) == 0x000000);
-	assert(*(buffer.pixels + 13) == 0x000000);
-	assert(*(buffer.pixels + 14) == 0x000000);
+	assert_uint32_t(buffer.get_pixel(10), 0xFFFFFF, "pixel index 10 color");
+	assert_uint32_t(buffer.get_pixel(11), 0x000000, "pixel index 11 color");
+	assert_uint32_t(buffer.get_pixel(12), 0x000000, "pixel index 12 color");
+	assert_uint32_t(buffer.get_pixel(13), 0x000000, "pixel index 13 color");
+	assert_uint32_t(buffer.get_pixel(14), 0x000000, "pixel index 14 color");
 
 	buffer.fill(0x000000);
 
@@ -63,29 +63,29 @@ static void RunSpriteRenderTests()
 
 	DrawSprite(buffer, testSprite, footprint, 0xFFFFFF);
 
-	assert(*buffer.pixels == 0x000000);
-	assert(*(buffer.pixels + 1) == 0x000000);
-	assert(*(buffer.pixels + 2) == 0x000000);
-	assert(*(buffer.pixels + 3) == 0x000000);
-	assert(*(buffer.pixels + 4) == 0x000000);
+	assert_uint32_t(buffer.get_pixel(0), 0x000000, "pixel index 0 color");
+	assert_uint32_t(buffer.get_pixel(1), 0x000000, "pixel index 1 color");
+	assert_uint32_t(buffer.get_pixel(2), 0x000000, "pixel index 2 color");
+	assert_uint32_t(buffer.get_pixel(3), 0x000000, "pixel index 3 color");
+	assert_uint32_t(buffer.get_pixel(4), 0x000000, "pixel index 4 color");
 
-	assert(*(buffer.pixels + 5) == 0xFFFFFF);
-	assert(*(buffer.pixels + 6) == 0xFFFFFF);
-	assert(*(buffer.pixels + 7) == 0x000000);
-	assert(*(buffer.pixels + 8) == 0x000000);
-	assert(*(buffer.pixels + 9) == 0x000000);
+	assert_uint32_t(buffer.get_pixel(5), 0xFFFFFF, "pixel index 5 color");
+	assert_uint32_t(buffer.get_pixel(6), 0xFFFFFF, "pixel index 6 color");
+	assert_uint32_t(buffer.get_pixel(7), 0x000000, "pixel index 7 color");
+	assert_uint32_t(buffer.get_pixel(8), 0x000000, "pixel index 8 color");
+	assert_uint32_t(buffer.get_pixel(9), 0x000000, "pixel index 9 color");
 
-	assert(*(buffer.pixels + 10) == 0x000000);
-	assert(*(buffer.pixels + 11) == 0x000000);
-	assert(*(buffer.pixels + 12) == 0xFFFFFF);
-	assert(*(buffer.pixels + 13) == 0xFFFFFF);
-	assert_uint32_t(*(buffer.pixels + 14), 0x000000, "pixel index 14 color");
+	assert_uint32_t(buffer.get_pixel(10), 0x000000, "pixel index 10 color");
+	assert_uint32_t(buffer.get_pixel(11), 0x000000, "pixel index 11 color");
+	assert_uint32_t(buffer.get_pixel(12), 0xFFFFFF, "pixel index 12 color");
+	assert_uint32_t(buffer.get_pixel(13), 0xFFFFFF, "pixel index 13 color");
+	assert_uint32_t(buffer.get_pixel(14), 0x000000, "pixel index 14 color");
 
-	assert_uint32_t(*(buffer.pixels + 15), 0xFFFFFF, "pixel index 15 color");
-	assert_uint32_t(*(buffer.pixels + 16), 0x000000, "pixel index 16 color");
-	assert_uint32_t(*(buffer.pixels + 17), 0x000000, "pixel index 17 color");
-	assert_uint32_t(*(buffer.pixels + 18), 0x000000, "pixel index 18 color");
-	assert_uint32_t(*(buffer.pixels + 19), 0x000000, "pixel index 19 color");
+	assert_uint32_t(buffer.get_pixel(15), 0xFFFFFF, "pixel index 15 color");
+	assert_uint32_t(buffer.get_pixel(16), 0x000000, "pixel index 16 color");
+	assert_uint32_t(buffer.get_pixel(17), 0x000000, "pixel index 17 color");
+	assert_uint32_t(buffer.get_pixel(18), 0x000000, "pixel index 18 color");
+	assert_uint32_t(buffer.get_pixel(19), 0x000000, "pixel index 19 color");
 }
 
 void RunSpriteTests()

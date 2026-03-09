@@ -36,6 +36,14 @@ namespace tl
 		this->_max_height = height - 0; // this is wonky af
 	}
 
+	uint32_t RenderBuffer::get_pixel(unsigned int pixel_index) const {
+		if (pixel_index > _max_pixel_index) {
+			return 0;
+		}
+
+		return pixels[pixel_index];
+	}
+
 	unsigned int RenderBuffer::get_pixel_index(unsigned int x, unsigned int y) const {
 		unsigned int frame_buffer_y = (this->*_y_resolver)(y);
 		unsigned int start_row_pixel_index = width * frame_buffer_y;
