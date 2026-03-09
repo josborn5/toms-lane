@@ -36,15 +36,14 @@ namespace tl
 		this->_max_height = height - 0; // this is wonky af
 	}
 
-	unsigned int RenderBuffer::frame_buffer_get_row_start_pixel(unsigned int y) const {
+	unsigned int RenderBuffer::get_pixel_index(unsigned int x, unsigned int y) const {
 		unsigned int frame_buffer_y = (this->*_y_resolver)(y);
 		unsigned int start_row_pixel_index = width * frame_buffer_y;
-		return start_row_pixel_index;
+		return start_row_pixel_index + x;
 	}
 
 	void RenderBuffer::plot_pixel(uint32_t color, unsigned int x, unsigned int y) const {
-		int positionStartOfRow = frame_buffer_get_row_start_pixel(y);
-		int pixel_index = positionStartOfRow + x;
+		int pixel_index = get_pixel_index(x, y);
 		if (pixel_index > _max_pixel_index) {
 			return;
 		}
@@ -88,10 +87,10 @@ namespace tl
 			x1 = x0;
 			x0 = temp;
 		}
-
-		int positionStartOfRow = frame_buffer_get_row_start_pixel(y);
-		int start_index = positionStartOfRow + *startX;
-		int end_index = positionStartOfRow + *endX;
+		unsigned int frame_buffer_y = (this->*_y_resolver)(y);
+		unsigned int start_row_pixel_index = width * frame_buffer_y;
+		unsigned int start_index = start_row_pixel_index + *startX;
+		unsigned int end_index = start_row_pixel_index + *endX;
 		uint32_t* pixelPointer = pixels + start_index;
 
 		if (end_index > _max_pixel_index) {
@@ -263,9 +262,8 @@ namespace tl
 
 		for (int y = y0; y < y1; y++)
 		{
-			int positionStartOfRow = frame_buffer_get_row_start_pixel(y);
-			int positionStartOfX0InRow = positionStartOfRow + x0;
-			uint32_t* pixel = pixels + positionStartOfX0InRow;
+			int x0_pixel_index = get_pixel_index(x0, y);
+			uint32_t* pixel = pixels + x0_pixel_index;
 			for (int x = x0; x < x1; x++)
 			{
 				*pixel = color;
