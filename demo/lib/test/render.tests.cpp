@@ -46,9 +46,12 @@ static void Run4x4FillTriangleTest(tl::Vec3<int> p0, tl::Vec3<int> p1, tl::Vec3<
 	 *    0   1   2   3   4
 	 */
 	tl::RenderBuffer renderBuffer;
-	renderBuffer.height = 4;
-	renderBuffer.width = 4;					// Size the buffer to 16 pixels. pixelArray is 18 pixels so the test can tell if the function ever oversteps the bounds of tl::RenderBuffer.
-	renderBuffer.pixels = &pixelArray[1];	// Use the second element in pixelArray so we can tell if the zero-th element ever gets accessed.
+	renderBuffer.init(
+		&pixelArray[1],
+		4,
+		4,
+		tl::frame_buffer_origin_bottom_left
+	);
 
 	triangle_fill(renderBuffer, depth_buffer, FILLED,
 		{ (float)p0.x, (float)p0.y, (float)p0.z },
