@@ -57,9 +57,9 @@ static void Win32_SizeglobalRenderBufferToCurrentWindow(HWND window)
 
 	int bitmapPixelCount = frame_buffer_width * frame_buffer_height;
 	int bitmapMemorySize = bitmapPixelCount * sizeof(unsigned int);
-	frame_buffer_memory = (uint32_t *)VirtualAlloc(0, bitmapMemorySize, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+	uint32_t* frame_buffer_memory = (uint32_t*)VirtualAlloc(0, bitmapMemorySize, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
 
-	globalRenderBeffer.init(frame_buffer_memory, frame_buffer,width, frame_buffer_height, frame_buffer_origin_bottom_left);
+	globalRenderBuffer.init(frame_buffer_memory, frame_buffer_width, frame_buffer_height, frame_buffer_origin_bottom_left);
 
 	HDC window_context = GetDC(globalWindow);
 	memory_context = CreateCompatibleDC(window_context);
