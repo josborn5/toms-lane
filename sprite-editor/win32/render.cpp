@@ -1,7 +1,7 @@
 #include "../../platform/lib/tl-library.hpp"
-#include "./editor.hpp"
-#include "./utilities.hpp"
-#include "./utils.cpp"
+#include "../lib/editor.hpp"
+#include "../lib/utilities.hpp"
+#include "../lib/utils.cpp"
 #include <stdio.h>
 
 struct sprite_control_view

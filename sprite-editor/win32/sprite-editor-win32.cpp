@@ -1,6 +1,6 @@
 #include <windows.h>
 #include "../../application/src/win32/win32-application.hpp"
-#include "./sprite-editor.hpp"
+#include "../lib/sprite-editor.hpp"
 
 static HINSTANCE _instance;
 
