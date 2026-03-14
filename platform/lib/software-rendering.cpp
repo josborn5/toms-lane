@@ -11,7 +11,7 @@ namespace tl
 	}
 
 	unsigned int RenderBuffer::resolve_y_for_top_left_origin(unsigned int y) const {
-		return height - y;
+		return height - 1 - y;
 	}
 
 	void RenderBuffer::init(uint32_t* pixels, unsigned int width, unsigned int height, frame_buffer_origin origin) {
@@ -103,8 +103,7 @@ namespace tl
 
 		if (end_index > _max_pixel_index) {
 			end_index = _max_pixel_index;
-
-			printf("end_index %d out of bounds", end_index);
+			printf("end_index out of bounds for y %d frame_buffer_y %d x0 %d x1 %d\n", y, frame_buffer_y, x0, x1);
 		}
 
 		for (int i = start_index; i <= end_index; i += 1)
@@ -153,7 +152,7 @@ namespace tl
 		int y0 = p0.y;
 		int x1 = p1.x;
 		int y1 = p1.y;
-		
+
 		int xDiff = x1 - x0;
 		if (xDiff == 0)
 		{
