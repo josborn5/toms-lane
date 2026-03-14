@@ -36,7 +36,7 @@ static tl::array<Triangle4d> meshArray = tl::array<Triangle4d>();
 
 static float positionIncrement = 0.0f;
 
-static tl::Rect<float> map;
+static tl::Rect<float> map = { 0 };
 static float world_to_map_scale_factor = 0.0f;
 static tl::Matrix2x3<float> mapProjectionMatrix;
 
@@ -418,6 +418,13 @@ static void reset_world_to_mesh() {
 		map_half_width,
 		map_half_width * world.half_size.x / world.half_size.z
 	};
+
+	printf(
+		"setting map halfSize %.2f, %.2f\n",
+		map.halfSize.x,
+		map.halfSize.y
+	);
+
 	const float map_margin_in_pixels = 50.0f;
 	map.position = {
 		(float)screen_width - map.halfSize.x - map_margin_in_pixels,
@@ -781,13 +788,11 @@ static int UpdateAndRender1(
 	tl::font_interface_render_int(renderBuffer, (int)(10.0f * camera.near_plane), charFoot, 0xAAAAAA);
 
 	charFoot.position = { 200.0f, infoHeight };
-	tl::font_interface_render_chars(renderBuffer, "POS", charFoot, 0xAAAAAA);
+	tl::font_interface_render_chars(renderBuffer, "MAP", charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)camera.position.x, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)map.halfSize.x, charFoot, 0xAAAAAA);
 	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)camera.position.y, charFoot, 0xAAAAAA);
-	charFoot.position.y -= fontSize;
-	tl::font_interface_render_int(renderBuffer, (int)camera.position.z, charFoot, 0xAAAAAA);
+	tl::font_interface_render_int(renderBuffer, (int)map.halfSize.y, charFoot, 0xAAAAAA);
 
 	charFoot.position = { 300.0f, infoHeight };
 	tl::font_interface_render_chars(renderBuffer, "MESH", charFoot, 0xAAAAAA);

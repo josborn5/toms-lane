@@ -30,7 +30,7 @@ int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY)
 	}
 
 	window_surface = SDL_GetWindowSurface(global_window);
-	if (window_surface == nullptr) {
+	if (window_surface == nullptr || window_surface->pixels == nullptr) {
 		return -2;
 	}
 
@@ -41,7 +41,7 @@ int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY)
 		32,
 		SDL_PIXELFORMAT_RGB888
 	);
-	if (frame_buffer_surface == nullptr) {
+	if (frame_buffer_surface == nullptr || frame_buffer_surface->pixels == nullptr) {
 		return -3;
 	}
 
