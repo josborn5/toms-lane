@@ -8,16 +8,16 @@ float ShortestDistanceFromPointToPlane(
 
 struct Plane
 {
-	tl::Vec3<float> position;
-	tl::Vec3<float> normal;
+	tl::Vec3<float> position = {0};
+	tl::Vec3<float> normal = {0};
 };
 
 struct Triangle4d
 {
-	tl::Vec3<float> p[3];
-	uint8_t color_r;
-	uint8_t color_g;
-	uint8_t color_b;
+	tl::Vec3<float> p[3] = {0};
+	uint8_t color_r = 0;
+	uint8_t color_g = 0;
+	uint8_t color_b = 0;
 };
 
 int ClipTriangleAgainstPlane(

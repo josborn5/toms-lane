@@ -1,4 +1,5 @@
 #include "./render.hpp"
+#include <stdio.h>
 
 
 void DrawTriangleInPixels(const tl::RenderBuffer& renderBuffer, uint32_t color, const tl::Vec2<int>& p0, const tl::Vec2<int>& p1, const tl::Vec2<int>& p2)
@@ -381,6 +382,18 @@ static void swap_vec3_pointers(const tl::Vec3<float>*& a, const tl::Vec3<float>*
 	b = spare;
 }
 
+
+static void log_if_point_off_screen(const tl::RenderBuffer& buffer, const tl::Vec3<float> point) {
+	if (point.x > (float)buffer.width) {
+		printf("x value %.2f off screen!\n", point.x);
+	}
+
+	if (point.y > (float)buffer.height) {
+		printf("y value %.2f off screen!\n", point.y);
+	}
+}
+
+
 void triangle_fill(
 	const tl::RenderBuffer& render_buffer,
 	z_buffer& depth_buffer,
@@ -392,6 +405,24 @@ void triangle_fill(
 	const tl::Vec3<float>* pp0 = &p0;
 	const tl::Vec3<float>* pp1 = &p1;
 	const tl::Vec3<float>* pp2 = &p2;
+
+/*
+ *  this triangle caused a segmentation fault:
+p0.x 280.00
+p0.y 0.00
+p1.x 1276.00
+p1.y 129.33
+p2.x 1276.00
+p2.y 0.00
+ *
+ * how did this triangle get passed in as an imput? the p1.x & p2.x values should have been clipped
+ * against the screen, but it appears they did not!
+ *
+ */
+	
+	log_if_point_off_screen(render_buffer, p0);
+	log_if_point_off_screen(render_buffer, p1);
+	log_if_point_off_screen(render_buffer, p2);
 
 	plane_coeff coefficients;
 	fill_triangle_plane_coeff(

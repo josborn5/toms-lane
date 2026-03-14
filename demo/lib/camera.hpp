@@ -23,10 +23,10 @@ struct Camera
 	tl::Vec3<float> unit_up = {0};
 	tl::Vec3<float> unit_direction = {0};
 
-	float view_space_near_left;
-	float view_space_near_right;
-	float view_space_near_top;
-	float view_space_near_bottom;
+	float view_space_near_left = 0.0f;
+	float view_space_near_right = 0.0f;
+	float view_space_near_top = 0.0f;
+	float view_space_near_bottom = 0.0f;
 
 	float field_of_view_deg = 0.0f;
 	float near_plane = 0.0f;

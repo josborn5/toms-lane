@@ -90,22 +90,6 @@ static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>
 
 
 
-static int compare_triangle_depth(const void* a, const void* b) {
-	float a_depth_sum = ((Triangle4d*)a)->p[0].z + ((Triangle4d*)a)->p[1].z + ((Triangle4d*)a)->p[2].z;
-	float b_depth_sum = ((Triangle4d*)b)->p[0].z + ((Triangle4d*)b)->p[1].z + ((Triangle4d*)b)->p[2].z;
-
-	if (a_depth_sum > b_depth_sum) {
-		return -1;
-	}
-
-	if (a_depth_sum < b_depth_sum) {
-		return 1;
-	}
-
-	return 0;
-}
-
-
 static void TransformAndRenderMesh(
 	const tl::RenderBuffer& renderBuffer,
 	const tl::array<Triangle4d>& mesh,
@@ -748,7 +732,6 @@ static int UpdateAndRender1(
 
 		if (input.buttons[tl::KEY_S].keyUp)
 		{
-			printf("demo started!\n");
 			isStarted = true;
 			reset_camera_in_world();
 		}
@@ -908,7 +891,17 @@ int demo_main()
 	transient_memory.sizeInBytes = 10 * 1024 * 1024;
 
 	persistent_memory.content = malloc(persistent_memory.sizeInBytes);
+	if (persistent_memory.content == nullptr) {
+		puts("ERROR! Failed to initialize memory!");
+		return 1;
+	}
+
 	transient_memory.content = malloc(transient_memory.sizeInBytes);
+	if (transient_memory.content == nullptr) {
+		puts("ERROR! Failed to initialize memory!");
+		return 1;
+	}
+
 
 	Initialize(persistent_memory);
 
