@@ -24,9 +24,9 @@ enum Mode
 
 struct Boundary
 {
-	Side side;
-	float position;
-	float direction;
+	Side side = Top;
+	float position = 0.0f;
+	float direction = 0.0f;
 };
 
 enum BlockType
@@ -38,45 +38,45 @@ enum BlockType
 };
 
 struct Block : tl::Rect<float> {
-	int color;
-	bool isCheckpoint;
-	BlockType type;
-	tl::bitmap* bitmap;
+	int color = 0;
+	bool isCheckpoint = false;
+	BlockType type = Regular;
+	tl::bitmap* bitmap = nullptr;
 };
 
 struct PlayerMovement
 {
-	bool left;
-	bool right;
-	int availableJumps;
-	bool inJump;
-	bool wasInJump;
+	bool left = false;
+	bool right = false;
+	int availableJumps = 2;
+	bool inJump = false;
+	bool wasInJump = false;
 };
 
 struct Player : tl::Rect<float>
 {
 	PlayerMovement movement;
 	tl::bitmap bitmap;
-	float pixelHalfSize;
-	tl::Vec2<float> prevPosition;
+	float pixelHalfSize = 0.0f;
+	tl::Vec2<float> prevPosition = { 0 };
 };
 
 struct GameState
 {
 	Player player;
 	Block blocks[BLOCK_ARRAY_SIZE];
-	float blockPixelHalfSize;
-	int level;
-	int score;
-	int lives;
-	Mode mode;
+	float blockPixelHalfSize = 0.0f;
+	int level = 0;
+	int score = 0;
+	int lives = 0;
+	Mode mode = ReadyToStart;
 	int blockCount = BLOCK_ARRAY_SIZE;
 	const int blockCapacity = BLOCK_ARRAY_SIZE;
-	tl::Rect<float> restartLevelButton = {0};
+	tl::Rect<float> restartLevelButton = { 0 };
 	tl::bitmap regularBlockBitmap;
 	tl::bitmap checkpointBitmap;
-	tl::Rect<float> world;
-	tl::Rect<float> camera;
+	tl::Rect<float> world = { 0 };
+	tl::Rect<float> camera = { 0 };
 };
 
 #endif

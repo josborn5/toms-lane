@@ -80,6 +80,7 @@ static int map_sdl_key_to_tl_key(int sdl_key) {
 	if (sdl_key == SDLK_DOWN) return KEY_DOWN;
 	if (sdl_key == SDLK_LEFT) return KEY_LEFT;
 	if (sdl_key == SDLK_RIGHT) return KEY_RIGHT;
+	if (sdl_key == SDLK_SPACE) return KEY_SPACE;
 
 	return -1;
 }
