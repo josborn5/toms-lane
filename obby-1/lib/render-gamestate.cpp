@@ -154,12 +154,14 @@ static void RenderGameState(
 		}
 	}
 
-	tl::Rect<float> playerInCameraSpace;
+	tl::Rect<float> playerInCameraSpace = { 0 };
 	tl::transform_interface_project_rect(
 		worldToCameraProjection,
 		state.player,
 		playerInCameraSpace
 	);
+
+
 	tl::bitmap_interface_render(
 		renderBuffer,
 		state.player.bitmap,

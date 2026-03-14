@@ -419,12 +419,6 @@ static void reset_world_to_mesh() {
 		map_half_width * world.half_size.x / world.half_size.z
 	};
 
-	printf(
-		"setting map halfSize %.2f, %.2f\n",
-		map.halfSize.x,
-		map.halfSize.y
-	);
-
 	const float map_margin_in_pixels = 50.0f;
 	map.position = {
 		(float)screen_width - map.halfSize.x - map_margin_in_pixels,

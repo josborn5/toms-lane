@@ -371,7 +371,8 @@ int bitmap_interface_render(
 	int bitmapY = 0;
 	for (int j = start.y; j < end.y; j += 1)
 	{
-		uint32_t* pixel = buffer.pixels + (buffer.width * j) + start.x;
+		unsigned int pixel_index = buffer.get_pixel_index(start.x, j);
+		uint32_t* pixel = buffer.pixels + pixel_index;
 		int bitmapX = 0;
 		for (int i = start.x; i < end.x; i += 1)
 		{
@@ -414,7 +415,9 @@ int bitmap_interface_render(
 	float bitmapY = 0.0f;
 	for (int j = start.y; j < end.y; j += 1)
 	{
-		uint32_t* pixel = buffer.pixels + (buffer.width * j) + start.x;
+		unsigned int pixel_index = buffer.get_pixel_index(start.x, j);
+		uint32_t* pixel = buffer.pixels + pixel_index;
+
 		float bitmapX = 0.0f;
 		for (int i = start.x; i < end.x; i += 1)
 		{

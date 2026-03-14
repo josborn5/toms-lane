@@ -34,6 +34,9 @@ int OpenWindow(const WindowSettings& settings, int& outClientX, int& outClientY)
 		return -2;
 	}
 
+	outClientX = settings.width;
+	outClientY = settings.height;
+
 	frame_buffer_surface = SDL_CreateRGBSurfaceWithFormat(
 		0,
 		window_surface->w,
