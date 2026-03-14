@@ -1,6 +1,6 @@
 #include <windows.h>
 #include "../../application/src/win32/win32-application.hpp"
-#include "./breakout.hpp"
+#include "../lib/breakout.hpp"
 
 static HINSTANCE _instance;
 

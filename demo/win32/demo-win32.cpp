@@ -1,6 +1,6 @@
 #include <windows.h>
 #include "../../application/src/win32/win32-application.hpp"
-#include "../src/demo.hpp"
+#include "../lib/demo.hpp"
 
 static HINSTANCE _instance;
 

@@ -1,6 +1,6 @@
 #include <windows.h>
 #include "../../application/src/win32/win32-application.hpp"
-#include "./obby-2.hpp"
+#include "../lib/obby-2.hpp"
 
 static HINSTANCE _instance;
 
