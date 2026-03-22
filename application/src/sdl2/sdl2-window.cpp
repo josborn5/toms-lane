@@ -96,6 +96,7 @@ int RunWindowUpdateLoop(
 	uint64_t counters_per_millisecond = performance_counter_per_second / 1000;
 	uint64_t target_counter_per_frame = performance_counter_per_second / targetFPS;
 	uint64_t previous_start_callback_counter = SDL_GetPerformanceCounter();
+	uint64_t start_callback_counter = previous_start_callback_counter;
 
 	while (is_running) {
 		uint64_t start_frame_counter = SDL_GetPerformanceCounter();
@@ -123,7 +124,8 @@ int RunWindowUpdateLoop(
 			}
 		}
 
-		uint64_t start_callback_counter = SDL_GetPerformanceCounter();
+		previous_start_callback_counter = start_callback_counter;
+		start_callback_counter = SDL_GetPerformanceCounter();
 		uint64_t counters_since_last_callback = start_callback_counter - previous_start_callback_counter;
 		float delta_time_in_milliseconds = counters_since_last_callback / counters_per_millisecond;
 		updateWindowCallback(input, delta_time_in_milliseconds, global_render_buffer);
