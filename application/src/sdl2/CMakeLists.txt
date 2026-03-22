@@ -6,6 +6,8 @@ add_library(
 	toms-lane-sdl2-application STATIC
 	sdl2-application.cpp
 	sdl2-window.cpp
+	sdl2-console.cpp
+	sdl2-sound.cpp
 )
 
 find_package(
