@@ -124,9 +124,19 @@ int RunWindowUpdateLoop(
 					if (key > 0) {
 						input.buttons[key].set_state(false, true);
 					}
-				} break;	
+				} break;
 			}
 		}
+
+		int window_pos_x = 0;
+		int window_pos_y = 0;
+		SDL_GetWindowPosition(global_window, &window_pos_x, &window_pos_y);
+
+		int mouse_pos_x = 0;
+		int mouse_pos_y = 0;
+		SDL_GetGlobalMouseState(&mouse_pos_x, &mouse_pos_y);
+		input.mouse.x = mouse_pos_x - window_pos_x;
+		input.mous.y = 0; // TODO: fix this!
 
 		updateWindowCallback(input, delta_time_in_milliseconds, global_render_buffer);
 
