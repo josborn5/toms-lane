@@ -26,7 +26,6 @@ int UpdateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer
 
 int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
-	printf("dtInMilliseconds %d\n", dtInMilliseconds);
 	float dt = (float)dtInMilliseconds / 1000.0f;
 	return UpdateAndRender(input, renderBuffer, dt);
 }
