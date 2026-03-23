@@ -85,6 +85,11 @@ static int map_sdl_key_to_tl_key(int sdl_key) {
 	return -1;
 }
 
+static uint64_t get_elapsed_counters(uint64_t start) {
+	uint64_t current = SDL_GetPerformanceCounter();
+	return current - start;
+}
+
 int RunWindowUpdateLoop(
 	int targetFPS,
 	UpdateWindowCallback updateWindowCallback
@@ -95,12 +100,11 @@ int RunWindowUpdateLoop(
 	uint64_t performance_counter_per_second = SDL_GetPerformanceFrequency();
 	uint64_t counters_per_millisecond = performance_counter_per_second / 1000;
 	uint64_t target_counter_per_frame = performance_counter_per_second / targetFPS;
-	uint64_t previous_start_callback_counter = SDL_GetPerformanceCounter();
-	uint64_t start_callback_counter = previous_start_callback_counter;
+
+	uint64_t start_frame_counter = SDL_GetPerformanceCounter();
+	float delta_time_in_milliseconds = 1.0f / (float)targetFPS;
 
 	while (is_running) {
-		uint64_t start_frame_counter = SDL_GetPerformanceCounter();
-
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -124,10 +128,6 @@ int RunWindowUpdateLoop(
 			}
 		}
 
-		previous_start_callback_counter = start_callback_counter;
-		start_callback_counter = SDL_GetPerformanceCounter();
-		uint64_t counters_since_last_callback = start_callback_counter - previous_start_callback_counter;
-		float delta_time_in_milliseconds = counters_since_last_callback / counters_per_millisecond;
 		updateWindowCallback(input, delta_time_in_milliseconds, global_render_buffer);
 
 		SDL_BlitSurface(frame_buffer_surface, nullptr, window_surface, nullptr);
@@ -136,13 +136,16 @@ int RunWindowUpdateLoop(
 
 		input.reset();
 
-		uint64_t end_frame_counter = SDL_GetPerformanceCounter();
+		uint64_t counters_in_frame = get_elapsed_counters(start_frame_counter);
 
-		uint64_t remaining_counters_in_frame = end_frame_counter - start_frame_counter;
-		if (remaining_counters_in_frame > 0) {
-			uint32_t milliseconds_to_wait = remaining_counters_in_frame / counters_per_millisecond;
-			SDL_Delay(milliseconds_to_wait);
+		if (counters_in_frame < target_counter_per_frame) {
+			uint64_t wait_counters = target_counter_per_frame - counters_in_frame;
+			uint32_t wait_milliseconds = wait_counters / counters_per_millisecond;
+			SDL_Delay(wait_milliseconds);
 		}
+
+		delta_time_in_milliseconds = get_elapsed_counters(start_frame_counter) / counters_per_millisecond;
+		start_frame_counter = SDL_GetPerformanceCounter();
 	}
 
 	SDL_FreeSurface(frame_buffer_surface);
