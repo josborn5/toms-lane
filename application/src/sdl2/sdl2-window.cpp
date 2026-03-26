@@ -136,7 +136,7 @@ int RunWindowUpdateLoop(
 		int mouse_pos_y = 0;
 		SDL_GetGlobalMouseState(&mouse_pos_x, &mouse_pos_y);
 		input.mouse.x = mouse_pos_x - window_pos_x;
-		input.mous.y = 0; // TODO: fix this!
+		input.mouse.y = 0; // TODO: fix this!
 
 		updateWindowCallback(input, delta_time_in_milliseconds, global_render_buffer);
 
