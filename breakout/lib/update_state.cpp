@@ -405,8 +405,12 @@ static void update_wall_positions(float dt) {
 		: wall_position_period_time;
 
 	gamestate.world.halfSize.x = (0.5f * (float)client_x) - (20.0f * corrected_wall_position_period);
+	gamestate.world.halfSize.y = (0.5f * (float)client_y) - (10.0f * corrected_wall_position_period);
+	gamestate.world.position.y = gamestate.world.halfSize.y;
+
 	rightBoundary.position = gamestate.world.position.x + gamestate.world.halfSize.x;
 	leftBoundary.position = gamestate.world.position.x - gamestate.world.halfSize.x;
+	topBoundary.position = gamestate.world.position.y + gamestate.world.halfSize.y;
 }
 
 GameState& UpdateGameState(const tl::Input& input, float dt)
