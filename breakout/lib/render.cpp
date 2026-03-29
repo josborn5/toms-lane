@@ -176,7 +176,11 @@ void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& stat
 	{
 		Block block = state.blocks.get(i);
 		if (block.exists) {
-			tl::DrawRect(renderBuffer, block.color, block);
+			tl::bitmap_interface_render(
+				renderBuffer,
+				state.block_bitmap,
+				block
+			);
 		}
 
 		if (block.powerUp.exists) {

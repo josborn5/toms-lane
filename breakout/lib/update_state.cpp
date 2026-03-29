@@ -2,6 +2,7 @@
 #include "math.cpp"
 #include "levels.cpp"
 #include "sound.cpp"
+#include "./generated-assets.hpp"
 
 
 static Boundary topBoundary = { Top, 720, -1.0f };
@@ -63,7 +64,8 @@ static void StartNextLevel()
 	);
 }
 
-void InitializeGameState(int clientX, int clientY)
+
+void InitializeGameStateInner(int clientX, int clientY)
 {
 	gamestate.mode = ReadyToStart;
 	rightBoundary.position = (float)clientX;
@@ -92,6 +94,19 @@ void InitializeGameState(int clientX, int clientY)
 	gamestate.lives = 3;
 	gamestate.level = 0;
 }
+
+void InitializeGameState(int clientX, int clientY, tl::MemorySpace application_memory) {
+	gamestate.block_bitmap.content = (uint8_t*)application_memory.content;
+	tl::MemorySpace bitmap_data;
+	bitmap_data.content = brick_bmp;
+	bitmap_data.sizeInBytes = brick_bmp_len * sizeof(unsigned char);
+	int bitmap_init_result = tl::bitmap_interface_initialize(
+		gamestate.block_bitmap,
+		bitmap_data);
+
+	InitializeGameStateInner(clientX, clientY);
+}
+
 
 static float ClampFloat(float min, float val, float max)
 {
@@ -380,7 +395,7 @@ GameState& UpdateGameState(const tl::Input& input, float dt)
 		}
 		else if (input.buttons[tl::KEY_R].keyUp)
 		{
-			InitializeGameState((int)rightBoundary.position, (int)topBoundary.position);
+			InitializeGameStateInner((int)rightBoundary.position, (int)topBoundary.position);
 		}
 		return gamestate;
 	}
@@ -388,7 +403,7 @@ GameState& UpdateGameState(const tl::Input& input, float dt)
 	if (gamestate.mode == GameOver) {
 		if (input.buttons[tl::KEY_SPACE].keyUp)
 		{
-			InitializeGameState((int)rightBoundary.position, (int)topBoundary.position);
+			InitializeGameStateInner((int)rightBoundary.position, (int)topBoundary.position);
 		}
 		return gamestate;
 	}
@@ -405,7 +420,7 @@ GameState& UpdateGameState(const tl::Input& input, float dt)
 
 	if (input.buttons[tl::KEY_R].keyUp || gamestate.mode == GameOver)
 	{
-		InitializeGameState((int)rightBoundary.position, (int)topBoundary.position);
+		InitializeGameStateInner((int)rightBoundary.position, (int)topBoundary.position);
 		return gamestate;
 	}
 
