@@ -19,6 +19,9 @@ static Ball balls[ballCapacity];
 
 static GameState gamestate = {0};
 
+static int client_x = 0;
+static int client_y = 0;
+
 struct WallCollision
 {
 	Boundary wall;
@@ -65,11 +68,11 @@ static void StartNextLevel()
 }
 
 
-void InitializeGameStateInner(int clientX, int clientY)
+void reset_game_state()
 {
 	gamestate.mode = ReadyToStart;
-	rightBoundary.position = (float)clientX;
-	topBoundary.position = (float)clientY;
+	rightBoundary.position = (float)client_x;
+	topBoundary.position = (float)client_y;
 	float worldHalfX = 0.5f * rightBoundary.position;
 	float worldHalfY = 0.5f * topBoundary.position;
 	gamestate.world.halfSize.x = worldHalfX;
@@ -96,6 +99,9 @@ void InitializeGameStateInner(int clientX, int clientY)
 }
 
 void InitializeGameState(int clientX, int clientY, tl::MemorySpace application_memory) {
+	client_x = clientX;
+	client_y = clientY;
+
 	gamestate.block_bitmap.content = (uint8_t*)application_memory.content;
 	tl::MemorySpace bitmap_data;
 	bitmap_data.content = brick_bmp;
@@ -104,7 +110,7 @@ void InitializeGameState(int clientX, int clientY, tl::MemorySpace application_m
 		gamestate.block_bitmap,
 		bitmap_data);
 
-	InitializeGameStateInner(clientX, clientY);
+	reset_game_state();
 }
 
 
@@ -395,7 +401,7 @@ GameState& UpdateGameState(const tl::Input& input, float dt)
 		}
 		else if (input.buttons[tl::KEY_R].keyUp)
 		{
-			InitializeGameStateInner((int)rightBoundary.position, (int)topBoundary.position);
+			reset_game_state();
 		}
 		return gamestate;
 	}
@@ -403,7 +409,7 @@ GameState& UpdateGameState(const tl::Input& input, float dt)
 	if (gamestate.mode == GameOver) {
 		if (input.buttons[tl::KEY_SPACE].keyUp)
 		{
-			InitializeGameStateInner((int)rightBoundary.position, (int)topBoundary.position);
+			reset_game_state();
 		}
 		return gamestate;
 	}
@@ -420,7 +426,7 @@ GameState& UpdateGameState(const tl::Input& input, float dt)
 
 	if (input.buttons[tl::KEY_R].keyUp || gamestate.mode == GameOver)
 	{
-		InitializeGameStateInner((int)rightBoundary.position, (int)topBoundary.position);
+		reset_game_state();
 		return gamestate;
 	}
 
