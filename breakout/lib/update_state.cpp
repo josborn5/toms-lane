@@ -7,7 +7,7 @@
 
 static Boundary topBoundary = { Top, 720, -1.0f };
 static const Boundary bottomBoundary = { Bottom, 0, 1.0f };
-static const Boundary leftBoundary = { Left, 0, 1.0f };
+static Boundary leftBoundary = { Left, 0, 1.0f };
 static Boundary rightBoundary = { Right, 1280, -1.0f };
 
 static const int blockCapacity = 64;
@@ -18,6 +18,11 @@ static const int ballCapacity = 3;
 static Ball balls[ballCapacity];
 
 static GameState gamestate = {0};
+
+static int client_x = 0;
+static int client_y = 0;
+
+static float wall_position_period_time = 0.0f;
 
 struct WallCollision
 {
@@ -39,7 +44,7 @@ static void ResetBalls()
 		newBall.velocity.x = minimumBallSpeed;
 		newBall.halfSize = { 10.0f, 10.0f };
 		newBall.position.y = gamestate.player.y_max() + balls[i].halfSize.y;
-		newBall.position.x = gamestate.player.position.x;
+		newBall.position.x = leftBoundary.position + newBall.halfSize.x;
 		gamestate.balls.append(newBall);
 	}
 }
@@ -65,11 +70,11 @@ static void StartNextLevel()
 }
 
 
-void InitializeGameStateInner(int clientX, int clientY)
+void reset_game_state()
 {
 	gamestate.mode = ReadyToStart;
-	rightBoundary.position = (float)clientX;
-	topBoundary.position = (float)clientY;
+	rightBoundary.position = (float)client_x;
+	topBoundary.position = (float)client_y;
 	float worldHalfX = 0.5f * rightBoundary.position;
 	float worldHalfY = 0.5f * topBoundary.position;
 	gamestate.world.halfSize.x = worldHalfX;
@@ -96,6 +101,9 @@ void InitializeGameStateInner(int clientX, int clientY)
 }
 
 void InitializeGameState(int clientX, int clientY, tl::MemorySpace application_memory) {
+	client_x = clientX;
+	client_y = clientY;
+
 	gamestate.block_bitmap.content = (uint8_t*)application_memory.content;
 	tl::MemorySpace bitmap_data;
 	bitmap_data.content = brick_bmp;
@@ -104,13 +112,15 @@ void InitializeGameState(int clientX, int clientY, tl::MemorySpace application_m
 		gamestate.block_bitmap,
 		bitmap_data);
 
-	InitializeGameStateInner(clientX, clientY);
+	reset_game_state();
 }
 
 
 static float ClampFloat(float min, float val, float max)
 {
-	if (val < min) return min;
+	if (val < min) {
+		return min;
+	}
 	if (val > max) return max;
 	return val;
 }
@@ -313,7 +323,8 @@ static void UpdateBallAndBlockState(float dt)
 				newBallState.position = ballWallCollision.result.collisions[0].position;
 				checkCollision = true;
 
-				if (ballWallCollision.wall.side == Left || ballWallCollision.wall.side == Right)
+				if ((ballWallCollision.wall.side == Left && newBallState.velocity.x < 0 )|| 
+					(ballWallCollision.wall.side == Right && newBallState.velocity.x > 0))
 				{
 					playTone(330, 200);
 					newBallState.velocity.x = -newBallState.velocity.x;
@@ -354,9 +365,10 @@ static void UpdateBallAndBlockState(float dt)
 			}
 			else
 			{
-				newBallState.position = tl::AddVectors(balls[i].position, tl::MultiplyVectorByScalar(balls[i].velocity, t1 - t0));
+
 				checkCollision = false;
 			}
+			newBallState.position = tl::AddVectors(balls[i].position, tl::MultiplyVectorByScalar(newBallState.velocity, t1 - t0));
 
 			balls[i] = newBallState;
 
@@ -370,12 +382,35 @@ static void UpdateBallAndBlockState(float dt)
 			balls[i].position.x,
 			rightBoundary.position - balls[i].halfSize.x
 		);
+
 		balls[i].position.y = ClampFloat(
 			bottomBoundary.position + balls[i].halfSize.y,
 			balls[i].position.y,
 			topBoundary.position - balls[i].halfSize.y
 		);
 	}
+}
+
+static void update_wall_positions(float dt) {
+	const float wall_duration_half_period = 3.0f;
+	const float wall_period_duration = 6.0f;
+	wall_position_period_time += dt;
+
+	if (wall_position_period_time > wall_period_duration) {
+		wall_position_period_time -= wall_period_duration;
+	}
+
+	float corrected_wall_position_period = (wall_position_period_time > wall_duration_half_period)
+		? wall_period_duration - wall_position_period_time
+		: wall_position_period_time;
+
+	gamestate.world.halfSize.x = (0.5f * (float)client_x) - (20.0f * corrected_wall_position_period);
+	gamestate.world.halfSize.y = (0.5f * (float)client_y) - (10.0f * corrected_wall_position_period);
+	gamestate.world.position.y = gamestate.world.halfSize.y;
+
+	rightBoundary.position = gamestate.world.position.x + gamestate.world.halfSize.x;
+	leftBoundary.position = gamestate.world.position.x - gamestate.world.halfSize.x;
+	topBoundary.position = gamestate.world.position.y + gamestate.world.halfSize.y;
 }
 
 GameState& UpdateGameState(const tl::Input& input, float dt)
@@ -395,7 +430,7 @@ GameState& UpdateGameState(const tl::Input& input, float dt)
 		}
 		else if (input.buttons[tl::KEY_R].keyUp)
 		{
-			InitializeGameStateInner((int)rightBoundary.position, (int)topBoundary.position);
+			reset_game_state();
 		}
 		return gamestate;
 	}
@@ -403,7 +438,7 @@ GameState& UpdateGameState(const tl::Input& input, float dt)
 	if (gamestate.mode == GameOver) {
 		if (input.buttons[tl::KEY_SPACE].keyUp)
 		{
-			InitializeGameStateInner((int)rightBoundary.position, (int)topBoundary.position);
+			reset_game_state();
 		}
 		return gamestate;
 	}
@@ -420,7 +455,7 @@ GameState& UpdateGameState(const tl::Input& input, float dt)
 
 	if (input.buttons[tl::KEY_R].keyUp || gamestate.mode == GameOver)
 	{
-		InitializeGameStateInner((int)rightBoundary.position, (int)topBoundary.position);
+		reset_game_state();
 		return gamestate;
 	}
 
@@ -434,9 +469,12 @@ GameState& UpdateGameState(const tl::Input& input, float dt)
 		return gamestate;
 	}
 
+	update_wall_positions(dt);
+
 	UpdatePlayerStateFromInput(input, dt);
 
 	UpdateBallAndBlockState(dt);
+
 	if (gamestate.mode == GameOver)
 	{
 		return gamestate;
