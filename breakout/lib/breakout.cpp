@@ -21,7 +21,9 @@ TODO (in no particular order):
 #include "game.hpp"
 #include "update.hpp"
 #include "render.hpp"
+#include <stdlib.h>
 
+static tl::MemorySpace application_memory_space;
 
 int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
@@ -55,7 +57,10 @@ int breakout_main()
 		return windowOpenResult;
 	}
 
-	InitializeGameState(clientX, clientY);
+	application_memory_space.sizeInBytes = 1024;
+	application_memory_space.content = malloc(application_memory_space.sizeInBytes);
+
+	InitializeGameState(clientX, clientY, application_memory_space);
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }

@@ -63,6 +63,7 @@ struct GameState {
 	int lives;
 	Mode mode;
 	tl::rect_tree blockTree;
+	tl::bitmap block_bitmap = { 0 };
 };
 
 #endif
