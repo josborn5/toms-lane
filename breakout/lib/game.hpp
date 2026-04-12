@@ -52,6 +52,13 @@ struct Block : tl::Rect<float> {
 	PowerUp powerUp;
 };
 
+typedef void (action)();
+
+struct button {
+	char* text;
+	action callback;
+};
+
 struct GameState {
 	tl::Rect<float> player;
 	tl::Rect<float> world;
@@ -64,6 +71,7 @@ struct GameState {
 	Mode mode;
 	tl::rect_tree blockTree;
 	tl::bitmap block_bitmap = { 0 };
+	tl::stack_array<button, 1> buttons;
 };
 
 #endif
