@@ -13,8 +13,8 @@
         android:theme="@style/Theme.MyApplication">
         <activity android:name="android.app.NativeActivity"
             android:exported="true">
-            <meta-data android:name="android.app.breakout-android"
-                android:value="myapplication" />
+            <meta-data android:name="android.app.lib_name"
+                android:value="breakout-android" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
