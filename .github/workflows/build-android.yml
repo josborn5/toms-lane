@@ -22,16 +22,16 @@ jobs:
         run: |
           echo "root\n"
           cd $ANDROID_SDK_ROOT
-          ls | echo
+          ls
           echo "cmd-line-tools\n"
           cd cmd-line-tools
-          ls | echo
+          ls
           echo "latest\n"
           cd latest
-          ls | echo
+          ls
           echo "bin\n"
           cd bin
-          le | echo
+          ls
           $ANDROID_SDK_ROOT/cmd-line-tools/latest/bin/sdkmanager \
             "cmake:3.28.3"
 
