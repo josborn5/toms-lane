@@ -20,18 +20,8 @@ jobs:
 
       - name: instal cmake & ndk
         run: |
-          echo "root\n"
-          cd $ANDROID_SDK_ROOT
-          ls
-          echo "\n\ncmd-line-tools\n"
-          cd cmdline-tools
-          ls
-          echo "\n\nlatest\n"
-          cd latest
-          ls
-          echo "\n\bin\n"
-          cd bin
-          ls
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --list | grep cmake
+
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager \
             "cmake:3.28.3"
 
