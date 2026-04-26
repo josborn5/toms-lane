@@ -23,13 +23,13 @@ jobs:
           echo "root\n"
           cd $ANDROID_SDK_ROOT
           ls
-          echo "cmd-line-tools\n"
+          echo "\n\ncmd-line-tools\n"
           cd cmd-line-tools
           ls
-          echo "latest\n"
+          echo "\n\nlatest\n"
           cd latest
           ls
-          echo "bin\n"
+          echo "\n\bin\n"
           cd bin
           ls
           $ANDROID_SDK_ROOT/cmd-line-tools/latest/bin/sdkmanager \
