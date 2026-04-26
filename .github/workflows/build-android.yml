@@ -22,8 +22,7 @@ jobs:
         run: |
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --list | grep cmake
 
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager \
-            "cmake:3.31.6"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "cmake;3.31.6"
 
       - working-directory: ./breakout/android/breakout-android
         run: ./gradlew assembleDebug
