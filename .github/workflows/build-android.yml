@@ -18,6 +18,11 @@ jobs:
           distribution: "temurin"
           cache: gradle
 
+      - name: instal cmake & ndk
+        run: |
+          $ANDROID_SDK_ROOT/cmd-line-tools/latest/bin/sdkmanager \
+            "cmake:3.28.3"
+
       - working-directory: ./breakout/android/breakout-android
         run: ./gradlew assembleDebug
 
