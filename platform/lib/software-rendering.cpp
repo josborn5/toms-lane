@@ -70,20 +70,10 @@ namespace tl
 	 */
 	void PlotPixel(const RenderBuffer &renderBuffer, uint32_t color, int x, int y)
 	{
-		renderBuffer.plot_pixel(color, x, y);
-	}
+		unsigned int u_x = (x < 0) ? 0 : x;
+		unsigned int u_y = (y < 0) ? 0 : y;
 
-	/**
-	 *	|---|---|---|
-	 *	| 0 | 1 | 2 |	pixel ordinals
-	 *	|---|---|---|
-	 *	0   1   2   3	position ordinals
-	 *
-	 * x1, x2 & y parameters are the pixel and NOT the position ordinals
-	 */
-	static void DrawHorizontalLineInPixels(const RenderBuffer &renderBuffer, uint32_t color, int x0, int x1, int y)
-	{
-		renderBuffer.draw_horizontal_line(color, x0, x1, y);
+		renderBuffer.plot_pixel(color, u_x, u_y);
 	}
 
 	void RenderBuffer::draw_horizontal_line(uint32_t color, unsigned int x0, unsigned int x1, unsigned int y) const {
@@ -121,7 +111,7 @@ namespace tl
 	 *
 	 * x, y0 & y1 parameters are the pixel and NOT the position ordinals
 	 */
-	void DrawVerticalLineInPixels(const RenderBuffer &renderBuffer, uint32_t color, int x, int y0, int y1)
+	static void DrawVerticalLineInPixels(const RenderBuffer &renderBuffer, uint32_t color, int x, int y0, int y1)
 	{
 		int yDiff = y1 - y0;
 		int yDiffMod = (yDiff < 0) ? -1 * yDiff : yDiff;
@@ -163,7 +153,7 @@ namespace tl
 		int yDiff = y1 - y0;
 		if (yDiff == 0)
 		{
-			DrawHorizontalLineInPixels(renderBuffer, color, x0, x1, y0);
+			renderBuffer.draw_horizontal_line(color, x0, x1, y0);
 			return;
 		}
 		bool negativeXDiff = (xDiff < 0);
