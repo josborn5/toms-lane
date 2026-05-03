@@ -325,11 +325,14 @@ namespace tl
 
 	void DrawRect(const RenderBuffer &renderBuffer, uint32_t color, const Rect<float> &rect)
 	{
-		int x0 = ConvertFloatToInt(rect.x_min());
-		int x1 = ConvertFloatToInt(rect.x_max());
-		int y0 = ConvertFloatToInt(rect.y_min());
-		int y1 = ConvertFloatToInt(rect.y_max());
-
+		float x_min = rect.x_min();
+		float x_max = rect.x_max();
+		float y_min = rect.y_min();
+		float y_max = rect.y_max();
+		unsigned int x0 = x_min < 0.0f ? 0 : ConvertFloatToInt(x_min);
+		unsigned int x1 = x_max < 0.0f ? 0 : ConvertFloatToInt(x_max);
+		unsigned int y0 = y_min < 0.0f ? 0 : ConvertFloatToInt(y_min);
+		unsigned int y1 = y_max < 0.0f ? 0 : ConvertFloatToInt(y_max);
 
 		renderBuffer.fill_rect(color, x0, y0, x1, y1);
 	}
