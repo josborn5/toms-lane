@@ -171,15 +171,21 @@ static WallCollision CheckWallCollision(const Ball &ball, float minimumTime)
 
 static bool isPaused = false;
 
+static void player_state_set_velocity(const tl::Input& input, float dt) {
+	float velocity = ((float)input.mouse.x - gamestate.player.position.x) / dt;
+
+	gamestate.player.velocity.x = velocity;
+	gamestate.player.velocity.y = 0.0f;
+}
+
+static void player_state_set_position(const tl::Input& input) {
+	gamestate.player.position.x = ClampFloat((float)leftBoundary.position, (float)input.mouse.x, (float)rightBoundary.position);
+}
+
 static void UpdatePlayerStateFromInput(const tl::Input& input, float dt)
 {
-	tl::Rect<float> newPlayerState;
-	newPlayerState.halfSize = gamestate.player.halfSize;
-	newPlayerState.position.x = ClampFloat((float)leftBoundary.position, (float)input.mouse.x, (float)rightBoundary.position);
-	newPlayerState.position.y = gamestate.player.position.y;
-	newPlayerState.velocity.x = (newPlayerState.position.x - gamestate.player.position.x) / dt;
-	newPlayerState.velocity.y = 0.0f;
-	gamestate.player = newPlayerState;
+	player_state_set_velocity(input, dt);
+	player_state_set_position(input);
 }
 
 static void UpdateBallAndBlockState(float dt)
