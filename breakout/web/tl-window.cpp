@@ -40,8 +40,8 @@ EXPORT int            tl_height()  { return tl::s_vb.height; }
 
 EXPORT void tl_set_mouse(int x, int y, int left)
 {
-    tl::s_input.mouseX    = x;
-    tl::s_input.mouseY    = y;
-    tl::s_input.mouseLeft = left != 0;
+	tl::s_input.mouse.x    = x;
+	tl::s_input.mouse.y    = y;
+	tl::s_input.mouse.buttons[0].isDown = (left != 0);
 }
 

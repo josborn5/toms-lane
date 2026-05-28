@@ -14,8 +14,8 @@ int myUpdate(const tl::Input& input, int dt, tl::VideoBuffer& vb)
     unsigned char* p = vb.pixels;
     for (int y = 0; y < vb.height; ++y) {
         for (int x = 0; x < vb.width; ++x) {
-            float dx = (float)(x - input.mouseX) / vb.width;
-            float dy = (float)(y - input.mouseY) / vb.height;
+            float dx = (float)(x - input.mouse.x) / vb.width;
+            float dy = (float)(y - input.mouse.y) / vb.height;
             float d  = sqrtf(dx*dx + dy*dy);
             p[0] = (unsigned char)(128 + 127 * sinf(s_t + d * 10.0f));
             p[1] = (unsigned char)(128 + 127 * sinf(s_t + d * 10.0f + 2.0f));
