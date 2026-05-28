@@ -37,8 +37,6 @@ WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
       e.buttons & 1
     );
   });
-  document.addEventListener('keydown', e => exp.tl_set_key(e.keyCode, 1));
-  document.addEventListener('keyup',   e => exp.tl_set_key(e.keyCode, 0));
 
   // Loop
   let last = 0;

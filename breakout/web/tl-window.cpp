@@ -45,8 +45,3 @@ EXPORT void tl_set_mouse(int x, int y, int left)
     tl::s_input.mouseLeft = left != 0;
 }
 
-EXPORT void tl_set_key(int keyCode, int down)
-{
-    if (keyCode >= 0 && keyCode < 256)
-        tl::s_input.keys[keyCode] = down != 0;
-}

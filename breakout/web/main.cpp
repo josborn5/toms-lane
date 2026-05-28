@@ -25,7 +25,7 @@ int myUpdate(const tl::Input& input, int dt, tl::VideoBuffer& vb)
         }
     }
 
-    return input.keys[27]; // Escape to quit
+    return 0;
 }
 
 int main()
