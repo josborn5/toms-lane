@@ -1,4 +1,5 @@
 #include "tl-window.hpp"
+#include <stdint.h>
 
 // sin/cos provided by JS via import (see index.html)
 extern "C" float sinf(float);
@@ -11,17 +12,15 @@ int myUpdate(const tl::Input& input, int dt, tl::VideoBuffer& vb)
 {
     s_t += dt * 0.001f;
 
-    unsigned char* p = vb.pixels;
+    uint32_t* p = (uint32_t*)vb.pixels;
     for (int y = 0; y < vb.height; ++y) {
         for (int x = 0; x < vb.width; ++x) {
             float dx = (float)(x - input.mouse.x) / vb.width;
             float dy = (float)(y - input.mouse.y) / vb.height;
             float d  = sqrtf(dx*dx + dy*dy);
-            p[0] = (unsigned char)(128 + 127 * sinf(s_t + d * 10.0f));
-            p[1] = (unsigned char)(128 + 127 * sinf(s_t + d * 10.0f + 2.0f));
-            p[2] = (unsigned char)(128 + 127 * cosf(s_t + d * 8.0f));
-            p[3] = 255;
-            p += 4;
+			uint32_t red = (uint32_t)(255.0f * sinf(s_t + d * 10.0f));
+			*p = (red << 24) | 0x000000FF;
+			p += 1;
         }
     }
 
