@@ -1,9 +1,10 @@
 #pragma once
+#include <stdint.h>
 
 namespace tl
 {
     struct VideoBuffer {
-        unsigned char* pixels; // RGBA
+        uint32_t* pixels; // RGBA
         int width;
         int height;
     };
