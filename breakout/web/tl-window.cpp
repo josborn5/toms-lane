@@ -1,7 +1,5 @@
 #include "tl-window.hpp"
 
-#define EXPORT __attribute__((visibility("default"))) extern "C"
-
 namespace tl
 {
     // Static pixel buffer — no malloc needed
@@ -28,15 +26,15 @@ namespace tl
 
 // ---- Exports called by JS ----
 
-EXPORT int tl_tick(int dt)
+extern "C" int tl_tick(int dt)
 {
     if (!tl::s_callback) return 0;
     return tl::s_callback(tl::s_input, dt, tl::s_vb);
 }
 
-EXPORT unsigned int* tl_pixels()  { return tl::s_vb.pixels; }
+extern "C" unsigned int* tl_pixels()  { return tl::s_vb.pixels; }
 
-EXPORT void tl_set_mouse(int x, int y, int left)
+extern "C" void tl_set_mouse(int x, int y, int left)
 {
 	tl::s_input.mouse.x    = x;
 	tl::s_input.mouse.y    = y;
