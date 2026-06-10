@@ -5,9 +5,9 @@
 namespace tl
 {
     // Static pixel buffer — no malloc needed
-    static uint32_t s_pixels[1280 * 960]; // max 1280x960
-    static VideoBuffer   s_vb;
-    static Input         s_input;
+    static unsigned int s_pixels[1280 * 960]; // max 1280x960
+    static VideoBuffer  s_vb;
+    static Input        s_input;
     static UpdateWindowCallback s_callback;
 
     int OpenWindow(const WindowSettings& settings)
@@ -34,9 +34,9 @@ EXPORT int tl_tick(int dt)
     return tl::s_callback(tl::s_input, dt, tl::s_vb);
 }
 
-EXPORT uint32_t* tl_pixels()  { return tl::s_vb.pixels; }
-EXPORT int       tl_width()   { return tl::s_vb.width;  }
-EXPORT int       tl_height()  { return tl::s_vb.height; }
+EXPORT unsigned int* tl_pixels()  { return tl::s_vb.pixels; }
+EXPORT int           tl_width()   { return tl::s_vb.width;  }
+EXPORT int           tl_height()  { return tl::s_vb.height; }
 
 EXPORT void tl_set_mouse(int x, int y, int left)
 {
