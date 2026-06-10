@@ -23,13 +23,10 @@ target_link_options(tl-window PRIVATE
     -nostdlib
     -Wl,--no-entry
     -Wl,--allow-undefined
-    -Wl,--export=main
+    -Wl,--export=tl_main
     -Wl,--export=tl_tick
     -Wl,--export=tl_pixels
-    -Wl,--export=tl_width
-    -Wl,--export=tl_height
     -Wl,--export=tl_set_mouse
-    -Wl,--export=tl_set_key
     -Wl,--export=memory
 )
 

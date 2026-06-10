@@ -21,11 +21,13 @@ WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
   const exp = instance.exports;
 
   // Run main() — this calls OpenWindow + RunWindowUpdateLoop, registering the callback
-  exp.main();
+	const w = 640;
+	const h = 480;
+	exp.tl_main(w, h);
 
   const canvas = document.getElementById('c');
-  canvas.width  = exp.tl_width();
-  canvas.height = exp.tl_height();
+  canvas.width  = w;
+  canvas.height = h;
   const ctx = canvas.getContext('2d');
 
   // Input
@@ -47,8 +49,6 @@ WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
 
     // Blit: view directly into WASM memory, zero copy
     const ptr  = exp.tl_pixels();
-    const w    = exp.tl_width();
-    const h    = exp.tl_height();
     const data = new Uint8ClampedArray(instance.exports.memory.buffer, ptr, w * h * 4);
     ctx.putImageData(new ImageData(data, w, h), 0, 0);
 

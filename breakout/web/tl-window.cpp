@@ -35,8 +35,6 @@ EXPORT int tl_tick(int dt)
 }
 
 EXPORT unsigned int* tl_pixels()  { return tl::s_vb.pixels; }
-EXPORT int           tl_width()   { return tl::s_vb.width;  }
-EXPORT int           tl_height()  { return tl::s_vb.height; }
 
 EXPORT void tl_set_mouse(int x, int y, int left)
 {

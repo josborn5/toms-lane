@@ -26,9 +26,9 @@ int myUpdate(const tl::Input& input, int dt, tl::VideoBuffer& vb)
     return 0;
 }
 
-int main()
+extern "C" int tl_main(int width, int height)
 {
-    tl::WindowSettings settings = { 640, 480, "TL Window" };
+    tl::WindowSettings settings = { width, height, "TL Window" };
     tl::OpenWindow(settings);
     tl::RunWindowUpdateLoop(60, myUpdate);
     return 0;
