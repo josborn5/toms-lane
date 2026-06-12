@@ -9,7 +9,6 @@ project(tl-window)
 
 add_executable(tl-window
     tl-window.cpp
-    main.cpp
 )
 
 target_compile_options(tl-window PRIVATE
