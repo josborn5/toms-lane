@@ -2,15 +2,16 @@
 
 namespace tl
 {
-	struct VideoBuffer {
-		unsigned int* pixels; // RGBA
-		int width;
-		int height;
+	struct RenderBuffer
+	{
+		unsigned int* pixels = nullptr;
+		int width = 0;
+		int height = 0;
 	};
 
 	// Static pixel buffer — no malloc needed
 	static unsigned int s_pixels[1280 * 960]; // max 1280x960
-	static VideoBuffer  s_vb;
+	static RenderBuffer s_vb;
 	static Input        s_input;
 }
 
@@ -21,7 +22,7 @@ extern "C" float sqrtf(float);
 
 static float s_t = 0.0f;
 
-int myUpdate(const tl::Input& input, int dt, tl::VideoBuffer& vb)
+int myUpdate(const tl::Input& input, int dt, tl::RenderBuffer& vb)
 {
     s_t += dt * 0.001f;
 
