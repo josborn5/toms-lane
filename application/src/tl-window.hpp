@@ -2,7 +2,7 @@
 #define TOMS_LANE_WINDOW_HPP
 
 #include "./tl-input.hpp"
-#include "../../platform/lib/software-rendering.hpp"
+#include "../../platform/lib/tl-renderbuffer.hpp"
 
 namespace tl
 {
