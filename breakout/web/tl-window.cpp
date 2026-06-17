@@ -29,7 +29,7 @@ namespace tl
 
 			unsigned int resolve_y_for_bottom_left_origin(unsigned int y) const;
 			unsigned int resolve_y_for_top_left_origin(unsigned int y) const;
-			y_resolve_function _y_resolver;
+			y_resolve_function* _y_resolver = nullptr;
 	};
 
 	// Static pixel buffer — no malloc needed
