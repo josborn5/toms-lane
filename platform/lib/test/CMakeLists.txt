@@ -47,6 +47,7 @@ add_executable(
 )
 target_link_libraries(
 	toms-lane-platform-test
+	tl-assert
 	toms-lane-platform
 )
 

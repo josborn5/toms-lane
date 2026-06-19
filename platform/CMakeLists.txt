@@ -13,6 +13,15 @@ function(generate_platform_asset input_file output_file)
 endfunction()
 generate_platform_asset(font-mono.tlsf font-mono.cpp)
 
+add_library(
+	tl-font STATIC
+	lib/font.cpp
+)
+
+add_library(
+	tl-assert STATIC
+	lib/assert.cpp
+)
 
 add_library(
 	toms-lane-platform STATIC
@@ -20,7 +29,6 @@ add_library(
 	assets/font-mono.cpp
 	lib/font.cpp
 	lib/transform.cpp
-	lib/assert.cpp
 )
 
 message("platform context end")
