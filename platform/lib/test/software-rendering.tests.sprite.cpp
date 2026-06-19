@@ -1,4 +1,4 @@
-#include "../software-rendering.hpp"
+#include "../software-rendering.sprite.hpp"
 #include "../assert.hpp"
 #include <iostream>
 #include <stdio.h>

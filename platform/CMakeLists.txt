@@ -17,11 +17,29 @@ add_library(
 	tl-font STATIC
 	lib/font.cpp
 )
+target_compile_options(
+	tl-font PRIVATE
+	-ffreestanding
+)
+target_link_options(
+	tl-font PRIVATE
+	-nostdlib
+)
 
 add_library(
 	tl-assert STATIC
 	lib/assert.cpp
 )
+target_compile_options(
+	tl-assert PRIVATE
+	-ffreestanding
+)
+target_link_options(
+	tl-assert PRIVATE
+	-nostdlib
+)
+
+
 
 add_library(
 	toms-lane-platform STATIC

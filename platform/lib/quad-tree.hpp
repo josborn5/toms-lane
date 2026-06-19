@@ -1,6 +1,7 @@
 #ifndef TOMS_LANE_QUAD_TREE_H
 #define TOMS_LANE_QUAD_TREE_H
 
+#include "./geometry.hpp"
 #include "./data-structures.hpp"
 
 namespace tl

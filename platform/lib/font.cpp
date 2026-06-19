@@ -1,10 +1,7 @@
 #include "./font.hpp"
-#include "./geometry.hpp"
-#include "./utilities.hpp"
 #include "./software-rendering.hpp"
 #include "./software-rendering.sprite.hpp"
 #include "./generated-assets.hpp"
-#include <stdio.h>
 
 namespace tl
 {
@@ -106,7 +103,6 @@ void font_interface_render_int(
 	float charWidth = (2.0f * firstCharFootprint.halfSize.x) + spaceWidth;
 
 	char character_buffer[12] = {0};
-	sprintf(character_buffer, "%d", number);
 	char* number_chars = character_buffer;
 
 	while (*number_chars)

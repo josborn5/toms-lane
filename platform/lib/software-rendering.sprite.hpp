@@ -3,7 +3,6 @@
 
 #include "./math.hpp"
 #include "./geometry.hpp"
-#include "./memory.hpp"
 #include "./tl-renderbuffer.hpp"
 
 namespace tl

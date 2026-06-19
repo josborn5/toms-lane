@@ -1,5 +1,4 @@
-#include "./software-rendering.hpp"
-#include "./utilities.hpp"
+#include "./software-rendering.sprite.hpp"
 
 namespace tl
 {

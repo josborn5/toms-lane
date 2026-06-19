@@ -1,6 +1,9 @@
 #ifndef TOMS_LANE_TRANSFORM_HPP
 #define TOMS_LANE_TRANSFORM_HPP
 
+#include "./geometry.hpp"
+#include "./math.hpp"
+
 namespace tl
 {
 
