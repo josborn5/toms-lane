@@ -13,18 +13,59 @@ function(generate_platform_asset input_file output_file)
 endfunction()
 generate_platform_asset(font-mono.tlsf font-mono.cpp)
 
-add_library(
+function(add_wasm_library NAME)
+	add_library(${NAME} ${ARGN})
+	target_compile_options(
+		${NAME} PRIVATE
+	    -fno-exceptions
+		-ffreestanding
+	    -nostdlib
+	)
+	target_link_options(
+		${NAME} PRIVATE
+	    --target=wasm32-unknown-unknown
+		-nostdlib
+	    -Wl,--no-entry
+	    -Wl,--allow-undefined
+	)
+endfunction()
+
+function (add_nostdlib_library NAME)
+	add_library(${NAME} ${ARGN})
+	target_compile_options(
+		${NAME} PRIVATE
+	    -fno-exceptions
+		-ffreestanding
+	    -nostdlib
+	)
+	target_link_options(
+		${NAME} PRIVATE
+		-nostdlib
+	)
+endfunction()
+
+add_nostdlib_library(
 	tl-font STATIC
 	lib/font.cpp
+) 
+add_wasm_library(
+	tl-font-web STATIC
+	lib/font.cpp
 )
-target_compile_options(
-	tl-font PRIVATE
-	-ffreestanding
+
+
+add_nostdlib_library(
+	tl-render STATIC
+	lib/software-rendering.cpp
+	lib/software-rendering.sprite.cpp
 )
-target_link_options(
-	tl-font PRIVATE
-	-nostdlib
+add_wasm_library(
+	tl-render-web STATIC
+	lib/software-rendering.cpp
+	lib/software-rendering.sprite.cpp
 )
+
+
 
 add_library(
 	tl-assert STATIC
@@ -47,6 +88,8 @@ add_library(
 	assets/font-mono.cpp
 	lib/font.cpp
 	lib/transform.cpp
+	lib/software-rendering.cpp
+	lib/software-rendering.sprite.cpp
 )
 
 message("platform context end")

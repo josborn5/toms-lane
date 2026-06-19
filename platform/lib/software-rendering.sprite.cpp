@@ -1,3 +1,4 @@
+#include "./software-rendering.hpp"
 #include "./software-rendering.sprite.hpp"
 
 namespace tl

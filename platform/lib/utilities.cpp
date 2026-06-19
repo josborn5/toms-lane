@@ -1,3 +1,5 @@
+#include "./memory.hpp"
+
 namespace tl
 {
 	MemorySpace CarveMemorySpace(uint64_t carveSizeInBytes, MemorySpace& toCarve)
