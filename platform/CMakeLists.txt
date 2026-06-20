@@ -66,6 +66,36 @@ add_wasm_library(
 )
 
 
+add_nostdlib_library(
+	tl-collision STATIC
+	lib/collision.cpp
+)
+add_wasm_library(
+	tl-collision-web STATIC
+	lib/collision.cpp
+)
+
+add_nostdlib_library(
+	tl-bitmap STATIC
+	lib/bitmap.cpp
+)
+add_wasm_library(
+	tl-bitmap-web STATIC
+	lib/bitmap.cpp
+)
+
+
+add_nostdlib_library(
+	tl-quadtree STATIC
+	lib/quad-tree.cpp
+)
+add_wasm_library(
+	tl-quadtree-web STATIC
+	lib/quad-tree.cpp
+)
+
+
+
 
 add_library(
 	tl-assert STATIC

@@ -1,4 +1,5 @@
 #include "./bitmap.hpp"
+#include <stddef.h>
 
 namespace tl
 {

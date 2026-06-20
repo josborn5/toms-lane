@@ -6,6 +6,7 @@ set(CMAKE_CXX_COMPILER clang++)
 
 project(tl-window)
 
+add_subdirectory(../lib ./lib-output)
 
 add_executable(tl-window
     tl-window.cpp
@@ -15,6 +16,12 @@ target_compile_options(tl-window PRIVATE
     --target=wasm32-unknown-unknown
     -fno-exceptions
     -nostdlib
+)
+
+target_link_libraries(
+	tl-window
+	breakout
+	tl-font-web
 )
 
 target_link_options(tl-window PRIVATE
