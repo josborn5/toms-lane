@@ -45,16 +45,6 @@ function (add_nostdlib_library NAME)
 endfunction()
 
 add_nostdlib_library(
-	tl-font STATIC
-	lib/font.cpp
-) 
-add_wasm_library(
-	tl-font-web STATIC
-	lib/font.cpp
-)
-
-
-add_nostdlib_library(
 	tl-render STATIC
 	lib/software-rendering.cpp
 	lib/software-rendering.sprite.cpp
@@ -63,51 +53,6 @@ add_wasm_library(
 	tl-render-web STATIC
 	lib/software-rendering.cpp
 	lib/software-rendering.sprite.cpp
-)
-
-
-add_nostdlib_library(
-	tl-collision STATIC
-	lib/collision.cpp
-)
-add_wasm_library(
-	tl-collision-web STATIC
-	lib/collision.cpp
-)
-
-add_nostdlib_library(
-	tl-bitmap STATIC
-	lib/bitmap.cpp
-)
-add_wasm_library(
-	tl-bitmap-web STATIC
-	lib/bitmap.cpp
-)
-
-
-add_nostdlib_library(
-	tl-quadtree STATIC
-	lib/quad-tree.cpp
-)
-add_wasm_library(
-	tl-quadtree-web STATIC
-	lib/quad-tree.cpp
-)
-
-
-
-
-add_library(
-	tl-assert STATIC
-	lib/assert.cpp
-)
-target_compile_options(
-	tl-assert PRIVATE
-	-ffreestanding
-)
-target_link_options(
-	tl-assert PRIVATE
-	-nostdlib
 )
 
 

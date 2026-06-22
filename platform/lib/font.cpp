@@ -5,51 +5,52 @@
 
 namespace tl
 {
-static const int sprite_count = 94;
-static Sprite ascii_chars[sprite_count];
+	namespace font {
+		static const int sprite_count = 94;
+		static Sprite ascii_chars[sprite_count];
+		static bool initialized = false;
 
-static bool initialized = false;
-
-static void load_sprites(unsigned char source[], int size)
-{
-	int char_cursor = 0;
-	unsigned char parsed_width = source[char_cursor];
-	char_cursor += 2; // increment past the newline
-	unsigned char parsed_height = source[char_cursor];
-	char_cursor += 2; // increment past the newline
-
-	int width = parsed_width - '0';
-	int height = parsed_height - '0';
-
-	for (int i = 0; i < sprite_count; i += 1)
+	static void load_sprites(unsigned char source[], int size)
 	{
-		ascii_chars[i].width = width;
-		ascii_chars[i].height = height;
-		ascii_chars[i].content = (char*)&(source[char_cursor]);
+		int char_cursor = 0;
+		unsigned char parsed_width = source[char_cursor];
+		char_cursor += 2; // increment past the newline
+		unsigned char parsed_height = source[char_cursor];
+		char_cursor += 2; // increment past the newline
 
-		int row_index = 0;
-		while ((char_cursor < size) && (row_index < ascii_chars[i].height))
+		int width = parsed_width - '0';
+		int height = parsed_height - '0';
+
+		for (int i = 0; i < sprite_count; i += 1)
 		{
-			if (source[char_cursor] == '\n')
+			ascii_chars[i].width = width;
+			ascii_chars[i].height = height;
+			ascii_chars[i].content = (char*)&(source[char_cursor]);
+
+			int row_index = 0;
+			while ((char_cursor < size) && (row_index < ascii_chars[i].height))
 			{
-				row_index += 1;
+				if (source[char_cursor] == '\n')
+				{
+					row_index += 1;
+				}
+				char_cursor += 1;
 			}
-			char_cursor += 1;
 		}
 	}
-}
 
-static int font_interface_initialize_from_sprite()
-{
-	load_sprites(font_mono_tlsf, font_mono_tlsf_len);
-	initialized = true;
+	static int font_interface_initialize_from_sprite()
+	{
+		load_sprites(font_mono_tlsf, font_mono_tlsf_len);
+		initialized = true;
 
-	return 0;
+		return 0;
+	}
 }
 
 int font_interface_initialize()
 {
-	return font_interface_initialize_from_sprite();
+	return font::font_interface_initialize_from_sprite();
 }
 
 float font_interface_render_chars(
@@ -59,7 +60,7 @@ float font_interface_render_chars(
 	uint32_t color
 )
 {
-	if (!initialized) return 0.0f;
+	if (!font::initialized) return 0.0f;
 
 	Rect<float> charRect;
 	charRect.halfSize = firstCharFootprint.halfSize;
@@ -73,7 +74,7 @@ float font_interface_render_chars(
 			if (*letterAt >= '!' && *letterAt <= '~')
 			{
 				int ascii_char_index = *letterAt - '!';
-				Sprite renderChar = ascii_chars[ascii_char_index];
+				Sprite renderChar = font::ascii_chars[ascii_char_index];
 				tl::DrawSprite(buffer, renderChar, charRect, color);
 			}
 			else
@@ -94,7 +95,7 @@ void font_interface_render_int(
 	uint32_t color
 )
 {
-	if (!initialized) return;
+	if (!font::initialized) return;
 
 	Rect<float> charRect;
 	charRect.halfSize = firstCharFootprint.halfSize;
@@ -110,13 +111,13 @@ void font_interface_render_int(
 		char digit = *number_chars;
 		if (digit == '-')
 		{
-			Sprite neg_sprite = ascii_chars['-' - '!'];
+			Sprite neg_sprite = font::ascii_chars['-' - '!'];
 			tl::DrawSprite(buffer, neg_sprite, charRect, color);
 		}
 		else
 		{
 			char digitIndex = digit - '!';
-			Sprite charDigit = ascii_chars[digitIndex];
+			Sprite charDigit = font::ascii_chars[digitIndex];
 			tl::DrawSprite(buffer, charDigit, charRect, color);
 		}
 
