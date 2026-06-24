@@ -30,36 +30,37 @@ function(add_wasm_library NAME)
 	)
 endfunction()
 
-function (add_nostdlib_library NAME)
-	add_library(${NAME} ${ARGN})
-	target_compile_options(
-		${NAME} PRIVATE
-	    -fno-exceptions
-		-ffreestanding
-	    -nostdlib
-	)
-	target_link_options(
-		${NAME} PRIVATE
-		-nostdlib
-	)
-endfunction()
-
-add_nostdlib_library(
-	tl-render STATIC
-	lib/software-rendering.sprite.cpp
+add_library(
+	tl-platform-core OBJECT
+	lib/toms-lane-platform.cpp
+	assets/font-mono.cpp
 )
+target_compile_options(
+	tl-platform-core PRIVATE
+    -fno-exceptions
+	-ffreestanding
+    -nostdlib
+)
+target_link_options(
+	tl-platform-core PRIVATE
+	-nostdlib
+)
+
 add_wasm_library(
-	tl-render-web STATIC
-	lib/software-rendering.sprite.cpp
+	tl-platform-core-web OBJECT
+	lib/toms-lane-platform.cpp
+	assets/font-mono.cpp
 )
 
-
+add_library(
+	external-math-functions OBJECT
+	lib/tl-math-functions.cpp
+)
 
 add_library(
 	toms-lane-platform STATIC
-	lib/toms-lane-platform.cpp
-	assets/font-mono.cpp
-	lib/tl-math-functions.cpp
+	$<TARGET_OBJECTS:tl-platform-core>
+	$<TARGET_OBJECTS:external-math-functions>
 )
 
 message("platform context end")
