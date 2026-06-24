@@ -5,4 +5,7 @@
 #include "./utilities.cpp"
 #include "./quad-tree.cpp"
 #include "./bitmap.cpp"
+#include "./transform.cpp"
+#include "./software-rendering.cpp"
+#include "./software-rendering.sprite.cpp"
 

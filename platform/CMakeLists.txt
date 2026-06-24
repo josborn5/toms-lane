@@ -46,12 +46,10 @@ endfunction()
 
 add_nostdlib_library(
 	tl-render STATIC
-	lib/software-rendering.cpp
 	lib/software-rendering.sprite.cpp
 )
 add_wasm_library(
 	tl-render-web STATIC
-	lib/software-rendering.cpp
 	lib/software-rendering.sprite.cpp
 )
 
@@ -61,10 +59,7 @@ add_library(
 	toms-lane-platform STATIC
 	lib/toms-lane-platform.cpp
 	assets/font-mono.cpp
-	lib/font.cpp
-	lib/transform.cpp
-	lib/software-rendering.cpp
-	lib/software-rendering.sprite.cpp
+	lib/tl-math-functions.cpp
 )
 
 message("platform context end")

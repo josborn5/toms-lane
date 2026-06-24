@@ -4,11 +4,13 @@
 namespace tl
 {
 
-static void Transform2DVector(const Vec2<float>& in, const Matrix2x3<float>& transformMatrix, Vec2<float>& out)
-{
-	out.x = (in.x * transformMatrix.m[0][0]) + (in.y * transformMatrix.m[0][1]) + (transformMatrix.m[0][2]);
-	out.y = (in.x * transformMatrix.m[1][0]) + (in.y * transformMatrix.m[1][1]) + (transformMatrix.m[1][2]);
-}
+	namespace transform {
+		static void Transform2DVector(const Vec2<float>& in, const Matrix2x3<float>& transformMatrix, Vec2<float>& out)
+		{
+			out.x = (in.x * transformMatrix.m[0][0]) + (in.y * transformMatrix.m[0][1]) + (transformMatrix.m[0][2]);
+			out.y = (in.x * transformMatrix.m[1][0]) + (in.y * transformMatrix.m[1][1]) + (transformMatrix.m[1][2]);
+		}
+	}
 
 void transform_interface_create_2d_projection_matrix(
 	const Rect<float>& source,
@@ -35,7 +37,7 @@ void transform_interface_project_rect(
 	Rect<float>& target
 )
 {
-	Transform2DVector(source.position, projection, target.position);
+	transform::Transform2DVector(source.position, projection, target.position);
 	target.halfSize.x = projection.m[0][0] * source.halfSize.x;
 	target.halfSize.y = projection.m[1][1] * source.halfSize.y;
 }

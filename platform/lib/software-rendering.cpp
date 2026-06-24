@@ -6,6 +6,75 @@
 
 namespace tl
 {
+	namespace softwarerender {
+		/**
+		 *	|---|---|---|
+		 *	| 0 | 1 | 2 |	pixel ordinals
+		 *	|---|---|---|
+		 *	0   1   2   3	position ordinals
+		 *
+		 * x, y0 & y1 parameters are the pixel and NOT the position ordinals
+		 */
+		static void DrawVerticalLineInPixels(const RenderBuffer &renderBuffer, uint32_t color, int x, int y0, int y1)
+		{
+			int yDiff = y1 - y0;
+			int yDiffMod = (yDiff < 0) ? -1 * yDiff : yDiff;
+			int yIncrement = (yDiff < 0) ? -1 : 1;
+			for (int i = 0; i <= yDiffMod; i += 1)
+			{
+				PlotPixel(renderBuffer, color, x, y0);
+				y0 += yIncrement;
+			}
+		}
+
+		static int ClampInt(int min, int val, int max)
+		{
+			if (val < min) return min;
+			if (val > max) return max;
+			return val;
+		}
+
+		static int ConvertFloatToInt(float floatValue)
+		{
+			return (int)(floatValue + 0.5f);
+		}
+
+		static void DrawCircleInPixels(const RenderBuffer& renderBuffer, uint32_t color, int centerX, int centerY, int radius)
+		{
+			int r2 = radius + radius;
+			int circleX = radius;
+			int circleY = 0;
+			int dY = -2;
+			int dX = r2 + r2 - 4;
+			int decision = r2 - 1;
+
+			while (circleY <= circleX)
+			{
+				PlotPixel(renderBuffer, color, centerX - circleX, centerY - circleY);
+				PlotPixel(renderBuffer, color, centerX - circleX, centerY + circleY);
+				PlotPixel(renderBuffer, color, centerX + circleX, centerY - circleY);
+				PlotPixel(renderBuffer, color, centerX + circleX, centerY + circleY);
+				PlotPixel(renderBuffer, color, centerX - circleY, centerY - circleX);
+				PlotPixel(renderBuffer, color, centerX - circleY, centerY + circleX);
+				PlotPixel(renderBuffer, color, centerX + circleY, centerY - circleX);
+				PlotPixel(renderBuffer, color, centerX + circleY, centerY + circleX);
+
+				decision += dY;
+				dY -= 4;
+
+				circleY += 1; // always increment up
+				if (decision < 0) // decide whether or not to decrement left toward the center of the circle
+				{
+					decision += dX;
+					dX -= 4;
+					circleX -= 1;
+				}
+			}
+		}
+
+
+	}
+
 	unsigned int RenderBuffer::resolve_y_for_bottom_left_origin(unsigned int y) const {
 		return y;
 	}
@@ -109,26 +178,6 @@ namespace tl
 	 *	|---|---|---|
 	 *	0   1   2   3	position ordinals
 	 *
-	 * x, y0 & y1 parameters are the pixel and NOT the position ordinals
-	 */
-	static void DrawVerticalLineInPixels(const RenderBuffer &renderBuffer, uint32_t color, int x, int y0, int y1)
-	{
-		int yDiff = y1 - y0;
-		int yDiffMod = (yDiff < 0) ? -1 * yDiff : yDiff;
-		int yIncrement = (yDiff < 0) ? -1 : 1;
-		for (int i = 0; i <= yDiffMod; i += 1)
-		{
-			PlotPixel(renderBuffer, color, x, y0);
-			y0 += yIncrement;
-		}
-	}
-
-	/**
-	 *	|---|---|---|
-	 *	| 0 | 1 | 2 |	pixel ordinals
-	 *	|---|---|---|
-	 *	0   1   2   3	position ordinals
-	 *
 	 * p0 & p1 are pixel and NOT position ordinals
 	 */
 	// Implemented with Bresenham's algorithm
@@ -146,7 +195,7 @@ namespace tl
 		int xDiff = x1 - x0;
 		if (xDiff == 0)
 		{
-			DrawVerticalLineInPixels(renderBuffer, color, x0, y0, y1);
+			softwarerender::DrawVerticalLineInPixels(renderBuffer, color, x0, y0, y1);
 			return;
 		}
 
@@ -241,18 +290,6 @@ namespace tl
 		DrawLineInPixels(renderBuffer, color, intP0, intP1);
 	}
 
-	static int ClampInt(int min, int val, int max)
-	{
-		if (val < min) return min;
-		if (val > max) return max;
-		return val;
-	}
-
-	static int ConvertFloatToInt(float floatValue)
-	{
-		return (int)(floatValue + 0.5f);
-	}
-
 	void RenderBuffer::fill_rect(uint32_t color, unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1) const {
 		if (x0 > max_width) x0 = max_width;
 		if (x1 > max_width) x1 = max_width;
@@ -271,46 +308,13 @@ namespace tl
 		}
 	}
 
-	static void DrawCircleInPixels(const RenderBuffer& renderBuffer, uint32_t color, int centerX, int centerY, int radius)
-	{
-		int r2 = radius + radius;
-		int circleX = radius;
-		int circleY = 0;
-		int dY = -2;
-		int dX = r2 + r2 - 4;
-		int decision = r2 - 1;
-
-		while (circleY <= circleX)
-		{
-			PlotPixel(renderBuffer, color, centerX - circleX, centerY - circleY);
-			PlotPixel(renderBuffer, color, centerX - circleX, centerY + circleY);
-			PlotPixel(renderBuffer, color, centerX + circleX, centerY - circleY);
-			PlotPixel(renderBuffer, color, centerX + circleX, centerY + circleY);
-			PlotPixel(renderBuffer, color, centerX - circleY, centerY - circleX);
-			PlotPixel(renderBuffer, color, centerX - circleY, centerY + circleX);
-			PlotPixel(renderBuffer, color, centerX + circleY, centerY - circleX);
-			PlotPixel(renderBuffer, color, centerX + circleY, centerY + circleX);
-
-			decision += dY;
-			dY -= 4;
-
-			circleY += 1; // always increment up
-			if (decision < 0) // decide whether or not to decrement left toward the center of the circle
-			{
-				decision += dX;
-				dX -= 4;
-				circleX -= 1;
-			}
-		}
-	}
-
 	void DrawCircle(const RenderBuffer &renderBuffer, uint32_t color, const Vec2<float>& center, float radius)
 	{
-		int centerX = ConvertFloatToInt(center.x);
-		int centerY = ConvertFloatToInt(center.y);
-		int radiusInt = ConvertFloatToInt(radius);
+		int centerX = softwarerender::ConvertFloatToInt(center.x);
+		int centerY = softwarerender::ConvertFloatToInt(center.y);
+		int radiusInt = softwarerender::ConvertFloatToInt(radius);
 
-		DrawCircleInPixels(renderBuffer, color, centerX, centerY, radiusInt);
+		softwarerender::DrawCircleInPixels(renderBuffer, color, centerX, centerY, radiusInt);
 	}
 
 	void DrawRect(const RenderBuffer &renderBuffer, uint32_t color, const Rect<float> &rect)
@@ -319,10 +323,10 @@ namespace tl
 		float x_max = rect.x_max();
 		float y_min = rect.y_min();
 		float y_max = rect.y_max();
-		unsigned int x0 = x_min < 0.0f ? 0 : ConvertFloatToInt(x_min);
-		unsigned int x1 = x_max < 0.0f ? 0 : ConvertFloatToInt(x_max);
-		unsigned int y0 = y_min < 0.0f ? 0 : ConvertFloatToInt(y_min);
-		unsigned int y1 = y_max < 0.0f ? 0 : ConvertFloatToInt(y_max);
+		unsigned int x0 = x_min < 0.0f ? 0 : softwarerender::ConvertFloatToInt(x_min);
+		unsigned int x1 = x_max < 0.0f ? 0 : softwarerender::ConvertFloatToInt(x_max);
+		unsigned int y0 = y_min < 0.0f ? 0 : softwarerender::ConvertFloatToInt(y_min);
+		unsigned int y1 = y_max < 0.0f ? 0 : softwarerender::ConvertFloatToInt(y_max);
 
 		renderBuffer.fill_rect(color, x0, y0, x1, y1);
 	}

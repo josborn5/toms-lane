@@ -1,5 +1,5 @@
 #include "./math.hpp"
-#include <math.h>
+#include "./tl-math-functions.hpp"
 
 namespace tl
 {
@@ -150,21 +150,21 @@ namespace tl
 	template<typename T>
 	float Length(const Vec4<T> &in)
 	{
-		return sqrtf((in.x * in.x) + (in.y * in.y) + (in.z * in.z));
+		return tl::square_root((in.x * in.x) + (in.y * in.y) + (in.z * in.z));
 	}
 	template float Length(const Vec4<float> &in);
 
 	template<typename T>
 	float Length(const Vec3<T> &in)
 	{
-		return sqrtf((in.x * in.x) + (in.y * in.y) + (in.z * in.z));
+		return tl::square_root((in.x * in.x) + (in.y * in.y) + (in.z * in.z));
 	}
 	template float Length(const Vec3<float> &in);
 
 	template<typename T>
 	float Length(const Vec2<T> &in)
 	{
-		return sqrtf((in.x * in.x) + (in.y * in.y));
+		return tl::square_root((in.x * in.x) + (in.y * in.y));
 	}
 	template float Length(const Vec2<float> &in);
 
