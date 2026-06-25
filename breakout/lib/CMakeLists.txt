@@ -41,3 +41,23 @@ target_link_options(
 	-nostdlib
 )
 
+
+add_library(
+	breakout-web STATIC
+	breakout.cpp
+	../assets/brick.cpp
+)
+target_compile_options(
+	breakout-web PRIVATE
+    --target=wasm32-unknown-unknown
+    -fno-exceptions
+	-ffreestanding
+    -nostdlib
+)
+target_link_options(
+	breakout-web PRIVATE
+    --target=wasm32-unknown-unknown
+	-nostdlib
+    -Wl,--no-entry
+    -Wl,--allow-undefined
+)

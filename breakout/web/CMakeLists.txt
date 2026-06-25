@@ -20,7 +20,8 @@ target_compile_options(tl-window PRIVATE
 
 target_link_libraries(
 	tl-window
-	breakout
+	tl-platform-core-web
+	breakout-web
 	tl-font-web
 )
 
