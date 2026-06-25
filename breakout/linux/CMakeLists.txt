@@ -14,6 +14,7 @@ add_executable(
 target_link_libraries(
 	breakout-linux
 	breakout
+	math-functions
 	toms-lane-platform
 	toms-lane-sdl2-application
 )

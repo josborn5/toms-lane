@@ -14,6 +14,7 @@ add_executable(
 target_link_libraries(
 	breakout-win32
 	breakout
+	math-functions
 	toms-lane-platform
 	toms-lane-win32-application
 )
