@@ -21,10 +21,25 @@ endfunction()
 generate_breakout_asset("brick")
 
 add_library(
+	math-functions STATIC
+	math-functions.cpp
+)
+
+add_library(
 	breakout STATIC
 	breakout.cpp
 	render.cpp
 	update_state.cpp
 	../assets/brick.cpp
+)
+target_compile_options(
+	breakout PRIVATE
+    -fno-exceptions
+	-ffreestanding
+    -nostdlib
+)
+target_link_options(
+	breakout PRIVATE
+	-nostdlib
 )
 

@@ -1,7 +1,7 @@
-#include <math.h>
-#include "math.cpp"
-#include "levels.cpp"
-#include "sound.cpp"
+#include "./math-functions.hpp"
+#include "./math.cpp"
+#include "./levels.cpp"
+#include "./sound.cpp"
 #include "./generated-assets.hpp"
 
 
@@ -285,8 +285,8 @@ static void UpdateBallAndBlockState(float dt)
 					// Add a horizontal velocity to allow player to change ball direction
 					float ballAngleFromNormal = GetThetaForBallPlayerCollision(player.position.x, balls[i].position.x, player.halfSize.x);
 					float ballSpeed = tl::Length(balls[i].velocity);
-					newBallState.velocity.x = (float)sinf(ballAngleFromNormal) * ballSpeed;
-					newBallState.velocity.y = (float)cosf(ballAngleFromNormal) * ballSpeed;
+					newBallState.velocity.x = sine(ballAngleFromNormal) * ballSpeed;
+					newBallState.velocity.y = cosine(ballAngleFromNormal) * ballSpeed;
 				}
 				else if (ballBatCollisionResult.collisions[1].side == tl::Left)
 				{

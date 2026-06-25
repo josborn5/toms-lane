@@ -21,9 +21,13 @@ TODO (in no particular order):
 #include "game.hpp"
 #include "update.hpp"
 #include "render.hpp"
-#include <stdlib.h>
+#include <stdint.h>
 
-static tl::MemorySpace application_memory_space;
+namespace breakout {
+	static const unsigned int APPLICATION_MEMORY_SIZE_IN_BYTES = 1024;
+	static uint8_t application_memory[APPLICATION_MEMORY_SIZE_IN_BYTES];
+	static tl::MemorySpace application_memory_space;
+}
 
 int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
@@ -57,10 +61,10 @@ int breakout_main()
 		return windowOpenResult;
 	}
 
-	application_memory_space.sizeInBytes = 1024;
-	application_memory_space.content = malloc(application_memory_space.sizeInBytes);
+	breakout::application_memory_space.sizeInBytes = breakout::APPLICATION_MEMORY_SIZE_IN_BYTES;
+	breakout::application_memory_space.content = breakout::application_memory;
 
-	InitializeGameState(clientX, clientY, application_memory_space);
+	InitializeGameState(clientX, clientY, breakout::application_memory_space);
 
 	return tl::RunWindowUpdateLoop(targetFPS, &updateWindowCallback);
 }
