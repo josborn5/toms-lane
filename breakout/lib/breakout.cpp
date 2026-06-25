@@ -16,6 +16,9 @@ TODO (in no particular order):
 
 */
 
+#include "./render.cpp"
+#include "./update_state.cpp"
+
 #include "../../platform/lib/tl-library.hpp"
 #include "../../application/src/tl-application.hpp"
 #include "game.hpp"

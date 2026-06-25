@@ -1,175 +1,177 @@
 #include "../../application/src/tl-application.hpp"
 #include "./game.hpp"
 
+namespace render {
+	const uint32_t BACKGROUND_COLOR = 0x551100;
+	const uint32_t BALL_COLOR = 0x0000FF;
+	const uint32_t BAT_COLOR = 0x00FF00;
+	const uint32_t TEXT_COLOR = 0xFFFF00;
 
-const uint32_t BACKGROUND_COLOR = 0x551100;
-const uint32_t BALL_COLOR = 0x0000FF;
-const uint32_t BAT_COLOR = 0x00FF00;
-const uint32_t TEXT_COLOR = 0xFFFF00;
+	const float SMALL_FONT_SIZE = 20.0f;
+	const float TITLE_FONT_SIZE = 120.0f;
 
-const float SMALL_FONT_SIZE = 20.0f;
-const float TITLE_FONT_SIZE = 120.0f;
-
-static void color_to_rgb(uint32_t colorRGBA, uint8_t& r, uint8_t& g, uint8_t& b)
-{
-	r = (uint8_t)(colorRGBA >> 16);
-	g = (uint8_t)(colorRGBA >> 8);
-	b = (uint8_t)(colorRGBA >> 0);
-}
-
-static uint32_t rgb_to_color(uint8_t& r, uint8_t& g, uint8_t& b)
-{
-	return (r << 16) | (g << 8) | (b << 0);
-}
-
-static uint32_t rainbowColor = 0xFF0000; // start as red
-static uint8_t rainbowPhase = 0;
-static void updateRainbowColor()
-{
-	uint8_t newR;
-	uint8_t newG;
-	uint8_t newB;
-
-	uint8_t oldR;
-	uint8_t oldG;
-	uint8_t oldB;
-	color_to_rgb(rainbowColor, oldR, oldG, oldB);
-	const uint8_t colorIncrement = 3;
-	switch (rainbowPhase)
+	static void color_to_rgb(uint32_t colorRGBA, uint8_t& r, uint8_t& g, uint8_t& b)
 	{
-		case 0:
-			newR = oldR - colorIncrement;
-			newG = oldG + colorIncrement;
-			newB = 0;
-
-			if (newR == 0)
-			{
-				rainbowPhase += 1;
-			}
-			break;
-		case 1:
-			newR = 0;
-			newG = oldG - colorIncrement;
-			newB = oldB + colorIncrement;
-
-			if (newG == 0)
-			{
-				rainbowPhase += 1;
-			}
-			break;
-		case 2:
-			newR = oldR + colorIncrement;
-			newG = 0;
-			newB = oldB - colorIncrement;
-
-			if (newB == 0)
-			{
-				rainbowPhase = 0;
-			}
-			break;
+		r = (uint8_t)(colorRGBA >> 16);
+		g = (uint8_t)(colorRGBA >> 8);
+		b = (uint8_t)(colorRGBA >> 0);
 	}
-	rainbowColor = rgb_to_color(newR, newG, newB);
-}
 
-static void render_title_screen(const tl::RenderBuffer& render_buffer)
-{
-	tl::ClearScreen(render_buffer, 0x050505);
+	static uint32_t rgb_to_color(uint8_t& r, uint8_t& g, uint8_t& b)
+	{
+		return (r << 16) | (g << 8) | (b << 0);
+	}
 
-	updateRainbowColor();
-	tl::Rect<float> titleCharRect;
-	titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
-	titleCharRect.halfSize = tl::Vec2<float> { 0.5f * TITLE_FONT_SIZE, TITLE_FONT_SIZE };
-	tl::font_interface_render_chars(
-		render_buffer,
-		"BREAKOUT",
-		titleCharRect,
-		rainbowColor
-	);
+	static uint32_t rainbowColor = 0xFF0000; // start as red
+	static uint8_t rainbowPhase = 0;
+	static void updateRainbowColor()
+	{
+		uint8_t newR;
+		uint8_t newG;
+		uint8_t newB;
 
-	tl::Rect<float> smallCharRect;
-	smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f};
-	smallCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
-	tl::font_interface_render_chars(
-		render_buffer,
-		"PRESS S TO START",
-		smallCharRect,
-		TEXT_COLOR
-	);
-}
+		uint8_t oldR;
+		uint8_t oldG;
+		uint8_t oldB;
+		color_to_rgb(rainbowColor, oldR, oldG, oldB);
+		const uint8_t colorIncrement = 3;
+		switch (rainbowPhase)
+		{
+			case 0:
+				newR = oldR - colorIncrement;
+				newG = oldG + colorIncrement;
+				newB = 0;
 
-static void render_start_level_screen(const tl::RenderBuffer& render_buffer)
-{
-	tl::ClearScreen(render_buffer, 0x050505);
+				if (newR == 0)
+				{
+					rainbowPhase += 1;
+				}
+				break;
+			case 1:
+				newR = 0;
+				newG = oldG - colorIncrement;
+				newB = oldB + colorIncrement;
 
-	updateRainbowColor();
-	tl::Rect<float> titleCharRect;
-	titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
-	titleCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
-	tl::font_interface_render_chars(
-		render_buffer,
-		"START LEVEL!",
-		titleCharRect,
-		rainbowColor
-	);
+				if (newG == 0)
+				{
+					rainbowPhase += 1;
+				}
+				break;
+			case 2:
+				newR = oldR + colorIncrement;
+				newG = 0;
+				newB = oldB - colorIncrement;
 
-	tl::Rect<float> smallCharRect;
-	smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f};
-	smallCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
-	tl::font_interface_render_chars(
-		render_buffer,
-		"PRESS SPACE TO START LEVEL",
-		smallCharRect,
-		TEXT_COLOR
-	);
-}
+				if (newB == 0)
+				{
+					rainbowPhase = 0;
+				}
+				break;
+		}
+		rainbowColor = rgb_to_color(newR, newG, newB);
+	}
 
-static void render_game_over_screen(const tl::RenderBuffer& render_buffer)
-{
-	tl::ClearScreen(render_buffer, 0x050505);
+	static void render_title_screen(const tl::RenderBuffer& render_buffer)
+	{
+		tl::ClearScreen(render_buffer, 0x050505);
 
-	updateRainbowColor();
-	tl::Rect<float> titleCharRect;
-	titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
-	titleCharRect.halfSize = tl::Vec2<float> { 0.5f * TITLE_FONT_SIZE, TITLE_FONT_SIZE };
-	tl::font_interface_render_chars(
-		render_buffer,
-		"GAME OVER!",
-		titleCharRect,
-		rainbowColor
-	);
+		updateRainbowColor();
+		tl::Rect<float> titleCharRect;
+		titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
+		titleCharRect.halfSize = tl::Vec2<float> { 0.5f * TITLE_FONT_SIZE, TITLE_FONT_SIZE };
+		tl::font_interface_render_chars(
+			render_buffer,
+			"BREAKOUT",
+			titleCharRect,
+			rainbowColor
+		);
 
-	tl::Rect<float> smallCharRect;
-	smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f};
-	smallCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
-	tl::font_interface_render_chars(
-		render_buffer,
-		"PRESS SPACE",
-		smallCharRect,
-		TEXT_COLOR
-	);
+		tl::Rect<float> smallCharRect;
+		smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f};
+		smallCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
+		tl::font_interface_render_chars(
+			render_buffer,
+			"PRESS S TO START",
+			smallCharRect,
+			TEXT_COLOR
+		);
+	}
+
+	static void render_start_level_screen(const tl::RenderBuffer& render_buffer)
+	{
+		tl::ClearScreen(render_buffer, 0x050505);
+
+		updateRainbowColor();
+		tl::Rect<float> titleCharRect;
+		titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
+		titleCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
+		tl::font_interface_render_chars(
+			render_buffer,
+			"START LEVEL!",
+			titleCharRect,
+			rainbowColor
+		);
+
+		tl::Rect<float> smallCharRect;
+		smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f};
+		smallCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
+		tl::font_interface_render_chars(
+			render_buffer,
+			"PRESS SPACE TO START LEVEL",
+			smallCharRect,
+			TEXT_COLOR
+		);
+	}
+
+	static void render_game_over_screen(const tl::RenderBuffer& render_buffer)
+	{
+		tl::ClearScreen(render_buffer, 0x050505);
+
+		updateRainbowColor();
+		tl::Rect<float> titleCharRect;
+		titleCharRect.position = tl::Vec2<float> { 250.0f, 400.0f};
+		titleCharRect.halfSize = tl::Vec2<float> { 0.5f * TITLE_FONT_SIZE, TITLE_FONT_SIZE };
+		tl::font_interface_render_chars(
+			render_buffer,
+			"GAME OVER!",
+			titleCharRect,
+			rainbowColor
+		);
+
+		tl::Rect<float> smallCharRect;
+		smallCharRect.position = tl::Vec2<float> { 100.0f, 100.0f};
+		smallCharRect.halfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
+		tl::font_interface_render_chars(
+			render_buffer,
+			"PRESS SPACE",
+			smallCharRect,
+			TEXT_COLOR
+		);
+	}
+
 }
 
 void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& state)
 {
 	if (state.mode == ReadyToStart) {
-		render_title_screen(renderBuffer);
+		render::render_title_screen(renderBuffer);
 		return;
 	}
 	else if (state.mode == ReadyToStartLevel) {
-		render_start_level_screen(renderBuffer);
+		render::render_start_level_screen(renderBuffer);
 		return;
 	}
 	else if (state.mode == GameOver) {
-		render_game_over_screen(renderBuffer);
+		render::render_game_over_screen(renderBuffer);
 		return;
 	}
 
 	// background
 	tl::ClearScreen(renderBuffer, 0x000000);
-	tl::DrawRect(renderBuffer, BACKGROUND_COLOR, state.world);
+	tl::DrawRect(renderBuffer, render::BACKGROUND_COLOR, state.world);
 
 	// player
-	tl::DrawRect(renderBuffer, BAT_COLOR, state.player);
+	tl::DrawRect(renderBuffer, render::BAT_COLOR, state.player);
 
 	// blocks & powerups
 	for (int i = 0; i < state.blocks.length(); i += 1)
@@ -194,27 +196,27 @@ void RenderGameState(const tl::RenderBuffer& renderBuffer, const GameState& stat
 		Ball& ball = state.balls.get(i);
 		if (!ball.exists) continue;
 
-		tl::DrawRect(renderBuffer, BALL_COLOR, ball);
+		tl::DrawRect(renderBuffer, render::BALL_COLOR, ball);
 	}
 
 	// Balls, Level & Score
-	tl::Vec2<float> inGameFontHalfSize = tl::Vec2<float> { 0.5f * SMALL_FONT_SIZE, SMALL_FONT_SIZE };
+	tl::Vec2<float> inGameFontHalfSize = tl::Vec2<float> { 0.5f * render::SMALL_FONT_SIZE, render::SMALL_FONT_SIZE };
 	tl::Rect<float> inGameCursor;
 	inGameCursor.halfSize = inGameFontHalfSize;
 	inGameCursor.position = tl::Vec2<float> { 100.0f, 100.0f };
 
-	tl::font_interface_render_chars(renderBuffer, "BALLS", inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_chars(renderBuffer, "BALLS", inGameCursor, render::TEXT_COLOR);
 	inGameCursor.position = tl::Vec2<float> { 250.0f, 100.0f };
-	tl::font_interface_render_int(renderBuffer, state.lives, inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_int(renderBuffer, state.lives, inGameCursor, render::TEXT_COLOR);
 
 	inGameCursor.position = tl::Vec2<float> { 450.0f, 100.0f };
-	tl::font_interface_render_chars(renderBuffer, "LEVEL", inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_chars(renderBuffer, "LEVEL", inGameCursor, render::TEXT_COLOR);
 	inGameCursor.position = tl::Vec2<float> { 600.0f, 100.0f };
-	tl::font_interface_render_int(renderBuffer, state.level, inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_int(renderBuffer, state.level, inGameCursor, render::TEXT_COLOR);
 
 	inGameCursor.position = tl::Vec2<float> { 900.0f, 100.0f };
-	tl::font_interface_render_chars(renderBuffer, "SCORE", inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_chars(renderBuffer, "SCORE", inGameCursor, render::TEXT_COLOR);
 	inGameCursor.position = tl::Vec2<float> { 1050.0f, 100.0f };
-	tl::font_interface_render_int(renderBuffer, state.score, inGameCursor, TEXT_COLOR);
+	tl::font_interface_render_int(renderBuffer, state.score, inGameCursor, render::TEXT_COLOR);
 }
 

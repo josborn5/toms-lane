@@ -28,8 +28,6 @@ add_library(
 add_library(
 	breakout STATIC
 	breakout.cpp
-	render.cpp
-	update_state.cpp
 	../assets/brick.cpp
 )
 target_compile_options(
