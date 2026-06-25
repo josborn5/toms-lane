@@ -17,7 +17,7 @@ function(add_wasm_library NAME)
 	add_library(${NAME} ${ARGN})
 	target_compile_options(
 		${NAME} PRIVATE
-    	--target=wasm32-unknown-unknown
+#    	--target=wasm32-unknown-unknown
 	    -fno-exceptions
 		-ffreestanding
 	    -nostdlib
