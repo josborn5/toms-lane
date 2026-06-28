@@ -13,24 +13,6 @@ function(generate_platform_asset input_file output_file)
 endfunction()
 generate_platform_asset(font-mono.tlsf font-mono.cpp)
 
-function(add_wasm_library NAME)
-	add_library(${NAME} ${ARGN})
-	target_compile_options(
-		${NAME} PRIVATE
-#    	--target=wasm32-unknown-unknown
-	    -fno-exceptions
-		-ffreestanding
-	    -nostdlib
-	)
-	target_link_options(
-		${NAME} PRIVATE
-	    --target=wasm32-unknown-unknown
-		-nostdlib
-	    -Wl,--no-entry
-	    -Wl,--allow-undefined
-	)
-endfunction()
-
 add_library(
 	tl-platform-core OBJECT
 	lib/toms-lane-platform.cpp
@@ -45,12 +27,6 @@ target_compile_options(
 target_link_options(
 	tl-platform-core PRIVATE
 	-nostdlib
-)
-
-add_wasm_library(
-	tl-platform-core-web OBJECT
-	lib/toms-lane-platform.cpp
-	assets/font-mono.cpp
 )
 
 add_library(
