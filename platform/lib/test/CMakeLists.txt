@@ -34,6 +34,7 @@ generate_platform_asset(4x4-1bit.bmp 4x4-1bit.cpp)
 add_executable(
 	toms-lane-platform-test
 	toms-lane-platform.tests.cpp
+	../assert.cpp
 	assets/test.cpp
 	assets/bitmap-4bit.cpp
 	assets/monochrome.cpp

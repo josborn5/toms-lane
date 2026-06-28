@@ -2,7 +2,6 @@
 #include "./geometry.hpp"
 #include "./software-rendering.hpp"
 #include "./utilities.hpp"
-#include <stdio.h>
 
 namespace tl
 {
@@ -162,7 +161,6 @@ namespace tl
 
 		if (end_index > _max_pixel_index) {
 			end_index = _max_pixel_index;
-			printf("end_index out of bounds for y %d frame_buffer_y %d x0 %d x1 %d\n", y, frame_buffer_y, x0, x1);
 		}
 
 		for (int i = start_index; i <= end_index; i += 1)

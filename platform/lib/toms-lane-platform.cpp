@@ -1,4 +1,3 @@
-#include "./assert.cpp"
 #include "./math.cpp"
 #include "./font.cpp"
 #include "./collision.cpp"
