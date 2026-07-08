@@ -1,5 +1,5 @@
 #include "./math.hpp"
-#include "./tl-math-functions.hpp"
+#include "../../std-lib-functions/tl-math-functions.hpp"
 
 namespace tl
 {

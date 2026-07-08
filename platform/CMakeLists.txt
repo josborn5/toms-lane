@@ -14,30 +14,19 @@ endfunction()
 generate_platform_asset(font-mono.tlsf font-mono.cpp)
 
 add_library(
-	tl-platform-core OBJECT
+	toms-lane-platform OBJECT
 	lib/toms-lane-platform.cpp
 	assets/font-mono.cpp
 )
 target_compile_options(
-	tl-platform-core PRIVATE
+	toms-lane-platform PRIVATE
     -fno-exceptions
 	-ffreestanding
     -nostdlib
 )
 target_link_options(
-	tl-platform-core PRIVATE
+	toms-lane-platform PRIVATE
 	-nostdlib
-)
-
-add_library(
-	external-math-functions OBJECT
-	lib/tl-math-functions.cpp
-)
-
-add_library(
-	toms-lane-platform STATIC
-	$<TARGET_OBJECTS:tl-platform-core>
-	$<TARGET_OBJECTS:external-math-functions>
 )
 
 message("platform context end")

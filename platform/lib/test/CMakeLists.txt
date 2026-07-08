@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.28.0)
 project(platform VERSION 1.0)
 
 add_subdirectory(../../ ./cmake-build/platform-output)
-
+add_subdirectory(../../../std-lib-functions ./cmake-build/std-lib-functions-output)
 
 message("platform test context:")
 message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
@@ -49,6 +49,7 @@ add_executable(
 target_link_libraries(
 	toms-lane-platform-test
 	toms-lane-platform
+	external-math-functions
 )
 
 

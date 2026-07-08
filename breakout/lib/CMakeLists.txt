@@ -21,11 +21,6 @@ endfunction()
 generate_breakout_asset("brick")
 
 add_library(
-	math-functions STATIC
-	math-functions.cpp
-)
-
-add_library(
 	breakout STATIC
 	breakout.cpp
 	../assets/brick.cpp

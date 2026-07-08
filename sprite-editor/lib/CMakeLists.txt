@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.28.0)
 project(sprite-editor VERSION 1.0)
 
 add_subdirectory(../../platform ./platform-output)
+add_subdirectory(../../std-lib-functions ./std-lib-functions-output)
 
 add_subdirectory(test)
 
@@ -16,5 +17,10 @@ add_library(
 	transform.cpp
 	operations.cpp
 	utils.cpp
+)
+
+target_link_libraries(
+	sprite-editor
+	external-math-functions
 )
 

@@ -1,5 +1,5 @@
 #include "../../application/src/tl-application.hpp"
-#include "./math-functions.hpp"
+#include "../../std-lib-functions/tl-math-functions.hpp"
 
 struct ADSREnvelope
 {
@@ -107,7 +107,7 @@ static int UpdateSound(const tl::SoundBuffer& soundBuffer)
 			Tone& activeTone = activeTones[j];
 			if (activeTone.sampleCounter < activeTone.envelope.totalDuration)
 			{
-				double toneValue = activeTone.volume * sine(activeTone.sampleCounter * activeTone.toneHz * 2.0 * pi / (double)samplesPerSecond);
+				double toneValue = activeTone.volume * tl::sine(activeTone.sampleCounter * activeTone.toneHz * 2.0 * pi / (double)samplesPerSecond);
 				double envelopeFactor = getEnvelopeAmplitude(activeTone);
 				soundValue += toneValue * envelopeFactor;
 

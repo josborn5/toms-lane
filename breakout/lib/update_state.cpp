@@ -1,4 +1,4 @@
-#include "./math-functions.hpp"
+#include "../../std-lib-functions/tl-math-functions.hpp"
 #include "./math.cpp"
 #include "./levels.cpp"
 #include "./sound.cpp"
@@ -238,8 +238,8 @@ namespace state {
 						// Add a horizontal velocity to allow player to change ball direction
 						float ballAngleFromNormal = GetThetaForBallPlayerCollision(player.position.x, balls[i].position.x, player.halfSize.x);
 						float ballSpeed = tl::Length(balls[i].velocity);
-						newBallState.velocity.x = sine(ballAngleFromNormal) * ballSpeed;
-						newBallState.velocity.y = cosine(ballAngleFromNormal) * ballSpeed;
+						newBallState.velocity.x = tl::sine(ballAngleFromNormal) * ballSpeed;
+						newBallState.velocity.y = tl::cosine(ballAngleFromNormal) * ballSpeed;
 					}
 					else if (ballBatCollisionResult.collisions[1].side == tl::Left)
 					{

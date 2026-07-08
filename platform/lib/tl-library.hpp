@@ -4,6 +4,7 @@
 #include "./math.hpp"
 #include "./geometry.hpp"
 #include "./software-rendering.hpp"
+#include "./software-rendering.sprite.hpp"
 #include "./collision.hpp"
 #include "./data-structures.hpp"
 #include "./quad-tree.hpp"

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.28.0)
 project(obby-1 VERSION 1.0)
 
 add_subdirectory(../../platform platform-output)
+add_subdirectory(../../std-lib-functions ./std-lib-functions-output)
 
 message("obby-1 context:")
 message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
@@ -28,5 +29,10 @@ add_library(
 	../assets/brick.cpp
 	../assets/checkpoint.cpp
 	../assets/player.cpp
+)
+
+target_link_libraries(
+	obby-1
+	external-math-functions
 )
 
