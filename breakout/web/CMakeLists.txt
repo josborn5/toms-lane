@@ -28,7 +28,7 @@ add_executable(tl-window
 
 target_link_libraries(
 	tl-window
-	tl-platform-core
+	toms-lane-platform
 	breakout
 )
 

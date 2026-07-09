@@ -1,4 +1,6 @@
 #include "../lib/breakout.hpp"
+#include "../../std-lib-functions/tl-math-functions.hpp"
+#include <stddef.h>
 
 namespace tl
 {
@@ -13,6 +15,31 @@ extern "C" float sinf(float);
 extern "C" float cosf(float);
 extern "C" float sqrtf(float);
 
+// implement the std-lib-functions module with the JS import functions
+float tl::sine(float input) {
+	return sinf(input);
+}
+
+float tl::cosine(float input) {
+	return cosf(input);
+}
+
+float tl::square_root(float input) {
+	return sqrtf(input);
+}
+
+extern "C" void* memcpy(void* dest, const void* src, size_t n) {
+	unsigned char* d = (unsigned char*)dest;
+	const unsigned char* s = (const unsigned char*)src;
+	while (n--) *d++ = *s++;
+	return dest;
+} 
+
+extern "C" void* memset(void* dest, int c, size_t n) {
+	unsigned char* d = (unsigned char*)(dest);
+	while (n--) *d++ = (unsigned char)(c);
+	return dest;
+} 
 
 // ---- Exports called by JS ----
 
