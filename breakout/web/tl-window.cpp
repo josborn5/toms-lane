@@ -18,6 +18,8 @@ extern "C" float sqrtf(float);
 
 extern "C" void open_window(float width, float height);
 
+extern "C" void console_log(const char* text, unsigned int len);
+
 // implement the std-lib-functions module with the JS import functions
 float tl::sine(float input) {
 	return sinf(input);
@@ -108,6 +110,7 @@ static void process_key_up(tl::Button& button) {
 }
 
 extern "C" void tl_set_keyup(const char* key_code) {
+	console_log("hello!", 6);
 	process_key_up(tl::s_input.buttons[tl::KEY_S]);
 }
 extern "C" void tl_set_keydown(const char* key_code) {
