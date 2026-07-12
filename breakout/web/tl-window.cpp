@@ -48,7 +48,7 @@ extern "C" int tl_tick(int dt)
 	return updateWindowCallback(tl::s_input, dt, tl::s_vb);
 }
 
-extern "C" unsigned int* tl_pixels()  { return tl::s_vb.pixels; }
+extern "C" unsigned int* tl_pixels()  { return tl::s_pixels; }
 
 extern "C" void tl_set_mouse(int x, int y, int left)
 {
@@ -58,9 +58,13 @@ extern "C" void tl_set_mouse(int x, int y, int left)
 
 extern "C" int tl_main(int width, int height)
 {
-	tl::s_vb.pixels = tl::s_pixels;
-	tl::s_vb.width  = width;
-	tl::s_vb.height = height;
+	tl::s_vb.init(
+		tl::s_pixels,
+		width,
+		height,
+		tl::frame_buffer_origin_bottom_left
+	);
+	tl::s_vb.color_format = tl::abgr;
 
 	return 0;
 }

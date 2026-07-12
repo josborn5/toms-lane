@@ -4,57 +4,59 @@
 <meta charset="utf-8">
 <title>TL Window</title>
 <style>
-  body { margin: 0; background: #111; display: flex; align-items: center; justify-content: center; height: 100vh; }
-  canvas { display: block; cursor: crosshair; }
+	body { margin: 0; background: #111; display: flex; align-items: center; justify-content: center; height: 100vh; }
+	canvas { display: block; cursor: crosshair; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <script>
 WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
-  env: {
-    sinf:  (x) => Math.sin(x),
-    cosf:  (x) => Math.cos(x),
-    sqrtf: (x) => Math.sqrt(x),
-  }
+	env: {
+		sinf:  (x) => Math.sin(x),
+		cosf:  (x) => Math.cos(x),
+		sqrtf: (x) => Math.sqrt(x),
+	}
 }).then(({ instance }) => {
-  const exp = instance.exports;
+	const exp = instance.exports;
 
-  // Run main() — this calls OpenWindow + RunWindowUpdateLoop, registering the callback
+	// Run main() — this calls OpenWindow + RunWindowUpdateLoop, registering the callback
 	const w = 640;
 	const h = 480;
 	exp.tl_main(w, h);
 
-  const canvas = document.getElementById('c');
-  canvas.width  = w;
-  canvas.height = h;
-  const ctx = canvas.getContext('2d');
+	const canvas = document.getElementById('c');
+	canvas.width  = w;
+	canvas.height = h;
+	const ctx = canvas.getContext('2d');
+
+	console.log("canvas context", ctx);
 
   // Input
-  canvas.addEventListener('mousemove', e => {
-    const r = canvas.getBoundingClientRect();
-    exp.tl_set_mouse(
-      (e.clientX - r.left) * (canvas.width  / r.width)  | 0,
-      (e.clientY - r.top)  * (canvas.height / r.height) | 0,
-      e.buttons & 1
-    );
-  });
+	canvas.addEventListener('mousemove', e => {
+		const r = canvas.getBoundingClientRect();
+		exp.tl_set_mouse(
+  			(e.clientX - r.left) * (canvas.width  / r.width)  | 0,
+  			(e.clientY - r.top)  * (canvas.height / r.height) | 0,
+  			e.buttons & 1
+		);
+	});
 
-  // Loop
-  let last = 0;
-  function frame(now) {
-    const dt   = last ? (now - last) | 0 : 0;
-    last       = now;
-    const quit = exp.tl_tick(dt);
+	// Loop
+	let last = 0;
+	function frame(now) {
+		const dt   = last ? (now - last) | 0 : 0;
+		last       = now;
+		const quit = exp.tl_tick(dt);
 
-    // Blit: view directly into WASM memory, zero copy
-    const ptr  = exp.tl_pixels();
-    const data = new Uint8ClampedArray(instance.exports.memory.buffer, ptr, w * h * 4);
-    ctx.putImageData(new ImageData(data, w, h), 0, 0);
+		// Blit: view directly into WASM memory, zero copy
+		const ptr  = exp.tl_pixels();
+		const data = new Uint8ClampedArray(exp.memory.buffer, ptr, w * h * 4);
+		ctx.putImageData(new ImageData(data, w, h), 0, 0);
 
-    if (!quit) requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
+		if (!quit) requestAnimationFrame(frame);
+	}
+	requestAnimationFrame(frame);
 });
 </script>
 </body>

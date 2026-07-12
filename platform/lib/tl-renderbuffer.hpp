@@ -5,6 +5,11 @@
 
 namespace tl {
 
+	enum color_channel_format {
+		rgb,
+		abgr
+	};
+
 	enum frame_buffer_origin {
 		frame_buffer_origin_top_left,
 		frame_buffer_origin_bottom_left
@@ -16,9 +21,15 @@ namespace tl {
 		int width = 0;
 		int height = 0;
 		frame_buffer_origin origin = frame_buffer_origin_bottom_left;
+		color_channel_format color_format = rgb;
 		unsigned int max_width = 0;
 
-		void init(uint32_t* pixels, unsigned int width, unsigned int height, frame_buffer_origin origin);
+		void init(
+			uint32_t* pixels,
+			unsigned int width,
+			unsigned int height,
+			frame_buffer_origin origin
+		);
 		uint32_t get_pixel(unsigned int pixel_index) const;
 		unsigned int get_pixel_index(unsigned int x, unsigned int y) const;
 		void plot_pixel(uint32_t color, unsigned int x, unsigned int y) const;

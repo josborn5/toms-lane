@@ -5,6 +5,24 @@
 
 namespace tl
 {
+	static uint32_t format_color(color_channel_format to_format, uint32_t rgb_color) {
+		uint32_t formatted_color = 0;
+		switch (to_format) {
+			case rgb: {
+				formatted_color = rgb_color;
+			} break;
+			case abgr: {
+				uint32_t abgr_red = (0xFF0000 & rgb_color) >> 16;
+				uint32_t abgr_green = 0x00FF00 & rgb_color;
+				uint32_t abgr_blue = (0x0000FF & rgb_color) << 16;
+				uint32_t alpha = 0xFF000000;
+				formatted_color = alpha | abgr_blue | abgr_green | abgr_red;
+			} break;
+		}
+
+		return formatted_color;
+	}
+
 	namespace softwarerender {
 		/**
 		 *	|---|---|---|
@@ -124,8 +142,10 @@ namespace tl
 			return;
 		}
 
+		uint32_t formatted_color = format_color(color_format, color);
+
 		uint32_t* pixel = pixels + pixel_index;
-		*pixel = color;
+		*pixel = formatted_color;
 	}
 
 	/**
@@ -163,9 +183,11 @@ namespace tl
 			end_index = _max_pixel_index;
 		}
 
+		uint32_t formatted_color = format_color(color_format, color);
+
 		for (int i = start_index; i <= end_index; i += 1)
 		{
-			*pixelPointer = color;
+			*pixelPointer = formatted_color;
 			pixelPointer++;
 		}
 	}
@@ -294,13 +316,15 @@ namespace tl
 		if (y0 > _max_height) y0 = _max_height;
 		if (y1 > _max_height) y1 = _max_height;
 
+		uint32_t formatted_color = format_color(color_format, color);
+
 		for (int y = y0; y < y1; y++)
 		{
 			int x0_pixel_index = get_pixel_index(x0, y);
 			uint32_t* pixel = pixels + x0_pixel_index;
 			for (int x = x0; x < x1; x++)
 			{
-				*pixel = color;
+				*pixel = formatted_color;
 				pixel++;
 			}
 		}
@@ -342,8 +366,10 @@ namespace tl
 
 	void RenderBuffer::fill(uint32_t color) const {
 		uint32_t* pixel = pixels;
+
+		uint32_t formatted_color = format_color(color_format, color);
 		for (unsigned int i = 0; i < _max_pixel_index; i += 1) {
-			*pixel = color;
+			*pixel = formatted_color;
 			pixel++;
 		}
 	}
