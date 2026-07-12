@@ -11,10 +11,12 @@ namespace tl
 	static Input        s_input;
 }
 
-// sin/cos provided by JS via import (see index.html)
+// ----- functions imported from JS (see index.html) -----
 extern "C" float sinf(float);
 extern "C" float cosf(float);
 extern "C" float sqrtf(float);
+
+extern "C" void open_window(float width, float height);
 
 // implement the std-lib-functions module with the JS import functions
 float tl::sine(float input) {
@@ -50,12 +52,38 @@ int tl::sound_interface_initialize(
 	int samplesPerSecond,
 	int numberOfChannels
 ) {
-
+	return 0;
 }
 
+int tl::console_interface_open() {
+	return 0;
+}
+int tl::console_interface_write(char* message) {
+	return 0;
+}
 
-int tl::console_interface_open() {}
-int tl::console_interface_write(char* message) {}
+int tl::OpenWindow(const tl::WindowSettings& settings, int& outClientX, int& outClientY) {
+	open_window((float)settings.width, (float)settings.height);
+	outClientX = settings.width;
+	outClientY = settings.height;
+
+	tl::s_vb.init(
+		tl::s_pixels,
+		settings.width,
+		settings.height,
+		tl::frame_buffer_origin_top_left
+	);
+	tl::s_vb.color_format = tl::abgr;
+
+	return 0;
+}
+
+// invoking the update window callback is controlled by the html, so this becomes a no-op
+int tl::RunWindowUpdateLoop(
+	int targetFPS,
+	tl::UpdateWindowCallback updateWindowCallback
+) { return 0; }
+
 
 // ---- Exports called by JS ----
 
@@ -72,17 +100,7 @@ extern "C" void tl_set_mouse(int x, int y, int left)
 	tl::s_input.mouse.y    = y;
 }
 
-extern "C" int tl_main(int width, int height)
+extern "C" int tl_main()
 {
-	tl::s_vb.init(
-		tl::s_pixels,
-		width,
-		height,
-		tl::frame_buffer_origin_top_left
-	);
-	tl::s_vb.color_format = tl::abgr;
-
-	tl::font_interface_initialize();
-
-	return 0;
+	return breakout_main();
 }

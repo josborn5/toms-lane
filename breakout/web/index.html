@@ -11,23 +11,31 @@
 <body>
 <canvas id="c"></canvas>
 <script>
+
+let w = 0;
+let h = 0;
+
+function openWindow(width, height) {
+	w = width;
+	h = height;
+	const canvas = document.getElementById('c');
+	canvas.width  = w;
+	canvas.height = h;
+}
+
 WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
 	env: {
 		sinf:  (x) => Math.sin(x),
 		cosf:  (x) => Math.cos(x),
 		sqrtf: (x) => Math.sqrt(x),
+		open_window: openWindow
 	}
 }).then(({ instance }) => {
 	const exp = instance.exports;
 
-	// Run main() — this calls OpenWindow + RunWindowUpdateLoop, registering the callback
-	const w = 640;
-	const h = 480;
-	exp.tl_main(w, h);
+	exp.tl_main();
 
 	const canvas = document.getElementById('c');
-	canvas.width  = w;
-	canvas.height = h;
 	const ctx = canvas.getContext('2d');
 
 	console.log("canvas context", ctx);

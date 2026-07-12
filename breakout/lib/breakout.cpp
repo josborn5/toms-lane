@@ -59,6 +59,7 @@ int breakout_main()
 
 	int clientX, clientY;
 	int windowOpenResult = tl::OpenWindow(settings, clientX, clientY);
+	return 0;
 	if (windowOpenResult != 0)
 	{
 		return windowOpenResult;
