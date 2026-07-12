@@ -1,5 +1,6 @@
 #include "../lib/breakout.hpp"
 #include "../../std-lib-functions/tl-math-functions.hpp"
+#include "../../application/src/tl-application.hpp"
 #include <stddef.h>
 
 namespace tl
@@ -41,6 +42,21 @@ extern "C" void* memset(void* dest, int c, size_t n) {
 	return dest;
 } 
 
+// ---- Stub out tl-application functions ----
+
+int tl::sound_interface_initialize(
+	UpdateSoundCallback updateSoundCallback,
+	int samplesToProcessPerCallback,
+	int samplesPerSecond,
+	int numberOfChannels
+) {
+
+}
+
+
+int tl::console_interface_open() {}
+int tl::console_interface_write(char* message) {}
+
 // ---- Exports called by JS ----
 
 extern "C" int tl_tick(int dt)
@@ -65,6 +81,8 @@ extern "C" int tl_main(int width, int height)
 		tl::frame_buffer_origin_bottom_left
 	);
 	tl::s_vb.color_format = tl::abgr;
+
+	tl::font_interface_initialize();
 
 	return 0;
 }
