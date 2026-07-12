@@ -78,7 +78,7 @@ extern "C" int tl_main(int width, int height)
 		tl::s_pixels,
 		width,
 		height,
-		tl::frame_buffer_origin_bottom_left
+		tl::frame_buffer_origin_top_left
 	);
 	tl::s_vb.color_format = tl::abgr;
 
