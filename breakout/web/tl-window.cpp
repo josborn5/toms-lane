@@ -100,6 +100,28 @@ extern "C" void tl_set_mouse(int x, int y, int left)
 	tl::s_input.mouse.y    = y;
 }
 
+static void process_key_up(tl::Button& button) {
+	button.isDown = false;
+	button.wasDown = true;
+	button.keyUp = true;
+	button.keyDown = false;
+}
+
+extern "C" void tl_set_keyup(const char* key_code) {
+	process_key_up(tl::s_input.buttons[tl::KEY_S]);
+}
+extern "C" void tl_set_keydown(const char* key_code) {
+	if (*key_code >= 'a' && *key_code <= 'z') {
+		int tl_key_code = tl::KEY_A - 'A' + (int)key_code;
+		tl::s_input.buttons[tl_key_code].isDown = true;
+		tl::s_input.buttons[tl_key_code].wasDown = false;
+		tl::s_input.buttons[tl_key_code].keyUp = false;
+		tl::s_input.buttons[tl_key_code].keyDown = true;
+	}
+}
+
+
+
 extern "C" int tl_main()
 {
 	return breakout_main();

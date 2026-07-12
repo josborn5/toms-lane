@@ -37,6 +37,8 @@ target_link_options(tl-window PRIVATE
     -Wl,--export=tl_tick
     -Wl,--export=tl_pixels
     -Wl,--export=tl_set_mouse
+    -Wl,--export=tl_set_keyup
+    -Wl,--export=tl_set_keydown
     -Wl,--export=memory
 )
 

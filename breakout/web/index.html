@@ -38,16 +38,23 @@ WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
 	const canvas = document.getElementById('c');
 	const ctx = canvas.getContext('2d');
 
+	const canvasRect = canvas.getBoundingClientRect();
+
 	console.log("canvas context", ctx);
 
   // Input
 	canvas.addEventListener('mousemove', e => {
-		const r = canvas.getBoundingClientRect();
 		exp.tl_set_mouse(
-  			(e.clientX - r.left) * (canvas.width  / r.width)  | 0,
-  			(e.clientY - r.top)  * (canvas.height / r.height) | 0,
+  			(e.clientX - canvasRect.left),
+  			(e.clientY - canvasRect.top),
   			e.buttons & 1
 		);
+	});
+	document.addEventListener("keyup", e => {
+		exp.tl_set_keyup(e.key);
+	});
+	document.addEventListener("keydown", e => {
+		exp.tl_set_keydown(e.key);
 	});
 
 	// Loop
