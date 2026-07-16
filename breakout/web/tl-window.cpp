@@ -103,23 +103,53 @@ extern "C" void tl_set_mouse(int x, int y, int left)
 }
 
 static void process_key_up(tl::Button& button) {
-	button.isDown = false;
 	button.wasDown = true;
+	button.isDown = false;
 	button.keyUp = true;
 	button.keyDown = false;
 }
 
-extern "C" void tl_set_keyup(const char* key_code) {
-	console_log("hello!", 6);
-	process_key_up(tl::s_input.buttons[tl::KEY_S]);
+static void process_key_down(tl::Button& button) {
+	button.wasDown = button.isDown;
+	button.isDown = true;
+	button.keyUp = false;
+	button.keyDown = !button.wasDown && button.isDown;
 }
-extern "C" void tl_set_keydown(const char* key_code) {
-	if (*key_code >= 'a' && *key_code <= 'z') {
-		int tl_key_code = tl::KEY_A - 'A' + (int)key_code;
-		tl::s_input.buttons[tl_key_code].isDown = true;
-		tl::s_input.buttons[tl_key_code].wasDown = false;
-		tl::s_input.buttons[tl_key_code].keyUp = false;
-		tl::s_input.buttons[tl_key_code].keyDown = true;
+
+
+
+extern "C" void tl_set_keyup(char key_code) {
+	if (key_code >= 'a' && key_code <= 'z') {
+		char tl_key_index = tl::KEY_A + key_code - 'a';
+		process_key_up(tl::s_input.buttons[tl_key_index]);
+		return;
+	}
+
+	if (key_code >= 'A' && key_code <= 'Z') {
+		char tl_key_index = tl::KEY_A + key_code - 'A';
+		process_key_up(tl::s_input.buttons[tl_key_index]);
+		return;
+	}
+
+	if (key_code == ' ') {
+		process_key_up(tl::s_input.buttons[tl::KEY_SPACE]);
+	}
+}
+extern "C" void tl_set_keydown(char key_code) {
+	if (key_code >= 'a' && key_code <= 'z') {
+		char tl_key_index = tl::KEY_A + key_code - 'a';
+		process_key_down(tl::s_input.buttons[tl_key_index]);
+		return;
+	}
+
+	if (key_code >= 'A' && key_code <= 'Z') {
+		char tl_key_index = tl::KEY_A + key_code - 'A';
+		process_key_down(tl::s_input.buttons[tl_key_index]);
+		return;
+	}
+
+	if (key_code == ' ') {
+		process_key_down(tl::s_input.buttons[tl::KEY_SPACE]);
 	}
 }
 

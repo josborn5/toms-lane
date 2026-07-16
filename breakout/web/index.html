@@ -59,10 +59,18 @@ WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
 		);
 	});
 	document.addEventListener("keyup", e => {
-		exp.tl_set_keyup(e.key);
+		if (e.key >= " " && e.key <= "~" ) {
+			const ascii_value = e.key.charCodeAt(0);
+			console.log("ascii", ascii_value);
+			exp.tl_set_keyup(ascii_value);
+		}
 	});
 	document.addEventListener("keydown", e => {
-		exp.tl_set_keydown(e.key);
+		if (e.key >= " " && e.key <= "~" ) {
+			const ascii_value = e.key.charCodeAt(0);
+			console.log("ascii", ascii_value);
+			exp.tl_set_keydown(ascii_value);
+		}
 	});
 
 	// Loop
