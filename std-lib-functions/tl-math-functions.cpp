@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <math.h>
 
 namespace tl {
@@ -9,5 +10,10 @@ namespace tl {
 	}
 	float cosine(float input) {
 		return cosf(input);
+	}
+
+
+	void put_string(const char* log) {
+		puts(log);
 	}
 }

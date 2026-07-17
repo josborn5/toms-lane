@@ -33,6 +33,16 @@ float tl::square_root(float input) {
 	return sqrtf(input);
 }
 
+void put_string(const char* log) {
+	unsigned int counter = 0;
+	const char* copy = log;
+	while (*copy) {
+		counter += 1;
+		copy += 1;
+	}
+	console_log(log, counter);
+}
+
 extern "C" void* memcpy(void* dest, const void* src, size_t n) {
 	unsigned char* d = (unsigned char*)dest;
 	const unsigned char* s = (const unsigned char*)src;
