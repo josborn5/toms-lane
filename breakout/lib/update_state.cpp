@@ -423,6 +423,7 @@ void InitializeGameState(int clientX, int clientY, tl::MemorySpace application_m
 
 GameState& UpdateGameState(const tl::Input& input, float dt)
 {
+	state::gamestate.counter += 1;
 	if (state::gamestate.mode == ReadyToStart) {
 		if (input.buttons[tl::KEY_S].keyUp)
 		{

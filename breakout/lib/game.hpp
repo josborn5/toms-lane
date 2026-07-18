@@ -64,6 +64,7 @@ struct GameState {
 	Mode mode;
 	tl::rect_tree blockTree;
 	tl::bitmap block_bitmap = { 0 };
+	int counter = 0;
 };
 
 #endif
