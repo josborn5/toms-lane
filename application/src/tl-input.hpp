@@ -59,7 +59,7 @@ namespace tl
 
 		void set_state(bool is_down, bool was_down) {
 			isDown = is_down;
-			was_down = wasDown;
+			wasDown = was_down;
 			keyDown = is_down && !was_down;
 			keyUp = !is_down && was_down;
 		}

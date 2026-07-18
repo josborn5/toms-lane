@@ -33,7 +33,7 @@ float tl::square_root(float input) {
 	return sqrtf(input);
 }
 
-void put_string(const char* log) {
+void tl::put_string(const char* log) {
 	unsigned int counter = 0;
 	const char* copy = log;
 	while (*copy) {
@@ -101,7 +101,9 @@ int tl::RunWindowUpdateLoop(
 
 extern "C" int tl_tick(int dt)
 {
-	return updateWindowCallback(tl::s_input, dt, tl::s_vb);
+	int return_val = updateWindowCallback(tl::s_input, dt, tl::s_vb);
+	tl::s_input.reset();
+	return return_val;
 }
 
 extern "C" unsigned int* tl_pixels()  { return tl::s_pixels; }
@@ -112,54 +114,43 @@ extern "C" void tl_set_mouse(int x, int y, int left)
 	tl::s_input.mouse.y    = y;
 }
 
-static void process_key_up(tl::Button& button) {
-	button.wasDown = true;
-	button.isDown = false;
-	button.keyUp = true;
-	button.keyDown = false;
-}
-
-static void process_key_down(tl::Button& button) {
-	button.wasDown = button.isDown;
-	button.isDown = true;
-	button.keyUp = false;
-	button.keyDown = !button.wasDown && button.isDown;
-}
-
 
 
 extern "C" void tl_set_keyup(char key_code) {
 	if (key_code >= 'a' && key_code <= 'z') {
 		char tl_key_index = tl::KEY_A + key_code - 'a';
-		process_key_up(tl::s_input.buttons[tl_key_index]);
+		tl::s_input.buttons[tl::KEY_S].set_state(false, true);
 		return;
 	}
 
 	if (key_code >= 'A' && key_code <= 'Z') {
 		char tl_key_index = tl::KEY_A + key_code - 'A';
-		process_key_up(tl::s_input.buttons[tl_key_index]);
+		tl::s_input.buttons[tl_key_index].set_state(false, true);
 		return;
 	}
 
 	if (key_code == ' ') {
-		process_key_up(tl::s_input.buttons[tl::KEY_SPACE]);
+		tl::s_input.buttons[tl::KEY_SPACE].set_state(false, true);
 	}
 }
 extern "C" void tl_set_keydown(char key_code) {
 	if (key_code >= 'a' && key_code <= 'z') {
 		char tl_key_index = tl::KEY_A + key_code - 'a';
-		process_key_down(tl::s_input.buttons[tl_key_index]);
+		tl::Button button = tl::s_input.buttons[tl_key_index];
+		button.set_state(true, button.isDown);
 		return;
 	}
 
 	if (key_code >= 'A' && key_code <= 'Z') {
 		char tl_key_index = tl::KEY_A + key_code - 'A';
-		process_key_down(tl::s_input.buttons[tl_key_index]);
+		tl::Button button = tl::s_input.buttons[tl_key_index];
+		button.set_state(true, button.isDown);
 		return;
 	}
 
 	if (key_code == ' ') {
-		process_key_down(tl::s_input.buttons[tl::KEY_SPACE]);
+		tl::Button button = tl::s_input.buttons[tl::KEY_SPACE];
+		button.set_state(true, button.isDown);
 	}
 }
 

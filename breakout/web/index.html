@@ -48,9 +48,7 @@ WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
 
 	const canvasRect = canvas.getBoundingClientRect();
 
-	console.log("canvas context", ctx);
-
-  // Input
+	// Input
 	canvas.addEventListener('mousemove', e => {
 		exp.tl_set_mouse(
   			(e.clientX - canvasRect.left),
@@ -61,14 +59,12 @@ WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
 	document.addEventListener("keyup", e => {
 		if (e.key >= " " && e.key <= "~" ) {
 			const ascii_value = e.key.charCodeAt(0);
-			console.log("ascii", ascii_value);
 			exp.tl_set_keyup(ascii_value);
 		}
 	});
 	document.addEventListener("keydown", e => {
 		if (e.key >= " " && e.key <= "~" ) {
 			const ascii_value = e.key.charCodeAt(0);
-			console.log("ascii", ascii_value);
 			exp.tl_set_keydown(ascii_value);
 		}
 	});
