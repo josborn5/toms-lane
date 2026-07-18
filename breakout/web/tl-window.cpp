@@ -19,6 +19,7 @@ extern "C" float sqrtf(float);
 extern "C" void open_window(float width, float height);
 
 extern "C" void console_log(const char* text, unsigned int len);
+extern "C" void console_log_value(const char* text, unsigned int len, float value);
 
 // implement the std-lib-functions module with the JS import functions
 float tl::sine(float input) {
@@ -41,6 +42,16 @@ void tl::put_string(const char* log) {
 		copy += 1;
 	}
 	console_log(log, counter);
+}
+
+void tl::print_int(const char* log, int num) {
+	unsigned int counter = 0;
+	const char* copy = log;
+	while (*copy) {
+		counter += 1;
+		copy += 1;
+	}
+	console_log_value(log, counter, (float)num);
 }
 
 extern "C" void* memcpy(void* dest, const void* src, size_t n) {

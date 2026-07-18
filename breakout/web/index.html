@@ -29,13 +29,19 @@ function consoleLog(ptr, len) {
 	console.log(new TextDecoder("utf8").decode(bytes));
 }
 
+function consoleLogValue(ptr, len, value) {
+	const bytes = new Uint8ClampedArray(wasmMemory, ptr, len);
+	console.log(new TextDecoder("utf8").decode(bytes), value);
+}
+
 WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
 	env: {
 		sinf:  (x) => Math.sin(x),
 		cosf:  (x) => Math.cos(x),
 		sqrtf: (x) => Math.sqrt(x),
 		open_window: openWindow,
-		console_log: consoleLog
+		console_log: consoleLog,
+		console_log_value: consoleLogValue
 	}
 }).then(({ instance }) => {
 	const exp = instance.exports;

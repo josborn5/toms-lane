@@ -4,4 +4,5 @@ namespace tl {
 	float cosine(float input);
 
 	void put_string(const char* log);
+	void print_int(const char* log, int num);
 }
