@@ -17,20 +17,18 @@ namespace tl {
 		puts(log);
 	}
 	void print_int(const char* log, int num) {
-		char buffer[256];
-		const char* copy = log;
+		char buffer[256] = {0};
 		unsigned int counter = 0;
-		while (*copy && counter < 252) {
-			buffer[counter] = *copy;
-			
+		while (*log && counter < 252) {
+			buffer[counter] = *log;
 			counter += 1 ;
-			copy += 1;
+			log += 1;
 		}
-		buffer[counter] = '{';
 		buffer[counter] = '%';
-		buffer[counter] = 'd';
-		buffer[counter] = '}';
-		buffer[counter] = '\n';
+		buffer[counter + 1] = 'd';
+		buffer[counter + 2] = '\n';
+		buffer[counter + 3] = '\0';
+
 		printf(buffer, num);
 	}
 }
