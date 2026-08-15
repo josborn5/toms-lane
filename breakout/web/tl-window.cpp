@@ -165,9 +165,32 @@ extern "C" void tl_set_keydown(char key_code) {
 	}
 }
 
+extern "C" void __wasm_call_ctors();
 
-
-extern "C" int tl_main()
+extern "C" void tl_main()
 {
-	return breakout_main();
+/*
+ * This call to __wasm_call_ctors is important because of wasm-ld behavior.
+ * Without it, the wasm linker will wrap all exported functions with a '.command_export'.
+ * This command_export re-initializes all variables in c/c++ code.
+ *
+ * The effect of this is any state in c/c++ code is lost between calls.
+ * Calling the same c/c++ function twice from JS will result in each function
+ * behaving as if it were called for the first time ever.
+ *
+ * Calling __wasm_call_ctors() here is detected by the wasm linker and stops it
+ * from wrapping exported functions with '.command_export'.
+ *
+ * The way to detect if command_export wrapping is taking place on an exported
+ * function is to run this command and check its output:
+ *
+ * wasm2wat web/cmake-build/tl-window.wasm | grep -A3 'func $tl_tick'
+ *
+ * This command outputs the 'readable' assembly for the exported tl_tick function
+ * that is defined in the tl-window.wasm file. If command_export is in the assembly,
+ * the wrapping is taking place.
+ */
+	__wasm_call_ctors();
+
+	breakout_main();
 }

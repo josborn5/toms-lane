@@ -9,7 +9,7 @@ namespace tl
 	struct rect_node_value
 	{
 		Rect<float> footprint;
-		void* value;
+		void* value = nullptr;
 	};
 
 	struct rect_node

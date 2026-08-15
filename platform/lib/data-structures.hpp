@@ -159,7 +159,7 @@ namespace tl
 			unsigned int _length = 0;
 			unsigned int _capacity = N;
 			size_t _itemSizeInBytes = sizeof(T);
-			T _content[N];
+			T _content[N] = { 0 };
 
 		public :
 			stack_array()

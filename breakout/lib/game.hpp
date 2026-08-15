@@ -37,30 +37,30 @@ struct Boundary
 struct PowerUp : tl::Rect<float>
 {
 	PowerUpType type;
-	bool exists;		// flips to true when the block containing it is hit. i.e. it's a flag to render the power-up and include it in collision detection
-	int color;
+	bool exists = false;		// flips to true when the block containing it is hit. i.e. it's a flag to render the power-up and include it in collision detection
+	int color = 0;
 };
 
 struct Ball : tl::Rect<float> {
-	bool exists;
+	bool exists = false;
 };
 
 struct Block : tl::Rect<float> {
-	int color;
-	int ogColor;
-	bool exists;
-	PowerUp powerUp;
+	int color = 0;
+	int ogColor = 0;
+	bool exists = false;
+	PowerUp powerUp = { 0 };
 };
 
 struct GameState {
-	tl::Rect<float> player;
-	tl::Rect<float> world;
+	tl::Rect<float> player = { 0 };
+	tl::Rect<float> world = { 0 };
 	tl::array<Ball> balls;
 	tl::array<Block> blocks;
 	bool isCometActive;
-	int level;
-	int score;
-	int lives;
+	int level = 0;
+	int score = 0;
+	int lives = 0;
 	Mode mode;
 	tl::rect_tree blockTree;
 	tl::bitmap block_bitmap = { 0 };

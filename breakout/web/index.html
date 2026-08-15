@@ -90,7 +90,7 @@ WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
 		if (!quit) requestAnimationFrame(frame);
 	}
 	requestAnimationFrame(frame);
-});
+}).catch(console.error);
 </script>
 </body>
 </html>

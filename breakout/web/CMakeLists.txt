@@ -3,21 +3,20 @@ cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
-
 project(tl-window)
 
 # Compile & link options specific for WASM
 add_compile_options(
-   	--target=wasm32-unknown-unknown
+	--target=wasm32-unknown-wasi
     -fno-exceptions
 	-ffreestanding
     -nostdlib
 )
 add_link_options(
-    --target=wasm32-unknown-unknown
+    --target=wasm32-unknown-wasi
 	-nostdlib
-    -Wl,--no-entry
     -Wl,--allow-undefined
+    -Wl,--entry=tl_main
 )
 
 add_subdirectory(../lib ./lib-output)
