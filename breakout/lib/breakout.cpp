@@ -38,8 +38,6 @@ int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::Rende
 
 	GameState state = UpdateGameState(input, dt);
 
-	tl::print_int("counter: ", state.counter);
-
 	RenderGameState(renderBuffer, state);
 
 	return 0;

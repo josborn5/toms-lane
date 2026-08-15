@@ -13,10 +13,10 @@ add_compile_options(
     -nostdlib
 )
 add_link_options(
-    --target=wasm32-unknown-wasi
+    --target=wasm32-unknown-unknown
 	-nostdlib
     -Wl,--allow-undefined
-    -Wl,--entry=tl_main
+    -Wl,--no-entry
 )
 
 add_subdirectory(../lib ./lib-output)
