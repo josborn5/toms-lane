@@ -46,6 +46,55 @@ namespace tl
 
 			return 0;
 		}
+
+		static int font_interface_int_to_char(int input, char* output, unsigned int output_length) {
+			if (output_length < 2) {
+				return -1;
+			}
+
+			if (input == 0) {
+				output[0] = '0';
+				output[1] = '\0';
+			}
+
+			unsigned int cursor_index = 0;
+			unsigned int last_writable_index = output_length - 1; // need to leave space to write a last \0 char
+			int positive_input = input;
+			if (input < 0) {
+				output[cursor_index] = '-';
+				cursor_index += 1;
+
+				if (cursor_index >= last_writable_index) {
+					output[cursor_index] = '\0';
+					return -1;
+				}
+
+				positive_input = -1 * input;
+			}
+
+			char temp[12] = {0};
+			unsigned char temp_index = 0;
+			while (positive_input > 0) {
+				int digit = positive_input % 10;
+				temp[temp_index] = '0' + digit;
+				temp_index += 1;
+				positive_input /= 10;
+			}
+
+			for (int i = temp_index - 1; i >= 0; i -= 1) {
+				output[cursor_index] = temp[i];
+				cursor_index += 1;
+
+				if (cursor_index >= last_writable_index) {
+					output[cursor_index] = '\0';
+					return -1;
+				}
+			}
+
+			
+			output[cursor_index] = '\0';
+			return 0;
+		}
 	}
 
 int font_interface_initialize()
@@ -104,6 +153,8 @@ void font_interface_render_int(
 	float charWidth = (2.0f * firstCharFootprint.halfSize.x) + spaceWidth;
 
 	char character_buffer[12] = {0};
+	font::font_interface_int_to_char(number, character_buffer, 12);
+
 	char* number_chars = character_buffer;
 
 	while (*number_chars)
