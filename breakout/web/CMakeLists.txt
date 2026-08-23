@@ -7,7 +7,7 @@ project(tl-window)
 
 # Compile & link options specific for WASM
 add_compile_options(
-	--target=wasm32-unknown-wasi
+	--target=wasm32-unknown-unknown
     -fno-exceptions
 	-ffreestanding
     -nostdlib
@@ -43,4 +43,6 @@ target_link_options(tl-window PRIVATE
 
 set_target_properties(tl-window PROPERTIES
     SUFFIX ".wasm"
+#	LINK_DEPENDS_USE_LINKER false
 )
+
