@@ -19,5 +19,5 @@ jobs:
         with:
           path: docs
       - uses: actions/deploy-pages@v5
-          id: deployment
+        id: deployment
 
