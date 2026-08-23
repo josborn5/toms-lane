@@ -43,6 +43,6 @@ target_link_options(tl-window PRIVATE
 
 set_target_properties(tl-window PROPERTIES
     SUFFIX ".wasm"
-#	LINK_DEPENDS_USE_LINKER false
+	LINK_DEPENDS_USE_LINKER FALSE
 )
 
