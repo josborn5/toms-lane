@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
+set(CMAKE_C_LINK_DEPENDS_USE_LINKER FALSE)
+set(CMAKE_CXX_LINK_DEPENDS_USE_LINKER FALSE)
+
 project(tl-window)
 
 # Compile & link options specific for WASM
@@ -43,6 +46,5 @@ target_link_options(tl-window PRIVATE
 
 set_target_properties(tl-window PROPERTIES
     SUFFIX ".wasm"
-	LINK_DEPENDS_USE_LINKER FALSE
 )
 
