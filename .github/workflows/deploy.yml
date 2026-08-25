@@ -18,7 +18,7 @@ jobs:
 
       - shell: bash
         working-directory: breakout
-        run: ./web.sh
+        run: ./web-ci.sh
 
       - uses: actions/upload-pages-artifact@v5
         with:
