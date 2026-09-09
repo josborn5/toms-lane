@@ -2,13 +2,12 @@
 #include <string>
 #include <limits>
 #include <math.h>
-#include <stdio.h>
 #include "../../application/src/tl-application.hpp"
 #include "../../platform/lib/tl-library.hpp"
 #include "./render.hpp"
 #include "./file.hpp"
 #include "./camera.hpp"
-#include "./math.hpp"
+ #include "./math.hpp"
 #include "./demo.hpp"
 
 struct cuboid {

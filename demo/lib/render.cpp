@@ -1,5 +1,4 @@
 #include "./render.hpp"
-#include <stdio.h>
 
 
 void DrawTriangleInPixels(const tl::RenderBuffer& renderBuffer, uint32_t color, const tl::Vec2<int>& p0, const tl::Vec2<int>& p1, const tl::Vec2<int>& p2)
@@ -385,11 +384,9 @@ static void swap_vec3_pointers(const tl::Vec3<float>*& a, const tl::Vec3<float>*
 
 static void log_if_point_off_screen(const tl::RenderBuffer& buffer, const tl::Vec3<float> point) {
 	if (point.x > (float)buffer.width) {
-		printf("x value %.2f off screen!\n", point.x);
 	}
 
 	if (point.y > (float)buffer.height) {
-		printf("y value %.2f off screen!\n", point.y);
 	}
 }
 
