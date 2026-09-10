@@ -1,5 +1,5 @@
 #include "./camera.hpp"
-#include <math.h>
+#include "../../std-lib-functions/tl-math-functions.hpp"
 
 static Camera camera;
 
@@ -42,8 +42,8 @@ static void rotate_around_unit_vector(
 ) {
 	// https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
 	float angle_in_radians = deg_to_rad(angle_in_deg);
-	float cos = cosf(angle_in_radians);
-	float sin = sinf(angle_in_radians);
+	float cos = tl::cosine(angle_in_radians);
+	float sin = tl::sine(angle_in_radians);
 
 	matrix3x3 rotation_matrix;
 	rotation_matrix.element[0][0] = (unit_vector_axis.x * unit_vector_axis.x * (1.0f - cos)) + cos;
@@ -153,7 +153,7 @@ static void set_view_frustrum() {
 	tl::Vec3<float> camera_right_unit = get_unit_right(camera);
 
 	float half_horizontal_fov_in_deg = 0.5f * camera.field_of_view_deg;
-	float tan_half_fov = tanf(deg_to_rad(half_horizontal_fov_in_deg));
+	float tan_half_fov = tl::tangent(deg_to_rad(half_horizontal_fov_in_deg));
 
 	tl::Vec3<float> near_plane_center_from_position = MultiplyVectorByScalar(
 		camera.unit_direction,
@@ -204,7 +204,7 @@ static void set_view_frustrum() {
 	camera.view_frustrum.far_plane_normal = tl::Vec3<float>{ -camera.unit_direction.x, -camera.unit_direction.y, -camera.unit_direction.z };
 
 	// fov is in horizontal direction. so vertical fov is going to be different when aspect ratio is not 1.
-	float vertical_half_fov_in_radians = atanf(near_opp_vertical / camera.near_plane);
+	float vertical_half_fov_in_radians = tl::arctangent(near_opp_vertical / camera.near_plane);
 
 	camera.view_frustrum.up_plane_normal = tl::Vec3<float> {
 		-camera.unit_up.x,

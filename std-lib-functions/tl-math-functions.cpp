@@ -14,7 +14,9 @@ namespace tl {
 	float tangent(float input) {
 		return tanf(input);
 	}
-
+	float arctangent(float input_radians) {
+		return atanf(input_radians);
+	}
 
 	void put_string(const char* log) {
 		puts(log);
