@@ -2,6 +2,7 @@ namespace tl {
 	float square_root(float input);
 	float sine(float input);
 	float cosine(float input);
+	float tangent(float input);
 
 	void put_string(const char* log);
 	void print_int(const char* log, int num);

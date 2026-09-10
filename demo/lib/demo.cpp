@@ -1,13 +1,13 @@
 #include <strstream>
 #include <string>
 #include <limits>
-#include <math.h>
 #include "../../application/src/tl-application.hpp"
 #include "../../platform/lib/tl-library.hpp"
+#include "../../std-lib-functions/tl-math-functions.hpp"
 #include "./render.hpp"
 #include "./file.hpp"
 #include "./camera.hpp"
- #include "./math.hpp"
+#include "./math.hpp"
 #include "./demo.hpp"
 
 struct cuboid {
@@ -69,7 +69,7 @@ static void get_camera_plane_map_coords(tl::Vec2<float>& near_1, tl::Vec2<float>
 			camera.unit_direction
 		)
 	);
-	float tan_half_fov = tanf(deg_to_rad(0.5f * camera.field_of_view_deg));
+	float tan_half_fov = tl::tangent(deg_to_rad(0.5f * camera.field_of_view_deg));
 
 	float near_opp = camera.near_plane * tan_half_fov;
 	tl::Vec3<float> near_plane_left = camera.view_frustrum.near_top_left_corner_position;

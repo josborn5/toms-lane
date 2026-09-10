@@ -11,6 +11,9 @@ namespace tl {
 	float cosine(float input) {
 		return cosf(input);
 	}
+	float tangent(float input) {
+		return tanf(input);
+	}
 
 
 	void put_string(const char* log) {
