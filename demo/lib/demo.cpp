@@ -1,6 +1,5 @@
 #include <strstream>
 #include <string>
-#include <limits>
 #include "../../application/src/tl-application.hpp"
 #include "../../platform/lib/tl-library.hpp"
 #include "../../std-lib-functions/tl-math-functions.hpp"
@@ -51,7 +50,7 @@ static unsigned int viewed_triangle_count = 0;
 static void depth_buffer_clear() {
 	for (unsigned int i = 0; i < pixel_count; i += 1) {
 		// smaller z is closer
-		depth_array[i] = std::numeric_limits<float>::max();
+		depth_array[i] = 3.4e38; // roughly FLT_MAX value from limits.h
 	}
 }
 
