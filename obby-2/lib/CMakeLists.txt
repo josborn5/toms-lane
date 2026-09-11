@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.28.0)
 project(obby-2 VERSION 1.0)
 
 add_subdirectory(../../platform ./platform-output)
+add_subdirectory(../../std-lib-functions ./std-lib-functions-output)
 
 message("obby-2 context:")
 message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
@@ -26,5 +27,10 @@ add_library(
 	obby-2.cpp
 	../assets/background.cpp
 	../assets/obby2-player.cpp
+)
+
+target_link_libraries(
+	obby-2
+	external-math-functions
 )
 
