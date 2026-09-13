@@ -1,0 +1,52 @@
+cmake_minimum_required(VERSION 3.20)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_CXX_COMPILER clang++)
+
+project(tl-window)
+
+set(CMAKE_C_LINK_DEPENDS_USE_LINKER FALSE)
+set(CMAKE_CXX_LINK_DEPENDS_USE_LINKER FALSE)
+
+
+# Compile & link options specific for WASM
+add_compile_options(
+	--target=wasm32-unknown-unknown
+    -fno-exceptions
+	-ffreestanding
+    -nostdlib
+)
+add_link_options(
+    --target=wasm32-unknown-unknown
+	-nostdlib
+    -Wl,--allow-undefined
+    -Wl,--no-entry
+)
+
+add_subdirectory(../lib ./lib-output)
+
+add_executable(tl-window
+    tl-window.cpp
+)
+
+target_link_libraries(
+	tl-window
+	toms-lane-platform
+	obby-2
+)
+
+target_link_options(tl-window PRIVATE
+    -Wl,--export=tl_main
+    -Wl,--export=tl_tick
+    -Wl,--export=tl_pixels
+    -Wl,--export=tl_set_mouse
+    -Wl,--export=tl_set_keyup
+    -Wl,--export=tl_set_keydown
+    -Wl,--export=memory
+)
+
+set_target_properties(tl-window PROPERTIES
+    SUFFIX ".wasm"
+)
+

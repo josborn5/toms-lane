@@ -21,10 +21,10 @@ tl::bitmap playerBitmaps;
 
 */
 
-bool initialized = false;
-bool isPaused = false;
+static bool initialized = false;
+static bool isPaused = false;
 
-int Initialize()
+static int Initialize()
 {
 	load_bitmap_from_embed(
 		background_bmp,
@@ -41,7 +41,7 @@ int Initialize()
 	return 0;
 }
 
-int UpdateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
+static int UpdateAndRender(const tl::Input& input, const tl::RenderBuffer& renderBuffer, float dt)
 {
 	tl::Vec2<int> pixelRect;
 	pixelRect.x = renderBuffer.width;
