@@ -129,7 +129,7 @@ extern "C" void tl_set_keyup(int tl_key_code) {
 	tl::s_input.buttons[tl_key_code].set_state(false, true);
 }
 extern "C" void tl_set_keydown(int tl_key_code) {
-	tl::Button button = tl::s_input.buttons[tl_key_code];
+	tl::Button& button = tl::s_input.buttons[tl_key_code];
 	button.set_state(true, button.wasDown);
 }
 
