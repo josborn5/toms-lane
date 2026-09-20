@@ -161,8 +161,13 @@ WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
 	// Loop
 	let last = 0;
 	function frame(now) {
-		const dt   = last ? (now - last) | 0 : 0;
-		last       = now;
+		if (now === last) {
+			console.log("dropping frame!");
+			requestAnimationFrame(frame);
+			return
+		}
+		const dt = now - last;
+		last = now;
 		const quit = exp.tl_tick(dt);
 
 		// Blit: view directly into WASM memory, zero copy
