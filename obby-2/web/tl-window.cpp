@@ -125,42 +125,12 @@ extern "C" void tl_set_mouse(int x, int y, int left)
 
 
 
-extern "C" void tl_set_keyup(char key_code) {
-	if (key_code >= 'a' && key_code <= 'z') {
-		char tl_key_index = tl::KEY_A + key_code - 'a';
-		tl::s_input.buttons[tl::KEY_S].set_state(false, true);
-		return;
-	}
-
-	if (key_code >= 'A' && key_code <= 'Z') {
-		char tl_key_index = tl::KEY_A + key_code - 'A';
-		tl::s_input.buttons[tl_key_index].set_state(false, true);
-		return;
-	}
-
-	if (key_code == ' ') {
-		tl::s_input.buttons[tl::KEY_SPACE].set_state(false, true);
-	}
+extern "C" void tl_set_keyup(int tl_key_code) {
+	tl::s_input.buttons[tl_key_code].set_state(false, true);
 }
-extern "C" void tl_set_keydown(char key_code) {
-	if (key_code >= 'a' && key_code <= 'z') {
-		char tl_key_index = tl::KEY_A + key_code - 'a';
-		tl::Button button = tl::s_input.buttons[tl_key_index];
-		button.set_state(true, button.isDown);
-		return;
-	}
-
-	if (key_code >= 'A' && key_code <= 'Z') {
-		char tl_key_index = tl::KEY_A + key_code - 'A';
-		tl::Button button = tl::s_input.buttons[tl_key_index];
-		button.set_state(true, button.isDown);
-		return;
-	}
-
-	if (key_code == ' ') {
-		tl::Button button = tl::s_input.buttons[tl::KEY_SPACE];
-		button.set_state(true, button.isDown);
-	}
+extern "C" void tl_set_keydown(int tl_key_code) {
+	tl::Button button = tl::s_input.buttons[tl_key_code];
+	button.set_state(true, button.wasDown);
 }
 
 extern "C" void __wasm_call_ctors();

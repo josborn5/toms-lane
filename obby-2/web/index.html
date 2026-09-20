@@ -54,6 +54,87 @@ WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
 
 	const canvasRect = canvas.getBoundingClientRect();
 
+	// https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values
+	const keyBoardEventKeyToTlKeyMap = {
+		"Enter":		0,
+		" ":			1,
+		"Shift":		2,
+		"Tab":			3,
+		"Control":		4,
+		"Alt":			5, // no differentiation between left alt & right alt
+		"Escape":		7,
+		"ArrowUp":		8,
+		"ArrowDown":	9,
+		"ArrowLeft":	10,
+		"ArrowRight":	11,
+		"PageUp":		12,
+		"PageDown":		13,
+		"End":			14,
+		"Home":			15,
+		"A":			16,
+		"a":			16,
+		"B":			17,
+		"b":			17,
+		"C":			18,
+		"c":			18,
+		"D":			19,
+		"d":			19,
+		"E":			20,
+		"e":			20,
+		"F":			21,
+		"f":			21,
+		"G":			22,
+		"g":			22,
+		"H":			23,
+		"h":			23,
+		"I":			24,
+		"i":			24,
+		"J":			25,
+		"j":			25,
+		"K":			26,
+		"k":			26,
+		"L":			27,
+		"l":			27,
+		"M":			28,
+		"m":			28,
+		"N":			29,
+		"n":			29,
+		"O":			30,
+		"o":			30,
+		"P":			31,
+		"p":			31,
+		"Q":			32,
+		"q":			32,
+		"R":			33,
+		"r":			33,
+		"S":			34,
+		"s":			34,
+		"T":			35,
+		"t":			35,
+		"U":			36,
+		"u":			36,
+		"V":			37,
+		"v":			37,
+		"W":			38,
+		"w":			38,
+		"X":			39,
+		"x":			39,
+		"Y":			40,
+		"y":			40,
+		"Z":			41,
+		"z":			41,
+		"0":			42,
+		"1":			43,
+		"2":			44,
+		"3":			45,
+		"4":			46,
+		"5":			47,
+		"6":			48,
+		"7":			49,
+		"8":			50,
+		"9":			51
+	};
+
 	// Input
 	canvas.addEventListener('mousemove', e => {
 		exp.tl_set_mouse(
@@ -63,15 +144,17 @@ WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
 		);
 	});
 	document.addEventListener("keyup", e => {
-		if (e.key >= " " && e.key <= "~" ) {
-			const ascii_value = e.key.charCodeAt(0);
-			exp.tl_set_keyup(ascii_value);
+		const tl_key_code = keyBoardEventKeyToTlKeyMap[e.key];
+
+		if (tl_key_code !== undefined) {
+			exp.tl_set_keyup(tl_key_code);
 		}
 	});
 	document.addEventListener("keydown", e => {
-		if (e.key >= " " && e.key <= "~" ) {
-			const ascii_value = e.key.charCodeAt(0);
-			exp.tl_set_keydown(ascii_value);
+		const tl_key_code = keyBoardEventKeyToTlKeyMap[e.key];
+
+		if (tl_key_code !== undefined) {
+			exp.tl_set_keydown(tl_key_code);
 		}
 	});
 
