@@ -1,5 +1,6 @@
 #include "../../platform/lib/tl-library.hpp"
 #include "./platform_common.hpp"
+#include "../../std-lib-functions/tl-math-functions.hpp"
 
 static bool IsDown(const tl::Input &input, int button)
 {
@@ -189,6 +190,10 @@ tl::Vec2<float> GetPlayerVelocity(
 	newVelocity.y = (player.movement.inJump && !player.movement.wasInJump)
 		? jumpSpeed
 		: player.velocity.y + (gravity / dt);
+
+	if (player.movement.inJump) {
+		tl::print_int("player y velocity: ", (int)newVelocity.y);
+	}
 
 	return newVelocity;
 }
