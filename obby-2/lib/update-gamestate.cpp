@@ -82,7 +82,6 @@ static int InitializeGameState(GameState *state, const tl::Vec2<int> &pixelRect,
 
 	state->player.movement.availableJumps = 2;
 	state->player.movement.inJump = false;
-	state->player.movement.wasInJump = false;
 	state->player.sprite = islaSprite;
 
 	if (state->lives <= 0)

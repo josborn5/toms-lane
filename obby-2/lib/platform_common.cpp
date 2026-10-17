@@ -155,22 +155,15 @@ void UpdatePlayerMovement(
 	player.right = IsDown(input, tl::KEY_RIGHT);
 
 	bool spaceIsDown = IsDown(input, tl::KEY_SPACE);
-	if (spaceIsDown &&
-		!player.inJump &&
-		!player.wasInJump &&
+
+	if (input.buttons[tl::KEY_SPACE].keyDown &&
 		player.availableJumps > 0
 	) {
 		player.inJump = true;
 		player.availableJumps -= 1;
 	}
-	else if (player.inJump && !player.wasInJump)
-	{
-		player.wasInJump = true;
-	}
-	else if (!spaceIsDown && player.inJump)
-	{
+	else {
 		player.inJump = false;
-		player.wasInJump = false;
 	}
 }
 
@@ -187,12 +180,12 @@ tl::Vec2<float> GetPlayerVelocity(
 		: (player.movement.right)
 			? horizontalSpeed
 			: 0.0f;
-	newVelocity.y = (player.movement.inJump && !player.movement.wasInJump)
+	newVelocity.y = (player.movement.inJump)
 		? jumpSpeed
 		: player.velocity.y + (gravity / dt);
 
 	if (player.movement.inJump) {
-		tl::print_int("player y velocity: ", (int)newVelocity.y);
+		tl::print_int("player in jump: ", (int)newVelocity.y);
 	}
 
 	return newVelocity;

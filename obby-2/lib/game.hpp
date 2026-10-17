@@ -50,7 +50,6 @@ struct PlayerMovement
 	bool right;
 	int availableJumps;
 	bool inJump;
-	bool wasInJump;
 };
 
 struct Player : tl::Rect<float>

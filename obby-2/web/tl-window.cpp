@@ -123,8 +123,6 @@ extern "C" void tl_set_mouse(int x, int y, int left)
 	tl::s_input.mouse.y    = y;
 }
 
-
-
 extern "C" void tl_set_keyup(int tl_key_code) {
 	tl::s_input.buttons[tl_key_code].set_state(false, true);
 }
