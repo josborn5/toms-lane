@@ -114,11 +114,13 @@ static void UpdateGameState(
 	// Translate input to player movement
 	UpdatePlayerMovement(input, state->player.movement);
 
+	const float gravity = -10000.0f;
+
 	// Calculate velocity to apply to current player state
 	tl::Vec2<float> currentPlayerVelocity = GetPlayerVelocity(
 		400.0f, // horizontalSpeed
 		1600.0f, // jumpSpeed
-		-3.0f, // gravity
+		gravity,
 		state->player,
 		dt
 	);
@@ -160,8 +162,7 @@ static void UpdateGameState(
 
 	tl::Vec2<float> newPlayerPosition;
 	newPlayerPosition.x = currentPlayerState.position.x + (currentPlayerState.velocity.x * dt);
-	newPlayerPosition.y = currentPlayerState.position.y + (currentPlayerState.velocity.y * dt);
-
+	newPlayerPosition.y = currentPlayerState.position.y + (currentPlayerState.velocity.y * dt); // + (0.5 * gravity * dt * dt);
 	newPlayerPosition.x = ClampFloat(minPlayerX, newPlayerPosition.x, maxPlayerX);
 	newPlayerPosition.y = ClampFloat(minPlayerY, newPlayerPosition.y, maxPlayerY);
 

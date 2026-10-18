@@ -182,11 +182,7 @@ tl::Vec2<float> GetPlayerVelocity(
 			: 0.0f;
 	newVelocity.y = (player.movement.inJump)
 		? jumpSpeed
-		: player.velocity.y + (gravity / dt);
-
-	if (player.movement.inJump) {
-		tl::print_int("player in jump: ", (int)newVelocity.y);
-	}
+		: player.velocity.y + (gravity * dt);
 
 	return newVelocity;
 }
