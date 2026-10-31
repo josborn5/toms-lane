@@ -127,7 +127,7 @@ CollisionResult CheckCollisionBetweenMovingRects(
 	return result;
 }
 
-CollisionResult CheckCollisionBetweenRects(
+CollisionResult obby_CheckCollisionBetweenRects(
 	const Rect<float> &aRect,
 	const Rect<float> &bRect,
 	float maxCollisionTime
