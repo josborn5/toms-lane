@@ -1,19 +1,43 @@
-using namespace tl;
+namespace col {
+
+enum CollisionSide
+{
+	None,
+	Top,
+	Right,
+	Bottom,
+	Left,
+	Overlap
+};
+
+struct Collision
+{
+	CollisionSide side = None;
+	tl::Vec2<float> position;
+};
+
+struct CollisionResult
+{
+	float time = 0.0f;
+	Collision collisions[2];
+	Collision a;
+	Collision b;
+};
 
 CollisionResult CheckStaticAndMovingRectCollision(
-	const Rect<float>& staticRect,
-	const Rect<float>& movingRect,
-	const Vec2<float>& movingRectVelocityB,
+	const tl::Rect<float>& staticRect,
+	const tl::Rect<float>& movingRect,
+	const tl::Vec2<float>& movingRectVelocityB,
 	float maxCollisionTime
 )
 {
-	tl::CollisionResult result = CollisionResult();
+	CollisionResult result = CollisionResult();
 	float blockTopSide = staticRect.y_max() + movingRect.halfSize.y;
 	float blockBottomSide = staticRect.y_min() - movingRect.halfSize.y;
 	float blockLeftSide = staticRect.x_min() - movingRect.halfSize.x;
 	float blockRightSide = staticRect.x_max() + movingRect.halfSize.x;
 
-	const Vec2<float>& movingRectPositionB = movingRect.position;
+	const tl::Vec2<float>& movingRectPositionB = movingRect.position;
 
 	// Check for overlap
 	if (movingRectPositionB.y < blockTopSide && movingRectPositionB.y > blockBottomSide
@@ -34,12 +58,12 @@ CollisionResult CheckStaticAndMovingRectCollision(
 	if (movingRectVelocityB.y > 0.0f)
 	{
 		yCollisionCheckPos = blockBottomSide;
-		verCollisionResult = tl::Bottom;
+		verCollisionResult = Bottom;
 	}
 	if (movingRectVelocityB.y < 0.0f)
 	{
 		yCollisionCheckPos = blockTopSide;
-		verCollisionResult = tl::Top;
+		verCollisionResult = Top;
 	}
 
 	if (movingRectVelocityB.y != 0.0f)
@@ -48,13 +72,18 @@ CollisionResult CheckStaticAndMovingRectCollision(
 		if (tYCollision >= 0.0f)
 		{
 			float ballXPosAtCollision = movingRectPositionB.x + (tYCollision * movingRectVelocityB.x);
-			// TODO: if (ballXPosAtCollision == blockLeftSide || ballXPosAtCollision || blockRightSide) AND (movingRectVelocityB.x == 0.0f) then the moving rect is 'brushing' against the static rect. Need to convey that in the return value somehow.
+			// TODO: if (
+			// 			ballXPosAtCollision == blockLeftSide
+			// 			|| ballXPosAtCollision || blockRightSide)
+			// 				AND (movingRectVelocityB.x == 0.0f)
+			// then the moving rect is 'brushing' against the static rect.
+			// Need to convey that in the return value somehow.
 			if (ballXPosAtCollision > blockLeftSide && ballXPosAtCollision < blockRightSide && tYCollision <= maxCollisionTime)
 			{
 				result.time = tYCollision;
-				Collision movingRect = Collision();
+				Collision movingRect;
 				movingRect.side = verCollisionResult;
-				movingRect.position = Vec2<float> { ballXPosAtCollision, yCollisionCheckPos };
+				movingRect.position = tl::Vec2<float> { ballXPosAtCollision, yCollisionCheckPos };
 				result.collisions[0] = movingRect;
 				result.a = movingRect;
 			}
@@ -67,12 +96,12 @@ CollisionResult CheckStaticAndMovingRectCollision(
 	if (movingRectVelocityB.x > 0.0f)
 	{
 		xCollisionCheckPos = blockLeftSide;
-		horCollisionResult = tl::Left;
+		horCollisionResult = Left;
 	}
 	if (movingRectVelocityB.x < 0.0f)
 	{
 		xCollisionCheckPos = blockRightSide;
-		horCollisionResult = tl::Right;
+		horCollisionResult = Right;
 	}
 
 	if (movingRectVelocityB.x != 0.0f)
@@ -87,7 +116,7 @@ CollisionResult CheckStaticAndMovingRectCollision(
 				result.time = tXCollision;
 				Collision movingRect = Collision();
 				movingRect.side = horCollisionResult;
-				movingRect.position = Vec2<float> { xCollisionCheckPos, ballYPosAtCollision };
+				movingRect.position = tl::Vec2<float> { xCollisionCheckPos, ballYPosAtCollision };
 				result.collisions[0] = movingRect;
 			}
 		}
@@ -95,4 +124,5 @@ CollisionResult CheckStaticAndMovingRectCollision(
 	return result;
 }
 
+}
 

@@ -208,7 +208,7 @@ BlockCollisionResult GetBlockCollisionResult(
 	{
 		Block block = blocks[j];
 		if (!block.exists) continue;
-		tl::CollisionResult collisionResult = CheckStaticAndMovingRectCollision(
+		col::CollisionResult collisionResult = col::CheckStaticAndMovingRectCollision(
 			block,
 			currentPlayerState,
 			currentPlayerState.velocity,
