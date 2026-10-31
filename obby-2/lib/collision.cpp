@@ -127,18 +127,4 @@ CollisionResult CheckCollisionBetweenMovingRects(
 	return result;
 }
 
-CollisionResult obby_CheckCollisionBetweenRects(
-	const Rect<float> &aRect,
-	const Rect<float> &bRect,
-	float maxCollisionTime
-)
-{
-	return CheckCollisionBetweenMovingRects(
-		aRect,
-		aRect.velocity,
-		bRect,
-		bRect.velocity,
-		maxCollisionTime
-	);
-}
 

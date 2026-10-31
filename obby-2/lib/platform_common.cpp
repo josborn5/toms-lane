@@ -208,9 +208,11 @@ BlockCollisionResult GetBlockCollisionResult(
 	{
 		Block block = blocks[j];
 		if (!block.exists) continue;
-		tl::CollisionResult collisionResult = obby_CheckCollisionBetweenRects(
+		tl::CollisionResult collisionResult = CheckCollisionBetweenMovingRects(
 			block,
+			tl::Vec2<float>{ 0.0f, 0.0f },
 			currentPlayerState,
+			currentPlayerState.velocity,
 			minCollisionTime
 		);
 		
