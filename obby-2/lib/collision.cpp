@@ -20,8 +20,6 @@ struct CollisionResult
 {
 	float time = 0.0f;
 	Collision collisions[2];
-	Collision a;
-	Collision b;
 };
 
 CollisionResult CheckStaticAndMovingRectCollision(
@@ -48,7 +46,6 @@ CollisionResult CheckStaticAndMovingRectCollision(
 		movingRect.side = Overlap;
 		movingRect.position = movingRectPositionB;
 		result.collisions[0] = movingRect;
-		result.a = movingRect;
 	}
 
 	// Check for collision between block side and ball path
@@ -85,7 +82,6 @@ CollisionResult CheckStaticAndMovingRectCollision(
 				movingRect.side = verCollisionResult;
 				movingRect.position = tl::Vec2<float> { ballXPosAtCollision, yCollisionCheckPos };
 				result.collisions[0] = movingRect;
-				result.a = movingRect;
 			}
 		}
 	}
