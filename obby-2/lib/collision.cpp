@@ -3,10 +3,8 @@ namespace col {
 enum CollisionSide
 {
 	None,
-	Top,
-	Right,
-	Bottom,
-	Left,
+	PositiveFace,
+	NegativeFace,
 	Overlap
 };
 
@@ -60,12 +58,12 @@ CollisionResult CheckStaticAndMovingRectCollision(
 	if (movingRectVelocityB.y > 0.0f)
 	{
 		yCollisionCheckPos = blockBottomSide;
-		verCollisionResult = Bottom;
+		verCollisionResult = NegativeFace;
 	}
 	if (movingRectVelocityB.y < 0.0f)
 	{
 		yCollisionCheckPos = blockTopSide;
-		verCollisionResult = Top;
+		verCollisionResult = PositiveFace;
 	}
 
 	if (movingRectVelocityB.y != 0.0f)
@@ -97,12 +95,12 @@ CollisionResult CheckStaticAndMovingRectCollision(
 	if (movingRectVelocityB.x > 0.0f)
 	{
 		xCollisionCheckPos = blockLeftSide;
-		horCollisionResult = Left;
+		horCollisionResult = NegativeFace;
 	}
 	if (movingRectVelocityB.x < 0.0f)
 	{
 		xCollisionCheckPos = blockRightSide;
-		horCollisionResult = Right;
+		horCollisionResult = PositiveFace;
 	}
 
 	if (movingRectVelocityB.x != 0.0f)

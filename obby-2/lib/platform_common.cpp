@@ -215,7 +215,7 @@ BlockCollisionResult GetBlockCollisionResult(
 			minCollisionTime
 		);
 
-		if (collisionResult.y_collision.side == col::Top) {
+		if (collisionResult.y_collision.side == col::PositiveFace) { // Top
 			minCollisionTime = collisionResult.time;
 
 			UpdateBlockCollision(
@@ -228,7 +228,7 @@ BlockCollisionResult GetBlockCollisionResult(
 
 		switch (collisionResult.x_collision.side)
 		{
-			case col::Right:
+			case col::PositiveFace: // Right
 				minCollisionTime = collisionResult.time;
 
 				UpdateBlockCollision(
@@ -238,7 +238,7 @@ BlockCollisionResult GetBlockCollisionResult(
 					minCollisionTime
 				);
 				break;
-			case col::Left:
+			case col::NegativeFace: // Left
 				minCollisionTime = collisionResult.time;
 
 				UpdateBlockCollision(
