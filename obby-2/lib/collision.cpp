@@ -95,36 +95,4 @@ CollisionResult CheckStaticAndMovingRectCollision(
 	return result;
 }
 
-CollisionResult CheckCollisionBetweenMovingRects(
-	const Rect<float>& aRect,
-	const Vec2<float>& aVelocity,
-	const Rect<float>& bRect,
-	const Vec2<float>& bVelocity,
-	float maxCollisionTime
-)
-{
-	// Calculate relative velocity as between a & b, as if a is static. i.e. the origin of our co-ordinate system is fixed to whereever object 'a' is
-	Vec2<float> aRelBVelocity = SubtractVectors(bVelocity, aVelocity);
-
-	CollisionResult result = CheckStaticAndMovingRectCollision(
-		aRect,
-		bRect,
-		aRelBVelocity,
-		maxCollisionTime
-	);
-
-	// 'a' is the static rect and 'b' is the moving rect in the relative coordinate system, so shift the result so that
-	// collisions[0] refers to the 'a' rect
-	// collisions[1] refers to the 'b' rect
-	result.collisions[1] = result.collisions[0];
-	// Translate bPosition from the co-ordinate system whose origin is on 'a' back to the static co-ordinate system
-	if (result.collisions[1].side != None)
-	{
-		Vec2<float> deltaAPosition = MultiplyVectorByScalar(aVelocity, result.time);
-		result.collisions[1].position = AddVectors(deltaAPosition, result.collisions[1].position);
-		// TODO: set the collision result for aRect in result.collisions[0]!
-	}
-	return result;
-}
-
 

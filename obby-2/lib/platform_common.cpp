@@ -208,13 +208,13 @@ BlockCollisionResult GetBlockCollisionResult(
 	{
 		Block block = blocks[j];
 		if (!block.exists) continue;
-		tl::CollisionResult collisionResult = CheckCollisionBetweenMovingRects(
+		tl::CollisionResult collisionResult = CheckStaticAndMovingRectCollision(
 			block,
-			tl::Vec2<float>{ 0.0f, 0.0f },
 			currentPlayerState,
 			currentPlayerState.velocity,
 			minCollisionTime
 		);
+		collisionResult.collisions[1] = collisionResult.collisions[0];
 		
 		switch (collisionResult.collisions[1].side)
 		{
