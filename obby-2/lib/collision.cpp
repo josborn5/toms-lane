@@ -12,14 +12,15 @@ enum CollisionSide
 
 struct Collision
 {
-	CollisionSide side = None;
+	CollisionSide side = None; // relative to static
 	tl::Vec2<float> position;
 };
 
 struct CollisionResult
 {
 	float time = 0.0f;
-	Collision collisions[2];
+	Collision x_collision;
+	Collision y_collision;
 };
 
 CollisionResult CheckStaticAndMovingRectCollision(
@@ -29,7 +30,7 @@ CollisionResult CheckStaticAndMovingRectCollision(
 	float maxCollisionTime
 )
 {
-	CollisionResult result = CollisionResult();
+	CollisionResult result;
 	float blockTopSide = staticRect.y_max() + movingRect.halfSize.y;
 	float blockBottomSide = staticRect.y_min() - movingRect.halfSize.y;
 	float blockLeftSide = staticRect.x_min() - movingRect.halfSize.x;
@@ -42,10 +43,14 @@ CollisionResult CheckStaticAndMovingRectCollision(
 		&& movingRectPositionB.x < blockRightSide && movingRectPositionB.x > blockRightSide)
 	{
 		result.time = 0.0f;
-		Collision movingRect = Collision();
+		Collision movingRect;
 		movingRect.side = Overlap;
 		movingRect.position = movingRectPositionB;
-		result.collisions[0] = movingRect;
+		result.x_collision.position = movingRectPositionB;
+		result.x_collision.side = Overlap;
+		result.y_collision.position = movingRectPositionB;
+		result.y_collision.side = Overlap;
+		return result;
 	}
 
 	// Check for collision between block side and ball path
@@ -81,7 +86,7 @@ CollisionResult CheckStaticAndMovingRectCollision(
 				Collision movingRect;
 				movingRect.side = verCollisionResult;
 				movingRect.position = tl::Vec2<float> { ballXPosAtCollision, yCollisionCheckPos };
-				result.collisions[0] = movingRect;
+				result.y_collision = movingRect;
 			}
 		}
 	}
@@ -110,10 +115,10 @@ CollisionResult CheckStaticAndMovingRectCollision(
 			if (ballYPosAtCollision > blockBottomSide && ballYPosAtCollision < blockTopSide && tXCollision <= maxCollisionTime)
 			{
 				result.time = tXCollision;
-				Collision movingRect = Collision();
+				Collision movingRect;
 				movingRect.side = horCollisionResult;
 				movingRect.position = tl::Vec2<float> { xCollisionCheckPos, ballYPosAtCollision };
-				result.collisions[0] = movingRect;
+				result.x_collision = movingRect;
 			}
 		}
 	}

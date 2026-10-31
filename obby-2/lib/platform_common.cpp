@@ -214,37 +214,37 @@ BlockCollisionResult GetBlockCollisionResult(
 			currentPlayerState.velocity,
 			minCollisionTime
 		);
-		collisionResult.collisions[1] = collisionResult.collisions[0];
-		
-		switch (collisionResult.collisions[1].side)
-		{
-			case tl::Top:
-				minCollisionTime = collisionResult.time;
 
-				UpdateBlockCollision(
-					south,
-					block,
-					collisionResult.collisions[1].position,
-					minCollisionTime
-				);
-				break;
-			case tl::Right:
+		if (collisionResult.y_collision.side == col::Top) {
+			minCollisionTime = collisionResult.time;
+
+			UpdateBlockCollision(
+				south,
+				block,
+				collisionResult.y_collision.position,
+				minCollisionTime
+			);
+		}
+
+		switch (collisionResult.x_collision.side)
+		{
+			case col::Right:
 				minCollisionTime = collisionResult.time;
 
 				UpdateBlockCollision(
 					west,
 					block,
-					collisionResult.collisions[1].position,
+					collisionResult.x_collision.position,
 					minCollisionTime
 				);
 				break;
-			case tl::Left:
+			case col::Left:
 				minCollisionTime = collisionResult.time;
 
 				UpdateBlockCollision(
 					east,
 					block,
-					collisionResult.collisions[1].position,
+					collisionResult.x_collision.position,
 					minCollisionTime
 				);
 				break;
