@@ -2,6 +2,8 @@
 #include "./platform_common.hpp"
 #include "../../std-lib-functions/tl-math-functions.hpp"
 
+#include "./collision.cpp"
+
 static bool IsDown(const tl::Input &input, int button)
 {
 	bool isDown = input.buttons[button].isDown;
@@ -206,7 +208,11 @@ BlockCollisionResult GetBlockCollisionResult(
 	{
 		Block block = blocks[j];
 		if (!block.exists) continue;
-		tl::CollisionResult collisionResult = tl::CheckCollisionBetweenRects(block, currentPlayerState, minCollisionTime);
+		tl::CollisionResult collisionResult = tl::CheckCollisionBetweenRects(
+			block,
+			currentPlayerState,
+			minCollisionTime
+		);
 		
 		switch (collisionResult.collisions[1].side)
 		{
