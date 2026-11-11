@@ -189,6 +189,23 @@ tl::Vec2<float> GetPlayerVelocity(
 	return newVelocity;
 }
 
+struct linear_movement_context {
+	float start_position = 0.0f;
+	float velocity = 0.0f;
+};
+
+float linear_position_func(float time, const void* context) {
+	const linear_movement_context* typed_context = static_cast<const linear_movement_context*>(context);
+	float position = typed_context->start_position + (time * typed_context->velocity);
+	return position;
+}
+
+float linear_time_func(float position, const void* context) {
+	const linear_movement_context* typed_context = static_cast<const linear_movement_context*>(context);
+	float time = (position - typed_context->start_position) / typed_context->velocity;
+	return time;
+}
+
 BlockCollisionResult GetBlockCollisionResult(
 	Block* blocks,
 	tl::Rect<float>& currentPlayerState,
@@ -204,13 +221,28 @@ BlockCollisionResult GetBlockCollisionResult(
 
 	float minCollisionTime = dt;
 
+	linear_movement_context vertical_context = {
+		currentPlayerState.position.y,
+		currentPlayerState.velocity.y
+	};
+
+	linear_movement_context horizontal_context = {
+		currentPlayerState.position.x,
+		currentPlayerState.velocity.x
+	};
+
 	for (int j = 0; j < blockCount; j += 1)
 	{
 		Block block = blocks[j];
 		if (!block.exists) continue;
+
 		col::CollisionResult collisionResult = col::CheckStaticAndMovingRectCollision(
 			block,
 			currentPlayerState,
+			&linear_position_func,
+			&linear_time_func,
+			&vertical_context,
+			&horizontal_context,
 			currentPlayerState.velocity,
 			minCollisionTime
 		);
