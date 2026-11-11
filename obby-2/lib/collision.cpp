@@ -21,6 +21,26 @@ struct CollisionResult
 	Collision y_collision;
 };
 
+typedef float (*position_func)(float t, void* context);
+typedef float (*time_func)(float position, void* context);
+
+struct linear_movement_context {
+	float start_position = 0.0f;
+	float velocity = 0.0f;
+};
+
+float linear_position_func(float time, void* context) {
+	linear_movement_context* typed_context = static_cast<linear_movement_context*>(context);
+	float position = typed_context->start_position + (time * typed_context->velocity);
+	return position;
+}
+
+float linear_time_func(float position, void* context) {
+	linear_movement_context* typed_context = static_cast<linear_movement_context*>(context);
+	float time = (position - typed_context->start_position) / typed_context->velocity;
+	return time;
+}
+
 CollisionResult CheckStaticAndMovingRectCollision(
 	const tl::Rect<float>& staticRect,
 	const tl::Rect<float>& movingRect,
@@ -66,12 +86,22 @@ CollisionResult CheckStaticAndMovingRectCollision(
 		verCollisionResult = PositiveFace;
 	}
 
+	linear_movement_context vertical_context = {
+		movingRectPositionB.y,
+		movingRectVelocityB.y
+	};
+
+	linear_movement_context horizontal_context = {
+		movingRectPositionB.x,
+		movingRectVelocityB.x
+	};
+
 	if (movingRectVelocityB.y != 0.0f)
 	{
-		float tYCollision = (yCollisionCheckPos - movingRectPositionB.y) / movingRectVelocityB.y;
+		float tYCollision = linear_time_func(yCollisionCheckPos, &vertical_context);
 		if (tYCollision >= 0.0f)
 		{
-			float ballXPosAtCollision = movingRectPositionB.x + (tYCollision * movingRectVelocityB.x);
+			float ballXPosAtCollision = linear_position_func(tYCollision, &horizontal_context);
 			// TODO: if (
 			// 			ballXPosAtCollision == blockLeftSide
 			// 			|| ballXPosAtCollision || blockRightSide)
@@ -105,10 +135,10 @@ CollisionResult CheckStaticAndMovingRectCollision(
 
 	if (movingRectVelocityB.x != 0.0f)
 	{
-		float tXCollision = (xCollisionCheckPos - movingRectPositionB.x) / movingRectVelocityB.x;
+		float tXCollision = linear_time_func(xCollisionCheckPos, &horizontal_context);
 		if (tXCollision >= 0.0f)
 		{
-			float ballYPosAtCollision = movingRectPositionB.y + (tXCollision * movingRectVelocityB.y);
+			float ballYPosAtCollision = linear_position_func(tXCollision, &vertical_context);
 			// TODO: if (ballYPosAtCollision == blockBottomSide || ballYPosAtCollision == blockTopSide) AND (movingRectVelocityB.y == 0.0f) then the moving rect is 'brushing' against the static rect. Need to convey that in the return value somehow.
 			if (ballYPosAtCollision > blockBottomSide && ballYPosAtCollision < blockTopSide && tXCollision <= maxCollisionTime)
 			{
