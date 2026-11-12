@@ -18,15 +18,21 @@ jobs:
 
       - shell: bash
         working-directory: breakout
-        run: ./web-ci.sh
+        run: |
+          ./web-ci.sh
+
+          cp -r ./web ../site/breakout
 
       - shell: bash
         working-directory: obby-2
-        run: ./web-ci.sh
+        run: |
+          ./web-ci.sh
+
+          cp -r ./web ../site/obby-2
 
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: breakout/web
+          path: site
 
       - uses: actions/deploy-pages@v5
         id: deployment
