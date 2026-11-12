@@ -20,6 +20,10 @@ jobs:
         working-directory: breakout
         run: ./web-ci.sh
 
+      - shell: bash
+        working-directory: obby-2
+        run: ./web-ci.sh
+
       - uses: actions/upload-pages-artifact@v5
         with:
           path: breakout/web
