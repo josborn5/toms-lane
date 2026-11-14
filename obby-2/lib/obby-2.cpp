@@ -63,7 +63,7 @@ static int Initialize()
 
 	tl::bitmap_interface_initialize_for_render(
 		playerBitmaps,
-		background_render_data_target,
+		player_render_data_target,
 		player_render_data
 	);
 
