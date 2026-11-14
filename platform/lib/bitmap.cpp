@@ -379,9 +379,7 @@ int bitmap_interface_initialize_for_render(
 		for (int i = 0; i < render_data.width; i += 1)
 		{
 			uint32_t pixel_color = (*colorResolutionFunction)(bitmap, i, j);
-			tl::print_int("color ", pixel_color);
 			*write_pointer = pixel_color;
-			tl::print_int("color pointer", *write_pointer);
 			write_pointer++;
 		}
 	}
@@ -452,9 +450,7 @@ int bitmap_interface_render_data(
 		{
 			unsigned int bitmap_pixel_index = pixel_start_row_index + (unsigned int)bitmap_x;
 
-			tl::print_int("bitmap_pixel_index ", bitmap_pixel_index);
-
-			uint32_t pixel_color = 0xFF0000; // *(render_data.pixel_data + bitmap_pixel_index);
+			uint32_t pixel_color = *(render_data.pixel_data + bitmap_pixel_index);
 
 			buffer.plot_pixel(pixel_color, i, j);
 
