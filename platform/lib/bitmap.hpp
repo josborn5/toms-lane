@@ -66,6 +66,18 @@ namespace tl
 		uint8_t* content = nullptr; // number of bits per pixel can vary
 	};
 
+	struct bitmap_render_data {
+		unsigned int width = 0;
+		unsigned int height = 0;
+		uint32_t* pixel_data = nullptr;
+	};
+
+	int bitmap_interface_initialize_for_render(
+		const bitmap& bitmap,
+		const MemorySpace& render_data_target,
+		bitmap_render_data& render_data
+	);
+
 	int bitmap_interface_initialize(
 		bitmap& bitmap,
 		const MemorySpace& bitmap_data);
@@ -84,6 +96,12 @@ namespace tl
 		const RenderBuffer& buffer,
 		const bitmap& bitmap,
 		const Rect<float>& footprint);
+
+	int bitmap_interface_render_data(
+		const RenderBuffer& buffer,
+		const bitmap_render_data& render_data,
+		const Rect<float>& footprint
+	);
 
 	int bitmap_interface_write(
 		const bitmap& bitmap,

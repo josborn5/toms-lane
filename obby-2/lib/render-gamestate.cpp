@@ -179,18 +179,18 @@ static void RenderGameState(const tl::RenderBuffer &renderBuffer, const GameStat
 	tl::Rect<float> backgroundRect;
 	backgroundRect.halfSize = { 640.0f, 360.0f };
 	backgroundRect.position = { 640.0f, 360.0f };
-	tl::bitmap_interface_render(
+	tl::bitmap_interface_render_data(
 		renderBuffer,
-		backgroundBitmap,
+		background_render_data,
 		backgroundRect
 	);
 
 	RenderBlocks(renderBuffer, state);
 	
 	// player
-	tl::bitmap_interface_render(
+	tl::bitmap_interface_render_data(
 		renderBuffer,
-		playerBitmaps,
+		player_render_data,
 		state.player
 	);
 }

@@ -354,6 +354,41 @@ int bitmap_interface_get_pixel_data(
 	return 0;
 }
 
+int bitmap_interface_initialize_for_render(
+	const bitmap& bitmap,
+	const MemorySpace& render_data_target,
+	bitmap_render_data& render_data
+) {
+	if (bitmap.file_header.fileType == 0) return -1;
+
+	GetColorFromBitmap* colorResolutionFunction = resolve_color_resolution_function(bitmap.dibs_header);
+	if (colorResolutionFunction == nullptr) return -2;
+
+	unsigned int bitmap_pixel_count = bitmap.dibs_header.width * bitmap.dibs_header.height;
+	size_t needed_bitmap_storage_in_bytes = bitmap_pixel_count * sizeof(uint32_t);
+
+	if (needed_bitmap_storage_in_bytes > render_data_target.sizeInBytes) return -3;
+
+	uint32_t* write_pointer = (uint32_t*)render_data_target.content;
+	render_data.width = bitmap.dibs_header.width;
+	render_data.height = bitmap.dibs_header.height;
+	render_data.pixel_data = (uint32_t*)render_data_target.content;
+
+	for (int j = 0; j < render_data.height; j += 1)
+	{
+		for (int i = 0; i < render_data.width; i += 1)
+		{
+			uint32_t pixel_color = (*colorResolutionFunction)(bitmap, i, j);
+			tl::print_int("color ", pixel_color);
+			*write_pointer = pixel_color;
+			tl::print_int("color pointer", *write_pointer);
+			write_pointer++;
+		}
+	}
+	return 0;
+}
+
+
 int bitmap_interface_render(
 	const RenderBuffer& buffer,
 	const bitmap& bitmap,
@@ -387,6 +422,48 @@ int bitmap_interface_render(
 	return 0;
 }
 
+int bitmap_interface_render_data(
+	const RenderBuffer& buffer,
+	const bitmap_render_data& render_data,
+	const Rect<float>& footprint
+) {
+	Vec2<float> bitmapIncrement = {
+		0.5f * (float)render_data.width / footprint.halfSize.x,
+		0.5f * (float)render_data.height / footprint.halfSize.y
+	};
+	Vec2<int> bitmapStart = {
+		(int)footprint.x_min(),
+		(int)footprint.y_min()
+	};
+	Vec2<int> bitmapEnd = {
+		(int)footprint.x_max(),
+		(int)footprint.y_max()
+	};
+	Vec2<int> start, end;
+	resolve_bitmap_render_bounds(buffer, bitmapStart, bitmapEnd, start, end);
+
+	float bitmap_y = 0.0f;
+	for (int j = start.y; j < end.y; j += 1)
+	{
+		unsigned int pixel_start_row_index = render_data.width * (unsigned int)bitmap_y;
+
+		float bitmap_x = 0.0f;
+		for (int i = start.x; i < end.x; i += 1)
+		{
+			unsigned int bitmap_pixel_index = pixel_start_row_index + (unsigned int)bitmap_x;
+
+			tl::print_int("bitmap_pixel_index ", bitmap_pixel_index);
+
+			uint32_t pixel_color = 0xFF0000; // *(render_data.pixel_data + bitmap_pixel_index);
+
+			buffer.plot_pixel(pixel_color, i, j);
+
+			bitmap_x += bitmapIncrement.x;
+		}
+		bitmap_y += bitmapIncrement.y;
+	}
+	return 0;
+}
 
 int bitmap_interface_render(
 	const RenderBuffer& buffer,

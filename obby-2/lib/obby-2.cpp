@@ -8,6 +8,15 @@
 tl::bitmap backgroundBitmap;
 tl::bitmap playerBitmaps;
 
+const unsigned int background_pixel_cache_count = 128;
+uint32_t background_pixel_data[background_pixel_cache_count];
+
+const unsigned int player_pixel_cache_count = 256;
+uint32_t player_pixel_data[player_pixel_cache_count];
+
+tl::bitmap_render_data background_render_data;
+tl::bitmap_render_data player_render_data;
+
 #include "./render-gamestate.cpp"
 #include "./update-gamestate.cpp"
 
@@ -36,6 +45,26 @@ static int Initialize()
 		obby2_player_bmp,
 		obby2_player_bmp_len,
 		playerBitmaps
+	);
+
+	tl::MemorySpace background_render_data_target;
+	background_render_data_target.content = &background_pixel_data[0];
+	background_render_data_target.sizeInBytes = sizeof(uint32_t) * background_pixel_cache_count;
+
+	tl::bitmap_interface_initialize_for_render(
+		backgroundBitmap,
+		background_render_data_target,
+		background_render_data
+	);
+
+	tl::MemorySpace player_render_data_target;
+	player_render_data_target.content = &player_pixel_data[0];
+	player_render_data_target.sizeInBytes = sizeof(uint32_t) * player_pixel_cache_count;
+
+	tl::bitmap_interface_initialize_for_render(
+		playerBitmaps,
+		background_render_data_target,
+		background_render_data
 	);
 
 	return 0;
