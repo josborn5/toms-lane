@@ -425,10 +425,6 @@ int bitmap_interface_render_data(
 	const bitmap_render_data& render_data,
 	const Rect<float>& footprint
 ) {
-	Vec2<float> bitmapIncrement = {
-		0.5f * (float)render_data.width / footprint.halfSize.x,
-		0.5f * (float)render_data.height / footprint.halfSize.y
-	};
 	Vec2<int> bitmapStart = {
 		(int)footprint.x_min(),
 		(int)footprint.y_min()
@@ -439,6 +435,45 @@ int bitmap_interface_render_data(
 	};
 	Vec2<int> start, end;
 	resolve_bitmap_render_bounds(buffer, bitmapStart, bitmapEnd, start, end);
+
+	Vec2<float> scale_bitmap_to_render = {
+		footprint.halfSize.x / (0.5f * (float)render_data.width),
+		footprint.halfSize.y / (0.5f * (float)render_data.height)
+	};
+
+	if (scale_bitmap_to_render.x > 1.0f && scale_bitmap_to_render.y > 1.0f) {
+		unsigned int horizontal_jump = (unsigned int)scale_bitmap_to_render.x;
+		unsigned int vertical_jump = (unsigned int)scale_bitmap_to_render.y;
+
+		unsigned int y0 = start.y;
+		unsigned int y1 = start.y + vertical_jump;
+
+		unsigned int bitmap_index = 0;
+		for (unsigned int j = 0; j < render_data.height; j += 1) {
+			unsigned int x0 = start.x;
+			unsigned int x1 = start.x + horizontal_jump;
+			
+			for (unsigned int i = 0; i < render_data.width; i += 1) {
+				uint32_t pixel_color = *(render_data.pixel_data + bitmap_index);
+
+				buffer.fill_rect(pixel_color, x0, y0, x1, y1);				
+
+				x0 = x1;
+				x1 += horizontal_jump;
+				bitmap_index += 1; 
+			}
+
+			y0 = y1;
+			y1 += vertical_jump;
+		}
+
+		return 0;
+	}
+
+	Vec2<float> bitmap_increment = {
+		0.5f * (float)render_data.width / footprint.halfSize.x,
+		0.5f * (float)render_data.height / footprint.halfSize.y
+	};
 
 	float bitmap_y = 0.0f;
 	for (int j = start.y; j < end.y; j += 1)
@@ -454,9 +489,9 @@ int bitmap_interface_render_data(
 
 			buffer.plot_pixel(pixel_color, i, j);
 
-			bitmap_x += bitmapIncrement.x;
+			bitmap_x += bitmap_increment.x;
 		}
-		bitmap_y += bitmapIncrement.y;
+		bitmap_y += bitmap_increment.y;
 	}
 	return 0;
 }
@@ -564,3 +599,4 @@ int bitmap_interface_write(
 }
 
 }
+
