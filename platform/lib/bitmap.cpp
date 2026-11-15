@@ -506,10 +506,6 @@ int bitmap_interface_render(
 	GetColorFromBitmap* colorResolutionFunction = resolve_color_resolution_function(bitmap.dibs_header);
 	if (colorResolutionFunction == nullptr) return -2;
 
-	Vec2<float> bitmapIncrement = {
-		0.5f * (float)bitmap.dibs_header.width / footprint.halfSize.x,
-		0.5f * (float)bitmap.dibs_header.height / footprint.halfSize.y
-	};
 	Vec2<int> bitmapStart = {
 		(int)footprint.x_min(),
 		(int)footprint.y_min()
@@ -520,6 +516,43 @@ int bitmap_interface_render(
 	};
 	Vec2<int> start, end;
 	resolve_bitmap_render_bounds(buffer, bitmapStart, bitmapEnd, start, end);
+
+	Vec2<float> scale_bitmap_to_render = {
+		footprint.halfSize.x / (0.5f * (float)bitmap.dibs_header.width),
+		footprint.halfSize.y / (0.5f * (float)bitmap.dibs_header.height)
+	};
+
+	if (scale_bitmap_to_render.x > 1.0f && scale_bitmap_to_render.y > 1.0f) {
+		unsigned int horizontal_jump = (unsigned int)scale_bitmap_to_render.x;
+		unsigned int vertical_jump = (unsigned int)scale_bitmap_to_render.y;
+
+		unsigned int y0 = start.y;
+		unsigned int y1 = start.y + vertical_jump;
+
+		for (unsigned int j = 0; j < bitmap.dibs_header.height; j += 1) {
+			unsigned int x0 = start.x;
+			unsigned int x1 = start.x + horizontal_jump;
+			
+			for (unsigned int i = 0; i < bitmap.dibs_header.width; i += 1) {
+				uint32_t pixel_color = (*colorResolutionFunction)(bitmap, i, j);
+
+				buffer.fill_rect(pixel_color, x0, y0, x1, y1);				
+
+				x0 = x1;
+				x1 += horizontal_jump;
+			}
+
+			y0 = y1;
+			y1 += vertical_jump;
+		}
+
+		return 0;
+	}
+
+	Vec2<float> bitmapIncrement = {
+		0.5f * (float)bitmap.dibs_header.width / footprint.halfSize.x,
+		0.5f * (float)bitmap.dibs_header.height / footprint.halfSize.y
+	};
 
 	float bitmapY = 0.0f;
 	for (int j = start.y; j < end.y; j += 1)
