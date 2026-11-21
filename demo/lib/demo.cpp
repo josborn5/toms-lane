@@ -437,6 +437,38 @@ static void reset_world_to_mesh() {
 	reset_camera_in_world();
 }
 
+static void copy_float_value_from_char_buffer(
+	char* input_buffer,
+	unsigned int input_buffer_size,
+	char* output_buffer,
+	unsigned int output_buffer_size
+) {
+	for (unsigned int i = 0; i < output_buffer_size; i += 1) {
+		output_buffer[i] = '\0';
+	}
+
+	bool at_end = false;
+	bool is_started = false;
+	for (unsigned int i = 0; i < input_buffer_size && !at_end; i += 1) {
+		bool is_number_char = (*input_buffer == '-' || *input_buffer == '.' || (*input_buffer >= '0' && *input_buffer <= '0'));
+
+		if (!is_started && is_number_char) {
+			*output_buffer = *input_buffer;
+			is_started = true;
+			tl::put_string("started");
+		} else if (is_started && is_number_char) {
+			*output_buffer = *input_buffer;
+			tl::put_string("copying");
+		} else if (is_started && !is_number_char) {
+			tl::put_string("done");
+			at_end = true;
+		}
+
+		input_buffer++;
+		output_buffer++;
+	}
+}
+
 static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& triangles, tl::MemorySpace& transient)
 {
 	void* asset = asset_interface_open(filename);
@@ -457,15 +489,27 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 		std::strstream stringStream;
 		stringStream << line;
 
-		if (line[0] == 'v' && line[1] == ' ')
+		if (string_buffer[0] == 'v' && string_buffer[1] == ' ')
 		{
 			tl::Vec3<float> vertex;
 			// expect line to have syntax 'v x y z' where x, y & z are the ordinals of the point position
+			const unsigned int float_buffer_size = 16;
+			char float_buffer[float_buffer_size];
+
+			copy_float_value_from_char_buffer(
+				string_buffer,
+				string_buffer_size,
+				float_buffer,
+				float_buffer_size
+			);
+
+			tl::put_string(float_buffer);
+
 			stringStream >> junk >> vertex.x >> vertex.y >> vertex.z;
 			heapVertices.append(vertex);
 		}
 
-		if (line[0] == 'f' && line[1] == ' ')
+		if (string_buffer[0] == 'f' && string_buffer[1] == ' ')
 		{
 			int points[3];
 			stringStream >> junk >> points[0] >> points[1] >> points[2];
