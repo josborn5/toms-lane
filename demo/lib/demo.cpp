@@ -437,37 +437,38 @@ static void reset_world_to_mesh() {
 	reset_camera_in_world();
 }
 
-static void copy_float_value_from_char_buffer(
-	char* input_buffer,
-	unsigned int input_buffer_size,
-	char* output_buffer,
-	unsigned int output_buffer_size
+static struct string_segment {
+	char* start = nullptr;
+	unsigned int length = 0;
+};
+
+static void read_float_value_from_string_segment(
+	const string_segment& input,
+	string_segment& output,
+	string_segment& remaining
 ) {
-	for (unsigned int i = 0; i < output_buffer_size; i += 1) {
-		output_buffer[i] = '\0';
-	}
-
-	bool at_end = false;
 	bool is_started = false;
-	for (unsigned int i = 0; i < input_buffer_size && !at_end; i += 1) {
-		bool is_number_char = (*input_buffer == '-' || *input_buffer == '.' || (*input_buffer >= '0' && *input_buffer <= '0'));
+	remaining.start = input.start;
+	remaining.length = input.length;
 
-		if (!is_started && is_number_char) {
-			*output_buffer = *input_buffer;
-			is_started = true;
-			tl::put_string("started");
-		} else if (is_started && is_number_char) {
-			*output_buffer = *input_buffer;
-			tl::put_string("copying");
+	for (unsigned int i = 0; i < input.length; i += 1) {
+		bool is_number_char = (*remaining.start == '-' || *remaining.start == '.' || (*remaining.start >= '0' && *remaining.start <= '9'));
+
+		if (is_number_char) {
+			output.length += 1;
+			if (!is_started) {
+				is_started = true;
+				output.start = remaining.start;
+			}
 		} else if (is_started && !is_number_char) {
-			tl::put_string("done");
-			at_end = true;
+			break;
 		}
 
-		input_buffer++;
-		output_buffer++;
+		remaining.start++;
+		remaining.length -= 1;
 	}
 }
+
 
 static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& triangles, tl::MemorySpace& transient)
 {
@@ -493,17 +494,15 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 		{
 			tl::Vec3<float> vertex;
 			// expect line to have syntax 'v x y z' where x, y & z are the ordinals of the point position
-			const unsigned int float_buffer_size = 16;
-			char float_buffer[float_buffer_size];
+			string_segment float_string;
+			string_segment input_string = { string_buffer, string_buffer_size };
+			string_segment remaining_string;
 
-			copy_float_value_from_char_buffer(
-				string_buffer,
-				string_buffer_size,
-				float_buffer,
-				float_buffer_size
+			read_float_value_from_string_segment(
+				input_string,
+				float_string,
+				remaining_string
 			);
-
-			tl::put_string(float_buffer);
 
 			stringStream >> junk >> vertex.x >> vertex.y >> vertex.z;
 			heapVertices.append(vertex);
