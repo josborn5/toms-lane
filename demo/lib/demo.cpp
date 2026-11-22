@@ -1009,7 +1009,7 @@ static int UpdateAndRender1(
 	return 0;
 }
 
-static int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
+int updateWindowCallback(const tl::Input& input, int dtInMilliseconds, tl::RenderBuffer& renderBuffer)
 {
 	actual_width = renderBuffer.width - 4;
 	actual_height = renderBuffer.height - 4;
