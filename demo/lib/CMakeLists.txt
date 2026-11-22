@@ -4,10 +4,6 @@ cmake_minimum_required(VERSION 3.28.0)
 
 project(demo-app VERSION 1.0)
 
-add_subdirectory(../../platform platform-output)
-
-add_subdirectory(test)
-
 message("demo-app context:")
 message("CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
 message("CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
@@ -43,10 +39,5 @@ target_compile_options(
 target_link_options(
 	demo PRIVATE
 	-nostdlib
-)
-
-
-target_link_libraries(
-	demo
 )
 
