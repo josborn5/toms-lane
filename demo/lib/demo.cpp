@@ -437,9 +437,19 @@ static void reset_world_to_mesh() {
 	reset_camera_in_world();
 }
 
-static struct string_segment {
+struct string_segment {
 	char* start = nullptr;
 	unsigned int length = 0;
+};
+
+struct cursor {
+	char* head = nullptr;
+	unsigned int position = 0;
+
+	void increment() {
+		head++;
+		position += 1;
+	}
 };
 
 static void read_float_value_from_string_segment(
@@ -469,6 +479,41 @@ static void read_float_value_from_string_segment(
 	}
 }
 
+static bool try_parse_float_from_string_segment(const string_segment& input, float& output) {
+	cursor cursor = { input.start, 0 };
+
+	float sign_factor = 1.0f;
+	if (*cursor.head == '-') {
+		sign_factor = -1.0f;
+		cursor.increment();
+	}
+
+	while (*cursor.head != '.' && cursor.position < input.length) {
+		if (*cursor.head < '0' || *cursor.head > '9') {
+			return false;
+		}
+		output *= 10.f;
+		output += (float)(*cursor.head - '0');
+
+		cursor.increment();
+	}
+
+	if (*cursor.head == '.') {
+		cursor.increment();
+		float scale = 0.1f;
+		while (*cursor.head >= '0' && *cursor.head <= '9' && cursor.position < input.length) {
+			float addition = scale * (float)(*cursor.head - '0');
+			output += addition;
+			scale *= 0.1f;
+
+			cursor.increment();
+		}
+	}
+
+	output *= sign_factor;
+
+	return true;
+}
 
 static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& triangles, tl::MemorySpace& transient)
 {
@@ -504,7 +549,12 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 				remaining_string
 			);
 
-			stringStream >> junk >> vertex.x >> vertex.y >> vertex.z;
+			float float_value = 0.0f;
+			try_parse_float_from_string_segment(float_string, vertex.x);
+
+			tl::print_int("parsed: ", (int)float_value);
+
+			stringStream >> junk >> float_value >> vertex.y >> vertex.z;
 			heapVertices.append(vertex);
 		}
 
