@@ -548,13 +548,27 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 				float_string,
 				remaining_string
 			);
-
-			float float_value = 0.0f;
 			try_parse_float_from_string_segment(float_string, vertex.x);
+			input_string = remaining_string;
 
-			tl::print_int("parsed: ", (int)float_value);
+			read_float_value_from_string_segment(
+				input_string,
+				float_string,
+				remaining_string
+			);
+			try_parse_float_from_string_segment(float_string, vertex.y);
+			input_string = remaining_string;
 
-			stringStream >> junk >> float_value >> vertex.y >> vertex.z;
+			read_float_value_from_string_segment(
+				input_string,
+				float_string,
+				remaining_string
+			);
+			try_parse_float_from_string_segment(float_string, vertex.z);
+
+
+			float float_value;
+			stringStream >> junk >> float_value >> float_value >> vertex.z;
 			heapVertices.append(vertex);
 		}
 
