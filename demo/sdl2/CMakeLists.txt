@@ -16,5 +16,6 @@ target_link_libraries(
 	demo
 	toms-lane-platform
 	toms-lane-sdl2-application
+	external-math-functions
 )
 

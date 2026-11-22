@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 3.28.0)
 project(demo-app VERSION 1.0)
 
 add_subdirectory(../../platform platform-output)
-add_subdirectory(../../std-lib-functions ./std-lib-functions-output)
 
 add_subdirectory(test)
 
@@ -49,6 +48,5 @@ target_link_options(
 
 target_link_libraries(
 	demo
-	external-math-functions
 )
 

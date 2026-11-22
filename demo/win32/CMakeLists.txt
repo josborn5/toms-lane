@@ -16,5 +16,6 @@ target_link_libraries(
 	demo
 	toms-lane-platform
 	toms-lane-win32-application
+	external-math-functions
 )
 
