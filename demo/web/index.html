@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>demo</title>
+<style>
+	body { margin: 0; background: #111; display: flex; align-items: center; justify-content: center; height: 100vh; }
+	canvas { display: block; cursor: crosshair; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+
+let w = 0;
+let h = 0;
+let wasmMemory;
+
+function openWindow(width, height) {
+	w = width;
+	h = height;
+	const canvas = document.getElementById('c');
+	canvas.width  = w;
+	canvas.height = h;
+}
+
+function consoleLog(ptr, len) {
+	const bytes = new Uint8ClampedArray(wasmMemory, ptr, len);
+	console.log(new TextDecoder("utf8").decode(bytes));
+}
+
+function consoleLogValue(ptr, len, value) {
+	const bytes = new Uint8ClampedArray(wasmMemory, ptr, len);
+	console.log(new TextDecoder("utf8").decode(bytes), value);
+}
+
+WebAssembly.instantiateStreaming(fetch('cmake-build/tl-window.wasm'), {
+	env: {
+		sinf:  (x) => Math.sin(x),
+		cosf:  (x) => Math.cos(x),
+		sqrtf: (x) => Math.sqrt(x),
+		tanf:  (x) => Math.tan(x),
+		atanf: (x) => Math.atan(x),
+		open_window: openWindow,
+		console_log: consoleLog,
+		console_log_value: consoleLogValue
+	}
+}).then(({ instance }) => {
+	const exp = instance.exports;
+	wasmMemory = instance.exports.memory.buffer;
+
+	exp.tl_main();
+
+	const canvas = document.getElementById('c');
+	const ctx = canvas.getContext('2d');
+
+	const canvasRect = canvas.getBoundingClientRect();
+
+	// https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values
+	const keyBoardEventKeyToTlKeyMap = {
+		"Enter":		0,
+		" ":			1,
+		"Shift":		2,
+		"Tab":			3,
+		"Control":		4,
+		"Alt":			5, // no differentiation between left alt & right alt
+		"Escape":		7,
+		"ArrowUp":		8,
+		"ArrowDown":	9,
+		"ArrowLeft":	10,
+		"ArrowRight":	11,
+		"PageUp":		12,
+		"PageDown":		13,
+		"End":			14,
+		"Home":			15,
+		"A":			16,
+		"a":			16,
+		"B":			17,
+		"b":			17,
+		"C":			18,
+		"c":			18,
+		"D":			19,
+		"d":			19,
+		"E":			20,
+		"e":			20,
+		"F":			21,
+		"f":			21,
+		"G":			22,
+		"g":			22,
+		"H":			23,
+		"h":			23,
+		"I":			24,
+		"i":			24,
+		"J":			25,
+		"j":			25,
+		"K":			26,
+		"k":			26,
+		"L":			27,
+		"l":			27,
+		"M":			28,
+		"m":			28,
+		"N":			29,
+		"n":			29,
+		"O":			30,
+		"o":			30,
+		"P":			31,
+		"p":			31,
+		"Q":			32,
+		"q":			32,
+		"R":			33,
+		"r":			33,
+		"S":			34,
+		"s":			34,
+		"T":			35,
+		"t":			35,
+		"U":			36,
+		"u":			36,
+		"V":			37,
+		"v":			37,
+		"W":			38,
+		"w":			38,
+		"X":			39,
+		"x":			39,
+		"Y":			40,
+		"y":			40,
+		"Z":			41,
+		"z":			41,
+		"0":			42,
+		"1":			43,
+		"2":			44,
+		"3":			45,
+		"4":			46,
+		"5":			47,
+		"6":			48,
+		"7":			49,
+		"8":			50,
+		"9":			51
+	};
+
+	// Input
+	canvas.addEventListener('mousemove', e => {
+		exp.tl_set_mouse(
+  			(e.clientX - canvasRect.left),
+  			(e.clientY - canvasRect.top),
+  			e.buttons & 1
+		);
+	});
+	document.addEventListener("keyup", e => {
+		const tl_key_code = keyBoardEventKeyToTlKeyMap[e.key];
+
+		if (tl_key_code !== undefined) {
+			exp.tl_set_keyup(tl_key_code);
+		}
+	});
+	document.addEventListener("keydown", e => {
+		const tl_key_code = keyBoardEventKeyToTlKeyMap[e.key];
+
+		if (tl_key_code !== undefined) {
+			exp.tl_set_keydown(tl_key_code);
+		}
+	});
+
+	// Loop
+	let last = 0;
+	function frame(now) {
+		if (now === last) {
+			console.log("dropping frame!");
+			requestAnimationFrame(frame);
+			return
+		}
+		const dt = now - last;
+		last = now;
+		const quit = exp.tl_tick(dt);
+
+		// Blit: view directly into WASM memory, zero copy
+		const ptr  = exp.tl_pixels();
+		const data = new Uint8ClampedArray(wasmMemory, ptr, w * h * 4);
+		ctx.putImageData(new ImageData(data, w, h), 0, 0);
+
+		if (!quit) requestAnimationFrame(frame);
+	}
+	requestAnimationFrame(frame);
+}).catch(console.error);
+</script>
+</body>
+</html>
