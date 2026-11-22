@@ -452,7 +452,7 @@ struct cursor {
 	}
 };
 
-static void read_float_value_from_string_segment(
+static void read_number_string_segment_from_string_segment(
 	const string_segment& input,
 	string_segment& output,
 	string_segment& remaining
@@ -481,6 +481,7 @@ static void read_float_value_from_string_segment(
 
 static bool try_parse_float_from_string_segment(const string_segment& input, float& output) {
 	cursor cursor = { input.start, 0 };
+	output = 0.0f;
 
 	float sign_factor = 1.0f;
 	if (*cursor.head == '-') {
@@ -515,6 +516,31 @@ static bool try_parse_float_from_string_segment(const string_segment& input, flo
 	return true;
 }
 
+static bool try_parse_int_from_string_segment(const string_segment& input, int& output) {
+	cursor cursor = { input.start, 0 };
+	output = 0.0f;
+
+	float sign_factor = 1.0f;
+	if (*cursor.head == '-') {
+		sign_factor = -1.0f;
+		cursor.increment();
+	}
+
+	while (cursor.position < input.length) {
+		if (*cursor.head < '0' || *cursor.head > '9') {
+			return false;
+		}
+		output *= 10.f;
+		output += (float)(*cursor.head - '0');
+
+		cursor.increment();
+	}
+
+	output *= sign_factor;
+
+	return true;
+}
+
 static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& triangles, tl::MemorySpace& transient)
 {
 	void* asset = asset_interface_open(filename);
@@ -527,14 +553,6 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 
 	tl::array<tl::Vec3<float>> heapVertices = tl::array<tl::Vec3<float>>(transient);
 	while (asset_interface_read_line(asset, string_buffer, string_buffer_size)) {
-
-		std::string line = std::string(string_buffer);
-
-		char junk;
-
-		std::strstream stringStream;
-		stringStream << line;
-
 		if (string_buffer[0] == 'v' && string_buffer[1] == ' ')
 		{
 			tl::Vec3<float> vertex;
@@ -543,7 +561,7 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 			string_segment input_string = { string_buffer, string_buffer_size };
 			string_segment remaining_string;
 
-			read_float_value_from_string_segment(
+			read_number_string_segment_from_string_segment(
 				input_string,
 				float_string,
 				remaining_string
@@ -551,7 +569,7 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 			try_parse_float_from_string_segment(float_string, vertex.x);
 			input_string = remaining_string;
 
-			read_float_value_from_string_segment(
+			read_number_string_segment_from_string_segment(
 				input_string,
 				float_string,
 				remaining_string
@@ -559,23 +577,48 @@ static void load_asset_to_array(const char* filename, tl::array<Triangle4d>& tri
 			try_parse_float_from_string_segment(float_string, vertex.y);
 			input_string = remaining_string;
 
-			read_float_value_from_string_segment(
+			read_number_string_segment_from_string_segment(
 				input_string,
 				float_string,
 				remaining_string
 			);
 			try_parse_float_from_string_segment(float_string, vertex.z);
 
-
-			float float_value;
-			stringStream >> junk >> float_value >> float_value >> vertex.z;
 			heapVertices.append(vertex);
 		}
 
 		if (string_buffer[0] == 'f' && string_buffer[1] == ' ')
 		{
 			int points[3];
-			stringStream >> junk >> points[0] >> points[1] >> points[2];
+			// expect line to have syntax 'v x y z' where x, y & z are the ordinals of the point position
+			string_segment float_string;
+			string_segment input_string = { string_buffer, string_buffer_size };
+			string_segment remaining_string;
+
+			read_number_string_segment_from_string_segment(
+				input_string,
+				float_string,
+				remaining_string
+			);
+			try_parse_int_from_string_segment(float_string, points[0]);
+			input_string = remaining_string;
+
+			read_number_string_segment_from_string_segment(
+				input_string,
+				float_string,
+				remaining_string
+			);
+			try_parse_int_from_string_segment(float_string, points[1]);
+			input_string = remaining_string;
+
+			read_number_string_segment_from_string_segment(
+				input_string,
+				float_string,
+				remaining_string
+			);
+			try_parse_int_from_string_segment(float_string, points[2]);
+
+			// stringStream >> junk >> points[0] >> points[1] >> points[2];
 			// expect line to have syntax 'f 1 2 3' where 1, 2 & 3 are the 1-indexed positions of the points in the file
 			Triangle4d newTriangle = {
 				heapVertices.get(points[0] - 1),
