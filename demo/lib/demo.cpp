@@ -1,5 +1,3 @@
-#include <strstream>
-#include <string>
 #include "../../application/src/tl-application.hpp"
 #include "../../platform/lib/tl-library.hpp"
 #include "../../std-lib-functions/tl-math-functions.hpp"
@@ -1037,15 +1035,15 @@ int demo_main()
 	persistent_memory.sizeInBytes = 10 * 1024 * 1024;
 	transient_memory.sizeInBytes = 10 * 1024 * 1024;
 
-	persistent_memory.content = malloc(persistent_memory.sizeInBytes);
+	persistent_memory.content = tl::allocate_memory(persistent_memory.sizeInBytes);
 	if (persistent_memory.content == nullptr) {
-		puts("ERROR! Failed to initialize memory!");
+		tl::put_string("ERROR! Failed to initialize memory!");
 		return 1;
 	}
 
-	transient_memory.content = malloc(transient_memory.sizeInBytes);
+	transient_memory.content = tl::allocate_memory(transient_memory.sizeInBytes);
 	if (transient_memory.content == nullptr) {
-		puts("ERROR! Failed to initialize memory!");
+		tl::put_string("ERROR! Failed to initialize memory!");
 		return 1;
 	}
 

@@ -36,4 +36,8 @@ namespace tl {
 
 		printf(buffer, num);
 	}
+
+	void* allocate_memory(unsigned long size_in_bytes) {
+		return malloc(size_in_bytes);
+	}
 }

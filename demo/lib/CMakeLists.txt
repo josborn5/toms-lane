@@ -35,6 +35,18 @@ add_library(
 	../assets/teapot.obj.cpp
 )
 
+target_compile_options(
+	demo PRIVATE
+    -fno-exceptions
+	-ffreestanding
+    -nostdlib
+)
+target_link_options(
+	demo PRIVATE
+	-nostdlib
+)
+
+
 target_link_libraries(
 	demo
 	external-math-functions

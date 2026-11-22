@@ -7,4 +7,6 @@ namespace tl {
 
 	void put_string(const char* log);
 	void print_int(const char* log, int num);
+
+	void* allocate_memory(unsigned long size_in_bytes);
 }
