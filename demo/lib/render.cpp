@@ -31,6 +31,26 @@ float plane_z_value_get(
 	return z0;
 }
 
+static uint32_t format_color(tl::color_channel_format to_format, uint32_t rgb_color) {
+	uint32_t formatted_color = 0;
+	switch (to_format) {
+		case tl::rgb: {
+			formatted_color = rgb_color;
+		} break;
+		case tl::abgr: {
+			uint32_t abgr_red = (0xFF0000 & rgb_color) >> 16;
+			uint32_t abgr_green = 0x00FF00 & rgb_color;
+			uint32_t abgr_blue = (0x0000FF & rgb_color) << 16;
+			uint32_t alpha = 0xFF000000;
+			formatted_color = alpha | abgr_blue | abgr_green | abgr_red;
+		} break;
+	}
+
+	return formatted_color;
+}
+
+
+
 /**
  *	|---|---|---|
  *	| 0 | 1 | 2 |	pixel ordinals
@@ -62,6 +82,8 @@ static void DrawHorizontalLineInPixels(
 
 	float running_depth = z0;
 
+	uint32_t corrected_color = format_color(renderBuffer.color_format, color);
+
 	if (end_x > renderBuffer.max_width) {
 		end_x = renderBuffer.max_width;
 	}
@@ -78,7 +100,7 @@ static void DrawHorizontalLineInPixels(
 			continue;
 		}
 
-		*pixel = color;
+		*pixel = corrected_color;
 		*pixel_depth = running_depth;
 
 		pixel++;
