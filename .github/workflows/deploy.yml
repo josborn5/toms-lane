@@ -30,6 +30,13 @@ jobs:
 
           cp -r ./web ../site/obby-2
 
+      - shell: bash
+        working-directory: demo
+        run: |
+          ./web-ci.sh
+
+          cp -r ./web ../site/demo
+
       - uses: actions/upload-pages-artifact@v5
         with:
           path: site
